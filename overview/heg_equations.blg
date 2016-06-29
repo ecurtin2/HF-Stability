@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: heg_equations.aux
+The style file: apsrev.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: heg_references.bib
+Repeated entry---line 715 of file heg_references.bib
+ : @article{Adams1962
+ :                   ,
+I'm skipping whatever remains of this entry
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+You've used 8 entries,
+            3411 wiz_defined-function locations,
+            1225 strings with 11618 characters,
+and the built_in function-call counts, 4906 in all, are:
+= -- 301
+> -- 113
+< -- 23
++ -- 80
+- -- 28
+* -- 662
+:= -- 562
+add.period$ -- 8
+call.type$ -- 8
+change.case$ -- 34
+chr.to.int$ -- 11
+cite$ -- 8
+duplicate$ -- 448
+empty$ -- 440
+format.name$ -- 78
+if$ -- 936
+int.to.chr$ -- 1
+int.to.str$ -- 9
+missing$ -- 71
+newline$ -- 39
+num.names$ -- 24
+pop$ -- 99
+preamble$ -- 1
+purify$ -- 32
+quote$ -- 0
+skip$ -- 172
+stack$ -- 0
+substring$ -- 174
+swap$ -- 354
+text.length$ -- 15
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 44
+warning$ -- 0
+while$ -- 25
+width$ -- 0
+write$ -- 106
+(There was 1 error message)
