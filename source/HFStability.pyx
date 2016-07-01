@@ -17,13 +17,15 @@ cdef extern from "stability.h" namespace "HFStability":
 		#Attrubutes
 		double  bzone_length, vol, rs, kf
 		long    Nocc, Nvir, Nexc, N_elec, ndim, Nk
-		mat states, excitations       #arma::mat wrapped by cyarma
-		umat excitations              #arma::umat not native to cyarma I added it
+		mat states                                #arma::mat wrapped by cyarma
+		umat excitations                         #arma::umat not native to cyarma I added it
+		uvec occ_states, vir_states
 
 		#Methods
 		double min_eigval(long, long, long, long, long, long, bool, double, double*)
-		double two_electron(double[], double[], double[], double[])
-		double two_electron_2d(double[], double[], double[], double[])
+		double energy(unsigned int)
+		double two_electron_3d(double[], double[], double[])
+		double two_electron_2d(double[], double[], double[])
 
 ################################################################################
 #																			   # 
@@ -42,6 +44,8 @@ cdef class PyHEG:
 		del self.c_HEG
 
 	#Class methods
+	def energy(self, unsigned int index):
+		return self.c_HEG.energy(index)
 #	def getA(self, long i, long j):
 #		return self.c_HEG.get_A(i, j)
 #	def min_eigval(self, 
@@ -155,6 +159,25 @@ cdef class PyHEG:
 		#cyarma
 		self.c_HEG.states = numpy_to_mat_d(inp_states)
 	states = property(get_states, set_states)
+
+
+	#occ_states
+	def get_occ_states(self):
+		ndarray = np.zeros((self.c_HEG.occ_states.n_elem), dtype=np.uint32)
+		return uvec_to_numpy(self.c_HEG.occ_states, ndarray)
+	def set_occ_states(self, np.ndarray[unsigned int, ndim=1, mode="c"] inp_occ_states not None):
+		#cyarma
+		self.c_HEG.occ_states = numpy_to_uvec_d(inp_occ_states)
+	occ_states = property(get_occ_states, set_occ_states)
+
+	#vir_states
+	def get_vir_states(self):
+		ndarray = np.zeros((self.c_HEG.vir_states.n_elem), dtype=np.uint32)
+		return uvec_to_numpy(self.c_HEG.vir_states, ndarray)
+	def set_vir_states(self, np.ndarray[unsigned int, ndim=1, mode="c"] inp_vir_states not None):
+		#cyarma
+		self.c_HEG.vir_states = numpy_to_uvec_d(inp_vir_states)
+	vir_states = property(get_vir_states, set_vir_states)
 
 	#excitations
 	def get_excitations(self):

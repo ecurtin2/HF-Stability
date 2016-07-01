@@ -13,9 +13,11 @@ namespace HFStability {
 		long    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
 		arma::mat  states;
 		arma::umat excitations;
+		arma::uvec occ_states, vir_states;
 
 		//Methods
         double min_eigval(long, long, long, long, long, long, bool, double, double*);
+		double energy(unsigned int);
 		double two_electron_3d(double[], double[], double[]);
 		double two_electron_2d(double[], double[], double[]);
 		double davidson_algorithm(long, 

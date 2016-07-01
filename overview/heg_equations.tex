@@ -19,10 +19,7 @@
 \maketitle
 
 
-\section{Equations}
-
-
-\subsection{Homogeneous Electron Gas}
+\section{Homogeneous Electron Gas}
 
 The Fermi level, $k_f$, is (p. 30 of \cite{Guiliani2005})
 
@@ -75,7 +72,40 @@ Where $n_{\vec{k}\sigma}$ is the occupation number of the state with momentum $\
 	\sum\limits_{\vec{k}}^{}{(...)}\xrightarrow{\text{$dk \ll L$}}\left(\frac{L}{2\pi}\right)^D\int (...)d\vec{k}
 \end{equation}
 
-\subsection{Hartree-Fock Stability}
+The analytic form of the exchange energy is known in the continuous case. Let $y = \frac{k}{k_{F\sigma}}$. Equations \ref{eq:hfexch} through \ref{eq:fnd} are from p. 81-82 of \cite{Guiliani2005}. In 2 or 3 dimensions the exchange energy is, 
+
+\begin{equation}\label{eq:hfexch}
+\epsilon_{k\sigma}^{(x)} = -\frac{2e^2k_{F\sigma}}{\pi}f_{ND}\left(\frac{k}{k_{F\sigma}}\right),
+\end{equation}
+where in 3D, the function $f_{3D}$ is given by
+\begin{equation}
+f_{3D}\left(y\right) = \frac{1}{2} + \frac{1-y^2}{4y} ln \left|\frac{1+y}{1-y} \right|,
+\end{equation}
+and in 2D, it is
+\begin{equation}\label{eq:fnd}
+f_{2D}\left(y\right) = 
+\begin{cases} 
+    \mathbf{E}\left(y\right), &  y \leq 1, \\
+    y 
+    \left[ 
+        \mathbf{E} 
+        \left(
+            \frac{1}{y} 
+        \right)
+        -
+        \left(
+            1 - \frac{1}{y^2}
+        \right)
+        \mathbf{K}
+        \left(
+            \frac{1}{y}
+        \right)
+       \right]  ,& y \geq 1. 
+\end{cases}
+\end{equation}
+The functions $\mathbf{K}(y)$ and $ \mathbf{E}(y) $ are complete elliptic integrals of the first and second kind, respectively. These are implemented in SciPy as \emph{scipy.special.ellipk} and \emph{scipy.special.ellipe}.
+
+\section{Hartree-Fock Stability}
 The HF stability conditions (to my knowledge) were presented by Thouless \cite{Thouless1972} ($1^{st}$ Ed. 1960). More general conditions were presented by Adams\cite{Adams1962}. The stability condition is that the eigenvalues ($\lambda$) given by (p. 41 of \cite{Thouless1972}) 
 
 \begin{equation}
@@ -92,7 +122,7 @@ The HF stability conditions (to my knowledge) were presented by Thouless \cite{T
 	=\lambda C_{ai}^*,
 \end{equation}
 are nonnegative. This is equivalent to the RPA oscillation frequencies being all real (p. 115 of \cite{Thouless1972}). The RPA is a linearized approximation to Time-Dependent Hartree-Fock theory. These can be written\cite{Dunning1967}\cite{Seeger1977} in the following form:
-\begin{equation}
+\begin{equation}\label{eq:1,3H}
 {}^{1,3}\bf{H'}=
 \begin{bmatrix}
 {}^{1,3}\bf{A'} & {}^{1,3}\bf{B'} \\
@@ -108,15 +138,16 @@ Where the $1,3$ denote singlet and triplet states, respectively. $\bf{A}$, $\bf{
 	{}^{3}{B'}_{i\rightarrow a, j\rightarrow b} &= -\braket{ab|ji}
 	\end{align}
 \end{subequations}
+The matrix given in Equation \ref{eq:1,3H} represents the case of complex RHF stability in the space of complex RHF space (${}^{1}\mathbf{H}$ - internal instability) and in the space of complex UHF space (${}^{3}\mathbf{H}$ - triplet instability). Seeger and Pople \cite{Seeger1977} give both more general formulae, and simplifications in special cases. Figure \ref{fig:stability_table} is a reproduction of the stability conditions they developed, and more details can be found in the paper. 
 \begin{figure}[h]
    \includegraphics[width=1.0\linewidth]{figures/seeger_stability.pdf}
   	\caption {Hartree-Fock Stability conditions reproduced from Seeger \& Pople \cite{Seeger1977}}
   	\label{fig:stability_table}
 \end{figure} 
 
-\subsection{Davidson's Algorithm}
-\subsubsection{Theory}
-Oftentimes we're interested only in the lowest or highest few eigenvalues of a large, symmetric matrix. Matrix eigenvalue problem operation counts scale as \url{~}$O(N^3)$ for an $N\times N$ matrix, while the memory requirement scales quadratically. Iterative subspace methods based off the Rayleigh-Ritz method are popular ways of dealing with this issue. The most famous are the Lanczos (hermitian) and Arnoldi (non-hermitian) algorithms, which build as their subspace a Krylov space. A more involved algorithm was proposed by Davidson\cite{Davidson1975} and involves building a subspace with correction vectors to be described momentarily. But first, a few definitions are introduced to define the notation to be used.
+\section{Davidson's Algorithm}
+\subsection{Theory}
+Oftentimes we're interested only in the lowest or highest few eigenvalues of a large, symmetric matrix. Matrix eigenvalue problem operation counts scale as \url{~}$O(N^3)$ for an $N \times N$ matrix, while the memory requirement scales quadratically. Iterative subspace methods based off the Rayleigh-Ritz method are popular ways of dealing with this issue. The most famous are the Lanczos (hermitian) and Arnoldi (non-hermitian) algorithms, which build as their subspace a Krylov space. A more involved algorithm was proposed by Davidson\cite{Davidson1975} and involves building a subspace with correction vectors to be described momentarily. But first, a few definitions are introduced to define the notation to be used.
 
 We are interested in the lowest (or highest) $k$ ($0 < k \leq N$) eigenvalue(s) of the $N \times N$ hermitian matrix, A,
 \begin{equation}
@@ -172,7 +203,7 @@ M &= M + l
 \end{align}
 \end{subequations}
 
-\subsubsection{Implementation}
+\subsection{Implementation}
 \begin{algorithm}[H]
 \caption{Davidson's Algorithm}\label{davidson}
 \begin{algorithmic}[1]

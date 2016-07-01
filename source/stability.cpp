@@ -9,28 +9,28 @@
 #define ARMA_NO_DEBUG
 
 
-double HFStability::energy(unsigned int state)
+double HFStability::HEG::energy(unsigned int state)
 {
 	double energy;
 	double kin = 0; //kinetic energy
 	double k[ndim], kprime[ndim];
 
 	for (int i = 0; i < ndim; ++i) {
-		k[i] = states[state, i];
+		k[i] = states(state, i);
 		kin += k[i]*k[i];
 	}
 	// ||k||/2m
 	kin /= 2.0;
 
-
 	double exc = 0;
 	for (int i = 0; i < Nocc; ++i) {
 		for (int j = 0; j < ndim; ++j){
-			kprime[j] = states[occ_states[i], j];
+			kprime[j] = states(occ_states(i), j);
 		}
 		//4th is always k by momentum conservation, 2 is occupation #
-		exc += 2.0 * two_electron(k, kprime, kprime);
+		exc += 2.0 * two_electron_2d(k, kprime, kprime);
 	}
+	exc /= bzone_length*bzone_length;
 	energy = kin - exc;
 	return energy;
 }
@@ -57,8 +57,7 @@ double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[])
 		const double tolerance = 10E-10;
 		double norm = 0.0;
 	    for (int i = 0; i < ndim; ++i) {
-			//norm^2 of momentum conserving excitation
-			norm += k[i]*k[i];
+			norm += (kp[i] - kr[i]) * (kp[i] - kr[i]);
 	    }
 	
 		//avoid singularities	
@@ -89,15 +88,14 @@ double HFStability::HEG::two_electron_2d(double kp[], double kq[], double kr[])
 		const double tolerance = 10E-10;
 		double norm = 0.0;
 	    for (int i = 0; i < ndim; ++i) {
-			//norm^2 of momentum conserving excitation
-			norm += k[i]*k[i];
+			norm += (kp[i] - kr[i]) * (kp[i] - kr[i]);
 	    }
 	
 		//avoid singularities	
 		if (norm < tolerance){
 			return 0.0;
 		}
-		return 4.0 * PI	/ (vol * sqrt(norm));
+		return 2.0 * PI	/ (vol * sqrt(norm));
 		}
 
 double HFStability::HEG::davidson_algorithm(long N,

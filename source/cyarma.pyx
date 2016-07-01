@@ -7,6 +7,16 @@ from cython.operator cimport dereference as deref
 from libcpp cimport bool
 
 cdef extern from "armadillo" namespace "arma" nogil:
+	# unsigned int vector class, added by Ecurtin, June 28, 2016
+    cdef cppclass uvec:
+        uvec(unsigned int * aux_mem, int number_of_elements, bool copy_aux_mem, bool strict) nogil
+        uvec(unsigned int * aux_mem, int number_of_elements) nogil
+        uvec(int) nogil
+        uvec() nogil
+        # attributes
+        int n_elem
+        #management
+        unsigned int * memptr() nogil
 	# unsigned in matrix class, added by Ecurtin, June 28, 2016
     cdef cppclass umat:
         umat(unsigned int * aux_mem, int n_rows, int n_cols, bool copy_aux_mem, bool strict) nogil
@@ -188,6 +198,7 @@ cdef umat numpy_to_umat_d(np.ndarray[np.uint32_t, ndim=2] X):
     del aR_p
     return aR
 
+#cube
 cdef cube * numpy_to_cube(np.ndarray[np.double_t, ndim=3] X):
     cdef cube *aR_p
     if not X.flags.c_contiguous:
@@ -201,6 +212,7 @@ cdef cube numpy_to_cube_d(np.ndarray[np.double_t, ndim=3] X):
     del aR_p
     return aR
     
+#vec
 cdef vec * numpy_to_vec(np.ndarray[np.double_t, ndim=1] x):
     if not (x.flags.f_contiguous or x.flags.owndata):
         x = x.copy()
@@ -213,6 +225,18 @@ cdef vec numpy_to_vec_d(np.ndarray[np.double_t, ndim=1] x):
     del ar_p
     return ar
     
+#uvec
+cdef uvec * numpy_to_uvec(np.ndarray[np.uint32_t, ndim=1] x):
+    if not (x.flags.f_contiguous or x.flags.owndata):
+        x = x.copy()
+    cdef uvec *ar_p = new uvec(<unsigned int*> x.data, x.shape[0], False, True)
+    return ar_p
+
+cdef uvec numpy_to_uvec_d(np.ndarray[np.uint32_t, ndim=1] x):
+    cdef uvec *ar_p = numpy_to_uvec(x)
+    cdef uvec ar = deref(ar_p)
+    del ar_p
+    return ar
 
 #### Get subviews #####
 cdef vec * mat_col_view(mat * x, int col) nogil:
@@ -270,6 +294,17 @@ cdef np.ndarray[np.double_t, ndim=1] vec_to_numpy(const vec & X, np.ndarray[np.d
     if D is None:
         D = np.empty(X.n_elem, dtype=np.double)
     cdef double * Dptr = <double*> D.data
+    for i in range(X.n_elem):
+        Dptr[i] = Xptr[i]
+    return D
+
+@cython.boundscheck(False)
+cdef np.ndarray[np.uint32_t, ndim=1] uvec_to_numpy(const uvec & X, np.ndarray[np.uint32_t, ndim=1] D):
+    cdef const unsigned int * Xptr = X.memptr()
+    
+    if D is None:
+        D = np.empty(X.n_elem, dtype=np.uint32)
+    cdef unsigned int * Dptr = <unsigned int*> D.data
     for i in range(X.n_elem):
         Dptr[i] = Xptr[i]
     return D
