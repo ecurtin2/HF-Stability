@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.12.4)  23 JUN 2016 17:24
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.12.4)  30 JUN 2016 13:13
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -472,58 +472,58 @@ runsystem(pygmentize -S default -f latex > heg_equations.pyg)...executed.
 
 Class revtex4 Warning: Assuming \noaffiliation for Evan Curtin.
 
-LaTeX Font Info:    Try loading font information for U+msa on input line 27.
+LaTeX Font Info:    Try loading font information for U+msa on input line 24.
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 27.
+LaTeX Font Info:    Try loading font information for U+msb on input line 24.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
-<figures/seeger_stability.pdf, id=20, 427.63585pt x 165.71465pt>
+<figures/seeger_stability.pdf, id=21, 427.63585pt x 165.71465pt>
 File: figures/seeger_stability.pdf Graphic file (type pdf)
 
 <use figures/seeger_stability.pdf>
-Package pdftex.def Info: figures/seeger_stability.pdf used on input line 112.
+Package pdftex.def Info: figures/seeger_stability.pdf used on input line 143.
 (pdftex.def)             Requested size: 510.0pt x 197.63524pt.
  [2 <./figures/seeger_stability.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 163--168
+Underfull \hbox (badness 10000) in paragraph at lines 194--199
 
  []
 
 [3]
 Package epstopdf Info: Source file: <figures/hf_stability_diagram.eps>
-(epstopdf)                    date: 2016-06-23 17:04:39
+(epstopdf)                    date: 2016-06-29 14:44:51
 (epstopdf)                    size: 401357 bytes
 (epstopdf)             Output file: <figures/hf_stability_diagram-eps-converted
 -to.pdf>
-(epstopdf)                    date: 2016-06-23 17:04:42
+(epstopdf)                    date: 2016-06-29 14:44:51
 (epstopdf)                    size: 164731 bytes
 (epstopdf)             Command: <epstopdf --outfile=figures/hf_stability_diagra
 m-eps-converted-to.pdf figures/hf_stability_diagram.eps>
-(epstopdf)             \includegraphics on input line 203.
+(epstopdf)             \includegraphics on input line 234.
 Package epstopdf Info: Output file is already uptodate.
 
-<figures/hf_stability_diagram-eps-converted-to.pdf, id=39, 1255.69125pt x 1426.
+<figures/hf_stability_diagram-eps-converted-to.pdf, id=38, 1255.69125pt x 1426.
 32875pt>
 File: figures/hf_stability_diagram-eps-converted-to.pdf Graphic file (type pdf)
 
  <use figures/hf_stability_diagram-eps-converted-to.pdf>
 Package pdftex.def Info: figures/hf_stability_diagram-eps-converted-to.pdf used
- on input line 203.
+ on input line 234.
 (pdftex.def)             Requested size: 510.0pt x 579.2923pt.
  [4]
 (./heg_equations.bbl [5 <./figures/hf_stability_diagram-eps-converted-to.pdf>])
 [6] (./heg_equations.aux) ) 
 Here is how much of TeX's memory you used:
- 6765 strings out of 493304
- 92818 string characters out of 6139871
- 182352 words of memory out of 5000000
- 10093 multiletter control sequences out of 15000+600000
+ 6766 strings out of 493304
+ 92800 string characters out of 6139871
+ 184395 words of memory out of 5000000
+ 10094 multiletter control sequences out of 15000+600000
  13304 words of font info for 50 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 37i,16n,37p,760b,320s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,16n,37p,761b,320s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/am
 sfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
@@ -550,7 +550,7 @@ msfonts/cm/cmti9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
 /cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 tt9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm
 7.pfb>
-Output written on heg_equations.pdf (6 pages, 526410 bytes).
+Output written on heg_equations.pdf (6 pages, 531327 bytes).
 PDF statistics:
  143 PDF objects out of 1000 (max. 8388607)
  102 compressed objects within 2 object streams
