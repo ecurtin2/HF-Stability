@@ -8,7 +8,6 @@
 #include "armadillo"
 #define ARMA_NO_DEBUG
 
-
 double HFStability::HEG::energy(unsigned int state)
 {
 	double energy;
@@ -34,7 +33,6 @@ double HFStability::HEG::energy(unsigned int state)
 	energy = kin - exc;
 	return energy;
 }
-
 
 double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[])
 {
