@@ -4,6 +4,9 @@
 #																			   # 
 ################################################################################
 from libcpp cimport bool
+import itertools
+import math
+from scipy import special as sp
 import numpy as np
 cimport numpy as np
 include "cyarma.pyx"
@@ -18,7 +21,7 @@ cdef extern from "stability.h" namespace "HFStability":
 		double  bzone_length, vol, rs, kf
 		long    Nocc, Nvir, Nexc, N_elec, ndim, Nk
 		mat states                                #arma::mat wrapped by cyarma
-		umat excitations                         #arma::umat not native to cyarma I added it
+		umat excitations                          #arma::umat not native to cyarma I added it
 		uvec occ_states, vir_states
 
 		#Methods
@@ -35,6 +38,7 @@ cdef extern from "stability.h" namespace "HFStability":
 ################################################################################
 #Python interface to c++ class
 cdef class PyHEG:
+	"""This is a class docstring"""
 	cdef HEG* c_HEG
 
 	#Standard stuff
@@ -43,9 +47,92 @@ cdef class PyHEG:
 	def __dealloc__(self):
 		del self.c_HEG
 
+	#All constants of calculation specified by __init__
+	def __init__(self, ndim=3, rs=1.0, Nk=4):
+		"""This is an init docstring"""
+		self.ndim = int(ndim)
+		self.rs = float(rs)
+		self.Nk = int(Nk)
+
+		#Determine other parameters
+		if self.ndim == 1:
+			self.kf = np.pi / (4 *self.rs)
+		elif self.ndim == 2:
+			self.kf = 2**0.5 /self.rs
+		elif self.ndim == 3:
+			self.kf = (9 * np.pi / 4)**(1./3.) * (1. / self.rs) 
+
+		kmax = 2.0 * self.kf
+		kgrid = np.linspace(-kmax, kmax, self.Nk)
+		#brillioun zone is from - pi/a .. pi/a
+		self.bzone_length =  kmax
+		direct_length = np.pi / kmax
+		self.vol = direct_length**(self.ndim)
+
+		temp = range(self.Nk)
+		states = temp
+		for i in range(self.ndim - 1):
+			states = itertools.product(states,temp)
+		states = list(states)
+
+		#unpack into list of tuples
+		if self.ndim == 3:
+			states = [(item[0][0], item [0][1], item[1]) for item in states]
+
+		if self.ndim == 1:
+			states = [[kgrid[state]] for state in states]
+		else:
+			states = [[kgrid[i] for i in state] for state in states]
+
+		#Separating into occ and vir by momentum
+		occ_states = []
+		vir_states = []
+		for index, state in enumerate(states):
+			k = np.linalg.norm(state)
+			if k < self.kf + 10e-8:
+				occ_states.append(index)
+			else:
+				vir_states.append(index)
+
+		self.Nocc = len(occ_states)
+		self.Nvir = len(vir_states)
+		self.states = np.asarray(states)
+		self.occ_states = np.asarray(occ_states, dtype=np.uint32)
+		self.vir_states = np.asarray(vir_states, dtype=np.uint32)
+
+		#RHF ONLY
+		self.N_elec = 2*self.Nocc
+
 	#Class methods
 	def energy(self, unsigned int index):
 		return self.c_HEG.energy(index)
+
+	def f2D(self, y):
+		if y <= 1.0:
+			#scipy and guiliani/vignale define K and E differently, x -> x*x
+			return sp.ellipe(y*y)
+		else:
+			#scipy and guiliani/vignale define K and E differently, x -> x*x
+			x = 1.0 / y
+			return y * (sp.ellipe(x*x) - (1.0 - x*x) * sp.ellipk(x*x))
+
+	def f3D(self, y):
+		if y < 10e-10:
+			return 1.0
+		return 0.5 + (1 - y*y) / (4*y) * math.log(abs((1+y) / (1-y)))
+		
+	def analytic_exch(self, k):
+		const = -2. * self.kf / math.pi
+		if self.ndim == 2:
+			return const * self.f2D(k/self.kf)
+		elif self.ndim == 3:
+			return const * self.f3D(k/self.kf)
+
+	def analytic_energy(self, k):
+		#works on k of any dimension
+		x = np.linalg.norm(k)
+		return (x*x / 2.0) + self.analytic_exch(x)
+
 #	def getA(self, long i, long j):
 #		return self.c_HEG.get_A(i, j)
 #	def min_eigval(self, 
@@ -75,10 +162,10 @@ cdef class PyHEG:
 #		return self.c_HEG.min_eigval(N, max_its, max_sub_size, num_of_roots, 
 #											num_of_guess, block_size, dotest, tol, guess_vecs)
 
+
 	#############################################################################
 	#       Define properties, allows for setting/getting them in python        #
 	#############################################################################
-	
 	
 	#Wigner-Seitz Radius
 	def get_rs(self):

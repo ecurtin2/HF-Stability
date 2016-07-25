@@ -103,7 +103,7 @@ f_{2D}\left(y\right) =
        \right]  ,& y \geq 1. 
 \end{cases}
 \end{equation}
-The functions $\mathbf{K}(y)$ and $ \mathbf{E}(y) $ are complete elliptic integrals of the first and second kind, respectively. These are implemented in SciPy as \emph{scipy.special.ellipk} and \emph{scipy.special.ellipe}.
+The functions $\mathbf{K}(y)$ and $ \mathbf{E}(y) $ are complete elliptic integrals of the first and second kind, respectively. These are implemented in SciPy as \emph{scipy.special.ellipk} and \emph{scipy.special.ellipe}. After a significant struggle, I have found that the author of the textbook\cite{Guiliani2005} and scipy/wolfram use a different definition of the complete elliptic integral. I was able to reproduce the graphs on pages 82 and 83 of \cite{Guiliani2005} properly with $\mathbf{K}(x) \rightarrow \mathbf{K}(x^2)$ and $\mathbf{E}(x) \rightarrow \mathbf{E}(x^2)$.
 
 \section{Hartree-Fock Stability}
 The HF stability conditions (to my knowledge) were presented by Thouless \cite{Thouless1972} ($1^{st}$ Ed. 1960). More general conditions were presented by Adams\cite{Adams1962}. The stability condition is that the eigenvalues ($\lambda$) given by (p. 41 of \cite{Thouless1972}) 
