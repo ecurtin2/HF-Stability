@@ -7,3 +7,4 @@ All dependencies are also here. The .bib contains all relevant references I've f
 
 ##source
 Contains all source code. The project is written as a Python-wrapped C++ class using Cython. 
+The class methods that need speed are written in C++ while the rest are written in python in the .pyx, which is compiled by Cython. These components may possibly be made faster by using static typing but this will probably be negligible compared to the bottleneck, which is the matrix-vector multiplications in Davidson's algorithm. 
