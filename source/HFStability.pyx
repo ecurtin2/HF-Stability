@@ -26,7 +26,7 @@ cdef extern from "stability.h" namespace "HFStability":
 
 		#Methods
 		double min_eigval(long, long, long, long, long, long, bool, double, double*)
-		double energy(unsigned int)
+		double energy(long long unsigned int)
 		double two_electron_3d(double[], double[], double[])
 		double two_electron_2d(double[], double[], double[])
 
@@ -97,14 +97,14 @@ cdef class PyHEG:
 		self.Nocc = len(occ_states)
 		self.Nvir = len(vir_states)
 		self.states = np.asarray(states)
-		self.occ_states = np.asarray(occ_states, dtype=np.uint32)
-		self.vir_states = np.asarray(vir_states, dtype=np.uint32)
+		self.occ_states = np.asarray(occ_states, dtype=np.uint64)
+		self.vir_states = np.asarray(vir_states, dtype=np.uint64)
 
 		#RHF ONLY
 		self.N_elec = 2*self.Nocc
 
 	#Class methods
-	def energy(self, unsigned int index):
+	def energy(self, long long unsigned int index):
 		return self.c_HEG.energy(index)
 
 	def f2D(self, y):
@@ -250,27 +250,27 @@ cdef class PyHEG:
 
 	#occ_states
 	def get_occ_states(self):
-		ndarray = np.zeros((self.c_HEG.occ_states.n_elem), dtype=np.uint32)
+		ndarray = np.zeros((self.c_HEG.occ_states.n_elem), dtype=np.uint64)
 		return uvec_to_numpy(self.c_HEG.occ_states, ndarray)
-	def set_occ_states(self, np.ndarray[unsigned int, ndim=1, mode="c"] inp_occ_states not None):
+	def set_occ_states(self, np.ndarray[long long unsigned int, ndim=1, mode="c"] inp_occ_states not None):
 		#cyarma
 		self.c_HEG.occ_states = numpy_to_uvec_d(inp_occ_states)
 	occ_states = property(get_occ_states, set_occ_states)
 
 	#vir_states
 	def get_vir_states(self):
-		ndarray = np.zeros((self.c_HEG.vir_states.n_elem), dtype=np.uint32)
+		ndarray = np.zeros((self.c_HEG.vir_states.n_elem), dtype=np.uint64)
 		return uvec_to_numpy(self.c_HEG.vir_states, ndarray)
-	def set_vir_states(self, np.ndarray[unsigned int, ndim=1, mode="c"] inp_vir_states not None):
+	def set_vir_states(self, np.ndarray[long long unsigned int, ndim=1, mode="c"] inp_vir_states not None):
 		#cyarma
 		self.c_HEG.vir_states = numpy_to_uvec_d(inp_vir_states)
 	vir_states = property(get_vir_states, set_vir_states)
 
 	#excitations
 	def get_excitations(self):
-		ndarray = np.zeros((self.c_HEG.excitations.n_rows, self.c_HEG.excitations.n_cols), dtype=np.uint32)
+		ndarray = np.zeros((self.c_HEG.excitations.n_rows, self.c_HEG.excitations.n_cols), dtype=np.uint64)
 		return umat_to_numpy(self.c_HEG.excitations, ndarray)
-	def set_excitations(self, np.ndarray[unsigned int, ndim=2, mode="c"] inp_excitations not None):
+	def set_excitations(self, np.ndarray[long long unsigned int, ndim=2, mode="c"] inp_excitations not None):
 		#cyarma
 		self.c_HEG.excitations = numpy_to_umat_d(inp_excitations)
 	excitations = property(get_excitations, set_excitations)

@@ -7,20 +7,34 @@ from cython.operator cimport dereference as deref
 from libcpp cimport bool
 
 cdef extern from "armadillo" namespace "arma" nogil:
-	# unsigned int vector class, added by Ecurtin, June 28, 2016
+	# long long unsigned int vector class, added by Ecurtin, June 28, 2016
     cdef cppclass uvec:
-        uvec(unsigned int * aux_mem, int number_of_elements, bool copy_aux_mem, bool strict) nogil
-        uvec(unsigned int * aux_mem, int number_of_elements) nogil
+        uvec(long long unsigned int * aux_mem, int number_of_elements, bool copy_aux_mem, bool strict) nogil
+        uvec(long long unsigned int * aux_mem, int number_of_elements) nogil
         uvec(int) nogil
         uvec() nogil
         # attributes
         int n_elem
         #management
-        unsigned int * memptr() nogil
+        long long unsigned int * memptr() nogil
+        # opperators
+        long long unsigned int& operator[](int)
+        long long unsigned int& at(int)
+        uvec operator%(vec)
+        uvec operator+(vec)
+        uvec operator/(vec)
+        uvec operator*(mat)
+        uvec operator*(long long unsigned int)
+        uvec operator-(long long unsigned int)
+        uvec operator+(long long unsigned int)
+        uvec operator/(long long unsigned int)
+
+
+
 	# unsigned in matrix class, added by Ecurtin, June 28, 2016
     cdef cppclass umat:
-        umat(unsigned int * aux_mem, int n_rows, int n_cols, bool copy_aux_mem, bool strict) nogil
-        umat(unsigned int * aux_mem, int n_rows, int n_cols) nogil
+        umat(long long unsigned int * aux_mem, int n_rows, int n_cols, bool copy_aux_mem, bool strict) nogil
+        umat(long long unsigned int * aux_mem, int n_rows, int n_cols) nogil
         umat(int n_rows, int n_cols) nogil
         umat() nogil
         # attributes
@@ -32,7 +46,22 @@ cdef extern from "armadillo" namespace "arma" nogil:
         #management
         umat reshape(int, int) nogil
         umat resize(int, int) nogil
-        unsigned int * memptr() nogil
+        long long unsigned int * memptr() nogil
+        # opperators
+        long long unsigned int& operator[](int) nogil
+        long long unsigned int& operator[](int,int) nogil
+        long long unsigned int& at(int,int) nogil
+        long long unsigned int& at(int) nogil
+        umat operator*(mat) nogil
+        umat operator%(mat) nogil
+        uvec operator*(vec) nogil
+        umat operator+(mat) nogil
+        umat operator-(mat) nogil
+        umat operator*(long long unsigned int) nogil
+        umat operator-(long long unsigned int) nogil
+        umat operator+(long long unsigned int) nogil
+        umat operator/(long long unsigned int) nogil
+        #etc
 
     # matrix class (double)
     cdef cppclass mat:
@@ -185,14 +214,14 @@ cdef mat numpy_to_mat_d(np.ndarray[np.double_t, ndim=2] X):
     del aR_p
     return aR
 
-#umat (unsigned int)
-cdef umat * numpy_to_umat(np.ndarray[np.uint32_t, ndim=2] X):
+#umat (long long unsigned int)
+cdef umat * numpy_to_umat(np.ndarray[np.uint64_t, ndim=2] X):
     if not (X.flags.f_contiguous or X.flags.owndata):
         X = X.copy(order="F")
-    cdef umat *aR_p  = new umat(<unsigned int*> X.data, X.shape[0], X.shape[1], False, True)
+    cdef umat *aR_p  = new umat(<long long unsigned int*> X.data, X.shape[0], X.shape[1], False, True)
     return aR_p
 
-cdef umat numpy_to_umat_d(np.ndarray[np.uint32_t, ndim=2] X):
+cdef umat numpy_to_umat_d(np.ndarray[np.uint64_t, ndim=2] X):
     cdef umat * aR_p = numpy_to_umat(X)
     cdef umat aR = deref(aR_p)
     del aR_p
@@ -226,13 +255,13 @@ cdef vec numpy_to_vec_d(np.ndarray[np.double_t, ndim=1] x):
     return ar
     
 #uvec
-cdef uvec * numpy_to_uvec(np.ndarray[np.uint32_t, ndim=1] x):
+cdef uvec * numpy_to_uvec(np.ndarray[np.uint64_t, ndim=1] x):
     if not (x.flags.f_contiguous or x.flags.owndata):
         x = x.copy()
-    cdef uvec *ar_p = new uvec(<unsigned int*> x.data, x.shape[0], False, True)
+    cdef uvec *ar_p = new uvec(<long long unsigned int*> x.data, x.shape[0], False, True)
     return ar_p
 
-cdef uvec numpy_to_uvec_d(np.ndarray[np.uint32_t, ndim=1] x):
+cdef uvec numpy_to_uvec_d(np.ndarray[np.uint64_t, ndim=1] x):
     cdef uvec *ar_p = numpy_to_uvec(x)
     cdef uvec ar = deref(ar_p)
     del ar_p
@@ -277,12 +306,12 @@ cdef np.ndarray[np.double_t, ndim=2] mat_to_numpy(const mat & X, np.ndarray[np.d
     return D
 
 @cython.boundscheck(False)
-cdef np.ndarray[np.uint32_t, ndim=2] umat_to_numpy(const umat & X, np.ndarray[np.uint32_t, ndim=2] D):
-    cdef const unsigned int * Xptr = X.memptr()
+cdef np.ndarray[np.uint64_t, ndim=2] umat_to_numpy(const umat & X, np.ndarray[np.uint64_t, ndim=2] D):
+    cdef const long long unsigned int * Xptr = X.memptr()
     
     if D is None:
-        D = np.empty((X.n_rows, X.n_cols), dtype=np.uint32, order="F")
-    cdef unsigned int* Dptr = <unsigned int*> D.data
+        D = np.empty((X.n_rows, X.n_cols), dtype=np.uint64, order="F")
+    cdef long long unsigned int* Dptr = <long long unsigned int*> D.data
     for i in range(X.n_rows*X.n_cols):
         Dptr[i] = Xptr[i]
     return D
@@ -299,12 +328,12 @@ cdef np.ndarray[np.double_t, ndim=1] vec_to_numpy(const vec & X, np.ndarray[np.d
     return D
 
 @cython.boundscheck(False)
-cdef np.ndarray[np.uint32_t, ndim=1] uvec_to_numpy(const uvec & X, np.ndarray[np.uint32_t, ndim=1] D):
-    cdef const unsigned int * Xptr = X.memptr()
+cdef np.ndarray[np.uint64_t, ndim=1] uvec_to_numpy(const uvec & X, np.ndarray[np.uint64_t, ndim=1] D):
+    cdef const long long unsigned int * Xptr = X.memptr()
     
     if D is None:
-        D = np.empty(X.n_elem, dtype=np.uint32)
-    cdef unsigned int * Dptr = <unsigned int*> D.data
+        D = np.empty(X.n_elem, dtype=np.uint64)
+    cdef long long unsigned int * Dptr = <long long unsigned int*> D.data
     for i in range(X.n_elem):
         Dptr[i] = Xptr[i]
     return D
