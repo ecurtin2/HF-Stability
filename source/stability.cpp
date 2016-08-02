@@ -8,7 +8,7 @@
 #include "armadillo"
 #define ARMA_NO_DEBUG
 
-double HFStability::HEG::energy(unsigned int state)
+double HFStability::HEG::energy(long long unsigned int state)
 {
 	double energy;
 	double kin = 0; //kinetic energy

@@ -17,7 +17,7 @@ namespace HFStability {
 
 		//Methods
         double min_eigval(long, long, long, long, long, long, bool, double, double*);
-		double energy(unsigned int);
+		double energy(long long unsigned int);
 		double two_electron_3d(double[], double[], double[]);
 		double two_electron_2d(double[], double[], double[]);
 		double davidson_algorithm(long, 

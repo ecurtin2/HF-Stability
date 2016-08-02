@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.12.4)  25 JUL 2016 13:11
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.12.4)  2 AUG 2016 12:19
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -498,11 +498,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 194--199
 
 [3 <./figures/seeger_stability.pdf>]
 Package epstopdf Info: Source file: <figures/hf_stability_diagram.eps>
-(epstopdf)                    date: 2016-06-29 14:44:51
+(epstopdf)                    date: 2016-08-01 16:39:35
 (epstopdf)                    size: 401357 bytes
 (epstopdf)             Output file: <figures/hf_stability_diagram-eps-converted
 -to.pdf>
-(epstopdf)                    date: 2016-06-29 14:44:51
+(epstopdf)                    date: 2016-08-01 16:39:35
 (epstopdf)                    size: 164731 bytes
 (epstopdf)             Command: <epstopdf --outfile=figures/hf_stability_diagra
 m-eps-converted-to.pdf figures/hf_stability_diagram.eps>
