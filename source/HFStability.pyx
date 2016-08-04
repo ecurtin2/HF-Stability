@@ -53,8 +53,22 @@ cdef class PyHEG:
 		self.ndim = int(ndim)
 		self.rs = float(rs)
 		self.Nk = int(Nk)
+		self.get_resulting_params()
 
-		#Determine other parameters
+	def get_resulting_params(self):
+		"""Given rs, ndim, Nk, determine other parameters
+
+		Description:
+
+		Args:
+			No args
+		Returns:
+			Nothing
+		Raises:
+			No exceptions
+			
+
+		"""
 		if self.ndim == 1:
 			self.kf = np.pi / (4 *self.rs)
 		elif self.ndim == 2:
@@ -107,16 +121,16 @@ cdef class PyHEG:
 
 	def two_electron_3d(self, i1, i2, i3, i4):
 		"""Check k-conservation and return the value of the two-electron integral.
-		
+
 		Args:
-			i1 (int): index of arbitrary state 1 in the range [0, #_States]. 
-			i2 (int): index of arbitrary state 2 in the range [0, #_States]. 
-			i3 (int): index of arbitrary state 3 in the range [0, #_States]. 
-			i4 (int): index of arbitrary state 4 in the range [0, #_States]. 
+			i1 (int): index of state 1 in the range [0, #_States]. 
+			i2 (int): index of state 2 in the range [0, #_States]. 
+			i3 (int): index of state 3 in the range [0, #_States]. 
+			i4 (int): index of state 4 in the range [0, #_States]. 
 		Returns:
-			(double) The value of the two electron integral. Note that the method 
-				checks for momentum conservation and returns 0.0 if this 
-				condition is not met. 
+			(double) The value of the two electron integral. Note that the
+			method checks for momentum conservation and returns 0.0 if 
+			this condition is not met. 
 		Raises:
 			No exceptions are raised. 
 		"""
@@ -172,8 +186,7 @@ cdef class PyHEG:
 			return const * self.f3D(k/self.kf)
 
 	def analytic_energy(self, k):
-		#works on k of any dimension
-		x = np.linalg.norm(k)
+		x = np.linalg.norm(k)  #works on k of any dimension
 		return (x*x / 2.0) + self.analytic_exch(x)
 
 #	def getA(self, long i, long j):
@@ -211,36 +224,37 @@ cdef class PyHEG:
 	#############################################################################
 	
 	def get_rs(self):
-		"""(float) Get or set Wigner-Seitz Radius. Setting checks type."""
+		"""(float) Get/set Wigner-Seitz Radius. Setting checks type."""
 		return self.c_HEG.rs
 	def set_rs(self, value):
 		self.c_HEG.rs = float(value)
 	rs = property(get_rs, set_rs)
 	
 	def get_kf(self):
-		"""(float) Get or set Fermi wavenumber. Setting checks type."""
+		"""(float) Get/set Fermi wavenumber. Setting checks type."""
 		return self.c_HEG.kf
 	def set_kf(self, value):
 		self.c_HEG.kf = float(value)
 	kf = property(get_kf, set_kf)
 	
 	def get_Nk(self):
-		"""(int) Get or set number of k-points. Setting checks type."""
+		"""(int) Get/set number of k-points. Setting checks type."""
 		return self.c_HEG.Nk
 	def set_Nk(self, value):
 		self.c_HEG.Nk = int(value)
 	Nk = property(get_Nk, set_Nk)
 
 	def get_N_elec(self):
-		"""(int) Get or set number of electrons. Setting checks type."""
+		"""(int) Get/set number of electrons. Setting checks type."""
 		return self.c_HEG.N_elec
 	def set_N_elec(self, value):
 		self.c_HEG.N_elec = int(value)
 	N_elec = property(get_N_elec, set_N_elec)
 
 	def get_ndim(self):
-		"""(int) Get or set number of dimensions. Setting checks type.
-			TODO: Setting ndim automaticall defines which functions are
+		"""(int) Get/set number of dimensions. Setting checks type.
+		TODO:
+			Setting ndim automaticall defines which functions are
 			to be used for the following:
 				two_electron_Xd
 				energy_Xd
@@ -252,28 +266,28 @@ cdef class PyHEG:
 	ndim = property(get_ndim, set_ndim)
 
 	def get_Nocc(self):
-		"""(int) Get or set number of occupied states. Setting checks type."""
+		"""(int) Get/set number of occupied states. Setting checks type."""
 		return self.c_HEG.Nocc
 	def set_Nocc(self, value):
 		self.c_HEG.Nocc = int(value)
 	Nocc = property(get_Nocc, set_Nocc)
 
 	def get_Nvir(self):
-		"""(int) Get or set number of virtual states. Setting checks type."""
+		"""(int) Get/set number of virtual states. Setting checks type."""
 		return self.c_HEG.Nvir
 	def set_Nvir(self, value):
 		self.c_HEG.Nvir = int(value)
 	Nvir = property(get_Nvir, set_Nvir)
 
 	def get_Nexc(self):
-		"""(int) Get or set number of virtual states. Setting checks type."""
+		"""(int) Get/set number of virtual states. Setting checks type."""
 		return self.c_HEG.Nexc
 	def set_Nexc(self, value):
 		self.c_HEG.Nexc = int(value)
 	Nexc = property(get_Nexc, set_Nexc)
 
 	def get_bzone_length(self):
-		"""(float) Get or set length of brillioun zone. Setting checks type.
+		"""(float) Get/set length of brillioun zone. Setting checks type.
 			This is the entire length from -pi/a .. pi/a. """
 		return self.c_HEG.bzone_length
 	def set_bzone_length(self, value):
@@ -281,29 +295,30 @@ cdef class PyHEG:
 	bzone_length = property(get_bzone_length, set_bzone_length)
 
 	def get_vol(self):
-		"""(float) Get or set direct lattice volume. Setting checks type."""
+		"""(float) Get/set direct lattice volume. Setting checks type."""
 		return self.c_HEG.vol
 	def set_vol(self, double value):
 		self.c_HEG.vol = float(value)
 	vol = property(get_vol, set_vol)
 
 	def get_states(self):
-		"""(np.ndarray[double, ndim=2, mode="c") Get or set state indices.
-			Description:
-				states is an array of shape (#_states, #_dimensions).
-				states[i] returns the tuple of momenta corresponding 
-				to state i where each element of the tuple corresponds to a 
-				dimension. 
-			Setter:
-				Uses the numpy_to_mat_d functionin cyarma.pyx to convert 
-				from numpy array to armadillo mat<double>. Data is not 
-				copied in this step (pass by reference) and boundscheck is
-				not performed. Numpy arrays are c-ordered while armadillo 
-				mat is fortran-ordered. 
-			Getter:
-				Uses the mat_to_numpy function in cyarma.pyx to convert
-				from armadillo mat<double> to numpy array. This step does
-				copy data and may be slow for very large arrays. 
+		"""(np.ndarray[double, ndim=2, mode="c") Get/set state indices.
+		Description:
+			states is an array of shape (#_states, #_dimensions).
+			states[i] returns the tuple of momenta corresponding 
+			to state i where each element of the tuple corresponds to
+			a dimension. 
+		Setter:
+			Uses the numpy_to_mat_d functionin cyarma.pyx to convert 
+			from numpy array to armadillo mat<double>. Data is not 
+			copied in this step if the numpy array is fortran 
+			ordered(pass by reference) and boundscheck 
+			is not performed. Numpy arrays are c-ordered while 
+			armadillo mat is fortran-ordered. 
+		Getter:
+			Uses the mat_to_numpy function in cyarma.pyx to convert
+			from armadillo mat<double> to numpy array. This step does
+			copy data and may be slow for very large arrays. 
 		"""
 		ndarray = np.zeros((self.c_HEG.states.n_rows, self.c_HEG.states.n_cols))
 		return mat_to_numpy(self.c_HEG.states, ndarray)
@@ -312,29 +327,30 @@ cdef class PyHEG:
 	states = property(get_states, set_states)
 
 	def get_occ_states(self):
-		"""(np.ndarray[uint64, ndim=1, mode="c") Get or set occ state indices.
-			Description:
-				occ_states is an array of shape (#_occ_states).
-				occ_states[i] returns the an index corresponding to the
-				general state which is occupied. Thus, to get momenta of
-				occupied states use states[occupied_states[i]].
-			Setter:
-				Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-				from numpy array to armadillo umat. Data is not copied
-				in this step (pass by reference) and boundscheck is not
-				performed. Numpy arrays are c-ordered while armadillo mat
-				is fortran-ordered. 
-			Getter:
-				Uses the mat_to_numpy function in cyarma.pyx to convert
-				from armadillo umat to numpy array. This step does
-				copy data and may be slow for very large arrays. 
-			Gotchas:
-				The armadillo matrix holds variables of type uword, defined
-				in the armadillo documentation. For C++11 this is defined
-				asa 64bit unsigned int on 64bit systems and 32bit unsigned
-				int on 32-bit systems. This may cause problems on different
-				versions and OS, make sure Armadillo is set to use 64-bit 
-				words by default. 
+		"""(np.ndarray[uint64, ndim=1, mode="c") Get/set occ state indices.
+		Description:
+			occ_states is an array of shape (#_occ_states).
+			occ_states[i] returns the an index corresponding to the
+			general state which is occupied. Thus, to get momenta of
+			occupied states use states[occupied_states[i]].
+		Setter:
+			Uses the numpy_to_mat_d functionin cyarma.pyx to convert
+			from numpy array to armadillo umat. Data is not copied
+			in this step if the numpy array is fortran ordered(pass 
+			by reference) and boundscheck is not performed. Numpy 
+			arrays are c-ordered while armadillo mat is 
+			fortran-ordered. 
+		Getter:
+			Uses the mat_to_numpy function in cyarma.pyx to convert
+			from armadillo umat to numpy array. This step does
+			copy data and may be slow for very large arrays. 
+		Gotchas:
+			The armadillo matrix holds variables of type uword, 
+			defined in the armadillo documentation. For C++11 this 
+			is defined as a 64bit unsigned int on 64bit systems and 
+			32bit unsigned int on 32bit systems. This may cause 
+			problems on different versions and OS, make sure 
+			Armadillo is set to use 64-bit words by default. 
 		"""
 		ndarray = np.zeros((self.c_HEG.occ_states.n_elem), dtype=np.uint64)
 		return uvec_to_numpy(self.c_HEG.occ_states, ndarray)
@@ -345,28 +361,29 @@ cdef class PyHEG:
 	#vir_states
 	def get_vir_states(self):
 		"""(np.ndarray[uint64, ndim=1, mode="c") Get/set vir state indices.
-			Description:
-				vir_states is an array of shape (#_vir_states).
-				vir_states[i] returns the an index corresponding to the
-				general state which is virupied. Thus, to get momenta of
-				virupied states use states[virupied_states[i]].
-			Setter:
-				Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-				fromnumpy array to armadillo umat. Data is not copied
-				in this step (pass by reference) and boundscheck is not
-				performed. Numpy arrays are c-ordered while armadillo mat
-				is fortran-ordered. 
-			Getter:
-				Uses the mat_to_numpy function in cyarma.pyx to convert
-				from armadillo umat to numpy array. This step does
-				copy data and may be slow for very large arrays. 
-			Gotchas:
-				The armadillo matrix holds variables of type uword, defined
-				in the armadillo documentation. For C++11 this is defined
-				as a 64bit unsigned int on 64bit systems and 32bit unsigned
-				int on 32-bit systems. This may cause problems on different
-				versions and OS, make sure Armadillo is set to use 64-bit 
-				words by default. 
+		Description:
+			vir_states is an array of shape (#_vir_states).
+			vir_states[i] returns the an index corresponding to the
+			general state which is virupied. Thus, to get momenta of
+			virupied states use states[virupied_states[i]].
+		Setter:
+			Uses the numpy_to_mat_d functionin cyarma.pyx to convert
+			from numpy array to armadillo umat. Data is not copied
+			in this step if the numpy array is fortran ordered(pass 
+			by reference) and boundscheck is not performed. Numpy 
+			arrays are c-ordered while armadillo mat is 
+			fortran-ordered. 
+		Getter:
+			Uses the mat_to_numpy function in cyarma.pyx to convert
+			from armadillo umat to numpy array. This step does
+			copy data and may be slow for very large arrays. 
+		Gotchas:
+			The armadillo matrix holds variables of type uword, 
+			defined in the armadillo documentation. For C++11 this 
+			is defined as a 64bit unsigned int on 64bit systems and 
+			32bit unsigned int on 32bit systems. This may cause 
+			problems on different versions and OS, make sure 
+			Armadillo is set to use 64-bit words by default. 
 		"""
 		ndarray = np.zeros((self.c_HEG.vir_states.n_elem), dtype=np.uint64)
 		return uvec_to_numpy(self.c_HEG.vir_states, ndarray)
@@ -376,30 +393,31 @@ cdef class PyHEG:
 
 	def get_excitations(self):
 		"""(np.ndarray[uint64, ndim=2, mode="c") Get/set exc indices.
-			Description:
-				excitations is an array of shape (#_excitations, 2).
-				excitations[i] returns the pair of indices corresponding
-				to the occupied (excitations[i,0]) and 
-				virtual (excitations[i,1]) states. To get the momentum of
-				occupied state use states[excitations[i,0]] for virtual
-				state use states[excitations[i,1]]. 
-			Setter:
-				Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-				from numpy array to armadillo umat. Data is not copied
-				in this step (pass by reference) and boundscheck is not
-				performed. Numpy arrays are c-ordered while armadillo mat
-				is fortran-ordered. 
-			Getter:
-				Uses the mat_to_numpy function in cyarma.pyx to convert
-				from armadillo umat to numpy array. This step does
-				copy data and may be slow for very large arrays. 
-			Gotchas:
-				The armadillo matrix holds variables of type uword, defined
-				in the armadillo documentation. For C++11 this is defined
-				as a 64bit unsigned int on 64bit systems and 32bit unsigned
-				int on 32-bit systems. This may cause problems on different
-				versions and OS, make sure Armadillo is set to use 64bit 
-				words by default. 
+		Description:
+			excitations is an array of shape (#_excitations, 2).
+			excitations[i] returns the pair of indices corresponding
+			to the occupied (excitations[i,0]) and 
+			virtual (excitations[i,1]) states. To get the momentum of
+			occupied state use states[excitations[i,0]] for virtual
+			state use states[excitations[i,1]]. 
+		Setter:
+			Uses the numpy_to_mat_d functionin cyarma.pyx to convert
+			from numpy array to armadillo umat. Data is not copied
+			in this step if the numpy array is fortran ordered(pass 
+			by reference) and boundscheck is not performed. Numpy 
+			arrays are c-ordered while armadillo mat is 
+			fortran-ordered. 
+		Getter:
+			Uses the mat_to_numpy function in cyarma.pyx to convert
+			from armadillo umat to numpy array. This step does
+			copy data and may be slow for very large arrays. 
+		Gotchas:
+			The armadillo matrix holds variables of type uword, 
+			defined in the armadillo documentation. For C++11 this
+			is defined as a 64bit unsigned int on 64bit systems and 
+			32bit unsigned int on 32bit systems. This may cause 
+			problems on different versions and OS, make sure 
+			Armadillo is set to use 64-bit words by default. 
 		"""
 		ndarray = np.zeros((self.c_HEG.excitations.n_rows, self.c_HEG.excitations.n_cols), dtype=np.uint64)
 		return umat_to_numpy(self.c_HEG.excitations, ndarray)
