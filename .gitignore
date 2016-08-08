@@ -1,1 +1,13 @@
 **.so
+source/build/
+HFStability.cpp
+cyarma.cpp
+heg_equations.aux
+heg_equations.bbl
+heg_equations.blg
+heg_equations.end
+heg_equations.fdb_latexmk
+heg_equations.fls
+heg_equations.log
+heg_equations.pyg
+heg_equations.synctex.gz
