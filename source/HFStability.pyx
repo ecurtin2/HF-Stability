@@ -145,11 +145,22 @@ cdef class PyHEG:
         return self.c_HEG.two_electron_3d(k1, k2, k3)
 
     def energy(self, long long unsigned int index):
+        
         return self.c_HEG.energy(index)
 
-    def p_energy(self, index):
+#    def p_energy_3d(self, index):
+#        kin = 
+#        exch= 
+#        energy = 2.0
+#        return 'not coded yet'
+
+    def p_energy_2d(self, index):
         energy = 2.0
-        return energy
+        return 'not coded yet'
+
+    def p_energy_21(self, index):
+        energy = 2.0
+        return 'not coded yet'
 
     def f2D(self, y):
         if y <= 1.0:
