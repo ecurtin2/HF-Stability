@@ -15,7 +15,7 @@ cdef extern from "stability.h" namespace "HFStability":
     cdef cppclass HEG:
         HEG() except +
         #Attributes
-        double bzone_length, vol, rs, kf
+        double bzone_length, vol, rs, kf, fermi_energy
         long Nocc, Nvir, Nexc, N_elec, ndim, Nk
         mat states          #arma::mat wrapped by cyarma
         umat excitations    #arma::umat not native to cyarma I added it
@@ -43,8 +43,8 @@ cdef class PyHEG:
     #All constants of calculation specified by __init__
     def __init__(self, ndim=3, rs=1.0, Nk=4):
         """This is an init docstring"""
-        self.ndim = int(ndim)
         self.rs = float(rs)
+        self.ndim = int(ndim)
         self.Nk = int(Nk)
         self.get_resulting_params()
 
@@ -52,7 +52,8 @@ cdef class PyHEG:
         """Given rs, ndim, Nk, determine other parameters
 
         Description:
-
+                Does nothing if all 3 aren't defined, which shouldn't
+                ever be possible.
         Args:
                 No args
         Returns:
@@ -62,34 +63,36 @@ cdef class PyHEG:
                 
 
         """
+        #It looks like the variables default to 0, not undefined?
+        if self.rs == 0 or self.ndim == 0 or self.Nk == 0:
+            return None
+        try:
+            self.rs
+            self.ndim
+            self.Nk
+        except:
+            return None #Don't try to calc resulting params until all defined!
+        else:
+            pass #Continue on if it checks out
+
         if self.ndim == 1:
-            self.kf = np.pi / (4 *self.rs)
+            self.kf = np.pi / (4 * self.rs)
         elif self.ndim == 2:
-            self.kf = 2**0.5 /self.rs
+            self.kf = 2**0.5 / self.rs
         elif self.ndim == 3:
             self.kf = (9 * np.pi / 4)**(1./3.) * (1. / self.rs) 
 
         kmax = 2.0 * self.kf
-        kgrid = np.linspace(-kmax, kmax, self.Nk)
+        self.fermi_energy = 0.5 * self.kf**2
         #brillioun zone is from - pi/a .. pi/a
         self.bzone_length =  2.0 * kmax
         direct_length = self.bzone_length / (2.0 * np.pi)
-        self.vol = direct_length**(self.ndim)
+        self.vol = direct_length ** (self.ndim)
 
-        temp = range(self.Nk)
-        states = temp
-        for i in range(self.ndim - 1):
-            states = itertools.product(states, temp)
-        states = list(states)
-
-        #unpack into list of tuples
-        if self.ndim == 3:
-            states = [(item[0][0], item[0][1], item[1]) for item in states]
-
-        if self.ndim == 1:
-            states = [[kgrid[state]] for state in states]
-        else:
-            states = [[kgrid[i] for i in state] for state in states]
+        # states is list of tuples each of length ndim containing the 
+        # coordinates in k-space of each state
+        kgrid = np.linspace(-kmax, kmax, self.Nk)
+        states = list(itertools.product(kgrid, repeat=self.ndim))
 
         #Separating into occ and vir by momentum
         occ_states = []
@@ -108,7 +111,7 @@ cdef class PyHEG:
         self.vir_states = np.asarray(vir_states, dtype=np.uint64)
 
         #RHF ONLY
-        self.N_elec = 2*self.Nocc
+        self.N_elec = 2 * self.Nocc
 
     #Class methods
     def two_electron_3d(self, i1, i2, i3, i4):
@@ -158,7 +161,7 @@ cdef class PyHEG:
         energy = 2.0
         return 'not coded yet'
 
-    def p_energy_21(self, index):
+    def p_energy_1d(self, index):
         energy = 2.0
         return 'not coded yet'
 
@@ -177,7 +180,7 @@ cdef class PyHEG:
         return 0.5 + (1 - y*y) / (4*y) * math.log(abs((1+y) / (1-y)))
 
     def analytic_exch(self, k):
-        const = -2. * self.kf / math.pi
+        const = -2.0 * self.kf / math.pi
         if self.ndim == 2:
             return const * self.f2D(k/self.kf)
         elif self.ndim == 3:
@@ -221,11 +224,35 @@ cdef class PyHEG:
     #############################################################################
     
     def get_rs(self):
-        """(float) Get/set Wigner-Seitz Radius. Setting checks type."""
+        """(float) Get/set Wigner-Seitz Radius. Setting checks type.
+            Setting ndim calls get_resulting_params to update all
+            dependent variables appropriately. """
         return self.c_HEG.rs
     def set_rs(self, value):
         self.c_HEG.rs = float(value)
+        self.get_resulting_params()
     rs = property(get_rs, set_rs)
+
+    def get_ndim(self):
+        """(int) Get/set number of dimensions. Setting checks type.
+            Setting ndim calls get_resulting_params to update all
+            dependent variables appropriately. 
+        """
+        return self.c_HEG.ndim
+    def set_ndim(self, value):
+        self.c_HEG.ndim = int(value)
+        self.get_resulting_params()
+    ndim = property(get_ndim, set_ndim)
+
+    def get_Nk(self):
+        """(int) Get/set number of k-points. Setting checks type.
+            Setting ndim calls get_resulting_params to update all
+            dependent variables appropriately. """
+        return self.c_HEG.Nk
+    def set_Nk(self, value):
+        self.c_HEG.Nk = int(value)
+        self.get_resulting_params()
+    Nk = property(get_Nk, set_Nk)
 
     def get_kf(self):
         """(float) Get/set Fermi wavenumber. Setting checks type."""
@@ -234,12 +261,12 @@ cdef class PyHEG:
         self.c_HEG.kf = float(value)
     kf = property(get_kf, set_kf)
 
-    def get_Nk(self):
-        """(int) Get/set number of k-points. Setting checks type."""
-        return self.c_HEG.Nk
-    def set_Nk(self, value):
-        self.c_HEG.Nk = int(value)
-    Nk = property(get_Nk, set_Nk)
+    def get_fermi_energy(self):
+        """(float) Get/set Fermi energy. Setting checks type."""
+        return self.c_HEG.fermi_energy
+    def set_fermi_energy(self, value):
+        self.c_HEG.fermi_energy = float(value)
+    fermi_energy = property(get_fermi_energy, set_fermi_energy)
 
     def get_N_elec(self):
         """(int) Get/set number of electrons. Setting checks type."""
@@ -248,19 +275,6 @@ cdef class PyHEG:
         self.c_HEG.N_elec = int(value)
     N_elec = property(get_N_elec, set_N_elec)
 
-    def get_ndim(self):
-        """(int) Get/set number of dimensions. Setting checks type.
-        TODO:
-            Setting ndim automaticall defines which functions are
-            to be used for the following:
-                two_electron_Xd
-                energy_Xd
-        """
-        return self.c_HEG.ndim
-
-    def set_ndim(self, value):
-        self.c_HEG.ndim = int(value)
-    ndim = property(get_ndim, set_ndim)
 
     def get_Nocc(self):
         """(int) Get/set number of occupied states. Setting checks type."""

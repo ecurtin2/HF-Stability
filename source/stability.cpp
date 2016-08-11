@@ -18,7 +18,7 @@ double HFStability::HEG::energy(long long unsigned int state)
         k[i] = states(state, i);
         kin += k[i]*k[i];
     }
-    // ||k||/2m
+    // ||k||**2/2m in atomic units
     kin /= 2.0;
 
     double exc = 0;
@@ -29,7 +29,7 @@ double HFStability::HEG::energy(long long unsigned int state)
         //4th is always k by momentum conservation, 2 is occupation #
         exc += 2.0 * two_electron_2d(k, kprime, kprime);
     }
-    exc /= bzone_length*bzone_length;
+    exc /= vol;
     energy = kin - exc;
     return energy;
 }
@@ -65,12 +65,12 @@ double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[])
     return 4.0 * PI / (vol * norm);
 }
 
-double HFStability::HEG::two_electron_2d(double kp[], double kq[], double kr[])
+double HFStability::HEG::two_electron_2d(double k1[], double k2[], double k3[])
 {
     //This is momentum conserving
     double k[ndim];
     for (int i = 0; i < ndim; ++i) {
-        k[i] = kp[i] + kq[i] - kr[i];
+        k[i] = k1[i] + k2[i] - k3[i];
     }
 
     //Translate into first BZ
@@ -86,14 +86,14 @@ double HFStability::HEG::two_electron_2d(double kp[], double kq[], double kr[])
     const double tolerance = 10E-10;
     double norm = 0.0;
     for (int i = 0; i < ndim; ++i) {
-        norm += (kp[i] - kr[i]) * (kp[i] - kr[i]);
+        norm += (k1[i] - k3[i]) * (k1[i] - k3[i]);
     }
 
     //avoid singularities    
     if (norm < tolerance){
         return 0.0;
     }
-    return 2.0 * PI    / (vol * sqrt(norm));
+    return 2.0 * PI / (vol * sqrt(norm));
 }
 
 double HFStability::HEG::davidson_algorithm(

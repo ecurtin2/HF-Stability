@@ -9,7 +9,7 @@ namespace HFStability {
 	class HEG {
 	public:
 		//Attributes
-		double  bzone_length, vol, rs, kf;
+		double  bzone_length, vol, rs, kf, fermi_energy;
 		long    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
 		arma::mat  states;
 		arma::umat excitations;
