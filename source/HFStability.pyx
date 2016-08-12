@@ -82,12 +82,12 @@ cdef class PyHEG:
         elif self.ndim == 3:
             self.kf = (9 * np.pi / 4)**(1./3.) * (1. / self.rs) 
 
+
         kmax = 2.0 * self.kf
         self.fermi_energy = 0.5 * self.kf**2
         #brillioun zone is from - pi/a .. pi/a
         self.bzone_length =  2.0 * kmax
         direct_length = self.bzone_length / (2.0 * np.pi)
-        self.vol = direct_length ** (self.ndim)
 
         # states is list of tuples each of length ndim containing the 
         # coordinates in k-space of each state
@@ -109,9 +109,13 @@ cdef class PyHEG:
         self.states = np.asarray(states)
         self.occ_states = np.asarray(occ_states, dtype=np.uint64)
         self.vir_states = np.asarray(vir_states, dtype=np.uint64)
-
         #RHF ONLY
         self.N_elec = 2 * self.Nocc
+
+        #self.vol = direct_length ** (self.ndim)
+        #2D ONLY OK 
+        self.vol = self.N_elec *np.pi * (self.rs**2)
+
 
     #Class methods
     def two_electron_3d(self, i1, i2, i3, i4):
