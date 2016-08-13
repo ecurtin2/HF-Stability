@@ -194,6 +194,31 @@ cdef class PyHEG:
         x = np.linalg.norm(k)  #works on k of any dimension
         return (x*x / 2.0) + self.analytic_exch(x)
 
+    def two_electron_2d(self, k1, k3):
+        const = 2.0 * np.pi / self.vol 
+        q = np.linalg.norm(k3 - k1)
+        if q < 10e-10:
+            return 0.0
+        return const / q
+
+    def kin(self, int i):
+        return 0.5 * np.linalg.norm(self.states[i]) ** 2
+
+    def exch(self, int i):
+        cdef double exch = 0.0
+        for j in self.occ_states:
+            #NOTE THERE SHOULD BE A 2 INSTEAD OF 1.0 . IS THIS BECAUSE IM
+            #OFF BY A FACTOR OF 2 IN TWO_ELECTRON_2d???
+            #I believe this is resolved, and should be a 1. Having a 2 here would
+            #double count the exchange, ie include exchange interaction between 
+            #electrons of opposite spin. 
+            exch += self.two_electron_2d(self.states[i], self.states[j])
+        exch = exch * (-1.)
+        return exch
+
+    def energy(self, int i):
+        return self.kin(i) + self.exch(i)
+
 #    def getA(self, long i, long j):
 #        return self.c_HEG.get_A(i, j)
 #    def min_eigval(self, 
