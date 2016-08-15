@@ -8,9 +8,102 @@
 #include "armadillo"
 #define ARMA_NO_DEBUG
 
+
+
+void HFStability::HEG::calc_energies_2d()
+{
+    arma::uword num_states = states.n_rows;
+    energies.set_size(num_states);
+    energies.fill(0.0);
+    for (arma::uword i = 0; i < num_states; ++i) {
+        for (long j = 0; j < ndim; ++j) {
+            energies(i) += states(i,j) * states(i,j); 
+        }  
+        energies[i] /= 2.0; //Is now filled with kinetic energy
+        energies[i] += exchange_2d(i); 
+    }
+
+}
+
+double HFStability::HEG::exchange_2d(arma::uword i)
+{
+    double exch = 0.0;
+    arma::uword occ_index;
+    for (arma::uword j = 0; j < Nocc; ++j) {
+        occ_index = occ_states(j);
+        exch += tw_electron_2d(i, occ_index);
+    } 
+    exch *= -1.0;
+    return exch;
+}
+
+double HFStability::HEG::tw_electron_2d(arma::uword i, arma::uword j) 
+{
+    double q = 0.0;
+    double p = 0.0;
+    for (int k = 0; k < ndim; ++k) { 
+        p = states(i, k) - states(j, k);
+        q += p*p;
+    }
+    q = sqrt(q);
+    if (q < 10E-10) {
+        return 0.0;
+    }else{
+        return two_e_const / q;
+    }
+}
+
+void HFStability::HEG::calc_energies_3d()
+{
+    arma::uword num_states = states.n_rows;
+    energies.set_size(num_states);
+    energies.fill(0.0);
+    for (arma::uword i = 0; i < num_states; ++i) {
+        for (long j = 0; j < ndim; ++j) {
+            energies(i) += states(i,j) * states(i,j); 
+        }  
+        energies[i] /= 2.0; //Is now filled with kinetic energy
+        energies[i] += exchange_3d(i); 
+    }
+
+}
+
+double HFStability::HEG::exchange_3d(arma::uword i)
+{
+    double exch = 0.0;
+    arma::uword occ_index;
+    for (arma::uword j = 0; j < Nocc; ++j) {
+        occ_index = occ_states(j);
+        exch += tw_electron_3d(i, occ_index);
+    } 
+    exch *= -1.0;
+    return exch;
+}
+
+double HFStability::HEG::tw_electron_3d(arma::uword i, arma::uword j) 
+{
+    double q = 0.0;
+    double p = 0.0;
+    for (int k = 0; k < ndim; ++k) { 
+        p = states(i, k) - states(j, k);
+        q += p*p;
+    }
+    if (q < 10E-10) {
+        return 0.0;
+    }else{
+        return two_e_const / q;
+    }
+}
+//void HFStability::calc_energies_3d()
+//{
+//
+//
+//}
+
+/*
 double HFStability::HEG::energy(long long unsigned int state)
 {
-    double energy;
+    double energy
     double kin = 0; //kinetic energy
     double k[ndim], kprime[ndim];
 
@@ -33,6 +126,7 @@ double HFStability::HEG::energy(long long unsigned int state)
     energy = kin - exc;
     return energy;
 }
+*/
 
 double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[])
 {

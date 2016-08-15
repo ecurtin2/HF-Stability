@@ -16,8 +16,10 @@ cdef extern from "stability.h" namespace "HFStability":
         HEG() except +
         #Attributes
         double bzone_length, vol, rs, kf, fermi_energy
+        double two_e_const
         long Nocc, Nvir, Nexc, N_elec, ndim, Nk
         mat states          #arma::mat wrapped by cyarma
+        vec energies
         umat excitations    #arma::umat not native to cyarma I added it
         uvec occ_states, vir_states
 
@@ -27,6 +29,8 @@ cdef extern from "stability.h" namespace "HFStability":
         double energy(long long unsigned int)
         double two_electron_3d(double[], double[], double[])
         double two_electron_2d(double[], double[], double[])
+        void calc_energies_2d()
+        void calc_energies_3d()
 
 ################################################################################
 #                             Python Land is Here
@@ -106,68 +110,27 @@ cdef class PyHEG:
 
         self.Nocc = len(occ_states)
         self.Nvir = len(vir_states)
-        self.states = np.asarray(states)
+        self.states = np.asfortranarray(states)
         self.occ_states = np.asarray(occ_states, dtype=np.uint64)
         self.vir_states = np.asarray(vir_states, dtype=np.uint64)
         #RHF ONLY
         self.N_elec = 2 * self.Nocc
 
-        #self.vol = direct_length ** (self.ndim)
-        #2D ONLY OK 
-        self.vol = self.N_elec *np.pi * (self.rs**2)
+        if self.ndim == 3:
+            self.vol = self.N_elec * 4.0 / 3.0 * np.pi * (self.rs**3)
+        elif self.ndim == 2:
+            self.vol = self.N_elec * np.pi * (self.rs**2)
+            self.two_e_const = 2.0 * np.pi / self.vol 
+        elif self.ndim == 1:
+            self.vol = self.N_elec * 2.0 * self.rs
+            self.two_e_const = 4.0 * np.pi / self.vol 
 
-
-    #Class methods
-    def two_electron_3d(self, i1, i2, i3, i4):
-        """Check k-conservation and return the value of the two-electron integral.
-
-        Args:
-                i1 (int): index of state 1 in the range [0, #_States]. 
-                i2 (int): index of state 2 in the range [0, #_States]. 
-                i3 (int): index of state 3 in the range [0, #_States]. 
-                i4 (int): index of state 4 in the range [0, #_States]. 
-        Returns:
-                (double) The value of the two electron integral. Note that the
-                method checks for momentum conservation and returns 0.0 if 
-                this condition is not met. 
-        Raises:
-                No exceptions are raised. 
-        """
-
-        cdef double k1[3], k2[3], k3[3], k4[3];
-        cdef double mysum = 0.0;
-
-        for i in range(3):
-            k1[i] = self.states[i1, i]
-            k2[i] = self.states[i2, i]
-            k3[i] = self.states[i3, i]
-            k4[i] = self.states[i4, i]
-            #momentum conservation
-            mysum += (k1[i] + k2[i] - (k3[i] + k4[i]))**2
-        mysum = mysum**(0.5)
-        #if momentum is not conserved
-        if mysum > 10E-10:
-            return 0.0
-        #otherwise call the c++ function
-        return self.c_HEG.two_electron_3d(k1, k2, k3)
-
-    def energy(self, long long unsigned int index):
-        
-        return self.c_HEG.energy(index)
-
-#    def p_energy_3d(self, index):
-#        kin = 
-#        exch= 
-#        energy = 2.0
-#        return 'not coded yet'
-
-    def p_energy_2d(self, index):
-        energy = 2.0
-        return 'not coded yet'
-
-    def p_energy_1d(self, index):
-        energy = 2.0
-        return 'not coded yet'
+    def calc_energy(self):
+        if self.ndim == 2:
+            self.c_HEG.calc_energies_2d()
+        elif self.ndim == 3:
+            self.c_HEG.calc_energies_3d()
+        return None
 
     def f2D(self, y):
         if y <= 1.0:
@@ -194,30 +157,42 @@ cdef class PyHEG:
         x = np.linalg.norm(k)  #works on k of any dimension
         return (x*x / 2.0) + self.analytic_exch(x)
 
-    def two_electron_2d(self, k1, k3):
+    def p_two_electron_2d(self, k1, k3):
         const = 2.0 * np.pi / self.vol 
         q = np.linalg.norm(k3 - k1)
         if q < 10e-10:
             return 0.0
         return const / q
 
+    def p_two_electron_3d(self, k1, k3):
+        const = 4.0 * np.pi / self.vol 
+        q = np.linalg.norm(k3 - k1)
+        if q < 10e-10:
+            return 0.0
+        return const / (q * q)
+        
     def kin(self, int i):
         return 0.5 * np.linalg.norm(self.states[i]) ** 2
 
-    def exch(self, int i):
+    def exch_2d(self, int i):
         cdef double exch = 0.0
         for j in self.occ_states:
-            #NOTE THERE SHOULD BE A 2 INSTEAD OF 1.0 . IS THIS BECAUSE IM
-            #OFF BY A FACTOR OF 2 IN TWO_ELECTRON_2d???
-            #I believe this is resolved, and should be a 1. Having a 2 here would
-            #double count the exchange, ie include exchange interaction between 
-            #electrons of opposite spin. 
-            exch += self.two_electron_2d(self.states[i], self.states[j])
+            exch += self.p_two_electron_2d(self.states[i], self.states[j])
+        exch = exch * (-1.)
+        return exch
+
+    def exch_3d(self, int i):
+        cdef double exch = 0.0
+        for j in self.occ_states:
+            exch += self.p_two_electron_3d(self.states[i], self.states[j])
         exch = exch * (-1.)
         return exch
 
     def energy(self, int i):
-        return self.kin(i) + self.exch(i)
+        if self.ndim == 2:
+            return self.kin(i) + self.exch_2d(i)
+        elif self.ndim == 3:
+            return self.kin(i) + self.exch_3d(i)
 
 #    def getA(self, long i, long j):
 #        return self.c_HEG.get_A(i, j)
@@ -290,6 +265,13 @@ cdef class PyHEG:
         self.c_HEG.kf = float(value)
     kf = property(get_kf, set_kf)
 
+    def get_two_e_const(self):
+        """(float) Get/set Fermi wavenumber. Setting checks type."""
+        return self.c_HEG.two_e_const
+    def set_two_e_const(self, value):
+        self.c_HEG.two_e_const = float(value)
+    two_e_const = property(get_two_e_const, set_two_e_const)
+
     def get_fermi_energy(self):
         """(float) Get/set Fermi energy. Setting checks type."""
         return self.c_HEG.fermi_energy
@@ -342,7 +324,7 @@ cdef class PyHEG:
     vol = property(get_vol, set_vol)
 
     def get_states(self):
-        """(np.ndarray[double, ndim=2, mode="c") Get/set state indices.
+        """(np.ndarray[double, ndim=2, mode="f") Get/set state indices.
         Description:
             states is an array of shape (#_states, #_dimensions).
             states[i] returns the tuple of momenta corresponding 
@@ -360,9 +342,10 @@ cdef class PyHEG:
             from armadillo mat<double> to numpy array. This step does
             copy data and may be slow for very large arrays. 
         """
-        ndarray = np.zeros((self.c_HEG.states.n_rows, self.c_HEG.states.n_cols))
+        ndarray = np.zeros((self.c_HEG.states.n_rows, 
+                            self.c_HEG.states.n_cols), order='F')
         return mat_to_numpy(self.c_HEG.states, ndarray)
-    def set_states(self, np.ndarray[double, ndim=2, mode="c"] arr not None):
+    def set_states(self, np.ndarray[double, ndim=2, mode="fortran"] arr not None):
         self.c_HEG.states = numpy_to_mat_d(arr)
     states = property(get_states, set_states)
 
@@ -472,3 +455,37 @@ cdef class PyHEG:
                         inp_excitations not None):
         self.c_HEG.excitations = numpy_to_umat_d(inp_excitations)
     excitations = property(get_excitations, set_excitations)
+    
+    def get_energies(self):
+        """(np.ndarray[np.float64, ndim=1]) Get/set occ state indices.
+        Description:
+            occ_states is an array of shape (#_occ_states).
+            occ_states[i] returns the an index corresponding to the
+            general state which is occupied. Thus, to get momenta of
+            occupied states use states[occupied_states[i]].
+        Setter:
+            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
+            from numpy array to armadillo umat. Data is not copied
+            in this step if the numpy array is fortran ordered(pass 
+            by reference) and boundscheck is not performed. Numpy 
+            arrays are c-ordered while armadillo mat is 
+            fortran-ordered. 
+        Getter:
+            Uses the mat_to_numpy function in cyarma.pyx to convert
+            from armadillo umat to numpy array. This step does
+            copy data and may be slow for very large arrays. 
+        Gotchas:
+            The armadillo matrix holds variables of type uword, 
+            defined in the armadillo documentation. For C++11 this 
+            is defined as a 64bit unsigned int on 64bit systems and 
+            32bit unsigned int on 32bit systems. This may cause 
+            problems on different versions and OS, make sure 
+            Armadillo is set to use 64-bit words by default. 
+        """
+        ndarray = np.zeros((self.c_HEG.energies.n_elem), dtype=np.float64)
+        return vec_to_numpy(self.c_HEG.energies, ndarray)
+    def set_energies(self, 
+                        np.ndarray[double, ndim=1]
+                        inp_energies not None):
+        self.c_HEG.energies = numpy_to_vec_d(inp_energies)
+    energies = property(get_energies, set_energies)
