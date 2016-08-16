@@ -9,24 +9,20 @@
 #define ARMA_NO_DEBUG
 
 
-
-void HFStability::HEG::calc_energies_2d()
-{
+void HFStability::HEG::calc_energies_2d() {
     arma::uword num_states = states.n_rows;
     energies.set_size(num_states);
     energies.fill(0.0);
     for (arma::uword i = 0; i < num_states; ++i) {
-        for (long j = 0; j < ndim; ++j) {
+        for (unsigned int j = 0; j < ndim; ++j) {
             energies(i) += states(i,j) * states(i,j); 
         }  
         energies[i] /= 2.0; //Is now filled with kinetic energy
         energies[i] += exchange_2d(i); 
     }
-
 }
 
-double HFStability::HEG::exchange_2d(arma::uword i)
-{
+double HFStability::HEG::exchange_2d(arma::uword i) {
     double exch = 0.0;
     arma::uword occ_index;
     for (arma::uword j = 0; j < Nocc; ++j) {
@@ -37,11 +33,10 @@ double HFStability::HEG::exchange_2d(arma::uword i)
     return exch;
 }
 
-double HFStability::HEG::tw_electron_2d(arma::uword i, arma::uword j) 
-{
+double HFStability::HEG::tw_electron_2d(arma::uword i, arma::uword j) {
     double q = 0.0;
     double p = 0.0;
-    for (int k = 0; k < ndim; ++k) { 
+    for (unsigned int k = 0; k < ndim; ++k) { 
         p = states(i, k) - states(j, k);
         q += p*p;
     }
@@ -53,23 +48,20 @@ double HFStability::HEG::tw_electron_2d(arma::uword i, arma::uword j)
     }
 }
 
-void HFStability::HEG::calc_energies_3d()
-{
+void HFStability::HEG::calc_energies_3d() {
     arma::uword num_states = states.n_rows;
     energies.set_size(num_states);
     energies.fill(0.0);
     for (arma::uword i = 0; i < num_states; ++i) {
-        for (long j = 0; j < ndim; ++j) {
+        for (unsigned int j = 0; j < ndim; ++j) {
             energies(i) += states(i,j) * states(i,j); 
         }  
         energies[i] /= 2.0; //Is now filled with kinetic energy
         energies[i] += exchange_3d(i); 
     }
-
 }
 
-double HFStability::HEG::exchange_3d(arma::uword i)
-{
+double HFStability::HEG::exchange_3d(arma::uword i) {
     double exch = 0.0;
     arma::uword occ_index;
     for (arma::uword j = 0; j < Nocc; ++j) {
@@ -80,11 +72,10 @@ double HFStability::HEG::exchange_3d(arma::uword i)
     return exch;
 }
 
-double HFStability::HEG::tw_electron_3d(arma::uword i, arma::uword j) 
-{
+double HFStability::HEG::tw_electron_3d(arma::uword i, arma::uword j) {
     double q = 0.0;
     double p = 0.0;
-    for (int k = 0; k < ndim; ++k) { 
+    for (unsigned int k = 0; k < ndim; ++k) { 
         p = states(i, k) - states(j, k);
         q += p*p;
     }
@@ -94,42 +85,8 @@ double HFStability::HEG::tw_electron_3d(arma::uword i, arma::uword j)
         return two_e_const / q;
     }
 }
-//void HFStability::calc_energies_3d()
-//{
-//
-//
-//}
-
 /*
-double HFStability::HEG::energy(long long unsigned int state)
-{
-    double energy
-    double kin = 0; //kinetic energy
-    double k[ndim], kprime[ndim];
-
-    for (int i = 0; i < ndim; ++i) {
-        k[i] = states(state, i);
-        kin += k[i]*k[i];
-    }
-    // ||k||**2/2m in atomic units
-    kin /= 2.0;
-
-    double exc = 0;
-    for (int i = 0; i < Nocc; ++i) {
-        for (int j = 0; j < ndim; ++j){
-            kprime[j] = states(occ_states(i), j);
-        }
-        //4th is always k by momentum conservation, 2 is occupation #
-        exc += 2.0 * two_electron_2d(k, kprime, kprime);
-    }
-    exc /= vol;
-    energy = kin - exc;
-    return energy;
-}
-*/
-
-double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[])
-{
+double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[]) {
     //This is momentum conserving
     double k[ndim];
     for (int i = 0; i < ndim; ++i) {
@@ -159,8 +116,7 @@ double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[])
     return 4.0 * PI / (vol * norm);
 }
 
-double HFStability::HEG::two_electron_2d(double k1[], double k2[], double k3[])
-{
+double HFStability::HEG::two_electron_2d(double k1[], double k2[], double k3[]) {
     //This is momentum conserving
     double k[ndim];
     for (int i = 0; i < ndim; ++i) {
@@ -189,38 +145,35 @@ double HFStability::HEG::two_electron_2d(double k1[], double k2[], double k3[])
     }
     return 2.0 * PI / (vol * sqrt(norm));
 }
-
+*/
 double HFStability::HEG::davidson_algorithm(
-    long N,
-    long max_its, 
-    long max_sub_size,
-    long num_of_roots,
+    uint64_t N,
+    uint64_t max_its, 
+    uint64_t max_sub_size,
+    uint64_t num_of_roots,
     arma::uword block_size,
     arma::mat(guess_evecs),
     double tolerance, 
-    double (HFStability::HEG::*matrix)(long, long))
-{
-
-    //Initialize.    
-    long sub_size = guess_evecs.n_cols;
-    long old_sub_size = 0;    
+    double (HFStability::HEG::*matrix)(uint64_t, uint64_t)) {
+    
+    uint64_t sub_size = guess_evecs.n_cols;
+    uint64_t old_sub_size = 0;    
     arma::uword num_new_vecs = sub_size;
     arma::vec old_evals;
     arma::mat old_evecs = guess_evecs;
     arma::mat mat_vec_prod(N, 0, arma::fill::zeros);
     arma::mat ritz_vecs = guess_evecs;
 
-    clock_t t;//debug
     
     arma::mat init_guess(N, num_of_roots);
-    for (long i = 0; i < num_of_roots; ++i) {
+    for (uint64_t i = 0; i < num_of_roots; ++i) {
         init_guess.col(i) = guess_evecs.col(i);
     }
 
         
 
     //Iterate the block Davidson algorithm.
-    for (long i=0 ; i < max_its ; ++i){
+    for (uint64_t i=0 ; i < max_its ; ++i){
         arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
         //std::cout << "i = " << i << std::endl;
     
@@ -277,21 +230,21 @@ double HFStability::HEG::davidson_algorithm(
         //Sub_size changes within this loop
         old_sub_size = sub_size;
         arma::vec norms(block_size, arma::fill::zeros);
-        for (long j=0; j < block_size; ++j){
+        for (uint64_t j=0; j < block_size; ++j){
             arma::vec res(N, arma::fill::zeros);
             double rayq = 0.0;
             double x_k = 0.0;
             //rayleigh quotient is x.T * M * x
-            for (long k = 0; k < N; ++k) {
+            for (uint64_t k = 0; k < N; ++k) {
                 x_k = ritz_vecs(k,j);    
-                for (long l = 0; l < N; ++l) {
+                for (uint64_t l = 0; l < N; ++l) {
                     rayq += x_k * (this->*matrix)(k,l) * ritz_vecs(l,j);
                 }
             }
 
-            for (long k=0; k < N; ++k) {
+            for (uint64_t k=0; k < N; ++k) {
                 sum = 0.0;
-                for (long m=0; m < N; ++m) {    
+                for (uint64_t m=0; m < N; ++m) {    
                     if (m == k){
                         sum += ((this->*matrix)(k,k) - rayq) * ritz_vecs(m,j);
                     }else{
@@ -309,14 +262,14 @@ double HFStability::HEG::davidson_algorithm(
 
                 //If diagonal element = eval, get singularity
                 bool apply_corr = true;
-                for (long k = 0; k < old_sub_size; ++k) {
+                for (uint64_t k = 0; k < old_sub_size; ++k) {
                     if ( fabs( (this->*matrix)(k,k) - sub_evals(j) ) <= 10E-10) {
                         apply_corr = false;
                     }
                 }
 
                 //This is the DPR corr
-                for (long k=0 ; k < N ; ++k) {
+                for (uint64_t k=0 ; k < N ; ++k) {
                     corr(k) = ( -1.0/ ( (this->*matrix)(k,k) - rayq ) ) * res(k);
                 }
 
@@ -356,7 +309,7 @@ double HFStability::HEG::davidson_algorithm(
         arma::qr_econ(Q, R, guess_evecs);
         //Enforce sums of elements of eigenvector matrix are positive
         //with no loss of generality. 
-        for (int i = 0; i < sub_size; ++i) {
+        for (uint64_t i = 0; i < sub_size; ++i) {
             if (arma::sum(Q.col(i)) < 0.0) {
                 Q.col(i) = -1.0 * Q.col(i);
             }

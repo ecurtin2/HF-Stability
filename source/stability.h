@@ -11,11 +11,12 @@ namespace HFStability {
 		//Attributes
 		double  bzone_length, vol, rs, kf, fermi_energy;
                 double  two_e_const;
-		long    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
+		uint64_t    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
 		arma::mat  states;
 		arma::vec  energies;
 		arma::umat excitations;
 		arma::uvec occ_states, vir_states;
+                uint64_t my_test;
 
 		//Methods
         double min_eigval(long, long, long, long, long, long, bool, double, double*);
@@ -28,14 +29,14 @@ namespace HFStability {
                 void calc_energies_3d();
                 double exchange_3d(arma::uword);
                 double tw_electron_3d(arma::uword, arma::uword);
-		double davidson_algorithm(long, 
-				long,
-			   	long, 
-				long, 
+		double davidson_algorithm(uint64_t, 
+				uint64_t,
+			   	uint64_t, 
+				uint64_t, 
 				arma::uword,
 			   	arma::mat,
 				double, 
-			   	double (HFStability::HEG::*)(long, long));
+			   	double (HFStability::HEG::*)(uint64_t, uint64_t));
 	};
 }
 

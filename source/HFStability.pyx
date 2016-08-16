@@ -8,6 +8,9 @@ from scipy import special as sp
 import numpy as np
 cimport numpy as np
 include "cyarma.pyx"
+
+cdef extern from "stdint.h" nogil:
+    ctypedef unsigned long long uint64_t
 	
 #C++ class
 #Note only methods/attributes that want python access need to be here.
@@ -17,7 +20,7 @@ cdef extern from "stability.h" namespace "HFStability":
         #Attributes
         double bzone_length, vol, rs, kf, fermi_energy
         double two_e_const
-        long Nocc, Nvir, Nexc, N_elec, ndim, Nk
+        uint64_t Nocc, Nvir, Nexc, N_elec, ndim, Nk
         mat states          #arma::mat wrapped by cyarma
         vec energies
         umat excitations    #arma::umat not native to cyarma I added it
@@ -118,12 +121,12 @@ cdef class PyHEG:
 
         if self.ndim == 3:
             self.vol = self.N_elec * 4.0 / 3.0 * np.pi * (self.rs**3)
+            self.two_e_const = 4.0 * np.pi / self.vol 
         elif self.ndim == 2:
             self.vol = self.N_elec * np.pi * (self.rs**2)
             self.two_e_const = 2.0 * np.pi / self.vol 
         elif self.ndim == 1:
             self.vol = self.N_elec * 2.0 * self.rs
-            self.two_e_const = 4.0 * np.pi / self.vol 
 
     def calc_energy(self):
         if self.ndim == 2:
@@ -157,45 +160,9 @@ cdef class PyHEG:
         x = np.linalg.norm(k)  #works on k of any dimension
         return (x*x / 2.0) + self.analytic_exch(x)
 
-    def p_two_electron_2d(self, k1, k3):
-        const = 2.0 * np.pi / self.vol 
-        q = np.linalg.norm(k3 - k1)
-        if q < 10e-10:
-            return 0.0
-        return const / q
-
-    def p_two_electron_3d(self, k1, k3):
-        const = 4.0 * np.pi / self.vol 
-        q = np.linalg.norm(k3 - k1)
-        if q < 10e-10:
-            return 0.0
-        return const / (q * q)
-        
     def kin(self, int i):
         return 0.5 * np.linalg.norm(self.states[i]) ** 2
 
-    def exch_2d(self, int i):
-        cdef double exch = 0.0
-        for j in self.occ_states:
-            exch += self.p_two_electron_2d(self.states[i], self.states[j])
-        exch = exch * (-1.)
-        return exch
-
-    def exch_3d(self, int i):
-        cdef double exch = 0.0
-        for j in self.occ_states:
-            exch += self.p_two_electron_3d(self.states[i], self.states[j])
-        exch = exch * (-1.)
-        return exch
-
-    def energy(self, int i):
-        if self.ndim == 2:
-            return self.kin(i) + self.exch_2d(i)
-        elif self.ndim == 3:
-            return self.kin(i) + self.exch_3d(i)
-
-#    def getA(self, long i, long j):
-#        return self.c_HEG.get_A(i, j)
 #    def min_eigval(self, 
 #                   np.ndarray[double, ndim = 2] GUESS_VECS not None,
 #                   long MAX_ITS = 20, 
@@ -342,9 +309,7 @@ cdef class PyHEG:
             from armadillo mat<double> to numpy array. This step does
             copy data and may be slow for very large arrays. 
         """
-        ndarray = np.zeros((self.c_HEG.states.n_rows, 
-                            self.c_HEG.states.n_cols), order='F')
-        return mat_to_numpy(self.c_HEG.states, ndarray)
+        return mat_to_numpy(self.c_HEG.states)
     def set_states(self, np.ndarray[double, ndim=2, mode="fortran"] arr not None):
         self.c_HEG.states = numpy_to_mat_d(arr)
     states = property(get_states, set_states)
@@ -375,8 +340,7 @@ cdef class PyHEG:
             problems on different versions and OS, make sure 
             Armadillo is set to use 64-bit words by default. 
         """
-        ndarray = np.zeros((self.c_HEG.occ_states.n_elem), dtype=np.uint64)
-        return uvec_to_numpy(self.c_HEG.occ_states, ndarray)
+        return uvec_to_numpy(self.c_HEG.occ_states)
     def set_occ_states(self, 
                         np.ndarray[long long unsigned int, ndim=1, mode="c"]
                         inp_occ_states not None):
@@ -410,8 +374,7 @@ cdef class PyHEG:
             problems on different versions and OS, make sure 
             Armadillo is set to use 64-bit words by default. 
         """
-        ndarray = np.zeros((self.c_HEG.vir_states.n_elem), dtype=np.uint64)
-        return uvec_to_numpy(self.c_HEG.vir_states, ndarray)
+        return uvec_to_numpy(self.c_HEG.vir_states)
     def set_vir_states(self, 
                         np.ndarray[long long unsigned int, ndim=1, mode="c"]
                         inp_vir_states not None):
@@ -446,12 +409,9 @@ cdef class PyHEG:
             problems on different versions and OS, make sure 
             Armadillo is set to use 64-bit words by default. 
         """
-        M = self.c_HEG.excitations.n_rows
-        N = self.c_HEG.excitations.n_cols
-        ndarray = np.zeros((M, N), dtype=np.uint64)
-        return umat_to_numpy(self.c_HEG.excitations, ndarray)
+        return umat_to_numpy(self.c_HEG.excitations)
     def set_excitations(self,
-                        np.ndarray[long long unsigned int, ndim=2, mode="c"]
+                        np.ndarray[long long unsigned int, ndim=2,mode="fortran"]
                         inp_excitations not None):
         self.c_HEG.excitations = numpy_to_umat_d(inp_excitations)
     excitations = property(get_excitations, set_excitations)
@@ -482,8 +442,7 @@ cdef class PyHEG:
             problems on different versions and OS, make sure 
             Armadillo is set to use 64-bit words by default. 
         """
-        ndarray = np.zeros((self.c_HEG.energies.n_elem), dtype=np.float64)
-        return vec_to_numpy(self.c_HEG.energies, ndarray)
+        return vec_to_numpy(self.c_HEG.energies)
     def set_energies(self, 
                         np.ndarray[double, ndim=1]
                         inp_energies not None):
