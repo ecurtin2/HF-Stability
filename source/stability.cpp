@@ -27,24 +27,30 @@ double HFStability::HEG::exchange_2d(arma::uword i) {
     arma::uword occ_index;
     for (arma::uword j = 0; j < Nocc; ++j) {
         occ_index = occ_states(j);
-        exch += tw_electron_2d(i, occ_index);
+        exch += two_electron_2d(i, occ_index);
     } 
     exch *= -1.0;
     return exch;
 }
 
-double HFStability::HEG::tw_electron_2d(arma::uword i, arma::uword j) {
-    double q = 0.0;
-    double p = 0.0;
-    for (unsigned int k = 0; k < ndim; ++k) { 
-        p = states(i, k) - states(j, k);
-        q += p*p;
+double HFStability::HEG::two_electron_2d(arma::uword i, arma::uword j) {
+    double sum_sqrs = 0.0;
+    double k[2];
+
+    for (unsigned int n = 0; n < 2; ++n) { 
+        k[i] = states(i, n) - states(j, n);
+        //Shift into first brillouin zone
+        if (k[i] < -kmax) {
+            k[i] += bzone_length;
+        }else if (k[i] > kmax) {
+            k[i] -= bzone_length;
+        }
+        sum_sqrs += k[i] * k[i];
     }
-    q = sqrt(q);
-    if (q < 10E-10) {
+    if (sum_sqrs < 10E-10) {
         return 0.0;
     }else{
-        return two_e_const / q;
+        return two_e_const / sqrt(sum_sqrs);
     }
 }
 
@@ -66,86 +72,33 @@ double HFStability::HEG::exchange_3d(arma::uword i) {
     arma::uword occ_index;
     for (arma::uword j = 0; j < Nocc; ++j) {
         occ_index = occ_states(j);
-        exch += tw_electron_3d(i, occ_index);
+        exch += two_electron_3d(i, occ_index);
     } 
     exch *= -1.0;
     return exch;
 }
 
-double HFStability::HEG::tw_electron_3d(arma::uword i, arma::uword j) {
-    double q = 0.0;
-    double p = 0.0;
-    for (unsigned int k = 0; k < ndim; ++k) { 
-        p = states(i, k) - states(j, k);
-        q += p*p;
+double HFStability::HEG::two_electron_3d(arma::uword i, arma::uword j) {
+    double sum_sqrs = 0.0;
+    double k[3];
+
+    for (unsigned int n = 0; n < 3; ++n) { 
+        k[i] = states(i, n) - states(j, n);
+        //Shift into first brillouin zone
+        if (k[i] < -kmax) {
+            k[i] += bzone_length;
+        }else if (k[i] > kmax) {
+            k[i] -= bzone_length;
+        }
+        sum_sqrs += k[i] * k[i];
     }
-    if (q < 10E-10) {
+    if (sum_sqrs < 10E-10) {
         return 0.0;
     }else{
-        return two_e_const / q;
+        return two_e_const / sum_sqrs;
     }
 }
-/*
-double HFStability::HEG::two_electron_3d(double kp[], double kq[], double kr[]) {
-    //This is momentum conserving
-    double k[ndim];
-    for (int i = 0; i < ndim; ++i) {
-        k[i] = kp[i] + kq[i] - kr[i];
-    }
 
-    //Translate into first BZ
-    double bound = bzone_length / 2.0;
-    for (int i = 0; i < ndim; ++i) {
-        if (k[i] < -bound){
-            k[i] += bzone_length;
-        }else if (k[i] > bound){
-            k[i] -= bzone_length;
-        }
-    }
-
-    const double tolerance = 10E-10;
-    double norm = 0.0;
-    for (int i = 0; i < ndim; ++i) {
-        norm += (kp[i] - kr[i]) * (kp[i] - kr[i]);
-    }
-
-    //avoid singularities    
-    if (norm < tolerance){
-        return 0.0;
-    }
-    return 4.0 * PI / (vol * norm);
-}
-
-double HFStability::HEG::two_electron_2d(double k1[], double k2[], double k3[]) {
-    //This is momentum conserving
-    double k[ndim];
-    for (int i = 0; i < ndim; ++i) {
-        k[i] = k1[i] + k2[i] - k3[i];
-    }
-
-    //Translate into first BZ
-    double bound = bzone_length / 2.0;
-    for (int i = 0; i < ndim; ++i) {
-        if (k[i] < -bound){
-            k[i] += bzone_length;
-        }else if (k[i] > bound){
-            k[i] -= bzone_length;
-        }
-    }
-
-    const double tolerance = 10E-10;
-    double norm = 0.0;
-    for (int i = 0; i < ndim; ++i) {
-        norm += (k1[i] - k3[i]) * (k1[i] - k3[i]);
-    }
-
-    //avoid singularities    
-    if (norm < tolerance){
-        return 0.0;
-    }
-    return 2.0 * PI / (vol * sqrt(norm));
-}
-*/
 double HFStability::HEG::davidson_algorithm(
     uint64_t N,
     uint64_t max_its, 
