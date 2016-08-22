@@ -206,7 +206,7 @@ cdef extern from "armadillo" namespace "arma" nogil:
 ##### Tools to convert numpy arrays to armadillo arrays ######
 #mat (doubles)
 cdef mat * numpy_to_mat(np.ndarray[np.double_t, ndim=2] X):
-    if not (X.flags.f_contiguous and X.flags.owndata):
+    if not (X.flags.f_contiguous or X.flags.owndata):
         X = X.copy(order="F")
     cdef mat *aR_p  = new mat(<double*> X.data, X.shape[0], X.shape[1], False, True)
     return aR_p
@@ -219,7 +219,7 @@ cdef mat numpy_to_mat_d(np.ndarray[np.double_t, ndim=2] X):
 
 #umat (long long unsigned int)
 cdef umat * numpy_to_umat(np.ndarray[np.uint64_t, ndim=2] X):
-    if not (X.flags.f_contiguous and X.flags.owndata):
+    if not (X.flags.f_contiguous or X.flags.owndata):
         X = X.copy(order="F")
     cdef umat *aR_p  = new umat(<long long unsigned int*> X.data, X.shape[0], X.shape[1], False, True)
     return aR_p
@@ -246,7 +246,7 @@ cdef umat numpy_to_umat_d(np.ndarray[np.uint64_t, ndim=2] X):
     
 #vec
 cdef vec * numpy_to_vec(np.ndarray[np.double_t, ndim=1] x):
-    if not (x.flags.f_contiguous and x.flags.owndata):
+    if not (x.flags.f_contiguous or x.flags.owndata):
         x = x.copy()
     cdef vec *ar_p = new vec(<double*> x.data, x.shape[0], False, True)
     return ar_p
@@ -259,7 +259,7 @@ cdef vec numpy_to_vec_d(np.ndarray[np.double_t, ndim=1] x):
     
 #uvec
 cdef uvec * numpy_to_uvec(np.ndarray[np.uint64_t, ndim=1] x):
-    if not (x.flags.f_contiguous and x.flags.owndata):
+    if not (x.flags.f_contiguous or x.flags.owndata):
         x = x.copy()
     cdef uvec *ar_p = new uvec(<long long unsigned int*> x.data, x.shape[0], False, True)
     return ar_p

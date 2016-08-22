@@ -18,7 +18,7 @@ cdef extern from "stability.h" namespace "HFStability":
     cdef cppclass HEG:
         HEG() except +
         #Attributes
-        double bzone_length, vol, rs, kf, kmax, fermi_energy
+        double bzone_length, vol, rs, kf, fermi_energy
         double two_e_const
         uint64_t Nocc, Nvir, Nexc, N_elec, ndim, Nk
         mat states          #arma::mat wrapped by cyarma
@@ -90,15 +90,15 @@ cdef class PyHEG:
             self.kf = (9 * np.pi / 4)**(1./3.) * (1. / self.rs) 
 
 
-        self.kmax = 2.0 * self.kf
+        kmax = 2.0 * self.kf
         self.fermi_energy = 0.5 * self.kf**2
         #brillioun zone is from - pi/a .. pi/a
-        self.bzone_length =  2.0 * self.kmax
+        self.bzone_length =  2.0 * kmax
         direct_length = self.bzone_length / (2.0 * np.pi)
 
         # states is list of tuples each of length ndim containing the 
         # coordinates in k-space of each state
-        kgrid = np.linspace(-self.kmax, self.kmax, self.Nk)
+        kgrid = np.linspace(-kmax, kmax, self.Nk)
         states = list(itertools.product(kgrid, repeat=self.ndim))
 
         #Separating into occ and vir by momentum
@@ -163,11 +163,14 @@ cdef class PyHEG:
     def kin(self, int i):
         return 0.5 * np.linalg.norm(self.states[i]) ** 2
 
+<<<<<<< HEAD
 #def get_excitations(self):
         
 
 
 
+=======
+>>>>>>> parent of 7a522d9... Fixed 3D, altered cyarma to function more reliably.
 #    def min_eigval(self, 
 #                   np.ndarray[double, ndim = 2] GUESS_VECS not None,
 #                   long MAX_ITS = 20, 
@@ -236,13 +239,6 @@ cdef class PyHEG:
     def set_kf(self, value):
         self.c_HEG.kf = float(value)
     kf = property(get_kf, set_kf)
-
-    def get_kmax(self):
-        """(float) Get/set Fermi wavenumber. Setting checks type."""
-        return self.c_HEG.kmax
-    def set_kmax(self, value):
-        self.c_HEG.kmax = float(value)
-    kmax = property(get_kmax, set_kmax)
 
     def get_two_e_const(self):
         """(float) Get/set Fermi wavenumber. Setting checks type."""
@@ -322,7 +318,7 @@ cdef class PyHEG:
             copy data and may be slow for very large arrays. 
         """
         return mat_to_numpy(self.c_HEG.states)
-    def set_states(self, np.ndarray[double, ndim=2] arr not None):
+    def set_states(self, np.ndarray[double, ndim=2, mode="fortran"] arr not None):
         self.c_HEG.states = numpy_to_mat_d(arr)
     states = property(get_states, set_states)
 
@@ -354,7 +350,11 @@ cdef class PyHEG:
         """
         return mat_to_numpy(self.c_HEG.occ_states)
     def set_occ_states(self, 
+<<<<<<< HEAD
                         np.ndarray[double, ndim=2, mode='fortran']
+=======
+                        np.ndarray[long long unsigned int, ndim=1, mode="c"]
+>>>>>>> parent of 7a522d9... Fixed 3D, altered cyarma to function more reliably.
                         inp_occ_states not None):
         self.c_HEG.occ_states = numpy_to_mat_d(inp_occ_states)
     occ_states = property(get_occ_states, set_occ_states)
