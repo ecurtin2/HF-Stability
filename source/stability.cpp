@@ -24,21 +24,22 @@ void HFStability::HEG::calc_energies_2d() {
 
 double HFStability::HEG::exchange_2d(arma::uword i) {
     double exch = 0.0;
-    arma::uword occ_index;
+    double ki[2] = {states(i, 0), states(i,1)};
+
     for (arma::uword j = 0; j < Nocc; ++j) {
-        occ_index = occ_states(j);
-        exch += two_electron_2d(i, occ_index);
+        double kj[2] = {occ_states(j, 0), occ_states(j,1)};
+        exch += two_electron_2d(ki, kj);
     } 
     exch *= -1.0;
     return exch;
 }
 
-double HFStability::HEG::two_electron_2d(arma::uword i, arma::uword j) {
+double HFStability::HEG::two_electron_2d(double k1[], double k2[]) {
     double sum_sqrs = 0.0;
     double k[2];
 
-    for (unsigned int n = 0; n < 2; ++n) { 
-        k[i] = states(i, n) - states(j, n);
+    for (unsigned int i = 0; i < 2; ++i) { 
+        k[i] = k1[i] - k2[i];
         //Shift into first brillouin zone
         if (k[i] < -kmax) {
             k[i] += bzone_length;
@@ -69,21 +70,21 @@ void HFStability::HEG::calc_energies_3d() {
 
 double HFStability::HEG::exchange_3d(arma::uword i) {
     double exch = 0.0;
-    arma::uword occ_index;
+    double ki[3] = {states(i, 0), states(i,1), states(i,2)};
     for (arma::uword j = 0; j < Nocc; ++j) {
-        occ_index = occ_states(j);
-        exch += two_electron_3d(i, occ_index);
+        double kj[3] = {occ_states(j, 0), occ_states(j,1), occ_states(j,2)};
+        exch += two_electron_3d(ki, kj);
     } 
     exch *= -1.0;
     return exch;
 }
 
-double HFStability::HEG::two_electron_3d(arma::uword i, arma::uword j) {
+double HFStability::HEG::two_electron_3d(double k1[], double k2[]) {
     double sum_sqrs = 0.0;
     double k[3];
 
-    for (unsigned int n = 0; n < 3; ++n) { 
-        k[i] = states(i, n) - states(j, n);
+    for (unsigned int i = 0; i < 3; ++i) { 
+        k[i] = k1[i] - k2[i];
         //Shift into first brillouin zone
         if (k[i] < -kmax) {
             k[i] += bzone_length;

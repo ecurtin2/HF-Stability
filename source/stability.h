@@ -15,17 +15,17 @@ namespace HFStability {
 		arma::mat  states;
 		arma::vec  energies;
 		arma::umat excitations;
-		arma::uvec occ_states, vir_states;
+		arma::mat occ_states, vir_states;
                 uint64_t my_test;
 
 		//Methods
         double min_eigval(long, long, long, long, long, long, bool, double, double*);
                 void calc_energies_2d();
                 double exchange_2d(arma::uword);
-                double two_electron_2d(arma::uword, arma::uword);
+                double two_electron_2d(double[], double[]);
                 void calc_energies_3d();
                 double exchange_3d(arma::uword);
-                double two_electron_3d(arma::uword, arma::uword);
+                double two_electron_3d(double[], double[]);
 		double davidson_algorithm(uint64_t, 
 				uint64_t,
 			   	uint64_t, 

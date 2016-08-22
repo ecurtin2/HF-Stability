@@ -2,7 +2,7 @@ from distutils.core import setup
 from Cython.Build import cythonize 
 from distutils.extension import Extension
 
-sourcefiles  = ['*.pyx', 'stability.cpp']
+sourcefiles  = ['HFStability.pyx', 'stability.cpp']
 compile_opts = ['-O3', '-ffast-math', '-std=c++11']
 my_libraries = ['armadillo']
 

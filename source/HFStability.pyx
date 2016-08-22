@@ -24,7 +24,7 @@ cdef extern from "stability.h" namespace "HFStability":
         mat states          #arma::mat wrapped by cyarma
         vec energies
         umat excitations    #arma::umat not native to cyarma I added it
-        uvec occ_states, vir_states
+        mat occ_states, vir_states
 
         #Methods
         double min_eigval(long, long, long, long, long, long, bool, 
@@ -107,15 +107,15 @@ cdef class PyHEG:
         for index, state in enumerate(states):
             k = np.linalg.norm(state)
             if k < self.kf + 10e-8:
-                occ_states.append(index)
+                occ_states.append(state)
             else:
-                vir_states.append(index)
+                vir_states.append(state)
 
         self.Nocc = len(occ_states)
         self.Nvir = len(vir_states)
         self.states = np.asfortranarray(states)
-        self.occ_states = np.asarray(occ_states, dtype=np.uint64)
-        self.vir_states = np.asarray(vir_states, dtype=np.uint64)
+        self.occ_states = np.asfortranarray(occ_states, dtype=np.float64)
+        self.vir_states = np.asfortranarray(vir_states, dtype=np.float64)
         #RHF ONLY
         self.N_elec = 2 * self.Nocc
 
@@ -163,7 +163,7 @@ cdef class PyHEG:
     def kin(self, int i):
         return 0.5 * np.linalg.norm(self.states[i]) ** 2
 
-    def get_excitations(self):
+#def get_excitations(self):
         
 
 
@@ -352,11 +352,11 @@ cdef class PyHEG:
             problems on different versions and OS, make sure 
             Armadillo is set to use 64-bit words by default. 
         """
-        return uvec_to_numpy(self.c_HEG.occ_states)
+        return mat_to_numpy(self.c_HEG.occ_states)
     def set_occ_states(self, 
-                        np.ndarray[long long unsigned int, ndim=1]
+                        np.ndarray[double, ndim=2, mode='fortran']
                         inp_occ_states not None):
-        self.c_HEG.occ_states = numpy_to_uvec_d(inp_occ_states)
+        self.c_HEG.occ_states = numpy_to_mat_d(inp_occ_states)
     occ_states = property(get_occ_states, set_occ_states)
 
     #vir_states
@@ -386,11 +386,11 @@ cdef class PyHEG:
             problems on different versions and OS, make sure 
             Armadillo is set to use 64-bit words by default. 
         """
-        return uvec_to_numpy(self.c_HEG.vir_states)
+        return mat_to_numpy(self.c_HEG.vir_states)
     def set_vir_states(self, 
-                        np.ndarray[long long unsigned int, ndim=1, mode="c"]
+                        np.ndarray[double, ndim=2, mode="fortran"]
                         inp_vir_states not None):
-        self.c_HEG.vir_states = numpy_to_uvec_d(inp_vir_states)
+        self.c_HEG.vir_states = numpy_to_mat_d(inp_vir_states)
     vir_states = property(get_vir_states, set_vir_states)
 
     def get_excitations(self):
