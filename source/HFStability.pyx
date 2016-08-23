@@ -133,7 +133,19 @@ cdef class PyHEG:
             self.c_HEG.calc_energies_2d()
         elif self.ndim == 3:
             self.c_HEG.calc_energies_3d()
-        return None
+
+    def calc_excitations(self):
+        exc = []
+        if self.ndim == 2:
+            for i, occ_state in enumerate(self.occ_states):
+                matches = np.where(self.vir_states[:,0] == occ_state[0])
+                exc.append([(i,j) for j in matches[0]])
+        elif self.ndim == 3:
+            for i, occ_state in enumerate(self.occ_states):
+                matches = np.where(np.all(self.vir_states[:, :2] == occ_state[:2], axis=1))
+                exc.append([(i,j) for j in matches[0]])
+
+        self.excitations = np.asfortranarray(list(itertools.chain.from_iterable(exc)), dtype=np.uint64)
 
     def f2D(self, y):
         if y <= 1.0:
@@ -162,10 +174,6 @@ cdef class PyHEG:
 
     def kin(self, int i):
         return 0.5 * np.linalg.norm(self.states[i]) ** 2
-
-#def get_excitations(self):
-        
-
 
 
 #    def min_eigval(self, 
