@@ -13,8 +13,9 @@ namespace HFStability {
                 double  two_e_const;
 		uint64_t    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
 		arma::mat  states;
-		arma::vec  energies;
+		arma::vec  energies, exc_energies;
 		arma::umat excitations;
+                arma::uvec occ2state, vir2state;
 		arma::mat occ_states, vir_states;
                 uint64_t my_test;
 
