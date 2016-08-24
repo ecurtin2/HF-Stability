@@ -10,10 +10,10 @@ namespace HFStability {
 	public:
 		//Attributes
 		double  bzone_length, vol, rs, kf, kmax, fermi_energy;
-                double  two_e_const;
+                double  two_e_const, deltaK;
 		uint64_t    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
 		arma::mat  states;
-		arma::vec  energies, exc_energies;
+		arma::vec  energies, exc_energies, kgrid;
 		arma::umat excitations;
                 arma::uvec occ2state, vir2state;
 		arma::mat occ_states, vir_states;

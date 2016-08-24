@@ -19,10 +19,10 @@ cdef extern from "stability.h" namespace "HFStability":
         HEG() except +
         #Attributes
         double bzone_length, vol, rs, kf, kmax, fermi_energy
-        double two_e_const
+        double two_e_const, deltaK
         uint64_t Nocc, Nvir, Nexc, N_elec, ndim, Nk
         mat states          #arma::mat wrapped by cyarma
-        vec energies, exc_energies
+        vec energies, exc_energies, kgrid
         umat excitations, 
         uvec occ2state, vir2state  #arma::umat not native to cyarma I added it
         mat occ_states, vir_states
@@ -99,8 +99,9 @@ cdef class PyHEG:
 
         # states is list of tuples each of length ndim containing the 
         # coordinates in k-space of each state
-        kgrid = np.linspace(-self.kmax, self.kmax, self.Nk)
-        states = list(itertools.product(kgrid, repeat=self.ndim))
+        self.kgrid = np.linspace(-self.kmax, self.kmax, self.Nk)
+        self.deltaK = self.kgrid[1] - self.kgrid[0]
+        states = list(itertools.product(self.kgrid, repeat=self.ndim))
 
         #Separating into occ and vir by momentum
         occ_states = []
@@ -118,7 +119,7 @@ cdef class PyHEG:
 
         self.Nocc = len(occ_states)
         self.Nvir = len(vir_states)
-        self.states = np.asfortranarray(states)
+        self.states = np.asfortranarray(states, dtype=np.float64)
         self.occ_states = np.asfortranarray(occ_states, dtype=np.float64)
         self.vir_states = np.asfortranarray(vir_states, dtype=np.float64)
         self.occ2state = np.asfortranarray(occ2state, dtype=np.uint64)
@@ -154,12 +155,99 @@ cdef class PyHEG:
 
         self.excitations = np.asfortranarray(list(itertools.chain.from_iterable(exc)), dtype=np.uint64)
 
-        exc_energies = []
-        for exc in self.excitations:
-            exc_energy = (self.energies[self.vir2state[exc[1]]] 
-                         -self.energies[self.occ2state[exc[0]]])
-            exc_energies.append(exc_energy)
-        self.exc_energies = np.asfortranarray(exc_energies, dtype=np.float64)
+    def find_virs2(self):
+        x_exc = (self.kgrid + self.kmax)[1:]         #all potential +x excitations within 1st BZ
+        all_exc = np.zeros((self.Nk - 1, self.ndim)) # -1 excludes the occ_state
+        all_exc[:,0] = x_exc                       #only consider +x,  y and z are zero
+        num_add = self.Nk - 1                       # max number of excitations in 1D
+        my_ones = np.ones((num_add), dtype=int)
+        N = self.Nocc * num_add
+        occ_idx = np.zeros((N), dtype=np.uint64)
+        vir = np.zeros((N, self.ndim), dtype=np.float64)
+        i1 = 0
+        i2 = num_add
+        for index, state in enumerate(self.occ_states):
+            a = all_exc + state
+            b = index * my_ones
+            occ_idx[i1:i2] = b
+            vir[i1:i2] = a
+            i1 += num_add
+            i2 += num_add
+        vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
+        idx= np.where((vir_norms > self.kf+10E-8) & (vir_norms <= self.kmax+10E-8))
+        vir = vir[idx]  # keep only those above fermi but below cutoff
+        occ_idx = occ_idx[idx]  #this is the occupied state that generated the vir
+        return occ_idx, self.k_to_index(vir)
+
+    def unique_rows2(self, data):                 
+        """Return only unique rows
+        see http://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array"""
+        sorted_idx = np.lexsort(data.T)
+        sorted_data =  data[sorted_idx,:]
+        row_mask = np.append([True],np.any(np.diff(sorted_data,axis=0),1))
+        new_idx = 0
+        vir_list = [0]
+        for i in row_mask[1:]:
+            if i:
+                new_idx += 1
+            vir_list.append(new_idx)
+
+        vir_list = np.asarray(vir_list, dtype=int)
+        return sorted_data[row_mask], vir_list, sorted_idx
+
+    def find_exc2(self):
+        occ_idx, vir = self.find_virs2()
+        vir_states, exc_virs, idx2 = self.unique_rows2(vir)
+        occ_idx = occ_idx[idx2]
+        exc = np.column_stack((occ_idx, exc_virs))
+        return exc
+
+    def find_virs(self):
+        x_exc = (self.kgrid + self.kmax)[1:]         #all potential +x excitations within 1st BZ
+        all_exc = np.zeros((self.Nk - 1, self.ndim)) # -1 excludes the occ_state
+        all_exc[:,0] = x_exc                         #only consider +x,  y and z are zero
+        first_state = self.occ_states[0]
+        vir = all_exc + first_state                  # adds k of first state to each possible exc
+        my_ones = np.ones((self.Nk-1), dtype=np.uint64)
+        occ_idx = my_ones * 0
+        for index, state in enumerate(self.occ_states[1:]): ####THIS LOOP IS A BOTTLENECK
+            vir = np.vstack((vir, all_exc + state)) #do for the rest, and put into 1 array
+            occ_idx = np.append(occ_idx, (index+1) * my_ones)
+        vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
+        idx = np.where((vir_norms > self.kf+10E-8) & (vir_norms <= self.kmax+10E-8))
+        vir = vir[idx]  # keep only those above fermi but below cutoff
+        occ_idx = occ_idx[idx]  #this is the occupied state that generated the vir
+        return occ_idx, self.k_to_index(vir)
+
+    def unique_rows(self, data):                 
+        """Return only unique rows
+        see http://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array"""
+        sorted_idx = np.lexsort(data.T)
+        sorted_data =  data[sorted_idx,:]
+        row_mask = np.append([True],np.any(np.diff(sorted_data,axis=0),1))
+        new_idx = 0
+        vir_list = [0]
+        for i in row_mask[1:]:
+                if i:
+                    new_idx += 1
+                vir_list.append(new_idx)
+
+        vir_list = np.asfortranarray(vir_list, dtype=np.uint64)
+        return sorted_data[row_mask], vir_list, sorted_idx
+
+    def find_exc(self):
+        occ_idx, vir = self.find_virs()
+        vir_states, exc_virs, idx2 = self.unique_rows(vir)
+        occ_idx = occ_idx[idx2]
+        exc = np.column_stack((occ_idx, exc_virs))
+        return exc
+                    
+#        exc_energies = []
+#        for exc in self.excitations:
+#            exc_energy = (self.energies[self.vir2state[exc[1]]] 
+#                         -self.energies[self.occ2state[exc[0]]])
+#            exc_energies.append(exc_energy)
+#        self.exc_energies = np.asfortranarray(exc_energies, dtype=np.float64)
 
     def f2D(self, y):
         if y <= 1.0:
@@ -188,6 +276,12 @@ cdef class PyHEG:
 
     def kin(self, int i):
         return 0.5 * np.linalg.norm(self.states[i]) ** 2
+
+    def k_to_index(self, array):
+        deltaK = self.kgrid[1] - self.kgrid[0]
+        idx = np.rint(((array + self.kmax) / deltaK)).astype(np.uint64)
+        assert np.all(np.isclose(self.kgrid[idx], array))
+        return idx
 
 
 #    def min_eigval(self, 
@@ -325,55 +419,14 @@ cdef class PyHEG:
     vol = property(get_vol, set_vol)
 
     def get_states(self):
-        """(np.ndarray[double, ndim=2, mode="f") Get/set state indices.
-        Description:
-            states is an array of shape (#_states, #_dimensions).
-            states[i] returns the tuple of momenta corresponding 
-            to state i where each element of the tuple corresponds to
-            a dimension. 
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert 
-            from numpy array to armadillo mat<double>. Data is not 
-            copied in this step if the numpy array is fortran 
-            ordered(pass by reference) and boundscheck 
-            is not performed. Numpy arrays are c-ordered while 
-            armadillo mat is fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo mat<double> to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        """
         return mat_to_numpy(self.c_HEG.states)
-    def set_states(self, np.ndarray[double, ndim=2] arr not None):
-        self.c_HEG.states = numpy_to_mat_d(arr)
+    def set_states(self, 
+                        np.ndarray[double, ndim=2, mode="fortran"]
+                        inp_states not None):
+        self.c_HEG.states = numpy_to_mat_d(inp_states)
     states = property(get_states, set_states)
 
     def get_occ_states(self):
-        """(np.ndarray[uint64, ndim=1, mode="c") Get/set occ state indices.
-        Description:
-            occ_states is an array of shape (#_occ_states).
-            occ_states[i] returns the an index corresponding to the
-            general state which is occupied. Thus, to get momenta of
-            occupied states use states[occupied_states[i]].
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this 
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return mat_to_numpy(self.c_HEG.occ_states)
     def set_occ_states(self, 
                         np.ndarray[double, ndim=2, mode='fortran']
@@ -381,33 +434,7 @@ cdef class PyHEG:
         self.c_HEG.occ_states = numpy_to_mat_d(inp_occ_states)
     occ_states = property(get_occ_states, set_occ_states)
 
-    #vir_states
     def get_vir_states(self):
-        """(np.ndarray[uint64, ndim=1, mode="c") Get/set vir state indices.
-        Description:
-            vir_states is an array of shape (#_vir_states).
-            vir_states[i] returns the an index corresponding to the
-            general state which is virupied. Thus, to get momenta of
-            virupied states use states[virupied_states[i]].
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this 
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return mat_to_numpy(self.c_HEG.vir_states)
     def set_vir_states(self, 
                         np.ndarray[double, ndim=2, mode="fortran"]
@@ -416,33 +443,6 @@ cdef class PyHEG:
     vir_states = property(get_vir_states, set_vir_states)
 
     def get_excitations(self):
-        """(np.ndarray[uint64, ndim=2, mode="c") Get/set exc indices.
-        Description:
-            excitations is an array of shape (#_excitations, 2).
-            excitations[i] returns the pair of indices corresponding
-            to the occupied (excitations[i,0]) and 
-            virtual (excitations[i,1]) states. To get the momentum of
-            occupied state use states[excitations[i,0]] for virtual
-            state use states[excitations[i,1]]. 
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return umat_to_numpy(self.c_HEG.excitations)
     def set_excitations(self,
                         np.ndarray[long long unsigned int, ndim=2,mode="fortran"]
@@ -451,31 +451,6 @@ cdef class PyHEG:
     excitations = property(get_excitations, set_excitations)
     
     def get_energies(self):
-        """(np.ndarray[np.float64, ndim=1]) Get/set occ state indices.
-        Description:
-            occ_states is an array of shape (#_occ_states).
-            occ_states[i] returns the an index corresponding to the
-            general state which is occupied. Thus, to get momenta of
-            occupied states use states[occupied_states[i]].
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this 
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return vec_to_numpy(self.c_HEG.energies)
     def set_energies(self, 
                         np.ndarray[double, ndim=1]
@@ -484,31 +459,6 @@ cdef class PyHEG:
     energies = property(get_energies, set_energies)
 
     def get_occ2state(self):
-        """(np.ndarray[np.uint64, ndim=1]) Get/set occ state indices.
-        Description:
-            occ_states is an array of shape (#_occ_states).
-            occ_states[i] returns the an index corresponding to the
-            general state which is occupied. Thus, to get momenta of
-            occupied states use states[occupied_states[i]].
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this 
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return uvec_to_numpy(self.c_HEG.occ2state)
     def set_occ2state(self, 
                         np.ndarray[long long unsigned int, ndim=1]
@@ -517,31 +467,6 @@ cdef class PyHEG:
     occ2state = property(get_occ2state, set_occ2state)
 
     def get_vir2state(self):
-        """(np.ndarray[np.uint64, ndim=1]) Get/set vir state indices.
-        Description:
-            vir_states is an array of shape (#_vir_states).
-            vir_states[i] returns the an index corresponding to the
-            general state which is virupied. Thus, to get momenta of
-            virupied states use states[virupied_states[i]].
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this 
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return uvec_to_numpy(self.c_HEG.vir2state)
     def set_vir2state(self, 
                         np.ndarray[long long unsigned int, ndim=1]
@@ -551,34 +476,23 @@ cdef class PyHEG:
 
 
     def get_exc_energies(self):
-        """(np.ndarray[np.float64, ndim=1]) Get/set occ state indices.
-        Description:
-            occ_states is an array of shape (#_occ_states).
-            occ_states[i] returns the an index corresponding to the
-            general state which is occupied. Thus, to get momenta of
-            occupied states use states[occupied_states[i]].
-        Setter:
-            Uses the numpy_to_mat_d functionin cyarma.pyx to convert
-            from numpy array to armadillo umat. Data is not copied
-            in this step if the numpy array is fortran ordered(pass 
-            by reference) and boundscheck is not performed. Numpy 
-            arrays are c-ordered while armadillo mat is 
-            fortran-ordered. 
-        Getter:
-            Uses the mat_to_numpy function in cyarma.pyx to convert
-            from armadillo umat to numpy array. This step does
-            copy data and may be slow for very large arrays. 
-        Gotchas:
-            The armadillo matrix holds variables of type uword, 
-            defined in the armadillo documentation. For C++11 this 
-            is defined as a 64bit unsigned int on 64bit systems and 
-            32bit unsigned int on 32bit systems. This may cause 
-            problems on different versions and OS, make sure 
-            Armadillo is set to use 64-bit words by default. 
-        """
         return vec_to_numpy(self.c_HEG.exc_energies)
     def set_exc_energies(self, 
                         np.ndarray[double, ndim=1]
                         inp_exc_energies not None):
         self.c_HEG.exc_energies = numpy_to_vec_d(inp_exc_energies)
     exc_energies = property(get_exc_energies, set_exc_energies)
+
+    def get_kgrid(self):
+        return vec_to_numpy(self.c_HEG.kgrid)
+    def set_kgrid(self, 
+                        np.ndarray[double, ndim=1]
+                        inp_kgrid not None):
+        self.c_HEG.kgrid = numpy_to_vec_d(inp_kgrid)
+    kgrid = property(get_kgrid, set_kgrid)
+
+    def get_deltaK(self):
+        return self.c_HEG.deltaK
+    def set_deltaK(self, value):
+        self.c_HEG.deltaK = float(value)
+    deltaK = property(get_deltaK, set_deltaK)
