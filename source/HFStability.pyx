@@ -22,18 +22,12 @@ cdef extern from "stability.h" namespace "HFStability":
         double bzone_length, vol, rs, kf, kmax, fermi_energy
         double two_e_const, deltaK
         uint64_t Nocc, Nvir, Nexc, N_elec, ndim, Nk
-        mat states          #arma::mat wrapped by cyarma
-        vec energies, exc_energies, kgrid, occ_energies, vir_energies
-        umat occ_states_idx, vir_states_idx, excitations, 
-        uvec occ2state, vir2state  #arma::umat not native to cyarma I added it
-        mat occ_states, vir_states
+        vec  occ_energies, vir_energies, exc_energies, kgrid
+        umat occ_states, vir_states, excitations, 
 
         #Methods
-        double min_eigval(long, long, long, long, long, long, bool, 
-                            double, double*)
-        void calc_occ_energies_2d_idx()
-        void calc_vir_energies_2d_idx()
-        void calc_energies_3d_wrap(bool) # True = vir, else = occ 
+        void calc_energy_wrap(bool) # True = vir, else = occ 
+
 
 ################################################################################
 #                             Python Land is Here
@@ -82,6 +76,7 @@ cdef class PyHEG:
         else:
             pass #Continue on if it checks out
 
+        ##### IMPORTANT!!! THIS ORDER MATTERS FROM HERE!!!! #######
         if self.ndim == 1:
             self.kf = np.pi / (4 * self.rs)
         elif self.ndim == 2:
@@ -89,44 +84,14 @@ cdef class PyHEG:
         elif self.ndim == 3:
             self.kf = (9 * np.pi / 4)**(1./3.) * (1. / self.rs) 
 
-
         self.kmax = 2.0 * self.kf
         self.fermi_energy = 0.5 * self.kf**2
         #brillioun zone is from - pi/a .. pi/a
         self.bzone_length =  2.0 * self.kmax
-        direct_length = self.bzone_length / (2.0 * np.pi)
-
-        # states is list of tuples each of length ndim containing the 
-        # coordinates in k-space of each state
         self.kgrid = np.linspace(-self.kmax, self.kmax, self.Nk)
         self.deltaK = self.kgrid[1] - self.kgrid[0]
-#       states = list(itertools.product(self.kgrid, repeat=self.ndim))
 
-        #Separating into occ and vir by momentum
-#        occ_states = []
-#        vir_states = []
-#        occ2state = []
-#        vir2state = []
-#        for index, state in enumerate(states):
-#            k = np.linalg.norm(state)
-#            if k < self.kf + 10e-8:
-#                occ2state.append(index) 
-#                occ_states.append(state)
-#            else:
-#                vir2state.append(index) 
-#                vir_states.append(state)
-#
-#        self.Nocc = len(occ_states)
-#        self.Nvir = len(vir_states)
-#        self.states = np.asfortranarray(states, dtype=np.float64)
-#        self.occ_states = np.asfortranarray(occ_states, dtype=np.float64)
-#        self.vir_states = np.asfortranarray(vir_states, dtype=np.float64)
-#        self.occ2state = np.asfortranarray(occ2state, dtype=np.uint64)
-#        self.vir2state = np.asfortranarray(vir2state, dtype=np.uint64)
-        #RHF ONLY
-#        self.N_elec = 2 * self.Nocc
-
-        self.calc_occ()
+        self.find_occ_states()
 
         if self.ndim == 3:
             self.vol = self.N_elec * 4.0 / 3.0 * np.pi * (self.rs**3)
@@ -137,30 +102,24 @@ cdef class PyHEG:
         elif self.ndim == 1:
             self.vol = self.N_elec * 2.0 * self.rs
 
-    def calc_occ(self):
+        self.calc_occ_energies()
+        self.find_vir_states()
+        self.calc_vir_energies()
+        ##### IMPORTANT!!! THIS ORDER MATTERS UNTIL HERE!!!! #######
+
+    def find_occ_states(self):
         ary_list = [self.kgrid] * self.ndim
         allcombos = np.array(gm_cartesian(ary_list))
         rownorms = np.sqrt((allcombos * allcombos).sum(axis=1))
         condition_ary = rownorms <= self.kf + 10E-8
         indices = self.k_to_index(allcombos[condition_ary])
-        self.occ_states_idx = np.asfortranarray(indices, dtype=np.uint64)
-        self.Nocc = len(self.occ_states_idx)
+        self.occ_states = np.asfortranarray(indices, dtype=np.uint64)
+        self.Nocc = len(self.occ_states)
         #RHF ONLY
         self.N_elec = 2 * self.Nocc
 
-    def calc_occ_energy_idx(self):
-#        if self.ndim == 2:
-#            self.c_HEG.calc_occ_energies_2d_idx()
-#        elif self.ndim == 3:
-        self.c_HEG.calc_energies_3d_wrap(False) # False = occupied energies
 
-    def calc_vir_energy_idx(self):
-#if self.ndim == 2:
-#            self.c_HEG.calc_vir_energies_2d_idx()
-#        elif self.ndim == 3:
-        self.c_HEG.calc_energies_3d_wrap(True) # True = virtual energies
-
-    def find_virs2(self):
+    def find_possible_exc(self):
         x_exc = (self.kgrid + self.kmax)[1:]         #all potential +x excitations within 1st BZ
         all_exc = np.zeros((self.Nk - 1, self.ndim)) # -1 excludes the occ_state
         all_exc[:,0] = x_exc                         #only consider +x,  y and z are zero
@@ -171,7 +130,7 @@ cdef class PyHEG:
         vir = np.zeros((N, self.ndim), dtype=np.float64)
         i1 = 0
         i2 = num_add
-        occ_states_k = self.kgrid[self.occ_states_idx]
+        occ_states_k = self.kgrid[self.occ_states]
         for index, state in enumerate(occ_states_k):
             a = all_exc + state
             b = index * my_ones
@@ -181,36 +140,43 @@ cdef class PyHEG:
             i2 += num_add
         vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
         idx= np.where((vir_norms > self.kf+10E-8) & (vir_norms <= self.kmax+10E-8))
-        vir = vir[idx]  # keep only those above fermi but below cutoff
-        occ_idx = occ_idx[idx]  #this is the occupied state that generated the vir
+        vir = vir[idx]          # keep only those above fermi but below cutoff
+        occ_idx = occ_idx[idx]  # this is the occupied state that generated the vir
         return occ_idx, self.k_to_index(vir)
 
-    def unique_rows2(self, data):                 
+    def unique_rows(self, data):                 
         """Return only unique rows
         see http://stackoverflow.com/questions/31097247/remove-duplicate-rows-of-a-numpy-array"""
         sorted_idx = np.lexsort(data.T)
         sorted_data =  data[sorted_idx,:]
         row_mask = np.append([True],np.any(np.diff(sorted_data,axis=0),1))
         new_idx = 0
-        vir_list = [0]
+        #EASY SPEED HERE PREALLOCATE BUT PROBS NOT NEEDED
+        # unique_map maps the unfiltered row to the filtered row
+        unique_map = [0]
         for i in row_mask[1:]:
             if i:
                 new_idx += 1
-            vir_list.append(new_idx)
+            unique_map.append(new_idx)
 
-        vir_list = np.asarray(vir_list, dtype=int)
-        return sorted_data[row_mask], vir_list, sorted_idx
+        unique_map = np.asarray(unique_map, dtype=int)
+        return sorted_data[row_mask], unique_map, sorted_idx
 
-    def find_exc2(self):
-        occ_idx, vir = self.find_virs2()
-        vir_states, exc_virs, idx2 = self.unique_rows2(vir)
+    def find_vir_states(self):
+        occ_idx, non_unique_virs = self.find_possible_exc()
+        unique_virs, unique_map, sorted_idx = self.unique_rows(non_unique_virs) #keep only unique
 
-        self.vir_states_idx = np.asfortranarray(vir_states, dtype=np.uint64)
-
-        occ_idx = occ_idx[idx2]
-        exc = np.column_stack((occ_idx, exc_virs))
+        self.vir_states = np.asfortranarray(unique_virs, dtype=np.uint64)
+        occ_idx = occ_idx[sorted_idx]  # the virs have been shuffled, update occ positions
+        exc = np.column_stack((occ_idx, unique_map))
         exc = np.asfortranarray(exc, dtype=np.uint64)
         self.excitations = exc
+
+    def calc_occ_energies(self):
+        self.c_HEG.calc_energy_wrap(False) # False = occupied energies
+
+    def calc_vir_energies(self):
+        self.c_HEG.calc_energy_wrap(True) # True = virtual energies
 
     def f2D(self, y):
         if y <= 1.0:
@@ -237,42 +203,11 @@ cdef class PyHEG:
         x = np.linalg.norm(k)  #works on k of any dimension
         return (x*x / 2.0) + self.analytic_exch(x)
 
-    def kin(self, int i):
-        return 0.5 * np.linalg.norm(self.states[i]) ** 2
-
     def k_to_index(self, array):
         deltaK = self.kgrid[1] - self.kgrid[0]
         idx = np.rint(((array + self.kmax) / deltaK)).astype(np.uint64)
         assert np.all(np.isclose(self.kgrid[idx], array))
         return idx
-
-
-#    def min_eigval(self, 
-#                   np.ndarray[double, ndim = 2] GUESS_VECS not None,
-#                   long MAX_ITS = 20, 
-#                   long NUM_OF_ROOTS = 1, 
-#                   long MAX_SUB_SIZE = 2000, 
-#                   long BLOCK_SIZE   = 1,
-#                   bool DOTEST=False, 
-#                   double TOLERANCE  =  10E-8):
-#
-#       GUESS_VECS = np.asfortranarray(GUESS_VECS)
-#
-#       cdef long N, num_of_roots,  num_of_guess, max_its, max_sub_size
-#       N = GUESS_VECS.shape[0]
-#       num_of_roots = NUM_OF_ROOTS
-#       num_of_guess = GUESS_VECS.shape[1]
-#       max_its = MAX_ITS
-#       max_sub_size = MAX_SUB_SIZE
-#       block_size = BLOCK_SIZE
-#       
-#       cdef bool dotest = DOTEST	
-#       
-#       cdef double tol = TOLERANCE
-#       cdef double* guess_vecs = &GUESS_VECS[0,0]
-#       
-#       return self.c_HEG.min_eigval(N, max_its, max_sub_size, num_of_roots, 
-#          num_of_guess, block_size, dotest, tol, guess_vecs)
 
     #############################################################################
     #       Define properties, allows for setting/getting them in python        #
@@ -323,6 +258,20 @@ cdef class PyHEG:
         self.c_HEG.kmax = float(value)
     kmax = property(get_kmax, set_kmax)
 
+    def get_kgrid(self):
+        return vec_to_numpy(self.c_HEG.kgrid)
+    def set_kgrid(self, 
+                        np.ndarray[double, ndim=1]
+                        inp_kgrid not None):
+        self.c_HEG.kgrid = numpy_to_vec_d(inp_kgrid)
+    kgrid = property(get_kgrid, set_kgrid)
+
+    def get_deltaK(self):
+        return self.c_HEG.deltaK
+    def set_deltaK(self, value):
+        self.c_HEG.deltaK = float(value)
+    deltaK = property(get_deltaK, set_deltaK)
+
     def get_two_e_const(self):
         """(float) Get/set Fermi wavenumber. Setting checks type."""
         return self.c_HEG.two_e_const
@@ -343,7 +292,6 @@ cdef class PyHEG:
     def set_N_elec(self, value):
         self.c_HEG.N_elec = int(value)
     N_elec = property(get_N_elec, set_N_elec)
-
 
     def get_Nocc(self):
         """(int) Get/set number of occupied states. Setting checks type."""
@@ -381,45 +329,21 @@ cdef class PyHEG:
         self.c_HEG.vol = float(value)
     vol = property(get_vol, set_vol)
 
-    def get_states(self):
-        return mat_to_numpy(self.c_HEG.states)
-    def set_states(self, 
-                        np.ndarray[double, ndim=2, mode="fortran"]
-                        inp_states not None):
-        self.c_HEG.states = numpy_to_mat_d(inp_states)
-    states = property(get_states, set_states)
-
     def get_occ_states(self):
-        return mat_to_numpy(self.c_HEG.occ_states)
+        return umat_to_numpy(self.c_HEG.occ_states)
     def set_occ_states(self, 
-                        np.ndarray[double, ndim=2, mode='fortran']
+                        np.ndarray[long long unsigned int, ndim=2, mode='fortran']
                         inp_occ_states not None):
-        self.c_HEG.occ_states = numpy_to_mat_d(inp_occ_states)
+        self.c_HEG.occ_states = numpy_to_umat_d(inp_occ_states)
     occ_states = property(get_occ_states, set_occ_states)
 
     def get_vir_states(self):
-        return mat_to_numpy(self.c_HEG.vir_states)
+        return umat_to_numpy(self.c_HEG.vir_states)
     def set_vir_states(self, 
-                        np.ndarray[double, ndim=2, mode="fortran"]
-                        inp_vir_states not None):
-        self.c_HEG.vir_states = numpy_to_mat_d(inp_vir_states)
-    vir_states = property(get_vir_states, set_vir_states)
-
-    def get_occ_states_idx(self):
-        return umat_to_numpy(self.c_HEG.occ_states_idx)
-    def set_occ_states_idx(self, 
-                        np.ndarray[long long unsigned int, ndim=2, mode='fortran']
-                        inp_occ_states_idx not None):
-        self.c_HEG.occ_states_idx = numpy_to_umat_d(inp_occ_states_idx)
-    occ_states_idx = property(get_occ_states_idx, set_occ_states_idx)
-
-    def get_vir_states_idx(self):
-        return umat_to_numpy(self.c_HEG.vir_states_idx)
-    def set_vir_states_idx(self, 
                         np.ndarray[long long unsigned int, ndim=2, mode="fortran"]
-                        inp_vir_states_idx not None):
-        self.c_HEG.vir_states_idx = numpy_to_umat_d(inp_vir_states_idx)
-    vir_states_idx = property(get_vir_states_idx, set_vir_states_idx)
+                        inp_vir_states not None):
+        self.c_HEG.vir_states = numpy_to_umat_d(inp_vir_states)
+    vir_states = property(get_vir_states, set_vir_states)
 
     def get_excitations(self):
         return umat_to_numpy(self.c_HEG.excitations)
@@ -428,31 +352,6 @@ cdef class PyHEG:
                         inp_excitations not None):
         self.c_HEG.excitations = numpy_to_umat_d(inp_excitations)
     excitations = property(get_excitations, set_excitations)
-    
-    def get_energies(self):
-        return vec_to_numpy(self.c_HEG.energies)
-    def set_energies(self, 
-                        np.ndarray[double, ndim=1]
-                        inp_energies not None):
-        self.c_HEG.energies = numpy_to_vec_d(inp_energies)
-    energies = property(get_energies, set_energies)
-
-    def get_occ2state(self):
-        return uvec_to_numpy(self.c_HEG.occ2state)
-    def set_occ2state(self, 
-                        np.ndarray[long long unsigned int, ndim=1]
-                        inp_occ2state not None):
-        self.c_HEG.occ2state = numpy_to_uvec_d(inp_occ2state)
-    occ2state = property(get_occ2state, set_occ2state)
-
-    def get_vir2state(self):
-        return uvec_to_numpy(self.c_HEG.vir2state)
-    def set_vir2state(self, 
-                        np.ndarray[long long unsigned int, ndim=1]
-                        inp_vir2state not None):
-        self.c_HEG.vir2state = numpy_to_uvec_d(inp_vir2state)
-    vir2state = property(get_vir2state, set_vir2state)
-
 
     def get_occ_energies(self):
         return vec_to_numpy(self.c_HEG.occ_energies)
@@ -477,17 +376,3 @@ cdef class PyHEG:
                         inp_exc_energies not None):
         self.c_HEG.exc_energies = numpy_to_vec_d(inp_exc_energies)
     exc_energies = property(get_exc_energies, set_exc_energies)
-
-    def get_kgrid(self):
-        return vec_to_numpy(self.c_HEG.kgrid)
-    def set_kgrid(self, 
-                        np.ndarray[double, ndim=1]
-                        inp_kgrid not None):
-        self.c_HEG.kgrid = numpy_to_vec_d(inp_kgrid)
-    kgrid = property(get_kgrid, set_kgrid)
-
-    def get_deltaK(self):
-        return self.c_HEG.deltaK
-    def set_deltaK(self, value):
-        self.c_HEG.deltaK = float(value)
-    deltaK = property(get_deltaK, set_deltaK)
