@@ -8,26 +8,75 @@
 #include "armadillo"
 #define ARMA_NO_DEBUG
 
+//void HFStability::HEG::calc_vir_energies_2d_idx() {
+//    arma::uword num_states = vir_states_idx.n_rows;
+//    vir_energies.set_size(num_states);
+//    vir_energies.fill(0.0);
+//    for (arma::uword i = 0; i < num_states; ++i) {
+//        for (unsigned int j = 0; j < ndim; ++j) {
+//            vir_energies(i) += kgrid(vir_states_idx(i,j)) * kgrid(vir_states_idx(i,j)); 
+//        }  
+//        vir_energies[i] /= 2.0; //Is now filled with kinetic energy
+//        vir_energies[i] += exchange_vir_2d_idx(i); 
+//    }
+//}
+//
+//double HFStability::HEG::exchange_vir_2d_idx(arma::uword i) {
+//    double exch = 0.0;
+//    double ki[2] = {kgrid(vir_states_idx(i, 0)), kgrid(vir_states_idx(i,1))};
+//
+//    for (arma::uword j = 0; j < Nocc; ++j) {
+//        double kj[2] = {kgrid(occ_states_idx(j, 0)), kgrid(occ_states_idx(j,1))};
+//        exch += two_electron_2d(ki, kj);
+//    } 
+//    exch *= -1.0;
+//    return exch;
+//}
+//
+//void HFStability::HEG::calc_occ_energies_2d_idx() {
+//    arma::uword num_states = occ_states_idx.n_rows;
+//    occ_energies.set_size(num_states);
+//    occ_energies.fill(0.0);
+//    for (arma::uword i = 0; i < num_states; ++i) {
+//        for (unsigned int j = 0; j < ndim; ++j) {
+//            occ_energies(i) += kgrid(occ_states_idx(i,j)) * kgrid(occ_states_idx(i,j)); 
+//        }  
+//        occ_energies[i] /= 2.0; //Is now filled with kinetic energy
+//        occ_energies[i] += exchange_occ_2d_idx(i); 
+//    }
+//}
+//
+//double HFStability::HEG::exchange_occ_2d_idx(arma::uword i) {
+//    double exch = 0.0;
+//    double ki[2] = {kgrid(occ_states_idx(i, 0)), kgrid(occ_states_idx(i,1))};
+//
+//    for (arma::uword j = 0; j < Nocc; ++j) {
+//        double kj[2] = {kgrid(occ_states_idx(j, 0)), kgrid(occ_states_idx(j,1))};
+//        exch += two_electron_2d(ki, kj);
+//    } 
+//    exch *= -1.0;
+//    return exch;
+//}
 
-void HFStability::HEG::calc_energies_2d() {
-    arma::uword num_states = states.n_rows;
-    energies.set_size(num_states);
-    energies.fill(0.0);
-    for (arma::uword i = 0; i < num_states; ++i) {
+void HFStability::HEG::calc_energies_2d(arma::umat& inp_states, arma::vec& energy_vec) {
+    arma::uword num_inp_states = inp_states.n_rows;
+    energy_vec.set_size(num_inp_states);
+    energy_vec.fill(0.0);
+    for (arma::uword i = 0; i < num_inp_states; ++i) {
         for (unsigned int j = 0; j < ndim; ++j) {
-            energies(i) += states(i,j) * states(i,j); 
+            energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
         }  
-        energies[i] /= 2.0; //Is now filled with kinetic energy
-        energies[i] += exchange_2d(i); 
+        energy_vec[i] /= 2.0; //Is now filled with kinetic energy
+        energy_vec[i] += exchange_2d(inp_states, i); 
     }
 }
 
-double HFStability::HEG::exchange_2d(arma::uword i) {
+double HFStability::HEG::exchange_2d(arma::umat& inp_states, arma::uword i) {
     double exch = 0.0;
-    double ki[2] = {states(i, 0), states(i,1)};
+    double ki[2] = {kgrid(inp_states(i, 0)), kgrid(inp_states(i,1))};
 
     for (arma::uword j = 0; j < Nocc; ++j) {
-        double kj[2] = {occ_states(j, 0), occ_states(j,1)};
+        double kj[2] = {kgrid(occ_states_idx(j, 0)), kgrid(occ_states_idx(j,1))};
         exch += two_electron_2d(ki, kj);
     } 
     exch *= -1.0;
@@ -48,6 +97,7 @@ double HFStability::HEG::two_electron_2d(double k1[], double k2[]) {
         }
         sum_sqrs += k[i] * k[i];
     }
+
     if (sum_sqrs < 10E-10) {
         return 0.0;
     }else{
@@ -55,24 +105,42 @@ double HFStability::HEG::two_electron_2d(double k1[], double k2[]) {
     }
 }
 
-void HFStability::HEG::calc_energies_3d() {
-    arma::uword num_states = states.n_rows;
-    energies.set_size(num_states);
-    energies.fill(0.0);
-    for (arma::uword i = 0; i < num_states; ++i) {
-        for (unsigned int j = 0; j < ndim; ++j) {
-            energies(i) += states(i,j) * states(i,j); 
-        }  
-        energies[i] /= 2.0; //Is now filled with kinetic energy
-        energies[i] += exchange_3d(i); 
+void HFStability::HEG::calc_energies_3d_wrap(bool is_vir) {
+    if (ndim == 3) {
+        if (is_vir) {
+            calc_energies_3d(vir_states_idx, vir_energies);
+        }else{ 
+            calc_energies_3d(occ_states_idx, occ_energies);
+        }
+
+    } else if (ndim == 2) {
+        if (is_vir) {
+            calc_energies_2d(vir_states_idx, vir_energies);
+        }else{ 
+            calc_energies_2d(occ_states_idx, occ_energies);
+        }
     }
 }
 
-double HFStability::HEG::exchange_3d(arma::uword i) {
+void HFStability::HEG::calc_energies_3d(arma::umat& inp_states, arma::vec& energy_vec) {
+    arma::uword num_inp_states = inp_states.n_rows;
+    energy_vec.set_size(num_inp_states);
+    energy_vec.fill(0.0);
+    for (arma::uword i = 0; i < num_inp_states; ++i) {
+        for (unsigned int j = 0; j < ndim; ++j) {
+            energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
+        }  
+        energy_vec[i] /= 2.0; //Is now filled with kinetic energy
+        energy_vec[i] += exchange_3d(inp_states, i); 
+    }
+}
+
+double HFStability::HEG::exchange_3d(arma::umat& inp_states, arma::uword i) {
     double exch = 0.0;
-    double ki[3] = {states(i, 0), states(i,1), states(i,2)};
+    double ki[3] = {kgrid(inp_states(i, 0)), kgrid(inp_states(i,1)), kgrid(inp_states(i,2))};
+
     for (arma::uword j = 0; j < Nocc; ++j) {
-        double kj[3] = {occ_states(j, 0), occ_states(j,1), occ_states(j,2)};
+        double kj[3] = {kgrid(occ_states_idx(j, 0)), kgrid(occ_states_idx(j,1)), kgrid(occ_states_idx(j,2))};
         exch += two_electron_3d(ki, kj);
     } 
     exch *= -1.0;
