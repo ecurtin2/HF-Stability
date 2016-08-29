@@ -52,3 +52,37 @@ def gm_cartesian(arrays, out=None):
         for j in xrange(1, arrays[0].size):
             out[j*m:(j+1)*m,1:] = out[0:m,1:]
     return out
+
+'''
+def one_to_three(index):
+    """Return 3 indices corresponding to the 1 index mapping"""
+    nx = int(floor(index/(run.Nk*run.Nk)))
+    ny = int(floor(index/run.Nk - run.Nk*nx))
+    nz = int(index - run.Nk * run.Nk * nx - run.Nk * ny)
+    return np.asarray(nx, ny, nz)
+
+def three_to_one(array):
+    """return 1 index correspond to 3idx , mapping"""
+    return run.Nk*run.Nk * array[0] + run.Nk * array[1] + array[2]
+
+def one_to_two(index):
+    """Return 2 indices corresponding to the 1 index mapping"""
+    nx = int(floor(index/(run.Nk)))
+    ny = int(floor(index/run.Nk - nx))
+    return np.asarray(nx, ny, nz)
+
+def two_to_one(array):
+    """return 1 index correspond to 2idx , mapping"""
+    return int(run.Nk * array[0] + array[1])
+
+def N_to_one(array):
+    if run.ndim == 2:
+        return two_to_one(array)
+    elif run.ndim == 3:
+        return three_to_one(array)
+def one_to_N(index):
+    if run.ndim == 2:
+        return one_to_two(index)
+    elif run.ndim == 3:
+        return one_to_three(index)
+'''

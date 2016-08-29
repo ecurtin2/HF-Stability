@@ -16,7 +16,9 @@ namespace HFStability {
 		arma::umat occ_states, vir_states, excitations;
 
 		//Methods
+                arma::vec& mat_vec_prod_2d(arma::vec);
                 void   calc_energy_wrap(bool);
+                void   calc_exc_energy();
                 //2d
                 void   calc_energies_2d(arma::umat&, arma::vec&);
                 double two_electron_2d(double[], double[]);

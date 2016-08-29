@@ -27,6 +27,7 @@ cdef extern from "stability.h" namespace "HFStability":
 
         #Methods
         void calc_energy_wrap(bool) # True = vir, else = occ 
+        void calc_exc_energy()
 
 
 ################################################################################
@@ -91,7 +92,7 @@ cdef class PyHEG:
         self.kgrid = np.linspace(-self.kmax, self.kmax, self.Nk)
         self.deltaK = self.kgrid[1] - self.kgrid[0]
 
-        self.find_occ_states()
+        self.calc_occ_states()
 
         if self.ndim == 3:
             self.vol = self.N_elec * 4.0 / 3.0 * np.pi * (self.rs**3)
@@ -103,11 +104,18 @@ cdef class PyHEG:
             self.vol = self.N_elec * 2.0 * self.rs
 
         self.calc_occ_energies()
-        self.find_vir_states()
+        self.calc_vir_states()
         self.calc_vir_energies()
+        self.calc_exc_energies()
+        assert np.all(self.occ_energies < self.fermi_energy) # Occ states must all be below
+        # The converse can not be said for the virtual states, since the exchange
+        # interaction reduces the energies wrt the non-interacting case. Thus some virtual 
+        # states lie lower in energy compared to the unperturbed fermi level.
+        # the perturbed fermi level is not calculated here, as I don't need it. 
+        assert np.all(self.exc_energies > 0.0)
         ##### IMPORTANT!!! THIS ORDER MATTERS UNTIL HERE!!!! #######
 
-    def find_occ_states(self):
+    def calc_occ_states(self):
         ary_list = [self.kgrid] * self.ndim
         allcombos = np.array(gm_cartesian(ary_list))
         rownorms = np.sqrt((allcombos * allcombos).sum(axis=1))
@@ -118,8 +126,7 @@ cdef class PyHEG:
         #RHF ONLY
         self.N_elec = 2 * self.Nocc
 
-
-    def find_possible_exc(self):
+    def calc_possible_exc(self):
         x_exc = (self.kgrid + self.kmax)[1:]         #all potential +x excitations within 1st BZ
         all_exc = np.zeros((self.Nk - 1, self.ndim)) # -1 excludes the occ_state
         all_exc[:,0] = x_exc                         #only consider +x,  y and z are zero
@@ -162,8 +169,8 @@ cdef class PyHEG:
         unique_map = np.asarray(unique_map, dtype=int)
         return sorted_data[row_mask], unique_map, sorted_idx
 
-    def find_vir_states(self):
-        occ_idx, non_unique_virs = self.find_possible_exc()
+    def calc_vir_states(self):
+        occ_idx, non_unique_virs = self.calc_possible_exc()
         unique_virs, unique_map, sorted_idx = self.unique_rows(non_unique_virs) #keep only unique
 
         self.vir_states = np.asfortranarray(unique_virs, dtype=np.uint64)
@@ -171,6 +178,10 @@ cdef class PyHEG:
         exc = np.column_stack((occ_idx, unique_map))
         exc = np.asfortranarray(exc, dtype=np.uint64)
         self.excitations = exc
+        self.Nexc = len(exc)
+
+    def calc_exc_energies(self):
+        self.c_HEG.calc_exc_energy() # False = occupied energies
 
     def calc_occ_energies(self):
         self.c_HEG.calc_energy_wrap(False) # False = occupied energies
