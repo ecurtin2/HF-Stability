@@ -12,7 +12,7 @@ cimport numpy as np
 cimport cython
 
 include "cyarma.pyx"
-include "cppclass.pyx"
+include "stability_h.pyx"
 import general_methods as gm
 
 # Python Wrapper Class 

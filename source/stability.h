@@ -29,6 +29,7 @@ namespace HFStability {
                 void   calc_energies_3d(arma::umat&, arma::vec&);
                 double exchange_3d(arma::umat&, arma::uword);
                 double two_electron_3d(double[], double[]);
+        private:
 
                 //independent of dimension
 		double davidson_algorithm(uint64_t, 
