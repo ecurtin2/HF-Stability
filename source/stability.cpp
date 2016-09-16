@@ -128,17 +128,18 @@ double HFStability::HEG::two_electron_3d(double k1[], double k2[]) {
 }
 
 void HFStability::HEG::get_vir_states_inv_2d() {
-    arma::umat vir_states_inv(Nexc)
+//arma::umat vir_states_inv(3)
     for (arma::uword i = 0; i < Nvir; ++i) {
-        
+        int x = 0;
     }
 }
 
-arma::uword HFStability::HEG::get_k_to_idx(k[]) {
+arma::uword HFStability::HEG::get_k_to_idx(double k[]) {
     
     for (arma::uword i = 0; i < Nexc; ++i) { 
-    
-
+        int k = 1;
+    }
+    return 3.0;
 }
 
 arma::vec& HFStability::HEG::mat_vec_prod_2d(arma::vec v) {
@@ -164,11 +165,15 @@ arma::vec& HFStability::HEG::mat_vec_prod_2d(arma::vec v) {
             double kb_B[2] = { (ki[0] + kj[0] - ka[0]), (ki[1] + kj[1] - ka[1]) };
             // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
             // map of vir_states
-            arma::uword b_A = k_to_idx(kb_A);
-            arma::uword b_B = k_to_idx(kb_B);
-            // excitations index, needed to know matrix location; A[s,t]
-            arma::uword t_A = inverse_exc_map(j, b_A);
-            arma::uword t_B = inverse_exc_map(j, b_A);
+            arma::uword b_A = 1;
+            arma::uword b_B = 1;
+            arma::uword t_A = 1;
+            arma::uword t_B = 1;
+//            arma::uword b_A = k_to_idx(kb_A);
+//            arma::uword b_B = k_to_idx(kb_B);
+//            // excitations index, needed to know matrix location; A[s,t]
+//            arma::uword t_A = inverse_exc_map(j, b_A);
+//            arma::uword t_B = inverse_exc_map(j, b_A);
 
             Mv(s) += two_electron_2d(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
             if (s == t_A) { // if diagonal element of A

@@ -23,6 +23,8 @@ namespace HFStability {
                 void   calc_energies_2d(arma::umat&, arma::vec&);
                 double two_electron_2d(double[], double[]);
                 double exchange_2d(arma::umat&, arma::uword);
+                arma::uword get_k_to_idx(double[]);
+                void get_vir_states_inv_2d();
                 //3d
                 void   calc_energies_3d(arma::umat&, arma::vec&);
                 double exchange_3d(arma::umat&, arma::uword);

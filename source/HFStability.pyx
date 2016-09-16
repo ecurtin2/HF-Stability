@@ -1,17 +1,20 @@
+# cython: profile=False
+# cython: boundscheck=False
+# cython: wraparound=False
 ################################################################################
 #                                   C++ Land is Here 
 ################################################################################
 from libcpp cimport bool
+from libc.math cimport sqrt
 import itertools
 import math
 from scipy import special as sp
 import numpy as np
 cimport numpy as np
+cimport cython
+
 include "cyarma.pyx"
 include "general_methods.pyx" #functions prepended with gm_
-
-cdef extern from "stdint.h" nogil:
-    ctypedef unsigned long long uint64_t
 	
 #C++ class
 #Note only methods/attributes that want python access need to be here.
@@ -21,13 +24,79 @@ cdef extern from "stability.h" namespace "HFStability":
         #Attributes
         double bzone_length, vol, rs, kf, kmax, fermi_energy
         double two_e_const, deltaK
-        uint64_t Nocc, Nvir, Nexc, N_elec, ndim, Nk
+        long long unsigned int Nocc, Nvir, Nexc, N_elec, ndim, Nk
         vec  occ_energies, vir_energies, exc_energies, kgrid
         umat occ_states, vir_states, excitations, 
 
         #Methods
         void calc_energy_wrap(bool) # True = vir, else = occ 
         void calc_exc_energy()
+
+cdef cppclass test:
+    test() except +
+    np.float64_t x
+
+
+    double func(double y):
+        return 2.0 * y
+
+cdef c_en(np.ndarray[np.uint64_t, ndim=2] occ, np.ndarray[np.float64_t, ndim=1] kgrid, int ndim, 
+          np.float64_t two_e_const, np.float64_t kmax):
+    cdef int N = len(occ)
+    cdef np.ndarray energies = np.zeros(N, dtype=np.float64)
+    cdef int i, j 
+    cdef np.float64_t kin
+    
+    for i in range(0,N):
+        kin = 0.0
+        for j in range(ndim):
+            kin += kgrid[occ[i,j]] * kgrid[occ[i,j]]
+        energies[i] = 0.5 * kin + c_exch(occ, kgrid, ndim, i, two_e_const, kmax) #kinetic + exch
+    return energies
+    
+cdef np.float64_t c_exch(np.ndarray[np.uint64_t, ndim=2] occ,
+            np.ndarray[np.float64_t , ndim=1] kgrid, 
+            int ndim,
+            int i,
+            np.float64_t two_e_const, np.float64_t kmax):
+    cdef int N = len(occ)
+    cdef int j
+    cdef np.float64_t exch = 0.0
+
+    ki1 = kgrid[occ[i,0]]
+    ki2 = kgrid[occ[i,1]]
+
+    for j in range(0,N):
+        kj1 = kgrid[occ[j, 0]]
+        kj2 = kgrid[occ[j, 1]]
+        exch += c_twoE(ki1, ki2, kj1, kj2, ndim, kmax, two_e_const)
+    exch *= -1.0
+    return exch
+        
+
+#cdef c_twoE(np.ndarray[np.float64_t, ndim=1] k1, np.ndarray[np.float64_t, ndim=1] k2, int ndim,
+#            np.float64_t kmax, np.float64_t two_e_const):
+cdef inline np.float64_t c_twoE(np.float64_t ki1, np.float64_t ki2, np.float64_t kj1, np.float64_t kj2,  int ndim,
+            np.float64_t kmax, np.float64_t two_e_const):
+    cdef int i
+    cdef np.float64_t k1, k2
+    cdef np.float64_t k_mag = 0.0
+
+    k1 = ki1 - kj1
+    k2 = ki2 - kj2
+    if k1 < -kmax:
+        k1 += 2.0 * kmax
+    elif k1 > kmax:
+        k1 -= 2.0 * kmax
+    if k2 < -kmax:
+        k2 += 2.0 * kmax
+    elif k2 > kmax:
+        k2 -= 2.0 * kmax
+    k_mag += (k1 * k1) + (k2 * k2)
+
+    if k_mag < 10E-10:
+        return 0.0
+    return two_e_const / k_mag**0.5
 
 
 ################################################################################
@@ -188,6 +257,16 @@ cdef class PyHEG:
 
     def calc_vir_energies(self):
         self.c_HEG.calc_energy_wrap(True) # True = virtual energies
+
+
+    def occ_cyth(self):
+        t_kgrid = np.copy(self.kgrid)
+        t_occ = np.copy(self.occ_states)
+        t_ndim = self.ndim
+        t_const = self.two_e_const
+        t_kmax = self.kmax
+        return c_en(t_occ, t_kgrid, t_ndim, t_const, t_kmax)
+        
 
     def f2D(self, y):
         if y <= 1.0:
