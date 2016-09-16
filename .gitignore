@@ -2,6 +2,7 @@
 source/build/
 HFStability.cpp
 cyarma.cpp
+general_methods.pyc
 heg_equations.aux
 heg_equations.bbl
 heg_equations.blg

@@ -1,8 +1,7 @@
 import numpy as np
-cimport numpy as np
 import itertools
 
-def gm_cartesian(arrays, out=None):
+def cartesian(arrays, out=None):
     """
     Generate a cartesian product of input arrays.
     http://stackoverflow.com/questions/1208118
@@ -48,7 +47,7 @@ def gm_cartesian(arrays, out=None):
     m = n / arrays[0].size
     out[:,0] = np.repeat(arrays[0], m)
     if arrays[1:]:
-        gm_cartesian(arrays[1:], out=out[0:m,1:])
+        cartesian(arrays[1:], out=out[0:m,1:])
         for j in xrange(1, arrays[0].size):
             out[j*m:(j+1)*m,1:] = out[0:m,1:]
     return out
