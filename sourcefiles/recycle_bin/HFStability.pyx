@@ -1,3 +1,5 @@
+
+"""
 # cython: profile=False
 # cython: boundscheck=False
 # cython: wraparound=False
@@ -11,9 +13,11 @@ import numpy as np
 cimport numpy as np
 cimport cython
 
-include "cyarma.pyx"
-include "stability_h.pyx"
-import general_methods as gm
+# This group imports from ./lib
+include "lib/cyarma.pyx"    
+include "lib/stability_h.pyx"
+from lib import general_methods as gm
+"""
 
 # Python Wrapper Class 
 cdef class PyHEG:

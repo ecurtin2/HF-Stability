@@ -1,17 +1,24 @@
+import os
+import shutil
 from distutils.core import setup 
 from Cython.Build import cythonize 
 from distutils.extension import Extension
-import cppheader_to_pyxheader
+from lib import ClassBlender
 
 # Don't touch this if you're not 100% sure
 # seriously I know you
 remove_assertions_at_compile = False
 
 #rewrites the c class wrapping .pyx part at before compiling
-cppheader_to_pyxheader.cpp_head_to_pyxhead('stability', breaker='davidson')
-        
+a = ClassBlender.CppClassWrapper(pyx_header='HFStability_h.pyx', pyx_class='HFStability_class.pyx', 
+                    cpp_header='stability.h',       cpp_class='stability.cpp')
+a.combine_sections()
+f = open('ClassWrap.pyx', 'w')
+for line in a.output:
+    f.write(line)
+f.close()
 
-sourcefiles  = ['HFStability.pyx', 'stability.cpp']
+sourcefiles  = ['ClassWrap.pyx', 'stability.cpp']
 compile_opts = ['-O3', '-ffast-math', '-std=c++11']
 my_libraries = ['armadillo']
 
@@ -23,3 +30,7 @@ ext=[Extension('*', sourcefiles, extra_compile_args=compile_opts, language='c++'
 setup( 
   ext_modules=cythonize(ext) 
 ) 
+
+shutil.move('ClassWrap.so', 'lib/ClassWrap.so')       
+shutil.move('ClassWrap.pyx', 'lib/ClassWrap.pyx')       
+shutil.move('ClassWrap.cpp', 'lib/ClassWrap.cpp')       
