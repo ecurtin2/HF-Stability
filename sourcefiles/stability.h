@@ -4,6 +4,7 @@
 	#define PI 3.14159265358979323846264338327
 #endif
 #include "armadillo"
+#include <map>
 
 namespace HFStability {
 	class HEG {
@@ -29,8 +30,11 @@ namespace HFStability {
                 void   calc_energies_3d(arma::umat&, arma::vec&);
                 double exchange_3d(arma::umat&, arma::uword);
                 double two_electron_3d(double[], double[]);
+                void get_inv_exc_map_2d();
+                arma::uvec inv_exc_map_2d_test;
         private:
-
+                //2d 
+                std::map<std::tuple<arma::uword, arma::uword>, arma::uword> inv_exc_map_2d;
                 //independent of dimension
 		double davidson_algorithm(uint64_t, 
 				uint64_t,

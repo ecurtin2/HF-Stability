@@ -45,6 +45,8 @@ cdef extern from "stability.h" namespace "HFStability":
         void   calc_energies_3d(umat&, vec&)
         double exchange_3d(umat&, long long unsigned int)
         double two_electron_3d(double[], double[])
+        void get_inv_exc_map_2d()
+        uvec inv_exc_map_2d_test
 
 
 ########################################################################
@@ -123,12 +125,14 @@ cdef class PyHEG:
         self.calc_vir_states()
         self.calc_vir_energies()
         self.calc_exc_energies()
-        assert np.all(self.occ_energies < self.fermi_energy) # Occ states must all be below
+        assert np.all(self.occ_energies < self.fermi_energy) , (
+               'Not all occupied energies are below fermi energy')
         # The converse can not be said for the virtual states, since the exchange
         # interaction reduces the energies wrt the non-interacting case. Thus some virtual 
         # states lie lower in energy compared to the unperturbed fermi level.
         # the perturbed fermi level is not calculated here, as I don't need it. 
-        assert np.all(self.exc_energies > 0.0)
+        assert np.all(self.exc_energies > 0.0), ( 
+               'Not all excitation energies are positive')
         ##### IMPORTANT!!! THIS ORDER MATTERS UNTIL HERE!!!! #######
     
     def calc_occ_states(self):
@@ -198,7 +202,7 @@ cdef class PyHEG:
         self.Nexc = len(exc)
     
     def calc_exc_energies(self):
-        self.c_HEG.calc_exc_energy() # False = occupied energies
+        self.c_HEG.calc_exc_energy()
     
     def calc_occ_energies(self):
         self.c_HEG.calc_energy_wrap(False) # False = occupied energies
@@ -232,10 +236,15 @@ cdef class PyHEG:
         return (x*x / 2.0) + self.analytic_exch(x)
     
     def k_to_index(self, array):
-        deltaK = self.kgrid[1] - self.kgrid[0]
-        idx = np.rint(((array + self.kmax) / deltaK)).astype(np.uint64)
-        assert np.all(np.isclose(self.kgrid[idx], array))
+        idx = np.rint(((array + self.kmax) / self.deltaK)).astype(np.uint64)
+        assert np.all(np.isclose(self.kgrid[idx], array)), 'Error in momentum to index xform'
         return idx
+    
+    def get_inv_exc_map_2d(self):
+        self.c_HEG.get_inv_exc_map_2d()
+        test = self.inv_exc_map_2d_test
+        assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect'
+    
 
 
 ########################################################################
@@ -414,6 +423,15 @@ cdef class PyHEG:
                      value not None):
         self.c_HEG.excitations = numpy_to_umat_d(value)
     excitations = property(get_excitations, set_excitations)
+    
+
+    def get_inv_exc_map_2d_test(self):
+        """(np.ndarray[long long unsigned int, ndim=1]) Get/Set inv_exc_map_2d_test"""
+        return uvec_to_numpy(self.c_HEG.inv_exc_map_2d_test)
+    def set_inv_exc_map_2d_test(self, np.ndarray[long long unsigned int, ndim=1] 
+                     value not None):
+        self.c_HEG.inv_exc_map_2d_test = numpy_to_uvec_d(value)
+    inv_exc_map_2d_test = property(get_inv_exc_map_2d_test, set_inv_exc_map_2d_test)
     
 
 

@@ -63,12 +63,14 @@ def get_resulting_params(self):
     self.calc_vir_states()
     self.calc_vir_energies()
     self.calc_exc_energies()
-    assert np.all(self.occ_energies < self.fermi_energy) # Occ states must all be below
+    assert np.all(self.occ_energies < self.fermi_energy) , (
+           'Not all occupied energies are below fermi energy')
     # The converse can not be said for the virtual states, since the exchange
     # interaction reduces the energies wrt the non-interacting case. Thus some virtual 
     # states lie lower in energy compared to the unperturbed fermi level.
     # the perturbed fermi level is not calculated here, as I don't need it. 
-    assert np.all(self.exc_energies > 0.0)
+    assert np.all(self.exc_energies > 0.0), ( 
+           'Not all excitation energies are positive')
     ##### IMPORTANT!!! THIS ORDER MATTERS UNTIL HERE!!!! #######
 
 def calc_occ_states(self):
@@ -138,7 +140,7 @@ def calc_vir_states(self):
     self.Nexc = len(exc)
 
 def calc_exc_energies(self):
-    self.c_HEG.calc_exc_energy() # False = occupied energies
+    self.c_HEG.calc_exc_energy()
 
 def calc_occ_energies(self):
     self.c_HEG.calc_energy_wrap(False) # False = occupied energies
@@ -172,7 +174,12 @@ def analytic_energy(self, k):
     return (x*x / 2.0) + self.analytic_exch(x)
 
 def k_to_index(self, array):
-    deltaK = self.kgrid[1] - self.kgrid[0]
-    idx = np.rint(((array + self.kmax) / deltaK)).astype(np.uint64)
-    assert np.all(np.isclose(self.kgrid[idx], array))
+    idx = np.rint(((array + self.kmax) / self.deltaK)).astype(np.uint64)
+    assert np.all(np.isclose(self.kgrid[idx], array)), 'Error in momentum to index xform'
     return idx
+
+def get_inv_exc_map_2d(self):
+    self.c_HEG.get_inv_exc_map_2d()
+    test = self.inv_exc_map_2d_test
+    assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect'
+

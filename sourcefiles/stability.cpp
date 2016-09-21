@@ -5,9 +5,7 @@
 #include <assert.h>
 #include <time.h>
 #include "stability.h"
-#include "armadillo"
 #define ARMA_NO_DEBUG
-
 
 void HFStability::HEG::calc_exc_energy() {
     exc_energies.zeros(Nexc);
@@ -134,7 +132,7 @@ void HFStability::HEG::get_vir_states_inv_2d() {
     }
 }
 
-arma::uword HFStability::HEG::get_k_to_idx(double k[]) {
+arma::uword HFStability::HEG::k_to_idx(double k[]) {
     
     for (arma::uword i = 0; i < Nexc; ++i) { 
         int k = 1;
@@ -142,8 +140,22 @@ arma::uword HFStability::HEG::get_k_to_idx(double k[]) {
     return 3.0;
 }
 
+void HFStability::HEG::get_inv_exc_map_2d() { 
+    for (arma::uword i = 0; i < Nexc; ++i) {
+        auto key = std::make_tuple(excitations(i,0), excitations(i,1));
+        inv_exc_map_2d[key] = i;
+    }
+    inv_exc_map_2d_test.set_size(Nexc);
+    for (arma::uword i = 0; i < Nexc; ++i) {
+        arma::uword j = excitations(i, 0);
+        arma::uword k = excitations(i, 1);
+        auto key = std::make_tuple(j, k);
+        inv_exc_map_2d_test(i) = inv_exc_map_2d[key];
+    }
+}
+
+
 arma::vec& HFStability::HEG::mat_vec_prod_2d(arma::vec v) {
-    // all loop indices in here will be a idx#
     // so the convention for orbital indices can be used
     // orbital indices will be of the form i_A, where i is the 
     // orbital index and the  _A means this corresponds to the A matrix
@@ -167,13 +179,11 @@ arma::vec& HFStability::HEG::mat_vec_prod_2d(arma::vec v) {
             // map of vir_states
             arma::uword b_A = 1;
             arma::uword b_B = 1;
-            arma::uword t_A = 1;
-            arma::uword t_B = 1;
 //            arma::uword b_A = k_to_idx(kb_A);
 //            arma::uword b_B = k_to_idx(kb_B);
-//            // excitations index, needed to know matrix location; A[s,t]
-//            arma::uword t_A = inverse_exc_map(j, b_A);
-//            arma::uword t_B = inverse_exc_map(j, b_A);
+            // excitations index, needed to know matrix location; A[s,t]
+            arma::uword t_A = inverse_exc_map(j, b_A);
+            arma::uword t_B = inverse_exc_map(j, b_A);
 
             Mv(s) += two_electron_2d(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
             if (s == t_A) { // if diagonal element of A
@@ -276,7 +286,7 @@ double HFStability::HEG::davidson_algorithm(
           As far as I know right now, this is the original method propossed by Davidson
           Apparently, sometimes people simply call this the Davidson method. */            
         
-        //Get the ress and append to subspace if needed.
+        //Get the res and append to subspace if needed.
         //Sub_size changes within this loop
         old_sub_size = sub_size;
         arma::vec norms(block_size, arma::fill::zeros);
