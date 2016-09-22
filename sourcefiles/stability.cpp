@@ -7,6 +7,7 @@
 #include "stability.h"
 #define ARMA_NO_DEBUG
 
+
 void HFStability::HEG::calc_exc_energy() {
     exc_energies.zeros(Nexc);
     for (arma::uword i = 0; i < Nexc; ++i) { 
@@ -37,7 +38,7 @@ void HFStability::HEG::calc_energies_2d(arma::umat& inp_states, arma::vec& energ
     energy_vec.set_size(num_inp_states);
     energy_vec.fill(0.0);
     for (arma::uword i = 0; i < num_inp_states; ++i) {
-        for (unsigned int j = 0; j < ndim; ++j) {
+        for (int j = 0; j < ndim; ++j) {
             energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
         }  
         energy_vec[i] /= 2.0; //Is now filled with kinetic energy
@@ -84,7 +85,7 @@ void HFStability::HEG::calc_energies_3d(arma::umat& inp_states, arma::vec& energ
     energy_vec.set_size(num_inp_states);
     energy_vec.fill(0.0);
     for (arma::uword i = 0; i < num_inp_states; ++i) {
-        for (unsigned int j = 0; j < ndim; ++j) {
+        for (int j = 0; j < ndim; ++j) {
             energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
         }  
         energy_vec[i] /= 2.0; //Is now filled with kinetic energy
@@ -132,30 +133,28 @@ void HFStability::HEG::get_vir_states_inv_2d() {
     }
 }
 
-arma::uword HFStability::HEG::k_to_idx(double k[]) {
-    
-    for (arma::uword i = 0; i < Nexc; ++i) { 
-        int k = 1;
-    }
-    return 3.0;
+std::vector<arma::uword> HFStability::HEG::k_to_idx(arma::vec k) {
+    arma::vec idx = arma::round((k + kmax) / deltaK);
+    std::vector<arma::uword> indices = arma::conv_to<std::vector<arma::uword>>::from(idx);
+    return indices;
 }
 
-void HFStability::HEG::get_inv_exc_map_2d() { 
+void HFStability::HEG::get_inv_exc_map() { 
     for (arma::uword i = 0; i < Nexc; ++i) {
-        auto key = std::make_tuple(excitations(i,0), excitations(i,1));
-        inv_exc_map_2d[key] = i;
+        std::vector<arma::uword> key {excitations(i,0), excitations(i,1)};
+        inv_exc_map[key] = i;
     }
-    inv_exc_map_2d_test.set_size(Nexc);
+
+    // Testing 
+    inv_exc_map_test.set_size(Nexc);
     for (arma::uword i = 0; i < Nexc; ++i) {
-        arma::uword j = excitations(i, 0);
-        arma::uword k = excitations(i, 1);
-        auto key = std::make_tuple(j, k);
-        inv_exc_map_2d_test(i) = inv_exc_map_2d[key];
+        std::vector<arma::uword> key {excitations(i,0), excitations(i,1)};
+        inv_exc_map_test(i) = inv_exc_map[key];
     }
 }
 
 
-arma::vec& HFStability::HEG::mat_vec_prod_2d(arma::vec v) {
+arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
     // so the convention for orbital indices can be used
     // orbital indices will be of the form i_A, where i is the 
     // orbital index and the  _A means this corresponds to the A matrix
@@ -163,46 +162,58 @@ arma::vec& HFStability::HEG::mat_vec_prod_2d(arma::vec v) {
     arma::vec Mv(Nexc*2.0, arma::fill::zeros);  // matrix vector product
     
     // This outer loop fills Mv[0..Nexc]
-    for (arma::uword s = 0; s < Nexc; ++s) {
-        // s, i and a are the same for A and B (Seeger/Pople notation)
-        arma::uword i = excitations(s, 0);
-        arma::uword a = excitations(s, 1);
-        double ki[2] = {kgrid(occ_states(i, 0)), kgrid(occ_states(i, 1))};
-        double ka[2] = {kgrid(occ_states(a, 0)), kgrid(occ_states(a, 1))};
-        for (arma::uword j = 0; j < Nocc; ++j) {
-            // j is the same for A and B
-            double kj[2] = {kgrid(occ_states(j, 0)), kgrid(occ_states(j, 1))};
-            // find the momentum conserving virtual orbital
-            double kb_A[2] = { (ki[0] + ka[0] - kj[0]), (ki[1] + ka[1] - kj[1]) };
-            double kb_B[2] = { (ki[0] + kj[0] - ka[0]), (ki[1] + kj[1] - ka[1]) };
-            // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
-            // map of vir_states
-            arma::uword b_A = 1;
-            arma::uword b_B = 1;
-//            arma::uword b_A = k_to_idx(kb_A);
-//            arma::uword b_B = k_to_idx(kb_B);
-            // excitations index, needed to know matrix location; A[s,t]
-            arma::uword t_A = inverse_exc_map(j, b_A);
-            arma::uword t_B = inverse_exc_map(j, b_A);
-
-            Mv(s) += two_electron_2d(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
-            if (s == t_A) { // if diagonal element of A
-                Mv(s) += exc_energies(s) * v(t_A);
-            } else { // off-diagonal of A
-                Mv(s) += two_electron_2d(kb_A, ka) * v(t_A);
-            }
-            
-            //This is the second half of the vector
-            Mv(s + Nexc) += two_electron_2d(kj, ka) * v(t_B);
-            if (s == t_A) { // if diagonal element of A
-                Mv(s + Nexc) += exc_energies(s) * v(t_A + Nexc);
-            } else { // off-diagonal of A
-                Mv(s + Nexc) += two_electron_2d(kb_A, ka) * v(t_A + Nexc);
-            }
-
-
-        }
-    }
+//    for (arma::uword s = 0; s < Nexc; ++s) {
+//        // s, i and a are the same for A and B (Seeger/Pople notation)
+//        arma::uword i = excitations(s, 0);
+//        arma::uword a = excitations(s, 1);
+//        arma::vec ki(ndim);
+//        arma::vec ka(ndim);
+//        for (int idx = 0; idx < ndim; ++idx) {
+//            ki[idx] = kgrid(occ_states(i, idx));
+//            ka[idx] = kgrid(occ_states(a, idx));
+//        }
+//        for (arma::uword j = 0; j < Nocc; ++j) {
+//            // j is the same for A and B
+//            arma::vec kj(ndim);
+//            arma::vec kb_A(ndim);
+//            arma::vec kb_B(ndim);
+//            for (int idx = 0; idx < ndim; ++idx) {
+//                kj[idx] = kgrid(occ_states(j, idx));
+//                // find the momentum conserving virtual orbital
+//                // A and B matrices have different momentum conservation rules
+//                kb_A[idx] = ki[idx] + ka[idx] - kj[idx];
+//                kb_B[idx] = ki[idx] + kj[idx] - ka[idx];
+//            }
+//            // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
+//            // map of vir_states
+//            std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
+//            std::vector<arma::uword> b_B_Nidx = k_to_idx(kb_B);
+//            arma::uword b_A = vir_N_to_1_map(b_A_Nidx);
+//            arma::uword b_B = vir_N_to_1_map(b_B_Nidx);
+//            // excitations index, needed to know matrix location; A[s,t]
+//            std::vector<arma::uword> key_A { j, b_A};
+//            std::vector<arma::uword> key_B { j, b_B};
+//            arma::uword t_A = inv_exc_map[key_A];
+//            arma::uword t_B = inv_exc_map[key_B];
+//
+//            Mv(s) += two_electron_2d(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
+//            if (s == t_A) { // if diagonal element of A
+//                Mv(s) += exc_energies(s) * v(t_A);
+//            } else { // off-diagonal of A
+//                Mv(s) += two_electron_2d(kb_A, ka) * v(t_A);
+//            }
+//            
+//            //This is the second half of the vector
+//            Mv(s + Nexc) += two_electron_2d(kj, ka) * v(t_B);
+//            if (s == t_A) { // if diagonal element of A
+//                Mv(s + Nexc) += exc_energies(s) * v(t_A + Nexc);
+//            } else { // off-diagonal of A
+//                Mv(s + Nexc) += two_electron_2d(kb_A, ka) * v(t_A + Nexc);
+//            }
+//
+//
+//        }
+//    }
     return Mv;
 }
 
@@ -381,4 +392,3 @@ double HFStability::HEG::davidson_algorithm(
     //NOTE THIS SHOULD BE HANDLED MORE ELEGANTLY
     return 1234567.89;
 }
-

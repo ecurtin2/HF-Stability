@@ -1,4 +1,5 @@
 #All constants of calculation specified by __init__
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 def __init__(self, ndim=3, rs=1.0, Nk=4):
     """This is an init docstring"""
     self.rs = float(rs)
@@ -21,7 +22,8 @@ def get_resulting_params(self):
             
 
     """
-    #It looks like the variables default to 0, not undefined?
+    # It looks like the variables default to 0, not undefined
+    # Because c++ defines it
     if self.rs == 0 or self.ndim == 0 or self.Nk == 0:
         return None
     try:
@@ -175,11 +177,13 @@ def analytic_energy(self, k):
 
 def k_to_index(self, array):
     idx = np.rint(((array + self.kmax) / self.deltaK)).astype(np.uint64)
-    assert np.all(np.isclose(self.kgrid[idx], array)), 'Error in momentum to index xform'
+    assert np.all(np.isclose(self.kgrid[idx], array)), 'Error in momentum to index transform.'
     return idx
 
-def get_inv_exc_map_2d(self):
-    self.c_HEG.get_inv_exc_map_2d()
-    test = self.inv_exc_map_2d_test
-    assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect'
+def get_inv_exc_map(self):
+    self.c_HEG.get_inv_exc_map()
+    test = self.inv_exc_map_test
+    assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
 
+    
+    

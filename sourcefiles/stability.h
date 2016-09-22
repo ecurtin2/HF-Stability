@@ -5,6 +5,7 @@
 #endif
 #include "armadillo"
 #include <map>
+#include <vector>
 
 namespace HFStability {
 	class HEG {
@@ -12,12 +13,13 @@ namespace HFStability {
 		//Attributes
 		double  bzone_length, vol, rs, kf, kmax, fermi_energy;
                 double  two_e_const, deltaK;
-		uint64_t    Nocc, Nvir, Nexc, N_elec, ndim, Nk;
+		uint64_t    Nocc, Nvir, Nexc, N_elec, Nk;
+                int ndim;
 		arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
 		arma::umat occ_states, vir_states, excitations;
 
 		//Methods
-                arma::vec& mat_vec_prod_2d(arma::vec);
+                arma::vec mat_vec_prod(arma::vec);
                 void   calc_energy_wrap(bool);
                 void   calc_exc_energy();
                 //2d
@@ -30,11 +32,13 @@ namespace HFStability {
                 void   calc_energies_3d(arma::umat&, arma::vec&);
                 double exchange_3d(arma::umat&, arma::uword);
                 double two_electron_3d(double[], double[]);
-                void get_inv_exc_map_2d();
-                arma::uvec inv_exc_map_2d_test;
+                void get_inv_exc_map();
+                arma::uvec inv_exc_map_test;
         private:
+                std::vector<arma::uword> k_to_idx(arma::vec);
+                std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
+                std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
                 //2d 
-                std::map<std::tuple<arma::uword, arma::uword>, arma::uword> inv_exc_map_2d;
                 //independent of dimension
 		double davidson_algorithm(uint64_t, 
 				uint64_t,

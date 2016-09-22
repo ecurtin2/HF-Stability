@@ -51,8 +51,8 @@ cdef extern from "armadillo" namespace "arma" nogil:
         umat resize(int, int) nogil
         long long unsigned int * memptr() nogil
         # opperators
-        long long unsigned int& operator[](int) nogil
-        long long unsigned int& operator[](int,int) nogil
+        long long unsigned int& operator[](int) nogil except +
+        long long unsigned int& operator[](int,int) nogil except +
         long long unsigned int& at(int,int) nogil
         long long unsigned int& at(int) nogil
         umat operator*(mat) nogil

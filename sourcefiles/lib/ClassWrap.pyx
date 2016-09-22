@@ -28,11 +28,12 @@ cdef extern from "stability.h" namespace "HFStability":
         #Attributes
         double  bzone_length, vol, rs, kf, kmax, fermi_energy
         double  two_e_const, deltaK
-        long long unsigned int    Nocc, Nvir, Nexc, N_elec, ndim, Nk
+        long long unsigned int    Nocc, Nvir, Nexc, N_elec, Nk
+        int ndim
         vec  occ_energies, vir_energies, exc_energies, kgrid
         umat occ_states, vir_states, excitations
         #Methods
-        vec& mat_vec_prod_2d(vec)
+        vec mat_vec_prod(vec)
         void   calc_energy_wrap(bool)
         void   calc_exc_energy()
         #2d
@@ -45,8 +46,8 @@ cdef extern from "stability.h" namespace "HFStability":
         void   calc_energies_3d(umat&, vec&)
         double exchange_3d(umat&, long long unsigned int)
         double two_electron_3d(double[], double[])
-        void get_inv_exc_map_2d()
-        uvec inv_exc_map_2d_test
+        void get_inv_exc_map()
+        uvec inv_exc_map_test
 
 
 ########################################################################
@@ -61,6 +62,7 @@ cdef class PyHEG:
 
 
     #All constants of calculation specified by __init__
+    #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
     def __init__(self, ndim=3, rs=1.0, Nk=4):
         """This is an init docstring"""
         self.rs = float(rs)
@@ -83,7 +85,8 @@ cdef class PyHEG:
                 
     
         """
-        #It looks like the variables default to 0, not undefined?
+        # It looks like the variables default to 0, not undefined
+        # Because c++ defines it
         if self.rs == 0 or self.ndim == 0 or self.Nk == 0:
             return None
         try:
@@ -237,14 +240,16 @@ cdef class PyHEG:
     
     def k_to_index(self, array):
         idx = np.rint(((array + self.kmax) / self.deltaK)).astype(np.uint64)
-        assert np.all(np.isclose(self.kgrid[idx], array)), 'Error in momentum to index xform'
+        assert np.all(np.isclose(self.kgrid[idx], array)), 'Error in momentum to index transform.'
         return idx
     
-    def get_inv_exc_map_2d(self):
-        self.c_HEG.get_inv_exc_map_2d()
-        test = self.inv_exc_map_2d_test
-        assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect'
+    def get_inv_exc_map(self):
+        self.c_HEG.get_inv_exc_map()
+        test = self.inv_exc_map_test
+        assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
     
+        
+        
 
 
 ########################################################################
@@ -346,20 +351,20 @@ cdef class PyHEG:
     N_elec = property(get_N_elec, set_N_elec)
     
 
-    def get_ndim(self):
-        """(int) Get/Set ndim"""
-        return self.c_HEG.ndim
-    def set_ndim(self, value):
-        self.c_HEG.ndim = int(value)
-    ndim = property(get_ndim, set_ndim)
-    
-
     def get_Nk(self):
         """(int) Get/Set Nk"""
         return self.c_HEG.Nk
     def set_Nk(self, value):
         self.c_HEG.Nk = int(value)
     Nk = property(get_Nk, set_Nk)
+    
+
+    def get_ndim(self):
+        """(int) Get/Set ndim"""
+        return self.c_HEG.ndim
+    def set_ndim(self, value):
+        self.c_HEG.ndim = int(value)
+    ndim = property(get_ndim, set_ndim)
     
 
     def get_occ_energies(self):
@@ -425,13 +430,13 @@ cdef class PyHEG:
     excitations = property(get_excitations, set_excitations)
     
 
-    def get_inv_exc_map_2d_test(self):
-        """(np.ndarray[long long unsigned int, ndim=1]) Get/Set inv_exc_map_2d_test"""
-        return uvec_to_numpy(self.c_HEG.inv_exc_map_2d_test)
-    def set_inv_exc_map_2d_test(self, np.ndarray[long long unsigned int, ndim=1] 
+    def get_inv_exc_map_test(self):
+        """(np.ndarray[long long unsigned int, ndim=1]) Get/Set inv_exc_map_test"""
+        return uvec_to_numpy(self.c_HEG.inv_exc_map_test)
+    def set_inv_exc_map_test(self, np.ndarray[long long unsigned int, ndim=1] 
                      value not None):
-        self.c_HEG.inv_exc_map_2d_test = numpy_to_uvec_d(value)
-    inv_exc_map_2d_test = property(get_inv_exc_map_2d_test, set_inv_exc_map_2d_test)
+        self.c_HEG.inv_exc_map_test = numpy_to_uvec_d(value)
+    inv_exc_map_test = property(get_inv_exc_map_test, set_inv_exc_map_test)
     
 
 
