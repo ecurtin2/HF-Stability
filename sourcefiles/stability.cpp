@@ -153,6 +153,9 @@ void HFStability::HEG::get_inv_exc_map() {
     }
 }
 
+void HFStability::HEG::stdout_test() {
+    std::cout << "ayy lmao" << std::endl;
+}
 
 arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
     // so the convention for orbital indices can be used

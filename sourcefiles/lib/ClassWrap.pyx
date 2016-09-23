@@ -48,6 +48,7 @@ cdef extern from "stability.h" namespace "HFStability":
         double two_electron_3d(double[], double[])
         void get_inv_exc_map()
         uvec inv_exc_map_test
+        void stdout_test()
 
 
 ########################################################################
@@ -248,6 +249,8 @@ cdef class PyHEG:
         test = self.inv_exc_map_test
         assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
     
+    def stdout_test(self):
+        self.c_HEG.stdout_test()
         
         
 

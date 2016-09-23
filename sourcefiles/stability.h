@@ -34,6 +34,7 @@ namespace HFStability {
                 double two_electron_3d(double[], double[]);
                 void get_inv_exc_map();
                 arma::uvec inv_exc_map_test;
+                void stdout_test();
         private:
                 std::vector<arma::uword> k_to_idx(arma::vec);
                 std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;

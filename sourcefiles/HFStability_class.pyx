@@ -185,5 +185,7 @@ def get_inv_exc_map(self):
     test = self.inv_exc_map_test
     assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
 
+def stdout_test(self):
+    self.c_HEG.stdout_test()
     
     
