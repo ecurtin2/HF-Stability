@@ -5,8 +5,7 @@
 #include <assert.h>
 #include <time.h>
 #include "stability.h"
-#define ARMA_NO_DEBUG
-
+//#define ARMA_NO_DEBUG
 
 void HFStability::HEG::calc_exc_energy() {
     exc_energies.zeros(Nexc);
@@ -17,70 +16,14 @@ void HFStability::HEG::calc_exc_energy() {
 }
 
 void HFStability::HEG::calc_energy_wrap(bool is_vir) {
-    if (ndim == 3) {
-        if (is_vir) {
-            calc_energies_3d(vir_states, vir_energies);
-        }else{ 
-            calc_energies_3d(occ_states, occ_energies);
-        }
-
-    } else if (ndim == 2) {
-        if (is_vir) {
-            calc_energies_2d(vir_states, vir_energies);
-        }else{ 
-            calc_energies_2d(occ_states, occ_energies);
-        }
-    }
-}
-
-void HFStability::HEG::calc_energies_2d(arma::umat& inp_states, arma::vec& energy_vec) {
-    arma::uword num_inp_states = inp_states.n_rows;
-    energy_vec.set_size(num_inp_states);
-    energy_vec.fill(0.0);
-    for (arma::uword i = 0; i < num_inp_states; ++i) {
-        for (int j = 0; j < ndim; ++j) {
-            energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
-        }  
-        energy_vec[i] /= 2.0; //Is now filled with kinetic energy
-        energy_vec[i] += exchange_2d(inp_states, i); 
-    }
-}
-
-double HFStability::HEG::exchange_2d(arma::umat& inp_states, arma::uword i) {
-    double exch = 0.0;
-    double ki[2] = {kgrid(inp_states(i, 0)), kgrid(inp_states(i,1))};
-
-    for (arma::uword j = 0; j < Nocc; ++j) {
-        double kj[2] = {kgrid(occ_states(j, 0)), kgrid(occ_states(j,1))};
-        exch += two_electron_2d(ki, kj);
-    } 
-    exch *= -1.0;
-    return exch;
-}
-
-double HFStability::HEG::two_electron_2d(double k1[], double k2[]) {
-    double sum_sqrs = 0.0;
-    double k[2];
-
-    for (unsigned int i = 0; i < 2; ++i) { 
-        k[i] = k1[i] - k2[i];
-        //Shift into first brillouin zone
-        if (k[i] < -kmax) {
-            k[i] += bzone_length;
-        }else if (k[i] > kmax) {
-            k[i] -= bzone_length;
-        }
-        sum_sqrs += k[i] * k[i];
-    }
-
-    if (sum_sqrs < 10E-10) {
-        return 0.0;
+    if (is_vir) {
+        calc_energies(vir_states, vir_energies);
     }else{
-        return two_e_const / sqrt(sum_sqrs);
+        calc_energies(occ_states, occ_energies);
     }
 }
 
-void HFStability::HEG::calc_energies_3d(arma::umat& inp_states, arma::vec& energy_vec) {
+void HFStability::HEG::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
     arma::uword num_inp_states = inp_states.n_rows;
     energy_vec.set_size(num_inp_states);
     energy_vec.fill(0.0);
@@ -89,27 +32,37 @@ void HFStability::HEG::calc_energies_3d(arma::umat& inp_states, arma::vec& energ
             energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
         }  
         energy_vec[i] /= 2.0; //Is now filled with kinetic energy
-        energy_vec[i] += exchange_3d(inp_states, i); 
+        energy_vec[i] += exchange(inp_states, i); 
     }
 }
 
-double HFStability::HEG::exchange_3d(arma::umat& inp_states, arma::uword i) {
-    double exch = 0.0;
-    double ki[3] = {kgrid(inp_states(i, 0)), kgrid(inp_states(i,1)), kgrid(inp_states(i,2))};
+double HFStability::HEG::exchange(arma::umat& inp_states, arma::uword i) {
 
-    for (arma::uword j = 0; j < Nocc; ++j) {
-        double kj[3] = {kgrid(occ_states(j, 0)), kgrid(occ_states(j,1)), kgrid(occ_states(j,2))};
-        exch += two_electron_3d(ki, kj);
+    double exch = 0.0;
+    arma::vec ki(ndim), k2(ndim);
+    
+
+    for (int j = 0; j < ndim; ++j) {
+        ki(j) = kgrid(inp_states(i, j));
+    }
+
+    for (arma::uword k = 0; k < Nocc; ++k) {
+        for (int j = 0; j < ndim; ++j) {
+            k2(j) = kgrid(occ_states(k, j));
+        }
+
+        exch += two_electron(ki, k2);
     } 
+
     exch *= -1.0;
     return exch;
 }
 
-double HFStability::HEG::two_electron_3d(double k1[], double k2[]) {
+double HFStability::HEG::two_electron(arma::vec k1, arma::vec k2) {
     double sum_sqrs = 0.0;
-    double k[3];
+    arma::vec k(ndim);
 
-    for (unsigned int i = 0; i < 3; ++i) { 
+    for (int i = 0; i < ndim; ++i) { 
         k[i] = k1[i] - k2[i];
         //Shift into first brillouin zone
         if (k[i] < -kmax) {
@@ -122,11 +75,11 @@ double HFStability::HEG::two_electron_3d(double k1[], double k2[]) {
     if (sum_sqrs < 10E-10) {
         return 0.0;
     }else{
-        return two_e_const / sum_sqrs;
+        return two_e_const / std::pow(std::sqrt(sum_sqrs), ndim - 1);
     }
 }
 
-void HFStability::HEG::get_vir_states_inv_2d() {
+void HFStability::HEG::get_vir_states_inv() {
 //arma::umat vir_states_inv(3)
     for (arma::uword i = 0; i < Nvir; ++i) {
         int x = 0;
@@ -153,70 +106,66 @@ void HFStability::HEG::get_inv_exc_map() {
     }
 }
 
-void HFStability::HEG::stdout_test() {
-    std::cout << "ayy lmao" << std::endl;
-}
-
 arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
+
     // so the convention for orbital indices can be used
     // orbital indices will be of the form i_A, where i is the 
     // orbital index and the  _A means this corresponds to the A matrix
 
     arma::vec Mv(Nexc*2.0, arma::fill::zeros);  // matrix vector product
-    
-    // This outer loop fills Mv[0..Nexc]
-//    for (arma::uword s = 0; s < Nexc; ++s) {
-//        // s, i and a are the same for A and B (Seeger/Pople notation)
-//        arma::uword i = excitations(s, 0);
-//        arma::uword a = excitations(s, 1);
-//        arma::vec ki(ndim);
-//        arma::vec ka(ndim);
-//        for (int idx = 0; idx < ndim; ++idx) {
-//            ki[idx] = kgrid(occ_states(i, idx));
-//            ka[idx] = kgrid(occ_states(a, idx));
-//        }
-//        for (arma::uword j = 0; j < Nocc; ++j) {
-//            // j is the same for A and B
-//            arma::vec kj(ndim);
-//            arma::vec kb_A(ndim);
-//            arma::vec kb_B(ndim);
-//            for (int idx = 0; idx < ndim; ++idx) {
-//                kj[idx] = kgrid(occ_states(j, idx));
-//                // find the momentum conserving virtual orbital
-//                // A and B matrices have different momentum conservation rules
-//                kb_A[idx] = ki[idx] + ka[idx] - kj[idx];
-//                kb_B[idx] = ki[idx] + kj[idx] - ka[idx];
-//            }
-//            // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
-//            // map of vir_states
-//            std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
-//            std::vector<arma::uword> b_B_Nidx = k_to_idx(kb_B);
-//            arma::uword b_A = vir_N_to_1_map(b_A_Nidx);
-//            arma::uword b_B = vir_N_to_1_map(b_B_Nidx);
-//            // excitations index, needed to know matrix location; A[s,t]
-//            std::vector<arma::uword> key_A { j, b_A};
-//            std::vector<arma::uword> key_B { j, b_B};
-//            arma::uword t_A = inv_exc_map[key_A];
-//            arma::uword t_B = inv_exc_map[key_B];
-//
-//            Mv(s) += two_electron_2d(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
-//            if (s == t_A) { // if diagonal element of A
-//                Mv(s) += exc_energies(s) * v(t_A);
-//            } else { // off-diagonal of A
-//                Mv(s) += two_electron_2d(kb_A, ka) * v(t_A);
-//            }
-//            
-//            //This is the second half of the vector
-//            Mv(s + Nexc) += two_electron_2d(kj, ka) * v(t_B);
-//            if (s == t_A) { // if diagonal element of A
-//                Mv(s + Nexc) += exc_energies(s) * v(t_A + Nexc);
-//            } else { // off-diagonal of A
-//                Mv(s + Nexc) += two_electron_2d(kb_A, ka) * v(t_A + Nexc);
-//            }
-//
-//
-//        }
-//    }
+      // This outer loop fills Mv[0..Nexc]
+    for (arma::uword s = 0; s < Nexc; ++s) {
+        // s, i and a are the same for A and B (Seeger/Pople notation)
+        arma::uword i = excitations(s, 0);
+        arma::uword a = excitations(s, 1);
+        arma::vec ki(ndim);
+        arma::vec ka(ndim);
+        for (int idx = 0; idx < ndim; ++idx) {
+            ki[idx] = kgrid(occ_states(i, idx));
+            ka[idx] = kgrid(occ_states(a, idx));
+        }
+        for (arma::uword j = 0; j < Nocc; ++j) {
+            // j is the same for A and B
+            arma::vec kj(ndim);
+            arma::vec kb_A(ndim);
+            arma::vec kb_B(ndim);
+            for (int idx = 0; idx < ndim; ++idx) {
+                kj[idx] = kgrid(occ_states(j, idx));
+                // find the momentum conserving virtual orbital
+                // A and B matrices have different momentum conservation rules
+                kb_A[idx] = ki[idx] + ka[idx] - kj[idx];
+                kb_B[idx] = ki[idx] + kj[idx] - ka[idx];
+            }
+            // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
+            // map of vir_states
+            std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
+            std::vector<arma::uword> b_B_Nidx = k_to_idx(kb_B);
+            arma::uword b_A = vir_N_to_1_map[b_A_Nidx];
+            arma::uword b_B = vir_N_to_1_map[b_B_Nidx];
+            // excitations index, needed to know matrix location; A[s,t]
+            std::vector<arma::uword> key_A { j, b_A};
+            std::vector<arma::uword> key_B { j, b_B};
+            arma::uword t_A = inv_exc_map[key_A];
+            arma::uword t_B = inv_exc_map[key_B];
+
+            Mv(s) += two_electron(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
+            if (s == t_A) { // if diagonal element of A
+                Mv(s) += exc_energies(s) * v(t_A);
+            } else { // off-diagonal of A
+                Mv(s) += two_electron(kb_A, ka) * v(t_A);
+            }
+            
+            //This is the second half of the vector
+            Mv(s + Nexc) += two_electron(kj, ka) * v(t_B);
+            if (s == t_A) { // if diagonal element of A
+                Mv(s + Nexc) += exc_energies(s) * v(t_A + Nexc);
+            } else { // off-diagonal of A
+                Mv(s + Nexc) += two_electron(kb_A, ka) * v(t_A + Nexc);
+            }
+
+
+        }
+    }
     return Mv;
 }
 

@@ -36,19 +36,13 @@ cdef extern from "stability.h" namespace "HFStability":
         vec mat_vec_prod(vec)
         void   calc_energy_wrap(bool)
         void   calc_exc_energy()
-        #2d
-        void   calc_energies_2d(umat&, vec&)
-        double two_electron_2d(double[], double[])
-        double exchange_2d(umat&, long long unsigned int)
         long long unsigned int get_k_to_idx(double[])
-        void get_vir_states_inv_2d()
-        #3d
-        void   calc_energies_3d(umat&, vec&)
-        double exchange_3d(umat&, long long unsigned int)
-        double two_electron_3d(double[], double[])
+        void get_vir_states_inv()
+        void   calc_energies(umat&, vec&)
+        double exchange(umat&, long long unsigned int)
+        double two_electron(vec, vec)
         void get_inv_exc_map()
         uvec inv_exc_map_test
-        void stdout_test()
 
 
 ########################################################################
@@ -124,7 +118,7 @@ cdef class PyHEG:
             self.two_e_const = 2.0 * np.pi / self.vol 
         elif self.ndim == 1:
             self.vol = self.N_elec * 2.0 * self.rs
-    
+        
         self.calc_occ_energies()
         self.calc_vir_states()
         self.calc_vir_energies()
@@ -248,10 +242,6 @@ cdef class PyHEG:
         self.c_HEG.get_inv_exc_map()
         test = self.inv_exc_map_test
         assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
-    
-    def stdout_test(self):
-        self.c_HEG.stdout_test()
-        
         
 
 

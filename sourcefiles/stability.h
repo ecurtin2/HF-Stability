@@ -22,25 +22,17 @@ namespace HFStability {
                 arma::vec mat_vec_prod(arma::vec);
                 void   calc_energy_wrap(bool);
                 void   calc_exc_energy();
-                //2d
-                void   calc_energies_2d(arma::umat&, arma::vec&);
-                double two_electron_2d(double[], double[]);
-                double exchange_2d(arma::umat&, arma::uword);
                 arma::uword get_k_to_idx(double[]);
-                void get_vir_states_inv_2d();
-                //3d
-                void   calc_energies_3d(arma::umat&, arma::vec&);
-                double exchange_3d(arma::umat&, arma::uword);
-                double two_electron_3d(double[], double[]);
+                void get_vir_states_inv();
+                void   calc_energies(arma::umat&, arma::vec&);
+                double exchange(arma::umat&, arma::uword);
+                double two_electron(arma::vec, arma::vec);
                 void get_inv_exc_map();
                 arma::uvec inv_exc_map_test;
-                void stdout_test();
         private:
                 std::vector<arma::uword> k_to_idx(arma::vec);
                 std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
                 std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
-                //2d 
-                //independent of dimension
 		double davidson_algorithm(uint64_t, 
 				uint64_t,
 			   	uint64_t, 

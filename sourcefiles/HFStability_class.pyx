@@ -60,7 +60,7 @@ def get_resulting_params(self):
         self.two_e_const = 2.0 * np.pi / self.vol 
     elif self.ndim == 1:
         self.vol = self.N_elec * 2.0 * self.rs
-
+    
     self.calc_occ_energies()
     self.calc_vir_states()
     self.calc_vir_energies()
@@ -184,8 +184,4 @@ def get_inv_exc_map(self):
     self.c_HEG.get_inv_exc_map()
     test = self.inv_exc_map_test
     assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
-
-def stdout_test(self):
-    self.c_HEG.stdout_test()
-    
     
