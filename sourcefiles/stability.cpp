@@ -5,7 +5,7 @@
 #include <assert.h>
 #include <time.h>
 #include "stability.h"
-//#define ARMA_NO_DEBUG
+////#define ARMA_NO_DEBUG
 
 void HFStability::HEG::calc_exc_energy() {
     exc_energies.zeros(Nexc);
@@ -59,30 +59,51 @@ double HFStability::HEG::exchange(arma::umat& inp_states, arma::uword i) {
 }
 
 double HFStability::HEG::two_electron(arma::vec k1, arma::vec k2) {
-    double sum_sqrs = 0.0;
+    double norm = 0.0;
     arma::vec k(ndim);
+    k = k1 - k2;
 
-    for (int i = 0; i < ndim; ++i) { 
-        k[i] = k1[i] - k2[i];
-        //Shift into first brillouin zone
-        if (k[i] < -kmax) {
-            k[i] += bzone_length;
-        }else if (k[i] > kmax) {
-            k[i] -= bzone_length;
-        }
-        sum_sqrs += k[i] * k[i];
-    }
-    if (sum_sqrs < 10E-10) {
+    to_first_BZ(k);
+    norm = arma::norm(k);
+    if (norm < 10E-10) {
         return 0.0;
     }else{
-        return two_e_const / std::pow(std::sqrt(sum_sqrs), ndim - 1);
+        return two_e_const / std::pow(norm, ndim - 1);
     }
 }
 
-void HFStability::HEG::get_vir_states_inv() {
-//arma::umat vir_states_inv(3)
+double HFStability::HEG::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::vec k4) {
+    // Same as two_electron, except checks for momentum conservation
+    // In the other, conservation is assumed
+    double sum_sqrs = 0.0;
+    arma::vec k(ndim);
+
+    k = k1 + k2 - k3 - k4;
+    to_first_BZ(k);
+
+    // If not momentum conserving:
+    if (arma::any(arma::abs(k) > 10E-10)) {
+            return 0.0;
+    }
+
+    k =  k1 - k3;
+    to_first_BZ(k);
+    double norm = arma::norm(k);
+
+    if (norm < 10E-10) {
+        return 0.0;
+    }else{
+        return two_e_const / std::pow(norm, ndim - 1);
+    }
+}
+
+void HFStability::HEG::get_vir_N_to_1_map() {
     for (arma::uword i = 0; i < Nvir; ++i) {
-        int x = 0;
+        std::vector<arma::uword> key(ndim);
+        for (int j = 0; j < ndim; ++j) {
+            key[j] = vir_states(i, j);
+        }
+        vir_N_to_1_map[key] = i;
     }
 }
 
@@ -106,7 +127,136 @@ void HFStability::HEG::get_inv_exc_map() {
     }
 }
 
+double HFStability::HEG::get_1B(arma::uword s, arma::uword t) {
+    arma::uword i = excitations(s, 0);
+    arma::uword a = excitations(s, 1);
+    arma::uword j = excitations(t, 0);
+    arma::uword b = excitations(t, 1);
+    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+    for (int idx = 0; idx < ndim; ++idx) {
+        ki[idx] = kgrid(occ_states(i, idx));
+        kj[idx] = kgrid(occ_states(j, idx));
+        ka[idx] = kgrid(vir_states(a, idx));
+        kb[idx] = kgrid(vir_states(b, idx));
+    }
+    return 2.0 * two_electron_check(ka, kb, ki, kj) - two_electron_check(ka, kb, kj, ki);
+}
+
+double HFStability::HEG::get_3B(arma::uword s, arma::uword t) {
+//    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
+    arma::uword i = excitations(s, 0);
+    arma::uword a = excitations(s, 1);
+    arma::uword j = excitations(t, 0);
+    arma::uword b = excitations(t, 1);
+    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+    for (int idx = 0; idx < ndim; ++idx) {
+        ki[idx] = kgrid(occ_states(i, idx));
+        kj[idx] = kgrid(occ_states(j, idx));
+        ka[idx] = kgrid(vir_states(a, idx));
+        kb[idx] = kgrid(vir_states(b, idx));
+    }
+//    std::cout << "Finish get_3A s =" << s << " t =" << t << std::endl; //DEBUG
+    return -1.0 * two_electron_check(ka, kb, kj, ki);
+}
+
+double HFStability::HEG::get_1A(arma::uword s, arma::uword t) {
+    arma::uword i = excitations(s, 0);
+    arma::uword a = excitations(s, 1);
+    arma::uword j = excitations(t, 0);
+    arma::uword b = excitations(t, 1);
+    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+    for (int idx = 0; idx < ndim; ++idx) {
+        ki[idx] = kgrid(occ_states(i, idx));
+        kj[idx] = kgrid(occ_states(j, idx));
+        ka[idx] = kgrid(vir_states(a, idx));
+        kb[idx] = kgrid(vir_states(b, idx));
+    }
+    double val = 0.0;
+    if ((i == j) && (a == b)) {
+        val = exc_energies(s);
+    }
+    val += 2.0 * two_electron_check(ka, kj, ki, kb) - two_electron_check(ka, kj, kb, ki);
+    return val;
+}
+
+double HFStability::HEG::get_3A(arma::uword s, arma::uword t) {
+//    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
+    arma::uword i = excitations(s, 0);
+    arma::uword a = excitations(s, 1);
+    arma::uword j = excitations(t, 0);
+    arma::uword b = excitations(t, 1);
+//    std::cout << "i =" << i << std::endl; //DEBUG 
+//    std::cout << "j =" << j << std::endl; //DEBUG 
+//    std::cout << "a =" << a << std::endl; //DEBUG 
+//    std::cout << "b =" << b << std::endl; //DEBUG
+    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+    for (int idx = 0; idx < ndim; ++idx) {
+        ki[idx] = kgrid(occ_states(i, idx));
+        kj[idx] = kgrid(occ_states(j, idx));
+        ka[idx] = kgrid(vir_states(a, idx));
+        kb[idx] = kgrid(vir_states(b, idx));
+    }
+    double val = 0.0;
+    if ((i == j) && (a == b)) {
+        val = exc_energies(s);
+    }
+    val += -1.0 * two_electron_check(ka, kj, kb, ki);
+//    std::cout << "Finish get_3A s =" << s << " t =" << t << std::endl; //DEBUG
+    return val;
+
+}
+
+double HFStability::HEG::get_3H(arma::uword i, arma::uword j) {
+//    std::cout << "Start get_3H i =" << i << " j =" << j << std::endl; //DEBUG
+    if (i < Nexc) {
+        if (j < Nexc) {
+            // First quadrant
+//            std::cout << "1" << std::endl; //DEBUG
+            return get_3A(i,j);
+        }else{
+            // Second quadrant
+//            std::cout << "2" << std::endl; //DEBUG
+            return get_3B(i, j-Nexc);
+        }
+    }else{
+        if (j < Nexc) {
+            // Third quadrant
+//            std::cout << "3" << std::endl; //DEBUG
+            return get_3B(i-Nexc,j);
+        }else{
+            // Second quadrant
+//            std::cout << "4" << std::endl; //DEBUG
+            return get_3A(i-Nexc, j-Nexc);
+        }
+    }
+}
+
+double HFStability::HEG::mvec_test() {
+    arma::mat matrix(2*Nexc, 2*Nexc, arma::fill::zeros);
+    for (arma::uword i = 0; i < 2*Nexc; ++i) {
+        for (arma::uword j = 0; j < 2*Nexc; ++j) {
+            matrix(i,j) =  get_3H(i,j);
+        }
+    }
+    vectest1 = matrix * vectest;
+    vectest2 = mat_vec_prod(vectest);
+    mattest = matrix;
+    return 2.0;
+}
+
+void HFStability::HEG::to_first_BZ(arma::vec& k) {
+    for (int i = 0; i < ndim; ++i) {
+        if (k[i] < -kmax) {
+            k[i] += bzone_length;
+        }else if (k[i] > kmax) {
+            k[i] -= bzone_length;
+        }
+    }
+}
+
 arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
+    get_vir_N_to_1_map();
+    get_inv_exc_map();
 
     // so the convention for orbital indices can be used
     // orbital indices will be of the form i_A, where i is the 
@@ -122,45 +272,71 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
         arma::vec ka(ndim);
         for (int idx = 0; idx < ndim; ++idx) {
             ki[idx] = kgrid(occ_states(i, idx));
-            ka[idx] = kgrid(occ_states(a, idx));
+            ka[idx] = kgrid(vir_states(a, idx));
         }
         for (arma::uword j = 0; j < Nocc; ++j) {
             // j is the same for A and B
             arma::vec kj(ndim);
             arma::vec kb_A(ndim);
             arma::vec kb_B(ndim);
-            for (int idx = 0; idx < ndim; ++idx) {
+            for (int idx = 0; idx < 1; ++idx) {
                 kj[idx] = kgrid(occ_states(j, idx));
                 // find the momentum conserving virtual orbital
                 // A and B matrices have different momentum conservation rules
-                kb_A[idx] = ki[idx] + ka[idx] - kj[idx];
-                kb_B[idx] = ki[idx] + kj[idx] - ka[idx];
+                kb_A[idx] = ka[idx] + kj[idx] - ki[idx];
+                kb_B[idx] = ka[idx] - kj[idx] - ki[idx];
             }
+            for (int idx = 1; idx < ndim; ++idx) {
+                // Exciting only in one dimension, the rest are unchanged
+                kb_A[idx] = kj[idx];
+                kb_B[idx] = kj[idx];
+            }
+            to_first_BZ(kb_A);
+            to_first_BZ(kb_B);
             // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
             // map of vir_states
             std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
             std::vector<arma::uword> b_B_Nidx = k_to_idx(kb_B);
+            for (int idx = 0; idx < ndim; ++idx) {
+                std::cout << "b_A_Nidx[" << idx << "] = " << b_A_Nidx[idx] << std::endl; //DEBUG
+            }
+            for (int idx = 0; idx < ndim; ++idx) {
+                std::cout << "b_B_Nidx[" << idx << "] = " << b_B_Nidx[idx] << std::endl; //DEBUG
+            }
             arma::uword b_A = vir_N_to_1_map[b_A_Nidx];
             arma::uword b_B = vir_N_to_1_map[b_B_Nidx];
             // excitations index, needed to know matrix location; A[s,t]
-            std::vector<arma::uword> key_A { j, b_A};
-            std::vector<arma::uword> key_B { j, b_B};
+            std::vector<arma::uword> key_A {j, b_A};
+            std::vector<arma::uword> key_B {j, b_B};
             arma::uword t_A = inv_exc_map[key_A];
             arma::uword t_B = inv_exc_map[key_B];
 
-            Mv(s) += two_electron(kj, ka) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
+            std::cout << "s = " << s << std::endl; //DEBUG
+            std::cout << "i = " << i << std::endl; //DEBUG
+            std::cout << "a = " << a << std::endl; //DEBUG
+            std::cout << "j = " << j << std::endl; //DEBUG
+//            std::cout << "b_A_Nidx = " << b_A_Nidx << std::endl; //DEBUG
+//            std::cout << "b_B_Nidx = " << b_B_Nidx << std::endl; //DEBUG
+//            std::cout << "key_A = " << key_A << std::endl; //DEBUG
+//            std::cout << "key_B = " << key_B << std::endl; //DEBUG
+            std::cout << "b_A = " << b_A << std::endl; //DEBUG
+            std::cout << "b_B = " << b_B << std::endl; //DEBUG
+            std::cout << "t_A = " << t_B << std::endl; //DEBUG
+            std::cout << "t_B = " << t_B << std::endl; //DEBUG
+            
+            Mv(s) += two_electron(ka, kj) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
             if (s == t_A) { // if diagonal element of A
                 Mv(s) += exc_energies(s) * v(t_A);
             } else { // off-diagonal of A
-                Mv(s) += two_electron(kb_A, ka) * v(t_A);
+                Mv(s) += two_electron(ka, kb_A) * v(t_A);
             }
             
             //This is the second half of the vector
-            Mv(s + Nexc) += two_electron(kj, ka) * v(t_B);
-            if (s == t_A) { // if diagonal element of A
+            Mv(s + Nexc) += two_electron(ka, kj) * v(t_B);
+            if ((s - Nexc) == t_A) { // if diagonal element of A
                 Mv(s + Nexc) += exc_energies(s) * v(t_A + Nexc);
             } else { // off-diagonal of A
-                Mv(s + Nexc) += two_electron(kb_A, ka) * v(t_A + Nexc);
+                Mv(s + Nexc) += two_electron(ka, kb_A) * v(t_A + Nexc);
             }
 
 

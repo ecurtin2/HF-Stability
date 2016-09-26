@@ -107,7 +107,7 @@ def calc_possible_exc(self):
         i1 += num_add
         i2 += num_add
     vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
-    idx= np.where((vir_norms > self.kf+10E-8) & (vir_norms <= self.kmax+10E-8))
+    idx= np.where((vir_norms > self.kf+10E-8) & (np.all(vir <= self.kmax + 10E-8, axis=1)))
     vir = vir[idx]          # keep only those above fermi but below cutoff
     occ_idx = occ_idx[idx]  # this is the occupied state that generated the vir
     return occ_idx, self.k_to_index(vir)
@@ -135,6 +135,7 @@ def calc_vir_states(self):
     unique_virs, unique_map, sorted_idx = self.unique_rows(non_unique_virs) #keep only unique
 
     self.vir_states = np.asfortranarray(unique_virs, dtype=np.uint64)
+    self.Nvir = len(unique_virs)
     occ_idx = occ_idx[sorted_idx]  # the virs have been shuffled, update occ positions
     exc = np.column_stack((occ_idx, unique_map))
     exc = np.asfortranarray(exc, dtype=np.uint64)
@@ -185,3 +186,5 @@ def get_inv_exc_map(self):
     test = self.inv_exc_map_test
     assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
     
+def mv_test(self):
+    self.c_HEG.mvec_test()

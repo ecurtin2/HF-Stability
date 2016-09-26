@@ -31,8 +31,13 @@ cdef extern from "stability.h" namespace "HFStability":
         long long unsigned int    Nocc, Nvir, Nexc, N_elec, Nk
         int ndim
         vec  occ_energies, vir_energies, exc_energies, kgrid
+        vec vectest
+        vec vectest1
+        vec vectest2
+        mat mattest
         umat occ_states, vir_states, excitations
         #Methods
+        double mvec_test()
         vec mat_vec_prod(vec)
         void   calc_energy_wrap(bool)
         void   calc_exc_energy()
@@ -41,7 +46,15 @@ cdef extern from "stability.h" namespace "HFStability":
         void   calc_energies(umat&, vec&)
         double exchange(umat&, long long unsigned int)
         double two_electron(vec, vec)
+        double two_electron_check(vec, vec, vec, vec)
+        double get_1B(long long unsigned int, long long unsigned int)
+        double get_3B(long long unsigned int, long long unsigned int)
+        double get_1A(long long unsigned int, long long unsigned int)
+        double get_3A(long long unsigned int, long long unsigned int)
+        double get_3H(long long unsigned int, long long unsigned int)
+        void to_first_BZ(vec&)
         void get_inv_exc_map()
+        void get_vir_N_to_1_map()
         uvec inv_exc_map_test
 
 
@@ -165,7 +178,7 @@ cdef class PyHEG:
             i1 += num_add
             i2 += num_add
         vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
-        idx= np.where((vir_norms > self.kf+10E-8) & (vir_norms <= self.kmax+10E-8))
+        idx= np.where((vir_norms > self.kf+10E-8) & (np.all(vir <= self.kmax + 10E-8, axis=1)))
         vir = vir[idx]          # keep only those above fermi but below cutoff
         occ_idx = occ_idx[idx]  # this is the occupied state that generated the vir
         return occ_idx, self.k_to_index(vir)
@@ -193,6 +206,7 @@ cdef class PyHEG:
         unique_virs, unique_map, sorted_idx = self.unique_rows(non_unique_virs) #keep only unique
     
         self.vir_states = np.asfortranarray(unique_virs, dtype=np.uint64)
+        self.Nvir = len(unique_virs)
         occ_idx = occ_idx[sorted_idx]  # the virs have been shuffled, update occ positions
         exc = np.column_stack((occ_idx, unique_map))
         exc = np.asfortranarray(exc, dtype=np.uint64)
@@ -243,6 +257,8 @@ cdef class PyHEG:
         test = self.inv_exc_map_test
         assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
         
+    def mv_test(self):
+        self.c_HEG.mvec_test()
 
 
 ########################################################################
@@ -394,6 +410,42 @@ cdef class PyHEG:
                      value not None):
         self.c_HEG.kgrid = numpy_to_vec_d(value)
     kgrid = property(get_kgrid, set_kgrid)
+    
+
+    def get_vectest(self):
+        """(np.ndarray[double, ndim=1]) Get/Set vectest"""
+        return vec_to_numpy(self.c_HEG.vectest)
+    def set_vectest(self, np.ndarray[double, ndim=1] 
+                     value not None):
+        self.c_HEG.vectest = numpy_to_vec_d(value)
+    vectest = property(get_vectest, set_vectest)
+    
+
+    def get_vectest1(self):
+        """(np.ndarray[double, ndim=1]) Get/Set vectest1"""
+        return vec_to_numpy(self.c_HEG.vectest1)
+    def set_vectest1(self, np.ndarray[double, ndim=1] 
+                     value not None):
+        self.c_HEG.vectest1 = numpy_to_vec_d(value)
+    vectest1 = property(get_vectest1, set_vectest1)
+    
+
+    def get_vectest2(self):
+        """(np.ndarray[double, ndim=1]) Get/Set vectest2"""
+        return vec_to_numpy(self.c_HEG.vectest2)
+    def set_vectest2(self, np.ndarray[double, ndim=1] 
+                     value not None):
+        self.c_HEG.vectest2 = numpy_to_vec_d(value)
+    vectest2 = property(get_vectest2, set_vectest2)
+    
+
+    def get_mattest(self):
+        """(np.ndarray[double, ndim=2, mode="fortran"]) Get/Set mattest"""
+        return mat_to_numpy(self.c_HEG.mattest)
+    def set_mattest(self, np.ndarray[double, ndim=2, mode="fortran"] 
+                     value not None):
+        self.c_HEG.mattest = numpy_to_mat_d(value)
+    mattest = property(get_mattest, set_mattest)
     
 
     def get_occ_states(self):
