@@ -231,6 +231,67 @@ double HFStability::HEG::get_3H(arma::uword i, arma::uword j) {
     }
 }
 
+arma::sp_mat HFStability::HEG::get_matrix() {
+    // A loop (first quadrant)
+    arma::umat indices;
+    arma::vec vals;
+    for (arma::uword s = 0; s < Nexc; ++s) {
+        for (arma::uword t = 0; t < Nexc; ++t) {
+            arma::uword i = excitations(s, 0);
+            arma::uword j = excitations(t, 0);
+            arma::uword a = excitations(s, 1);
+            arma::uword b = excitations(t, 1);
+            arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+            for (int idx = 0; idx < ndim; ++idx){
+                ki(idx) = kgrid(occ_states(i, idx));
+                kj(idx) = kgrid(occ_states(j, idx));
+                ka(idx) = kgrid(occ_states(a, idx));
+                kb(idx) = kgrid(occ_states(b, idx));
+            }
+            to_first_BZ(ki);
+            to_first_BZ(kj);
+            to_first_BZ(ka);
+            to_first_BZ(kb);
+            bool k_conserved = arma::all(ka + kj - ki - kb < 10E-10);
+            if (k_conserved) {
+                vals.insert_rows(vals.n_elem, get_3A(s, t));
+        }
+    }
+
+    // B loop (second quadrant)
+    for (arma::uword s = 0; s < Nexc; ++s) {
+        for (arma::uword t = Nexc; t < 2*Nexc; ++t) {
+            arma::uword i = excitations(s, 0);
+            arma::uword j = excitations(t, 0);
+            arma::uword a = excitations(s, 1);
+            arma::uword b = excitations(t, 1);
+            arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+            for (int idx = 0; idx < ndim; ++idx){
+                ki(idx) = kgrid(occ_states(i, idx));
+                kj(idx) = kgrid(occ_states(j, idx));
+                ka(idx) = kgrid(occ_states(a, idx));
+                kb(idx) = kgrid(occ_states(b, idx));
+            }
+            to_first_BZ(ki);
+            to_first_BZ(kj);
+            to_first_BZ(ka);
+            to_first_BZ(kb);
+            bool k_conserved = arma::all(ka + kb - ki - kj < 10E-10);
+            if (k_conserved) {
+                vals.insert_rows(vals.n_elem, get_3B(s, t));
+            }else{
+                return 0;
+            }
+        }
+    }
+    arma::sp_mat matrix = arma::sp_mat(indices, vals);
+    return matrix;
+
+}
+}
+
+
+
 double HFStability::HEG::mvec_test() {
     arma::mat matrix(2*Nexc, 2*Nexc, arma::fill::zeros);
     for (arma::uword i = 0; i < 2*Nexc; ++i) {
@@ -284,7 +345,7 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
                 // find the momentum conserving virtual orbital
                 // A and B matrices have different momentum conservation rules
                 kb_A[idx] = ka[idx] + kj[idx] - ki[idx];
-                kb_B[idx] = ka[idx] - kj[idx] - ki[idx];
+                kb_B[idx] = ki[idx] + kj[idx] - ka[idx];
             }
             for (int idx = 1; idx < ndim; ++idx) {
                 // Exciting only in one dimension, the rest are unchanged
@@ -293,6 +354,11 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
             }
             to_first_BZ(kb_A);
             to_first_BZ(kb_B);
+            std::cout << "ki = " << ki(0) << "," << ki(1) << std::endl; //DEBUG
+            std::cout << "kj = " << kj(0) << "," << kj(1) << std::endl; //DEBUG
+            std::cout << "ka = " << ka(0) << "," << ka(1) << std::endl; //DEBUG
+            std::cout << "kb_A = " << kb_A(0) << "," << kb_A(1) << std::endl; //DEBUG
+            std::cout << "kb_B = " << kb_B(0) << "," << kb_B(1) << std::endl; //DEBUG
             // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
             // map of vir_states
             std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);

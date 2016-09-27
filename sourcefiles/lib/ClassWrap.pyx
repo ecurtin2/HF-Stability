@@ -159,26 +159,27 @@ cdef class PyHEG:
         self.N_elec = 2 * self.Nocc
     
     def calc_possible_exc(self):
-        x_exc = (self.kgrid + self.kmax)[1:]         #all potential +x excitations within 1st BZ
-        all_exc = np.zeros((self.Nk - 1, self.ndim)) # -1 excludes the occ_state
-        all_exc[:,0] = x_exc                         #only consider +x,  y and z are zero
-        num_add = self.Nk - 1                        # max number of excitations in 1D
-        my_ones = np.ones((num_add), dtype=int)
-        N = self.Nocc * num_add
-        occ_idx = np.zeros((N), dtype=np.uint64)
-        vir = np.zeros((N, self.ndim), dtype=np.float64)
+        x_exc = (self.kgrid + self.kmax)[1:]           # all potential +x excitations within 1st BZ
+        x_exc = np.append(x_exc, (self.kgrid - self.kmax)[1:]) # -x
+        N_exc_per_occ = len(x_exc)
+        all_exc = np.zeros((N_exc_per_occ, self.ndim))    # -1 excludes the occ_state
+        all_exc[:,0] = x_exc                           # only consider +x,  y and z are zero
+        my_ones = np.ones((N_exc_per_occ), dtype=int)
+        N_exc = N_exc_per_occ * self.Nocc
+        occ_idx = np.zeros((N_exc), dtype=np.uint64)
+        vir = np.zeros((N_exc, self.ndim), dtype=np.float64)
         i1 = 0
-        i2 = num_add
+        i2 = N_exc_per_occ
         occ_states_k = self.kgrid[self.occ_states]
         for index, state in enumerate(occ_states_k):
-            a = all_exc + state
-            b = index * my_ones
+            a = all_exc + state   # add all excitations to state row-by-row
+            b = index * my_ones   
             occ_idx[i1:i2] = b
             vir[i1:i2] = a
-            i1 += num_add
-            i2 += num_add
+            i1 += N_exc_per_occ
+            i2 += N_exc_per_occ
         vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
-        idx= np.where((vir_norms > self.kf+10E-8) & (np.all(vir <= self.kmax + 10E-8, axis=1)))
+        idx= np.where((vir_norms > self.kf+10E-8) & (np.all(np.absolute(vir) <= self.kmax + 10E-8, axis=1)))
         vir = vir[idx]          # keep only those above fermi but below cutoff
         occ_idx = occ_idx[idx]  # this is the occupied state that generated the vir
         return occ_idx, self.k_to_index(vir)

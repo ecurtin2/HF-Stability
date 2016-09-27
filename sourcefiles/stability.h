@@ -43,6 +43,7 @@ namespace HFStability {
                 void get_vir_N_to_1_map();
                 arma::uvec inv_exc_map_test;
         private:
+                arma::sp_mat get_matrix();
                 std::vector<arma::uword> k_to_idx(arma::vec);
                 std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
                 std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
