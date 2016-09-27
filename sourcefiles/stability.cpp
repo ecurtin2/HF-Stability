@@ -113,6 +113,23 @@ std::vector<arma::uword> HFStability::HEG::k_to_idx(arma::vec k) {
     return indices;
 }
 
+arma::vec HFStability::HEG::occ_idx_to_k(arma::uword idx) {
+    arma::vec k(ndim);
+    for (int i = 0; i < ndim; ++i) {
+        k[i] = kgrid(occ_states(idx, i));
+    }
+    return k;
+}
+
+arma::vec HFStability::HEG::vir_idx_to_k(arma::uword idx) {
+    arma::vec k(ndim);
+    for (int i = 0; i < ndim; ++i) {
+        k[i] = kgrid(vir_states(idx, i));
+    }
+    return k;
+
+}
+
 void HFStability::HEG::get_inv_exc_map() { 
     for (arma::uword i = 0; i < Nexc; ++i) {
         std::vector<arma::uword> key {excitations(i,0), excitations(i,1)};
@@ -242,12 +259,11 @@ arma::sp_mat HFStability::HEG::get_matrix() {
             arma::uword a = excitations(s, 1);
             arma::uword b = excitations(t, 1);
             arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
-            for (int idx = 0; idx < ndim; ++idx){
-                ki(idx) = kgrid(occ_states(i, idx));
-                kj(idx) = kgrid(occ_states(j, idx));
-                ka(idx) = kgrid(occ_states(a, idx));
-                kb(idx) = kgrid(occ_states(b, idx));
-            }
+            ki = occ_idx_to_k(i);
+            kj = occ_idx_to_k(j);
+            ka = vir_idx_to_k(a);
+            kb = vir_idx_to_k(b);
+            
             to_first_BZ(ki);
             to_first_BZ(kj);
             to_first_BZ(ka);
@@ -290,8 +306,6 @@ arma::sp_mat HFStability::HEG::get_matrix() {
 }
 }
 
-
-
 double HFStability::HEG::mvec_test() {
     arma::mat matrix(2*Nexc, 2*Nexc, arma::fill::zeros);
     for (arma::uword i = 0; i < 2*Nexc; ++i) {
@@ -306,10 +320,13 @@ double HFStability::HEG::mvec_test() {
 }
 
 void HFStability::HEG::to_first_BZ(arma::vec& k) {
+    // Translate to first brillioun zone, defined on the
+    // interval [-pi/a .. pi/a)  
+    
     for (int i = 0; i < ndim; ++i) {
-        if (k[i] < -kmax) {
+        if (k[i] < -kmax - 10E-10) {
             k[i] += bzone_length;
-        }else if (k[i] > kmax) {
+        }else if (k[i] > kmax - 10E-10) {
             k[i] -= bzone_length;
         }
     }
@@ -331,51 +348,68 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
         arma::uword a = excitations(s, 1);
         arma::vec ki(ndim);
         arma::vec ka(ndim);
-        for (int idx = 0; idx < ndim; ++idx) {
-            ki[idx] = kgrid(occ_states(i, idx));
-            ka[idx] = kgrid(vir_states(a, idx));
-        }
+        ki = occ_idx_to_k(i);
+        ka = vir_idx_to_k(a);
         for (arma::uword j = 0; j < Nocc; ++j) {
             // j is the same for A and B
             arma::vec kj(ndim);
             arma::vec kb_A(ndim);
             arma::vec kb_B(ndim);
+
             for (int idx = 0; idx < 1; ++idx) {
                 kj[idx] = kgrid(occ_states(j, idx));
-                // find the momentum conserving virtual orbital
-                // A and B matrices have different momentum conservation rules
-                kb_A[idx] = ka[idx] + kj[idx] - ki[idx];
-                kb_B[idx] = ki[idx] + kj[idx] - ka[idx];
             }
+            // find the momentum conserving virtual orbital
+            // A and B matrices have different momentum conservation rules
+            // Exciting only in one dimension, the rest are unchanged
+
+            kb_A[0] = kj[0] + (ka[0] - ki[0]);
+            kb_B[0] = ki[0] + kj[0] - ka[0];
             for (int idx = 1; idx < ndim; ++idx) {
-                // Exciting only in one dimension, the rest are unchanged
                 kb_A[idx] = kj[idx];
                 kb_B[idx] = kj[idx];
             }
             to_first_BZ(kb_A);
             to_first_BZ(kb_B);
-            std::cout << "ki = " << ki(0) << "," << ki(1) << std::endl; //DEBUG
-            std::cout << "kj = " << kj(0) << "," << kj(1) << std::endl; //DEBUG
-            std::cout << "ka = " << ka(0) << "," << ka(1) << std::endl; //DEBUG
-            std::cout << "kb_A = " << kb_A(0) << "," << kb_A(1) << std::endl; //DEBUG
-            std::cout << "kb_B = " << kb_B(0) << "," << kb_B(1) << std::endl; //DEBUG
+            std::cout << "ki = " << std::endl;
+            ki.print();
+            std::cout << "ka = " << std::endl;
+            ka.print();
+            std::cout << "kj = " << std::endl;
+            kj.print();
+            std::cout << "kb_A = " << std::endl;
+            kb_A.print();
+            std::cout << "kb_B = " << std::endl;
+            kb_B.print();
+
+
             // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
             // map of vir_states
             std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
             std::vector<arma::uword> b_B_Nidx = k_to_idx(kb_B);
-            for (int idx = 0; idx < ndim; ++idx) {
-                std::cout << "b_A_Nidx[" << idx << "] = " << b_A_Nidx[idx] << std::endl; //DEBUG
+            std::cout << "b_A_3idx = "; //DEBUG
+            for (int idx = 0; idx < ndim; ++idx) { //DEBUG
+                std::cout <<  b_A_Nidx[idx] << ", "; //DEBUG
+            } //DEBUG
+            std::cout << std::endl; //DEBUG
+            std::cout << "b_B_3idx = "; //DEBUG
+            for (int idx = 0; idx < ndim; ++idx) { //DEBUG
+                std::cout << b_B_Nidx[idx] << ", "; //DEBUG
+            } //DEBUG
+            std::cout << std::endl; //DEBUG
+            arma::uword b_A = vir_N_to_1_map.at(b_A_Nidx);
+            arma::uword b_B = vir_N_to_1_map.at(b_B_Nidx);
+            if (vir_N_to_1_map.find(b_A_Nidx) == vir_N_to_1_map.end()) {
+                // key not in map
+            } else {
+                // key in map
+                
             }
-            for (int idx = 0; idx < ndim; ++idx) {
-                std::cout << "b_B_Nidx[" << idx << "] = " << b_B_Nidx[idx] << std::endl; //DEBUG
-            }
-            arma::uword b_A = vir_N_to_1_map[b_A_Nidx];
-            arma::uword b_B = vir_N_to_1_map[b_B_Nidx];
             // excitations index, needed to know matrix location; A[s,t]
             std::vector<arma::uword> key_A {j, b_A};
             std::vector<arma::uword> key_B {j, b_B};
-            arma::uword t_A = inv_exc_map[key_A];
-            arma::uword t_B = inv_exc_map[key_B];
+            arma::uword t_A = inv_exc_map.at(key_A);
+            arma::uword t_B = inv_exc_map.at(key_B);
 
             std::cout << "s = " << s << std::endl; //DEBUG
             std::cout << "i = " << i << std::endl; //DEBUG

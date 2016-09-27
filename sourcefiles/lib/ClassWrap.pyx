@@ -179,7 +179,9 @@ cdef class PyHEG:
             i1 += N_exc_per_occ
             i2 += N_exc_per_occ
         vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
-        idx= np.where((vir_norms > self.kf+10E-8) & (np.all(np.absolute(vir) <= self.kmax + 10E-8, axis=1)))
+        in_firstBZ = np.all(((vir > (-self.kmax - 10E-10)) & (vir < (self.kmax -10E-10))), axis=1)
+        is_vir = vir_norms > (self.kf + 10E-5)
+        idx = np.where(is_vir & in_firstBZ)
         vir = vir[idx]          # keep only those above fermi but below cutoff
         occ_idx = occ_idx[idx]  # this is the occupied state that generated the vir
         return occ_idx, self.k_to_index(vir)
