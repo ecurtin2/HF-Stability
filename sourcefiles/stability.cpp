@@ -341,29 +341,22 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
     // orbital index and the  _A means this corresponds to the A matrix
 
     arma::vec Mv(Nexc*2.0, arma::fill::zeros);  // matrix vector product
-      // This outer loop fills Mv[0..Nexc]
+    // This outer loop fills Mv[0..Nexc]
     for (arma::uword s = 0; s < Nexc; ++s) {
         // s, i and a are the same for A and B (Seeger/Pople notation)
-        arma::uword i = excitations(s, 0);
-        arma::uword a = excitations(s, 1);
-        arma::vec ki(ndim);
-        arma::vec ka(ndim);
+        arma::uword i = excitations(s, 0), a = excitations(s, 1);
+        arma::vec ki(ndim), ka(ndim);
         ki = occ_idx_to_k(i);
         ka = vir_idx_to_k(a);
         for (arma::uword j = 0; j < Nocc; ++j) {
             // j is the same for A and B
-            arma::vec kj(ndim);
-            arma::vec kb_A(ndim);
-            arma::vec kb_B(ndim);
-
-            for (int idx = 0; idx < 1; ++idx) {
-                kj[idx] = kgrid(occ_states(j, idx));
-            }
+            arma::vec kj(ndim), kb_A(ndim), kb_B(ndim);
+            kj = occ_idx_to_k(j);
+    
             // find the momentum conserving virtual orbital
             // A and B matrices have different momentum conservation rules
             // Exciting only in one dimension, the rest are unchanged
-
-            kb_A[0] = kj[0] + (ka[0] - ki[0]);
+            kb_A[0] = ka[0] + kj[0] - ki[0];
             kb_B[0] = ki[0] + kj[0] - ka[0];
             for (int idx = 1; idx < ndim; ++idx) {
                 kb_A[idx] = kj[idx];
@@ -371,74 +364,20 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
             }
             to_first_BZ(kb_A);
             to_first_BZ(kb_B);
-            std::cout << "ki = " << std::endl;
-            ki.print();
-            std::cout << "ka = " << std::endl;
-            ka.print();
-            std::cout << "kj = " << std::endl;
-            kj.print();
-            std::cout << "kb_A = " << std::endl;
-            kb_A.print();
-            std::cout << "kb_B = " << std::endl;
-            kb_B.print();
-
-
-            // virtual orbital index, k_to_idx needs to first find indices of kgrid, then do an inverse
-            // map of vir_states
-            std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
-            std::vector<arma::uword> b_B_Nidx = k_to_idx(kb_B);
-            std::cout << "b_A_3idx = "; //DEBUG
-            for (int idx = 0; idx < ndim; ++idx) { //DEBUG
-                std::cout <<  b_A_Nidx[idx] << ", "; //DEBUG
-            } //DEBUG
-            std::cout << std::endl; //DEBUG
-            std::cout << "b_B_3idx = "; //DEBUG
-            for (int idx = 0; idx < ndim; ++idx) { //DEBUG
-                std::cout << b_B_Nidx[idx] << ", "; //DEBUG
-            } //DEBUG
-            std::cout << std::endl; //DEBUG
-            arma::uword b_A = vir_N_to_1_map.at(b_A_Nidx);
-            arma::uword b_B = vir_N_to_1_map.at(b_B_Nidx);
-            if (vir_N_to_1_map.find(b_A_Nidx) == vir_N_to_1_map.end()) {
-                // key not in map
+            if (arma::norm(kb_A) < (kf + 10E-8) {
+                    // dont add
             } else {
-                // key in map
-                
-            }
-            // excitations index, needed to know matrix location; A[s,t]
-            std::vector<arma::uword> key_A {j, b_A};
-            std::vector<arma::uword> key_B {j, b_B};
-            arma::uword t_A = inv_exc_map.at(key_A);
-            arma::uword t_B = inv_exc_map.at(key_B);
+                std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
+                arma::uword b_A = vir_N_to_1_map.at(b_A_Nidx);
+                std::vector<arma::uword> key_A {j, b_A};
+                arma::uword t_A = inv_exc_map.at(key_A);
+                if (s == t_A) {
+                    Mv(s) += exc_energies(s) * v(t_A);
+                } else { 
+                    Mv(s) += two_electron(ka, kb_A) * v(t_A);
+                }
 
-            std::cout << "s = " << s << std::endl; //DEBUG
-            std::cout << "i = " << i << std::endl; //DEBUG
-            std::cout << "a = " << a << std::endl; //DEBUG
-            std::cout << "j = " << j << std::endl; //DEBUG
-//            std::cout << "b_A_Nidx = " << b_A_Nidx << std::endl; //DEBUG
-//            std::cout << "b_B_Nidx = " << b_B_Nidx << std::endl; //DEBUG
-//            std::cout << "key_A = " << key_A << std::endl; //DEBUG
-//            std::cout << "key_B = " << key_B << std::endl; //DEBUG
-            std::cout << "b_A = " << b_A << std::endl; //DEBUG
-            std::cout << "b_B = " << b_B << std::endl; //DEBUG
-            std::cout << "t_A = " << t_B << std::endl; //DEBUG
-            std::cout << "t_B = " << t_B << std::endl; //DEBUG
-            
-            Mv(s) += two_electron(ka, kj) * v(t_B + Nexc); // B is offset by Nexc because of the layout of H
-            if (s == t_A) { // if diagonal element of A
-                Mv(s) += exc_energies(s) * v(t_A);
-            } else { // off-diagonal of A
-                Mv(s) += two_electron(ka, kb_A) * v(t_A);
             }
-            
-            //This is the second half of the vector
-            Mv(s + Nexc) += two_electron(ka, kj) * v(t_B);
-            if ((s - Nexc) == t_A) { // if diagonal element of A
-                Mv(s + Nexc) += exc_energies(s) * v(t_A + Nexc);
-            } else { // off-diagonal of A
-                Mv(s + Nexc) += two_electron(ka, kb_A) * v(t_A + Nexc);
-            }
-
 
         }
     }
