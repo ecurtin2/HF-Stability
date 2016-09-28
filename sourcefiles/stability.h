@@ -44,6 +44,9 @@ namespace HFStability {
                 arma::uvec inv_exc_map_test;
         private:
                 arma::sp_mat get_matrix();
+                arma::uword kb_j_to_t(arma::vec, arma::uword);
+                arma::vec A_matvec_prod(arma::vec);
+                arma::vec B_matvec_prod(arma::vec);
                 arma::vec occ_idx_to_k(arma::uword);
                 arma::vec vir_idx_to_k(arma::uword);
                 std::vector<arma::uword> k_to_idx(arma::vec);

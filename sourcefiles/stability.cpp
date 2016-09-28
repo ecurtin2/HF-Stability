@@ -336,49 +336,81 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
     get_vir_N_to_1_map();
     get_inv_exc_map();
 
-    // so the convention for orbital indices can be used
-    // orbital indices will be of the form i_A, where i is the 
-    // orbital index and the  _A means this corresponds to the A matrix
-
     arma::vec Mv(Nexc*2.0, arma::fill::zeros);  // matrix vector product
-    // This outer loop fills Mv[0..Nexc]
+    /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
+                                         | B* A*| |v2|     | Mv2 |
+        Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
+        Mv1 = Av1  + Bv2
+        Mv2 = B*v1 + A*v2 
+    */
+    arma::vec v1 = v.head(Nexc);
+    arma::vec v2 = v.tail(Nexc);
+    arma::vec Mv1(Nexc, arma::fill::zeros), Mv2(Nexc, arma::fill::zeros);
+    Mv1 = A_matvec_prod(v1) + B_matvec_prod(v2);
+    Mv2 = B_matvec_prod(v1) + A_matvec_prod(v2);
+    Mv = arma::join_cols(Mv1, Mv2);
+    return Mv;
+}
+
+arma::uword HFStability::HEG::kb_j_to_t(arma::vec kb, arma::uword j) {
+    std::vector<arma::uword> b_N_idx = k_to_idx(kb);
+    arma::uword b = vir_N_to_1_map.at(b_N_idx);
+    std::vector<arma::uword> key {j, b};
+    arma::uword t = inv_exc_map.at(key);
+    return t;
+}
+
+arma::vec HFStability::HEG::A_matvec_prod(arma::vec v) {
+    assert (v.n_elem == Nexc);
+    arma::vec Mv(Nexc, arma::fill::zeros);
     for (arma::uword s = 0; s < Nexc; ++s) {
-        // s, i and a are the same for A and B (Seeger/Pople notation)
         arma::uword i = excitations(s, 0), a = excitations(s, 1);
         arma::vec ki(ndim), ka(ndim);
         ki = occ_idx_to_k(i);
         ka = vir_idx_to_k(a);
         for (arma::uword j = 0; j < Nocc; ++j) {
-            // j is the same for A and B
-            arma::vec kj(ndim), kb_A(ndim), kb_B(ndim);
+            arma::vec kj(ndim), kb(ndim);
             kj = occ_idx_to_k(j);
-    
-            // find the momentum conserving virtual orbital
-            // A and B matrices have different momentum conservation rules
-            // Exciting only in one dimension, the rest are unchanged
-            kb_A[0] = ka[0] + kj[0] - ki[0];
-            kb_B[0] = ki[0] + kj[0] - ka[0];
-            for (int idx = 1; idx < ndim; ++idx) {
-                kb_A[idx] = kj[idx];
-                kb_B[idx] = kj[idx];
-            }
-            to_first_BZ(kb_A);
-            to_first_BZ(kb_B);
-            if (arma::norm(kb_A) < (kf + 10E-8) {
-                    // dont add
-            } else {
-                std::vector<arma::uword> b_A_Nidx = k_to_idx(kb_A);
-                arma::uword b_A = vir_N_to_1_map.at(b_A_Nidx);
-                std::vector<arma::uword> key_A {j, b_A};
-                arma::uword t_A = inv_exc_map.at(key_A);
-                if (s == t_A) {
-                    Mv(s) += exc_energies(s) * v(t_A);
+            kb = ka + kj - ki; // Momentum conservation for <aj|bi>
+            to_first_BZ(kb);
+            if (arma::norm(kb) > (kf + 10E-8)) {
+                // only if momentum conserving state is virtual
+                arma::uword t = kb_j_to_t(kb, j);
+                if (s == t) {
+                    Mv(s) += exc_energies(s) * v(t);
                 } else { 
-                    Mv(s) += two_electron(ka, kb_A) * v(t_A);
+                    Mv(s) += -1.0 * two_electron(ka, kb) * v(t);
                 }
 
             }
+        }
+    }
+    return Mv;
+}
 
+arma::vec HFStability::HEG::B_matvec_prod(arma::vec v) {
+    assert (v.n_elem == Nexc);
+    arma::vec Mv(Nexc, arma::fill::zeros);
+    for (arma::uword s = 0; s < Nexc; ++s) {
+        arma::uword i = excitations(s, 0), a = excitations(s, 1);
+        arma::vec ki(ndim), ka(ndim);
+        ki = occ_idx_to_k(i);
+        ka = vir_idx_to_k(a);
+        for (arma::uword j = 0; j < Nocc; ++j) {
+            arma::vec kj(ndim), kb(ndim);
+            kj = occ_idx_to_k(j); 
+            kb = kj + ki - ka; // Momentum conservation for <ab|ji>
+            to_first_BZ(kb);
+            if (arma::norm(kb) > (kf + 10E-8)) {
+                // only if momentum conserving state is virtual
+                arma::uword t = kb_j_to_t(kb, j);
+                if (s == t) {
+                    Mv(s) += exc_energies(s) * v(t);
+                } else { 
+                    Mv(s) += -1.0 * two_electron(ka, kj) * v(t);
+                }
+
+            }
         }
     }
     return Mv;
