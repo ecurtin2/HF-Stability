@@ -10,6 +10,8 @@ from scipy import special as sp
 import numpy as np
 cimport numpy as np
 cimport cython
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # This group imports from ./lib
 include "lib/cyarma.pyx"    

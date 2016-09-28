@@ -3,6 +3,7 @@
 #ifndef PI
 	#define PI 3.14159265358979323846264338327
 #endif
+//#define ARMA_NO_DEBUG
 #include "armadillo"
 #include <map>
 #include <vector>
@@ -16,15 +17,12 @@ namespace HFStability {
 		uint64_t    Nocc, Nvir, Nexc, N_elec, Nk;
                 int ndim;
 		arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
-                arma::vec vectest;
-                arma::vec vectest1;
-                arma::vec vectest2;
+                arma::vec inp_test_vec, out_vec1, out_vec2;
                 arma::mat mattest;
 		arma::umat occ_states, vir_states, excitations;
 
 		//Methods
                 double mvec_test();
-                arma::vec mat_vec_prod(arma::vec);
                 void   calc_energy_wrap(bool);
                 void   calc_exc_energy();
                 arma::uword get_k_to_idx(double[]);
@@ -42,11 +40,14 @@ namespace HFStability {
                 void get_inv_exc_map();
                 void get_vir_N_to_1_map();
                 arma::uvec inv_exc_map_test;
+                void build_mattest();
+                void matvec_prod_arma();
+                void matvec_prod_me();
         private:
-                arma::sp_mat get_matrix();
                 arma::uword kb_j_to_t(arma::vec, arma::uword);
-                arma::vec A_matvec_prod(arma::vec);
-                arma::vec B_matvec_prod(arma::vec);
+                arma::vec matvec_prod_3A(arma::vec);
+                arma::vec matvec_prod_3B(arma::vec);
+                arma::vec matvec_prod_3H(arma::vec);
                 arma::vec occ_idx_to_k(arma::uword);
                 arma::vec vir_idx_to_k(arma::uword);
                 std::vector<arma::uword> k_to_idx(arma::vec);

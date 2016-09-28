@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <time.h>
 #include "stability.h"
-////#define ARMA_NO_DEBUG
 
 void HFStability::HEG::calc_exc_energy() {
     exc_energies.zeros(Nexc);
@@ -248,75 +247,22 @@ double HFStability::HEG::get_3H(arma::uword i, arma::uword j) {
     }
 }
 
-arma::sp_mat HFStability::HEG::get_matrix() {
-    // A loop (first quadrant)
-    arma::umat indices;
-    arma::vec vals;
-    for (arma::uword s = 0; s < Nexc; ++s) {
-        for (arma::uword t = 0; t < Nexc; ++t) {
-            arma::uword i = excitations(s, 0);
-            arma::uword j = excitations(t, 0);
-            arma::uword a = excitations(s, 1);
-            arma::uword b = excitations(t, 1);
-            arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
-            ki = occ_idx_to_k(i);
-            kj = occ_idx_to_k(j);
-            ka = vir_idx_to_k(a);
-            kb = vir_idx_to_k(b);
-            
-            to_first_BZ(ki);
-            to_first_BZ(kj);
-            to_first_BZ(ka);
-            to_first_BZ(kb);
-            bool k_conserved = arma::all(ka + kj - ki - kb < 10E-10);
-            if (k_conserved) {
-                vals.insert_rows(vals.n_elem, get_3A(s, t));
-        }
-    }
-
-    // B loop (second quadrant)
-    for (arma::uword s = 0; s < Nexc; ++s) {
-        for (arma::uword t = Nexc; t < 2*Nexc; ++t) {
-            arma::uword i = excitations(s, 0);
-            arma::uword j = excitations(t, 0);
-            arma::uword a = excitations(s, 1);
-            arma::uword b = excitations(t, 1);
-            arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
-            for (int idx = 0; idx < ndim; ++idx){
-                ki(idx) = kgrid(occ_states(i, idx));
-                kj(idx) = kgrid(occ_states(j, idx));
-                ka(idx) = kgrid(occ_states(a, idx));
-                kb(idx) = kgrid(occ_states(b, idx));
-            }
-            to_first_BZ(ki);
-            to_first_BZ(kj);
-            to_first_BZ(ka);
-            to_first_BZ(kb);
-            bool k_conserved = arma::all(ka + kb - ki - kj < 10E-10);
-            if (k_conserved) {
-                vals.insert_rows(vals.n_elem, get_3B(s, t));
-            }else{
-                return 0;
-            }
-        }
-    }
-    arma::sp_mat matrix = arma::sp_mat(indices, vals);
-    return matrix;
-
-}
-}
-
-double HFStability::HEG::mvec_test() {
-    arma::mat matrix(2*Nexc, 2*Nexc, arma::fill::zeros);
+void HFStability::HEG::build_mattest() {
+    mattest.set_size(2*Nexc, 2*Nexc);
     for (arma::uword i = 0; i < 2*Nexc; ++i) {
         for (arma::uword j = 0; j < 2*Nexc; ++j) {
-            matrix(i,j) =  get_3H(i,j);
+            mattest(i,j) =  get_3H(i,j);
         }
     }
-    vectest1 = matrix * vectest;
-    vectest2 = mat_vec_prod(vectest);
-    mattest = matrix;
-    return 2.0;
+}
+
+void HFStability::HEG::matvec_prod_arma() {
+    out_vec1 = mattest * inp_test_vec;
+}
+
+void HFStability::HEG::matvec_prod_me() {
+    out_vec2 = matvec_prod_3H(inp_test_vec);
+
 }
 
 void HFStability::HEG::to_first_BZ(arma::vec& k) {
@@ -332,7 +278,7 @@ void HFStability::HEG::to_first_BZ(arma::vec& k) {
     }
 }
 
-arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
+arma::vec HFStability::HEG::matvec_prod_3H(arma::vec v) {
     get_vir_N_to_1_map();
     get_inv_exc_map();
 
@@ -346,8 +292,8 @@ arma::vec HFStability::HEG::mat_vec_prod(arma::vec v) {
     arma::vec v1 = v.head(Nexc);
     arma::vec v2 = v.tail(Nexc);
     arma::vec Mv1(Nexc, arma::fill::zeros), Mv2(Nexc, arma::fill::zeros);
-    Mv1 = A_matvec_prod(v1) + B_matvec_prod(v2);
-    Mv2 = B_matvec_prod(v1) + A_matvec_prod(v2);
+    Mv1 = matvec_prod_3A(v1) + matvec_prod_3B(v2);
+    Mv2 = matvec_prod_3B(v1) + matvec_prod_3A(v2);
     Mv = arma::join_cols(Mv1, Mv2);
     return Mv;
 }
@@ -360,7 +306,7 @@ arma::uword HFStability::HEG::kb_j_to_t(arma::vec kb, arma::uword j) {
     return t;
 }
 
-arma::vec HFStability::HEG::A_matvec_prod(arma::vec v) {
+arma::vec HFStability::HEG::matvec_prod_3A(arma::vec v) {
     assert (v.n_elem == Nexc);
     arma::vec Mv(Nexc, arma::fill::zeros);
     for (arma::uword s = 0; s < Nexc; ++s) {
@@ -388,7 +334,7 @@ arma::vec HFStability::HEG::A_matvec_prod(arma::vec v) {
     return Mv;
 }
 
-arma::vec HFStability::HEG::B_matvec_prod(arma::vec v) {
+arma::vec HFStability::HEG::matvec_prod_3B(arma::vec v) {
     assert (v.n_elem == Nexc);
     arma::vec Mv(Nexc, arma::fill::zeros);
     for (arma::uword s = 0; s < Nexc; ++s) {
@@ -404,12 +350,7 @@ arma::vec HFStability::HEG::B_matvec_prod(arma::vec v) {
             if (arma::norm(kb) > (kf + 10E-8)) {
                 // only if momentum conserving state is virtual
                 arma::uword t = kb_j_to_t(kb, j);
-                if (s == t) {
-                    Mv(s) += exc_energies(s) * v(t);
-                } else { 
-                    Mv(s) += -1.0 * two_electron(ka, kj) * v(t);
-                }
-
+                Mv(s) += -1.0 * two_electron(ka, kj) * v(t);
             }
         }
     }

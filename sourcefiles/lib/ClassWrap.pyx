@@ -14,6 +14,8 @@ from scipy import special as sp
 import numpy as np
 cimport numpy as np
 cimport cython
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # This group imports from ./lib
 include "lib/cyarma.pyx"    
@@ -31,14 +33,11 @@ cdef extern from "stability.h" namespace "HFStability":
         long long unsigned int    Nocc, Nvir, Nexc, N_elec, Nk
         int ndim
         vec  occ_energies, vir_energies, exc_energies, kgrid
-        vec vectest
-        vec vectest1
-        vec vectest2
+        vec inp_test_vec, out_vec1, out_vec2
         mat mattest
         umat occ_states, vir_states, excitations
         #Methods
         double mvec_test()
-        vec mat_vec_prod(vec)
         void   calc_energy_wrap(bool)
         void   calc_exc_energy()
         long long unsigned int get_k_to_idx(double[])
@@ -56,6 +55,9 @@ cdef extern from "stability.h" namespace "HFStability":
         void get_inv_exc_map()
         void get_vir_N_to_1_map()
         uvec inv_exc_map_test
+        void build_mattest()
+        void matvec_prod_arma()
+        void matvec_prod_me()
 
 
 ########################################################################
@@ -70,7 +72,6 @@ cdef class PyHEG:
 
 
     #All constants of calculation specified by __init__
-    #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
     def __init__(self, ndim=3, rs=1.0, Nk=4):
         """This is an init docstring"""
         self.rs = float(rs)
@@ -260,8 +261,102 @@ cdef class PyHEG:
         test = self.inv_exc_map_test
         assert np.all(test == np.arange(len(test))), 'Inverse excitation map (2D) Incorrect.'
         
-    def mv_test(self):
-        self.c_HEG.mvec_test()
+    def matvec_prod_arma(self):
+        self.c_HEG.build_mattest()
+        self.c_HEG.matvec_prod_arma()
+        
+    def mv_is_working(self):
+        vec = np.random.rand(2 * self.Nexc)
+        self.inp_test_vec = vec
+        self.c_HEG.build_mattest()
+        self.c_HEG.matvec_prod_arma()
+        self.c_HEG.matvec_prod_me()
+        assert np.all(np.isclose(self.out_vec1, self.out_vec2)), 'Matrix Vector Disagrees With Arma'
+        return True
+    
+    def profile(self, func): 
+        import pstats, cProfile
+        cProfile.runctx(func, globals(), locals(), "Profile.prof")
+        s = pstats.Stats("Profile.prof")
+        s.strip_dirs().sort_stats("time").print_stats()
+    
+    #################################################################################
+    #                                                                               #
+    #                          Plotting Functions                                   # 
+    #                                                                               #
+    #################################################################################
+    
+    def plot_1stBZ(self, spec_alpha=0.20):
+        # Draw Shapes
+        assert (self.ndim == 2), 'Only 2d is supported right now'
+        circle = plt.Circle((0, 0), radius=self.kf, fc='none', linewidth=1)
+        sqrpoints = [[self.kmax, self.kmax]
+                    ,[self.kmax, -self.kmax]
+                    ,[-self.kmax, -self.kmax]
+                    ,[-self.kmax, self.kmax]]
+        square =plt.Polygon(sqrpoints, edgecolor=sns.color_palette()[0], fill=None)
+        plt.gca().add_patch(circle)
+        plt.gca().add_patch(square)
+    
+        # Get 'spectator virtuals'
+        allpts = gm.cartesian([self.kgrid[:self.Nk-1], self.kgrid[:self.Nk-1]])
+        mask = []
+        for idx, pt in enumerate(allpts):
+            occ = np.isclose(pt, self.kgrid[self.occ_states]).all(axis=1).any()
+            vir = np.isclose(pt, self.kgrid[self.vir_states]).all(axis=1).any()
+            if not (occ or vir):
+                mask.append(idx)
+        mask = np.asarray(mask)
+        spec_virs = allpts[mask]
+    
+        plt.scatter(self.kgrid[self.occ_states[:,0]], self.kgrid[self.occ_states[:,1]], 
+                    c=sns.color_palette()[0], label='Occupied')
+        plt.scatter(self.kgrid[self.vir_states[:,0]], self.kgrid[self.vir_states[:,1]],
+                    c=sns.color_palette()[2], label='Virtual')
+        plt.scatter(spec_virs[:,0], spec_virs[:,1], 
+                    c=sns.color_palette()[2], alpha=spec_alpha, label='Spectator Virtuals')
+        scale = 1.05
+        plt.xlim(-scale*self.kmax, scale*self.kmax)
+        plt.ylim(-scale*self.kmax, scale*self.kmax)
+        plt.legend(loc='center left', bbox_to_anchor=[0.95,0.5])
+        plt.axis('off')
+        plt.title('The First Brillouin Zone')
+    
+    def plot_energy(self, analytic=True, Discretized=True):
+        scale = 1.2
+        #Analytic plot
+        xmax = 2.0 * self.kf
+        x = np.linspace(0, xmax, 500)
+        energy_x = np.array([self.analytic_energy(i) for i in x]) / self.fermi_energy
+        kinetic_x = np.array([0.5 * i**2 for i in x]) / self.fermi_energy
+        exch_x = np.array([self.analytic_exch(i) for i in x]) / self.fermi_energy
+        x = x / self.kf  #rescale for plot
+        if analytic:
+            plt.plot(x, energy_x, 'k-' , label='Total')
+            plt.plot(x, kinetic_x, 'k:', label='Kinetic')
+            plt.plot(x, exch_x, 'k--', label='Exchange')
+        plt.title('Orbital Energies\n'+str(self.ndim) + 'D, rs = ' + str(self.rs))
+        plt.xlabel(r'$\frac{k}{k_f}$')
+        plt.ylabel(r'$\frac{\epsilon_k^{HF}}{\epsilon_F}$')
+        plt.xlim(0, 2)
+        plt.ylim(scale * np.amin(energy_x), scale * np.amax(energy_x))
+    
+        #Discretized Plot
+        y = self.occ_energies / self.fermi_energy
+        x = gm.row_norm(self.kgrid[self.occ_states]) / self.kf
+        if Discretized:
+            plt.plot(x, y, '.', c=sns.color_palette()[0], label='Occupied')
+        y = self.vir_energies / self.fermi_energy
+        x = gm.row_norm(self.kgrid[self.vir_states]) / self.kf
+        if Discretized:
+            plt.plot(x, y, '.', c=sns.color_palette()[2], label='Virtual')
+    
+    def plot_exc_hist(self):
+        plt.hist(self.exc_energies, self.Nexc/30)
+        plt.title('Excitation Energy Histogram')
+        plt.xlabel('$\epsilon_{vir} - \epsilon_{occ}$ (Hartree)')
+        plt.ylabel('Count')
+    
 
 
 ########################################################################
@@ -415,31 +510,31 @@ cdef class PyHEG:
     kgrid = property(get_kgrid, set_kgrid)
     
 
-    def get_vectest(self):
-        """(np.ndarray[double, ndim=1]) Get/Set vectest"""
-        return vec_to_numpy(self.c_HEG.vectest)
-    def set_vectest(self, np.ndarray[double, ndim=1] 
+    def get_inp_test_vec(self):
+        """(np.ndarray[double, ndim=1]) Get/Set inp_test_vec"""
+        return vec_to_numpy(self.c_HEG.inp_test_vec)
+    def set_inp_test_vec(self, np.ndarray[double, ndim=1] 
                      value not None):
-        self.c_HEG.vectest = numpy_to_vec_d(value)
-    vectest = property(get_vectest, set_vectest)
+        self.c_HEG.inp_test_vec = numpy_to_vec_d(value)
+    inp_test_vec = property(get_inp_test_vec, set_inp_test_vec)
     
 
-    def get_vectest1(self):
-        """(np.ndarray[double, ndim=1]) Get/Set vectest1"""
-        return vec_to_numpy(self.c_HEG.vectest1)
-    def set_vectest1(self, np.ndarray[double, ndim=1] 
+    def get_out_vec1(self):
+        """(np.ndarray[double, ndim=1]) Get/Set out_vec1"""
+        return vec_to_numpy(self.c_HEG.out_vec1)
+    def set_out_vec1(self, np.ndarray[double, ndim=1] 
                      value not None):
-        self.c_HEG.vectest1 = numpy_to_vec_d(value)
-    vectest1 = property(get_vectest1, set_vectest1)
+        self.c_HEG.out_vec1 = numpy_to_vec_d(value)
+    out_vec1 = property(get_out_vec1, set_out_vec1)
     
 
-    def get_vectest2(self):
-        """(np.ndarray[double, ndim=1]) Get/Set vectest2"""
-        return vec_to_numpy(self.c_HEG.vectest2)
-    def set_vectest2(self, np.ndarray[double, ndim=1] 
+    def get_out_vec2(self):
+        """(np.ndarray[double, ndim=1]) Get/Set out_vec2"""
+        return vec_to_numpy(self.c_HEG.out_vec2)
+    def set_out_vec2(self, np.ndarray[double, ndim=1] 
                      value not None):
-        self.c_HEG.vectest2 = numpy_to_vec_d(value)
-    vectest2 = property(get_vectest2, set_vectest2)
+        self.c_HEG.out_vec2 = numpy_to_vec_d(value)
+    out_vec2 = property(get_out_vec2, set_out_vec2)
     
 
     def get_mattest(self):

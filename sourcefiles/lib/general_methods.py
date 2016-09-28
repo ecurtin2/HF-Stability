@@ -52,6 +52,15 @@ def cartesian(arrays, out=None):
             out[j*m:(j+1)*m,1:] = out[0:m,1:]
     return out
 
+def row_norm(ary):
+    return np.sqrt((ary*ary).sum(axis=1))
+
+def profile(func): 
+    import pstats, cProfile
+    cProfile.runctx(func, globals(), locals(), "Profile.prof")
+    s = pstats.Stats("Profile.prof")
+    s.strip_dirs().sort_stats("time").print_stats()
+
 '''
 def one_to_three(index):
     """Return 3 indices corresponding to the 1 index mapping"""
