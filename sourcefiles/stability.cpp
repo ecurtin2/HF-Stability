@@ -357,7 +357,9 @@ arma::vec HFStability::HEG::matvec_prod_3B(arma::vec v) {
     return Mv;
 }
 
-double HFStability::HEG::davidson_algorithm(
+double HFSta
+
+void HFStability::HEG::davidson_algorithm(
     uint64_t N,
     uint64_t max_its, 
     uint64_t max_sub_size,
@@ -365,7 +367,8 @@ double HFStability::HEG::davidson_algorithm(
     arma::uword block_size,
     arma::mat(guess_evecs),
     double tolerance, 
-    double (HFStability::HEG::*matrix)(uint64_t, uint64_t)) {
+    double (HFStability::HEG::*matrix)(uint64_t, uint64_t) 
+    double (HFStability::HEG::*matvec_product)(arma::vec v)) {
     
     uint64_t sub_size = guess_evecs.n_cols;
     uint64_t old_sub_size = 0;    
@@ -400,19 +403,22 @@ double HFStability::HEG::davidson_algorithm(
 
         //This is matrix-matrix mult M*V, it looks this way to minimize
         //function calls to this->matrix which were a limiting step.
-        for (arma::uword j = 0; j < N; ++j) {
-            for (arma::uword l = 0; l < N; ++l) {
-                tempnum = (this->*matrix)(j,l);
-                for (arma::uword k = old_sub_size; k < sub_size; ++k) {
-                    //guess_evecs_t is the row major version of guess_evecs
-                    temp_mat(j, k-old_sub_size) += tempnum * guess_evecs_t(k,l);
-                }
-            }
-        }
+     //   for (arma::uword j = 0; j < N; ++j) {
+     //       for (arma::uword l = 0; l < N; ++l) {
+     //           tempnum = (this->*matrix)(j,l);
+     //           for (arma::uword k = old_sub_size; k < sub_size; ++k) {
+     //               //guess_evecs_t is the row major version of guess_evecs
+     //               temp_mat(j, k-old_sub_size) += tempnum * guess_evecs_t(k,l);
+     //           }
+     //       }
+     //   }
         // MV complete
-
+    
+        arma::vec Mv(N);
         //temp_mat has new matrix vector products
-        mat_vec_prod = arma::join_rows(mat_vec_prod, temp_mat);
+        for (arma::uword j = 0; j < num_new_vecs; ++j) { 
+            mat_vec_prod = arma::join_rows(mat_vec_prod, Mv);
+        }
 
         // V.t * MV
         sub_mat = guess_evecs_t * mat_vec_prod;
