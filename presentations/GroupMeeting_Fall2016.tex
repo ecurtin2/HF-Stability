@@ -2,7 +2,7 @@
 
 \usetheme{metropolis}
 \usepackage{appendixnumberbeamer}
-
+\usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage[scale=2]{ccicons}
 
@@ -17,7 +17,7 @@
 \date{\today}
 \author{Evan Curtin}
 \institute{University of Illinois at Urbana-Champaign}
-% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+\titlegraphic{\hfill\includegraphics[height=1.5cm]{../images/imark_bold.eps}}
 
 \begin{document}
 
@@ -35,15 +35,15 @@
 		\begin{tabular}{ | c | c | c | c |}
 			\hline
 			 Method & Spinorbital & DoF & Eigenfunction of\\ 
-			\hline
+			\hline 
 
 			Restricted \rule{0pt}{7ex} & 
-			\begin{tabular}{c@{}c@{}} 
-			$\chi_j^\alpha(\vec{r},\sigma) = 
-			\sum\limits_{i=1}^{N} c_{ij}\phi_i\left(\vec{r \,}\right)\alpha(\sigma)$
-			\\ \rule{0pt}{4ex} 
-			$\chi_j^\beta(\vec{r},\sigma) =
-			\sum\limits_{i=1}^{N} c_{ij}\phi_i\left(\vec{r \,}\right)\beta(\sigma)$
+			\begin{tabular}{c@{}c@{}}				
+				$\chi_j^\alpha(\vec{r},\sigma) = 
+				\sum\limits_{i=1}^{N} c_{ij}\phi_i\left(\vec{r \,}\right)\alpha(\sigma)$
+				\\ \rule{0pt}{4ex} 
+				$\chi_j^\beta(\vec{r},\sigma) =
+				\sum\limits_{i=1}^{N} c_{ij}\phi_i\left(\vec{r \,}\right)\beta(\sigma)$
 			\end{tabular}
 			& N/2 
 			& $\hat{S}^2$, $\hat{S}_z$
@@ -68,15 +68,37 @@
 				$+c_{ij}^\beta \phi_i(\vec{r \,}) \beta(\sigma)]  $
 			\end{tabular} 
 			& 2N & Neither \\ [5ex]
-
-			\hline
+			\hline			
 		\end{tabular}
 	\end{center}
+\end{frame}
 
-\end{frame}
 \begin{frame}[fragile]{Restricted Minimization}
-	\includegraphics[width=0.7\linewidth]{../images/pes.jpeg}
+	\begin{itemize}
+		\item<1-> Hartee-Fock SCF guarantees only stationary energy w.r.t. change in orbitals
+		\item<1-> The solution may be a maximum, minimum or saddle point
+		\begin{itemize}
+			\item<2-> \emph{Within the constrained space}
+		\end{itemize}
+	\end{itemize}
+	\begin{center}
+		\includegraphics[width=0.5\textwidth, trim={3cm, 2cm, 3cm, 2cm}, clip]{../images/1d_extrema.pdf}
+	\end{center}
 \end{frame}
+
+\begin{frame}[fragile]{Restricted Minimization}
+	\includegraphics[width=0.5\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_globalmin.jpeg}
+\end{frame}
+
+\begin{frame}[fragile]{Restricted Minimization}
+	\includegraphics[width=0.5\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_saddle.jpeg}
+\end{frame}
+
+\begin{frame}[fragile]{Restricted Minimization}
+	\includegraphics[width=0.5\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_nonstationary.jpeg}
+\end{frame}
+
+
 
 \section{Titleformats}
 
