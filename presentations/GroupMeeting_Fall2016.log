@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  30 SEP 2016 15:56
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  3 OCT 2016 15:30
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1271,7 +1271,7 @@ Package pdftex.def Info: ../images/1d_extrema.pdf used on input line 10.
 
 
 (./GroupMeeting_Fall2016.vrb
-<../images/const_opt_globalmin.jpeg, id=102, 1204.5pt x 981.6675pt>
+<../images/const_opt_globalmin.jpeg, id=100, 1204.5pt x 981.6675pt>
 File: ../images/const_opt_globalmin.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_globalmin.jpeg>
@@ -1284,7 +1284,7 @@ Package pdftex.def Info: ../images/const_opt_globalmin.jpeg used on input line
 \openout4 = `GroupMeeting_Fall2016.vrb'.
 
  (./GroupMeeting_Fall2016.vrb
-<../images/const_opt_saddle.jpeg, id=111, 1204.5pt x 826.08624pt>
+<../images/const_opt_saddle.jpeg, id=109, 1204.5pt x 826.08624pt>
 File: ../images/const_opt_saddle.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_saddle.jpeg>
@@ -1297,7 +1297,7 @@ Package pdftex.def Info: ../images/const_opt_saddle.jpeg used on input line 2.
 
 
 (./GroupMeeting_Fall2016.vrb
-<../images/const_opt_nonstationary.jpeg, id=119, 1204.5pt x 981.6675pt>
+<../images/const_opt_nonstationary.jpeg, id=117, 1204.5pt x 981.6675pt>
 File: ../images/const_opt_nonstationary.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_nonstationary.jpeg>
@@ -1464,11 +1464,11 @@ LaTeX Warning: There were undefined references.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 384.
  ) 
 Here is how much of TeX's memory you used:
- 31176 strings out of 493029
- 754728 string characters out of 6136235
+ 31172 strings out of 493029
+ 754684 string characters out of 6136235
  949028 words of memory out of 5000000
- 33958 multiletter control sequences out of 15000+600000
- 15356 words of font info for 57 fonts, out of 8000000 for 9000
+ 33956 multiletter control sequences out of 15000+600000
+ 14744 words of font info for 55 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  71i,18n,102p,1743b,2105s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/ccicons/ccicons.pfb></usr/s
@@ -1484,16 +1484,14 @@ nts/cm/cmss8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
 cmss9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx1
 0.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb
 ></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr
-/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmtt10.pfb>
-Output written on GroupMeeting_Fall2016.pdf (36 pages, 357122 bytes).
+/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on GroupMeeting_Fall2016.pdf (36 pages, 341394 bytes).
 PDF statistics:
- 363 PDF objects out of 1000 (max. 8388607)
- 282 compressed objects within 3 object streams
+ 355 PDF objects out of 1000 (max. 8388607)
+ 276 compressed objects within 3 object streams
  78 named destinations out of 1000 (max. 500000)
  138 words of extra memory for PDF output out of 10000 (max. 10000000)
 
