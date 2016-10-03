@@ -146,6 +146,11 @@ def calc_vir_states(self):
 
 def calc_exc_energies(self):
     self.c_HEG.calc_exc_energy()
+    #sort excitations in ascending order
+    idx = np.argsort(self.exc_energies)
+    self.excitations  = np.asfortranarray(self.excitations[idx])
+    self.exc_energies = np.asfortranarray(self.exc_energies[idx])
+
 
 def calc_occ_energies(self):
     self.c_HEG.calc_energy_wrap(False) # False = occupied energies
@@ -206,6 +211,48 @@ def profile(self, func):
     cProfile.runctx(func, globals(), locals(), "Profile.prof")
     s = pstats.Stats("Profile.prof")
     s.strip_dirs().sort_stats("time").print_stats()
+
+def davidson(self, guess_evecs, which=0, tolerance=10E-8, maxits=50, maxsubsize=None, numroots=1, blocksize=1):
+    """Run the davidson algorithm
+
+    Description:
+            Wrapper for the davidson algorithm
+    Args:
+            (int) which:
+                Determines which case of stability
+                    0 - (Default) Triplet H
+                            
+            (2D ndarray) guess_evecs
+            (float)      tolerance
+            (int)        maxits
+            (int)        maxsubsize
+            (int)        numroots
+            (int)        blocksize            
+    Returns:
+            Nothing
+    Raises:
+            No exceptions
+    """
+
+    cdef long long unsigned int MAXITS, MAXSUBSIZE, NUMROOTS, BLOCKSIZE
+    cdef double TOLERANCE
+    cdef mat GUESS_EVECS
+    cdef int WHICH
+    if maxsubsize == None:
+        maxsubsize = int(np.round(guess_evecs.shape[0] / 2))
+
+    assert (blocksize <= guess_evecs.shape[1]), 'Must guess at least as many vectors as blocksize'
+    MAXITS      = maxits
+    MAXSUBSIZE  = maxsubsize
+    NUMROOTS    = numroots
+    BLOCKSIZE   = blocksize
+    TOLERANCE   = tolerance
+    GUESS_EVECS = numpy_to_mat_d(guess_evecs)
+    WHICH       = which
+    self.c_HEG.davidson_wrapper(MAXITS, MAXSUBSIZE, NUMROOTS, 
+                                BLOCKSIZE, GUESS_EVECS, TOLERANCE, WHICH)
+
+
 
 #################################################################################
 #                                                                               #

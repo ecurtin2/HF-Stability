@@ -20,6 +20,8 @@ namespace HFStability {
                 arma::vec inp_test_vec, out_vec1, out_vec2;
                 arma::mat mattest;
 		arma::umat occ_states, vir_states, excitations;
+                arma::vec dav_vals;
+                arma::mat dav_vecs;
 
 		//Methods
                 double mvec_test();
@@ -43,6 +45,14 @@ namespace HFStability {
                 void build_mattest();
                 void matvec_prod_arma();
                 void matvec_prod_me();
+                void davidson_wrapper(arma::uword 
+                                     ,arma::uword 
+                                     ,arma::uword 
+                                     ,arma::uword 
+                                     ,arma::mat   
+                                     ,double      
+                                     ,int         
+                                     );
         private:
                 arma::uword kb_j_to_t(arma::vec, arma::uword);
                 arma::vec matvec_prod_3A(arma::vec);
@@ -53,14 +63,16 @@ namespace HFStability {
                 std::vector<arma::uword> k_to_idx(arma::vec);
                 std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
                 std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
-		double davidson_algorithm(uint64_t, 
-				uint64_t,
-			   	uint64_t, 
-				uint64_t, 
-				arma::uword,
-			   	arma::mat,
-				double, 
-			   	double (HFStability::HEG::*)(uint64_t, uint64_t));
+		void davidson_algorithm(arma::uword  
+				       ,arma::uword 
+			   	       ,arma::uword  
+				       ,arma::uword  
+				       ,arma::uword
+			   	       ,arma::mat
+				       ,double
+			   	       ,double (HFStability::HEG::*)(arma::uword, arma::uword)
+                                       ,arma::vec (HFStability::HEG::*matvec_product)(arma::vec v)
+                                       ); 
 	};
 }
 

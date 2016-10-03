@@ -357,87 +357,68 @@ arma::vec HFStability::HEG::matvec_prod_3B(arma::vec v) {
     return Mv;
 }
 
-double HFSta
+void HFStability::HEG::davidson_wrapper(arma::uword max_its 
+                                       ,arma::uword max_sub_size
+                                       ,arma::uword num_of_roots
+                                       ,arma::uword block_size
+                                       ,arma::mat   guess_evecs
+                                       ,double      tolerance
+                                       ,int         which 
+                                       )
+{
+    arma::uword N = 2.0 * Nexc;
+    davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance, 
+                       &HEG::get_3H, 
+                       &HEG::matvec_prod_3H);
+}
 
-void HFStability::HEG::davidson_algorithm(
-    uint64_t N,
-    uint64_t max_its, 
-    uint64_t max_sub_size,
-    uint64_t num_of_roots,
-    arma::uword block_size,
-    arma::mat(guess_evecs),
-    double tolerance, 
-    double (HFStability::HEG::*matrix)(uint64_t, uint64_t) 
-    double (HFStability::HEG::*matvec_product)(arma::vec v)) {
+void HFStability::HEG::davidson_algorithm(arma::uword N
+                                         ,arma::uword max_its
+                                         ,arma::uword max_sub_size
+                                         ,arma::uword num_of_roots
+                                         ,arma::uword block_size
+                                         ,arma::mat   guess_evecs
+                                         ,double      tolerance 
+                                         ,double      (HFStability::HEG::*matrix)(arma::uword, arma::uword)
+                                         ,arma::vec   (HFStability::HEG::*matvec_product)(arma::vec v)
+                                         )
+{
     
-    uint64_t sub_size = guess_evecs.n_cols;
-    uint64_t old_sub_size = 0;    
+    arma::uword sub_size = guess_evecs.n_cols;
+    arma::uword old_sub_size = 0;    
     arma::uword num_new_vecs = sub_size;
     arma::vec old_evals;
     arma::mat old_evecs = guess_evecs;
-    arma::mat mat_vec_prod(N, 0, arma::fill::zeros);
+    arma::mat Mvmat(N, 0, arma::fill::zeros);
     arma::mat ritz_vecs = guess_evecs;
-
-    
     arma::mat init_guess(N, num_of_roots);
-    for (uint64_t i = 0; i < num_of_roots; ++i) {
+
+
+    for (arma::uword i = 0; i < num_of_roots; ++i) {
         init_guess.col(i) = guess_evecs.col(i);
     }
 
-        
-
     //Iterate the block Davidson algorithm.
-    for (uint64_t i=0 ; i < max_its ; ++i){
+    for (arma::uword i = 0 ; i < max_its ; ++i){
         arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
-        //std::cout << "i = " << i << std::endl;
-    
-        // Matrix Vector product starts here
-        double sum = 0;
         num_new_vecs = sub_size - old_sub_size;
-        arma::mat temp_mat(N, num_new_vecs, arma::fill::zeros);
-        arma::mat temp_mat_t(num_new_vecs, N, arma::fill::zeros);
-        double tempnum;    
-        //guess evecs into row major ordering, this step is fast compared
-        //to striding access within the loop
-        arma::mat guess_evecs_t = guess_evecs.t();
-
-        //This is matrix-matrix mult M*V, it looks this way to minimize
-        //function calls to this->matrix which were a limiting step.
-     //   for (arma::uword j = 0; j < N; ++j) {
-     //       for (arma::uword l = 0; l < N; ++l) {
-     //           tempnum = (this->*matrix)(j,l);
-     //           for (arma::uword k = old_sub_size; k < sub_size; ++k) {
-     //               //guess_evecs_t is the row major version of guess_evecs
-     //               temp_mat(j, k-old_sub_size) += tempnum * guess_evecs_t(k,l);
-     //           }
-     //       }
-     //   }
-        // MV complete
-    
         arma::vec Mv(N);
-        //temp_mat has new matrix vector products
         for (arma::uword j = 0; j < num_new_vecs; ++j) { 
-            mat_vec_prod = arma::join_rows(mat_vec_prod, Mv);
+            Mv = (this->*matvec_product)(guess_evecs.col(old_sub_size + j));
+            Mvmat = arma::join_rows(Mvmat, Mv);
         }
-
-        // V.t * MV
-        sub_mat = guess_evecs_t * mat_vec_prod;
-
+        sub_mat = guess_evecs.t() * Mvmat;
         //Diagonalize subspace matrix.
         arma::vec sub_evals;
         arma::mat sub_evecs;
         arma::eig_sym(sub_evals, sub_evecs, sub_mat);
-        arma::mat temp;
 
         //sort eigenvals, vecs by value 
-        arma::mat Q, R;
-        arma::qr_econ(Q, R, sub_evecs);
-        sub_evecs = Q;
         arma::uvec indices = arma::sort_index(sub_evals);
         sub_evecs = sub_evecs.cols(indices);
         sub_evals = sub_evals.elem(indices);
         
-        old_evecs = sub_evecs;
+        //old_evecs = sub_evecs;
         ritz_vecs = guess_evecs * sub_evecs;
         /*Current implementation is the Diagonally Preconditioned Residue (DPR) method. 
           As far as I know right now, this is the original method propossed by Davidson
@@ -445,23 +426,24 @@ void HFStability::HEG::davidson_algorithm(
         
         //Get the res and append to subspace if needed.
         //Sub_size changes within this loop
+        double sum;
         old_sub_size = sub_size;
         arma::vec norms(block_size, arma::fill::zeros);
-        for (uint64_t j=0; j < block_size; ++j){
+        for (arma::uword j = 0; j < block_size; ++j){
             arma::vec res(N, arma::fill::zeros);
             double rayq = 0.0;
             double x_k = 0.0;
             //rayleigh quotient is x.T * M * x
-            for (uint64_t k = 0; k < N; ++k) {
+            for (arma::uword k = 0; k < N; ++k) {
                 x_k = ritz_vecs(k,j);    
-                for (uint64_t l = 0; l < N; ++l) {
+                for (arma::uword l = 0; l < N; ++l) {
                     rayq += x_k * (this->*matrix)(k,l) * ritz_vecs(l,j);
                 }
             }
 
-            for (uint64_t k=0; k < N; ++k) {
+            for (arma::uword k = 0; k < N; ++k) {
                 sum = 0.0;
-                for (uint64_t m=0; m < N; ++m) {    
+                for (arma::uword m = 0; m < N; ++m) {    
                     if (m == k){
                         sum += ((this->*matrix)(k,k) - rayq) * ritz_vecs(m,j);
                     }else{
@@ -479,14 +461,14 @@ void HFStability::HEG::davidson_algorithm(
 
                 //If diagonal element = eval, get singularity
                 bool apply_corr = true;
-                for (uint64_t k = 0; k < old_sub_size; ++k) {
+                for (arma::uword k = 0; k < old_sub_size; ++k) {
                     if ( fabs( (this->*matrix)(k,k) - sub_evals(j) ) <= 10E-10) {
                         apply_corr = false;
                     }
                 }
 
                 //This is the DPR corr
-                for (uint64_t k=0 ; k < N ; ++k) {
+                for (arma::uword k=0 ; k < N ; ++k) {
                     corr(k) = ( -1.0/ ( (this->*matrix)(k,k) - rayq ) ) * res(k);
                 }
 
@@ -499,42 +481,26 @@ void HFStability::HEG::davidson_algorithm(
             }
         }
 
-        //Print to screen
-        std::cout << "Eval = " << sub_evals(0) << " Norm = " << norms(0) << std::endl; 
-        
-        //Error handling and exit conditions
-        if (sub_size > max_sub_size) {
-            std::cout << "Error in Davidson: Subspace too big!" << std::endl;
-            return sub_evals(0);
-
-        }else if (i == max_its - 1) {
-            std::cout << "Davidson Error: Maximum # of iterations reached!" << std::endl;
-            return sub_evals(0);
-    
-        }else if (old_sub_size == sub_size) {
-            std::cout << "Davidson: Subspace converged in " << i + 1 << 
-            " iterations!"  << std::endl;
-            return sub_evals(0);
-
-        }else if ( arma::all(norms.rows(0,num_of_roots-1)  < tolerance)) {
-            std::cout << "Davidson: All requested norms converged in " 
-            << i + 1 << " iterations!"  << std::endl;
-            return sub_evals(0);
-        }            
-
         //Make sure the new guess space is orthonormal
+        arma::mat Q, R;
         arma::qr_econ(Q, R, guess_evecs);
         //Enforce sums of elements of eigenvector matrix are positive
         //with no loss of generality. 
-        for (uint64_t i = 0; i < sub_size; ++i) {
+        for (arma::uword i = 0; i < Q.n_cols; ++i) {
             if (arma::sum(Q.col(i)) < 0.0) {
                 Q.col(i) = -1.0 * Q.col(i);
             }
         }
         guess_evecs = Q;
 
+        dav_vecs =  guess_evecs;
+        dav_vals = sub_evals; 
+
+        if (old_sub_size == sub_size) {
+            break;
+        }
+        if ((sub_size + block_size) > max_sub_size) {
+            break;
+        }
     }
-    //If we got here there's a problem
-    //NOTE THIS SHOULD BE HANDLED MORE ELEGANTLY
-    return 1234567.89;
 }
