@@ -3,10 +3,11 @@
 #ifndef PI
 	#define PI 3.14159265358979323846264338327
 #endif
-//#define ARMA_NO_DEBUG
+#define ARMA_NO_DEBUG
 #include "armadillo"
 #include <map>
 #include <vector>
+#include <time.h>
 
 namespace HFStability {
 	class HEG {
@@ -22,6 +23,9 @@ namespace HFStability {
 		arma::umat occ_states, vir_states, excitations;
                 arma::vec dav_vals;
                 arma::mat dav_vecs;
+                int dav_its;
+
+                std::string dav_message;
 
 		//Methods
                 double mvec_test();
@@ -45,6 +49,7 @@ namespace HFStability {
                 void build_mattest();
                 void matvec_prod_arma();
                 void matvec_prod_me();
+                arma::vec matvec_prod_3H(arma::vec);
                 void davidson_wrapper(arma::uword 
                                      ,arma::uword 
                                      ,arma::uword 
@@ -57,7 +62,6 @@ namespace HFStability {
                 arma::uword kb_j_to_t(arma::vec, arma::uword);
                 arma::vec matvec_prod_3A(arma::vec);
                 arma::vec matvec_prod_3B(arma::vec);
-                arma::vec matvec_prod_3H(arma::vec);
                 arma::vec occ_idx_to_k(arma::uword);
                 arma::vec vir_idx_to_k(arma::uword);
                 std::vector<arma::uword> k_to_idx(arma::vec);

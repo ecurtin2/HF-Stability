@@ -7,7 +7,7 @@ from lib import ClassBlender
 
 # Don't touch this if you're not 100% sure
 # seriously I know you
-remove_assertions_at_compile = False
+remove_assertions_at_compile = True
 check_unused_functions = False
 check_unused_variables = False
 

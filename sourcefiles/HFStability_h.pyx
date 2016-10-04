@@ -3,6 +3,7 @@
 # cython: wraparound=False
 
 from libcpp cimport bool
+from libcpp.string cimport string
 from libc.math cimport sqrt
 import itertools
 import math

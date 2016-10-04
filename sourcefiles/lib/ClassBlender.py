@@ -96,7 +96,8 @@ class CppClassWrapper(object):
                         'vec'  : ['numpy_to_vec_d' , 'vec_to_numpy' , 'np.ndarray[double, ndim=1]'], 
                         'mat'  : ['numpy_to_mat_d' , 'mat_to_numpy' , 'np.ndarray[double, ndim=2, mode="fortran"]'], 
                         'uvec' : ['numpy_to_uvec_d', 'uvec_to_numpy', 'np.ndarray[long long unsigned int, ndim=1]'], 
-                        'umat' : ['numpy_to_umat_d', 'umat_to_numpy', 'np.ndarray[long long unsigned int, ndim=2, mode="fortran"]'] 
+                        'umat' : ['numpy_to_umat_d', 'umat_to_numpy', 'np.ndarray[long long unsigned int, ndim=2, mode="fortran"]'],
+                        'string' : 'str'
                          }
         
         variables = []
@@ -124,6 +125,7 @@ class CppClassWrapper(object):
                 line = line.strip(";")           # remove end of line semicolon
                 line = line.replace("//", "#")   # comments
                 line = line.replace("arma::", "")
+                line = line.replace("std::", "")
                 line = line.replace(":", "")
                 if breaker:
                     if breaker in line:

@@ -279,8 +279,6 @@ void HFStability::HEG::to_first_BZ(arma::vec& k) {
 }
 
 arma::vec HFStability::HEG::matvec_prod_3H(arma::vec v) {
-    get_vir_N_to_1_map();
-    get_inv_exc_map();
 
     arma::vec Mv(Nexc*2.0, arma::fill::zeros);  // matrix vector product
     /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
@@ -292,8 +290,15 @@ arma::vec HFStability::HEG::matvec_prod_3H(arma::vec v) {
     arma::vec v1 = v.head(Nexc);
     arma::vec v2 = v.tail(Nexc);
     arma::vec Mv1(Nexc, arma::fill::zeros), Mv2(Nexc, arma::fill::zeros);
+    clock_t t;
+    t = clock();
     Mv1 = matvec_prod_3A(v1) + matvec_prod_3B(v2);
+    t = clock() - t;
+    std::cout << "Mv1 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    t = clock();
     Mv2 = matvec_prod_3B(v1) + matvec_prod_3A(v2);
+    t = clock() - t;
+    std::cout << "Mv2 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
     Mv = arma::join_cols(Mv1, Mv2);
     return Mv;
 }
@@ -393,6 +398,7 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
     arma::mat ritz_vecs = guess_evecs;
     arma::mat init_guess(N, num_of_roots);
 
+    clock_t t, t1, t2, t3;
 
     for (arma::uword i = 0; i < num_of_roots; ++i) {
         init_guess.col(i) = guess_evecs.col(i);
@@ -400,11 +406,19 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
 
     //Iterate the block Davidson algorithm.
     for (arma::uword i = 0 ; i < max_its ; ++i){
+        t1 = clock();
         arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
-        num_new_vecs = sub_size - old_sub_size;
-        arma::vec Mv(N);
-        for (arma::uword j = 0; j < num_new_vecs; ++j) { 
-            Mv = (this->*matvec_product)(guess_evecs.col(old_sub_size + j));
+        num_new_vecs = sub_size - old_sub_size; 
+        for (arma::uword j = 0; j < num_new_vecs; ++j) 
+        { 
+            arma::vec temp = guess_evecs.col(old_sub_size+j);
+            arma::vec Mv(N); 
+            t = clock();
+            //Mv = (this->*matvec_product)(guess_evecs.col(old_sub_size + j));
+            //Mv = (this->*matvec_product)(temp);
+            Mv = matvec_prod_3H(temp);
+            t2 = clock() - t;
+            std::cout << "Mv took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
             Mvmat = arma::join_rows(Mvmat, Mv);
         }
         sub_mat = guess_evecs.t() * Mvmat;
@@ -495,11 +509,17 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
 
         dav_vecs =  guess_evecs;
         dav_vals = sub_evals; 
+        dav_its  = i;
+
+        t3 = clock() - t1;
+        std::cout << "Iteration took " << ((float)t3) / CLOCKS_PER_SEC << " seconds" << std::endl;
 
         if (old_sub_size == sub_size) {
+            dav_message = "Subspace Converged";
             break;
         }
-        if ((sub_size + block_size) > max_sub_size) {
+        else if ((sub_size + block_size) > max_sub_size) {
+            dav_message = "Subspace Size Too Large";
             break;
         }
     }

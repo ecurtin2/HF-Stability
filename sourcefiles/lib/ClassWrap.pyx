@@ -7,6 +7,7 @@
 # cython: wraparound=False
 
 from libcpp cimport bool
+from libcpp.string cimport string
 from libc.math cimport sqrt
 import itertools
 import math
@@ -38,6 +39,8 @@ cdef extern from "stability.h" namespace "HFStability":
         umat occ_states, vir_states, excitations
         vec dav_vals
         mat dav_vecs
+        int dav_its
+        string dav_message
         #Methods
         double mvec_test()
         void   calc_energy_wrap(bool)
@@ -60,6 +63,7 @@ cdef extern from "stability.h" namespace "HFStability":
         void build_mattest()
         void matvec_prod_arma()
         void matvec_prod_me()
+        vec matvec_prod_3H(vec)
         void davidson_wrapper(long long unsigned int
         ,long long unsigned int
         ,long long unsigned int
@@ -147,6 +151,9 @@ cdef class PyHEG:
         self.calc_vir_states()
         self.calc_vir_energies()
         self.calc_exc_energies()
+        self.get_inv_exc_map()
+        self.get_vir_N_to_1_map()
+    
         assert np.all(self.occ_energies < self.fermi_energy) , (
                'Not all occupied energies are below fermi energy')
         # The converse can not be said for the virtual states, since the exchange
@@ -191,7 +198,7 @@ cdef class PyHEG:
             i2 += N_exc_per_occ
         vir_norms = np.sqrt((vir*vir).sum(axis=1))  #norm of each row
         in_firstBZ = np.all(((vir > (-self.kmax - 10E-10)) & (vir < (self.kmax -10E-10))), axis=1)
-        is_vir = vir_norms > (self.kf + 10E-5)
+        is_vir = vir_norms > (self.kf + 10E-10)
         idx = np.where(is_vir & in_firstBZ)
         vir = vir[idx]          # keep only those above fermi but below cutoff
         occ_idx = occ_idx[idx]  # this is the occupied state that generated the vir
@@ -295,7 +302,7 @@ cdef class PyHEG:
         s = pstats.Stats("Profile.prof")
         s.strip_dirs().sort_stats("time").print_stats()
     
-    def davidson(self, guess_evecs, which=0, tolerance=10E-8, maxits=50, maxsubsize=None, numroots=1, blocksize=1):
+    def davidson(self, guess_evecs=None, which=0, tolerance=10E-8, maxits=50, maxsubsize=None, numroots=1, blocksize=1):
         """Run the davidson algorithm
     
         Description:
@@ -321,6 +328,8 @@ cdef class PyHEG:
         cdef double TOLERANCE
         cdef mat GUESS_EVECS
         cdef int WHICH
+        if guess_evecs == None:
+            guess_evecs = np.asfortranarray(np.eye(2 * self.Nexc, blocksize))
         if maxsubsize == None:
             maxsubsize = int(np.round(guess_evecs.shape[0] / 2))
     
@@ -413,6 +422,17 @@ cdef class PyHEG:
         plt.title('Excitation Energy Histogram')
         plt.xlabel('$\epsilon_{vir} - \epsilon_{occ}$ (Hartree)')
         plt.ylabel('Count')
+    
+    def mvprod(self, inp):
+        cdef vec inpv = numpy_to_vec_d(np.asfortranarray(inp))
+        cdef vec outp = self.c_HEG.matvec_prod_3H(inpv)
+        return vec_to_numpy(outp)
+    
+    def get_inv_exc_map(self):
+        self.c_HEG.get_inv_exc_map()
+    
+    def get_vir_N_to_1_map(self):
+        self.c_HEG.get_vir_N_to_1_map()
     
 
 
@@ -646,6 +666,22 @@ cdef class PyHEG:
                      value not None):
         self.c_HEG.dav_vecs = numpy_to_mat_d(value)
     dav_vecs = property(get_dav_vecs, set_dav_vecs)
+    
+
+    def get_dav_its(self):
+        """(int) Get/Set dav_its"""
+        return self.c_HEG.dav_its
+    def set_dav_its(self, value):
+        self.c_HEG.dav_its = int(value)
+    dav_its = property(get_dav_its, set_dav_its)
+    
+
+    def get_dav_message(self):
+        """(str) Get/Set dav_message"""
+        return self.c_HEG.dav_message
+    def set_dav_message(self, value):
+        self.c_HEG.dav_message = str(value)
+    dav_message = property(get_dav_message, set_dav_message)
     
 
     def get_inv_exc_map_test(self):
