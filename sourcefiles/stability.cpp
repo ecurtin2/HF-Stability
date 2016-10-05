@@ -5,10 +5,12 @@
 #include <assert.h>
 #include <time.h>
 #include "stability.h"
-#define PI 3.14159265358979323846264
-#define SMALLNUMBER 10E-10
 
 int main() {
+    HFS::Nk = 7;
+    HFS::ndim = 2;
+    HFS::rs = 1.0;
+    HFS::get_params();
 return 0;
 }
 
@@ -20,7 +22,7 @@ void HFS::get_params() {
     } else if (HFS::ndim == 3) {
         HFS::kf = std::pow((9.0 * PI / 4.0), (1.0/3.0)) * (1.0 / HFS::rs);
     }
-    HFS::kmax = 2.0 * HFS::kf
+    HFS::kmax = 2.0 * HFS::kf;
     HFS::fermi_energy = 0.5 * HFS::kf * HFS::kf;
     HFS::kgrid = arma::linspace(-HFS::kmax, HFS::kmax, HFS::Nk);
     HFS::deltaK = HFS::kgrid(1) - HFS::kgrid(0);
@@ -37,47 +39,65 @@ void HFS::get_params() {
         HFS::two_e_const = 4.0 * PI / HFS::vol;
     }
 
-    HFS::calc_occ_energies()
-    HFS::calc_vir_states()
-    HFS::calc_vir_energies()
-    HFS::calc_exc_energies()
-    HFS::get_inv_exc_map()
-    HFS::get_vir_N_to_1_map()
+    HFS::calc_occ_energies();
+
+    //HFS::calc_vir_states()
+
+    HFS::calc_vir_energies();
+    HFS::calc_exc_energies();
+    HFS::get_inv_exc_map();
+    HFS::get_vir_N_to_1_map();
 }
 
-void HFS::get_occ_states() {
+bool HFS::is_vir(double k) {
+        return (k <= HFS::kf + SMALLNUMBER);
+}
+
+void HFS::calc_occ_states() {
     arma::uword Nrows = std::pow(HFS::Nk, HFS::ndim);
-    arma::mat combos(Nrows, HFS::ndim);
+    states.set_size(Nrows, HFS::ndim);
     if (HFS::ndim == 1) {
         for (arma::uword i = 0; i < HFS::Nk; ++i) {
-            combos(i) = HFS::kgrid(i); 
+            states(i) = HFS::kgrid(i); 
         }
     } else if (HFS::ndim == 2) {
         for (arma::uword i = 0; i < HFS::Nk; ++i) {
             for (arma::uword j = 0; j < HFS::Nk; ++j) {
-                combos(HFS::Nk * i + j, 0) = HFS::kgrid(i);
-                combos(HFS::Nk * i + j, 1) = HFS::kgrid(j);
+                states(HFS::Nk * i + j, 0) = HFS::kgrid(i);
+                states(HFS::Nk * i + j, 1) = HFS::kgrid(j);
             }
         }
     } else if (HFS::ndim == 3) {
         for (arma::uword i = 0; i < HFS::Nk; ++i) {
             for (arma::uword j = 0; j < HFS::Nk; ++j) {
                 for (arma::uword k = 0; k < HFS::Nk; ++k) {
-                    combos(HFS::Nk * HFS::Nk * i + HFs::Nk * j + k, 0) = HFS::kgrid(i);
-                    combos(HFS::Nk * HFS::Nk * i + HFs::Nk * j + k, 1) = HFS::kgrid(j);
-                    combos(HFS::Nk * HFS::Nk * i + HFs::Nk * j + k, 2) = HFS::kgrid(k);
+                    states(HFS::Nk * HFS::Nk * i + HFS::Nk * j + k, 0) = HFS::kgrid(i);
+                    states(HFS::Nk * HFS::Nk * i + HFS::Nk * j + k, 1) = HFS::kgrid(j);
+                    states(HFS::Nk * HFS::Nk * i + HFS::Nk * j + k, 2) = HFS::kgrid(k);
                 }
             }
         }
     }
     double row_norm;
+    arma::uvec occ_indices(Nrows), vir_indices(Nrows);  // Allocate extra space to avoid append
+    HFS::Nocc = 0;
+    HFS::Nvir = 0;
     for (arma::uword i = 0; i < Nrows; ++i) {
-        row_norm = arma::norm(combos.row(i))
-        if (row_norm <= HFS::kf + SMALLNUMBER) {
-            arma::uvec idx = arma::round((combos.row(i) + HFS::kmax) / HFS::deltaK);
-            HFS::occ_states
+        row_norm = arma::norm(states.row(i));
+        if (HFS::is_vir(row_norm)) {
+            occ_indices(HFS::Nocc) = i;
+            ++HFS::Nocc;
+        } else { 
+            vir_indices(HFS::Nvir) = i;
+            ++HFS::Nvir;
         }
     }
+    occ_indices = occ_indices.head(HFS::Nocc); // Clip trailing elements
+    vir_indices = vir_indices.head(HFS::Nvir);
+    arma::mat occ_states  = states.rows(occ_indices);
+    arma::mat vir_states  = states.rows(vir_indices);
+    HFS::occ_states = k_to_uword(occ_states);
+    HFS::vir_states = k_to_uword(vir_states);
 }
 
 void HFS::calc_exc_energy() {
@@ -94,6 +114,39 @@ void HFS::calc_occ_energies() {
 
 void HFS::calc_vir_energies() {
     HFS::calc_energies(HFS::vir_states, HFS::vir_energies);
+}
+
+void HFS::calc_excitations() {
+    arma::vec kexc(HFS::ndim); 
+    arma::uvec exc_idx(HFS::ndim);
+    HFS::excitations.set_size(HFS::Nocc * HFS::Nvir, 2);
+    HFS::exc_energies.set_size(HFS::Nocc * HFS::Nvir);
+    HFS::Nexc = 0;
+    for (arma::uword i = 0; i < HFS::occ_states.n_rows; ++i) {
+        // Excite only in +x direction
+        for (arma::uword j = 0; j < HFS::Nk; ++j) {
+            kexc = HFS::kgrid(HFS::occ_states.row(i));
+            kexc(0) += HFS::deltaK * j; 
+            HFS::to_first_BZ(kexc);
+            exc_idx = HFS::k_to_uword(kexc);
+            // Find the vir state
+            for (arma::uword k = 0; k < HFS::vir_states.n_rows; ++k) {
+                if (arma::all(exc_idx == HFS::vir_states(k))) {
+                    HFS::excitations(HFS::Nexc, 0) = i;
+                    HFS::excitations(HFS::Nexc, 1) = k;
+                    HFS::exc_energies(HFS::Nexc) = HFS::vir_energies(k) - HFS::occ_energies(i);
+                    ++HFS::Nexc;
+                }
+            }
+            
+        }
+    }
+    HFS::excitations  = HFS::excitations.head_rows(HFS::Nexc);
+    HFS::exc_energies = HFS::exc_energies.head(HFS::Nexc);
+}
+
+void HFS::calc_exc_energies() {
+    int x=0;
 }
 
 void HFS::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
@@ -175,9 +228,20 @@ void HFS::get_vir_N_to_1_map() {
     }
 }
 
+arma::uvec HFS::k_to_uword(arma::vec k) {
+    arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
+    arma::uvec indices = arma::conv_to<arma::uvec>::from(idx);
+    return indices;
+}
+arma::uvec HFS::k_to_uword(arma::mat k) {
+    arma::mat idx = arma::round((k + HFS::kmax) / HFS::deltaK);
+    arma::umat indices = arma::conv_to<arma::umat>::from(idx);
+    return indices;
+}
+
 std::vector<arma::uword> HFS::k_to_idx(arma::vec k) {
     arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
-    std::vector<arma::uword> indices = arma::conv_to<std::vector<arma::uword>>::from(idx);
+    std::vector<arma::uword>indices = arma::conv_to<std::vector<arma::uword>>::from(idx);
     return indices;
 }
 

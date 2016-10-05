@@ -1,9 +1,12 @@
 #ifndef CPP_STABILITY // header guards 
 #define CPP_STABILITY
 #ifndef PI
-	#define PI 3.14159265358979323846264338327
+    #define PI 3.14159265358979323846264338327
 #endif
-#define ARMA_NO_DEBUG
+#ifndef SMALLNUMBER
+    #define SMALLNUMBER 10E-10
+#endif
+//#define ARMA_NO_DEBUG
 #include "armadillo"
 #include <map>
 #include <vector>
@@ -21,11 +24,18 @@ arma::mat mattest;
 arma::umat occ_states, vir_states, excitations;
 arma::vec dav_vals;
 arma::mat dav_vecs;
+arma::mat states;
 int dav_its;
 
 std::string dav_message;
 
 //Methods
+void calc_occ_states();
+void calc_occ_energies();
+void calc_vir_energies();
+void calc_exc_energies();
+void calc_excitations();
+bool is_vir(double);
 double mvec_test();
 void   calc_energy_wrap(bool);
 void   calc_exc_energy();
@@ -41,8 +51,11 @@ double get_1A(arma::uword, arma::uword);
 double get_3A(arma::uword, arma::uword);
 double get_3H(arma::uword, arma::uword);
 void to_first_BZ(arma::vec&);
+void get_params();
 void get_inv_exc_map();
 void get_vir_N_to_1_map();
+arma::uvec k_to_uword(arma::vec);
+arma::uvec k_to_uword(arma::mat);
 arma::uvec inv_exc_map_test;
 void build_mattest();
 void matvec_prod_arma();
