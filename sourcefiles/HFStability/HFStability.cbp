@@ -12,8 +12,14 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-g" />
+					<Add option="-larmadillo" />
+					<Add option="-O0" />
 				</Compiler>
+				<Linker>
+					<Add option="-larmadillo" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/HFStability" prefix_auto="1" extension_auto="1" />
@@ -32,7 +38,10 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="HFSnamespace.cpp" />
+		<Unit filename="HFSnamespace.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="stability.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
