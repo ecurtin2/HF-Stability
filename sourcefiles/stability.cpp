@@ -5,80 +5,149 @@
 #include <assert.h>
 #include <time.h>
 #include "stability.h"
+#define PI 3.14159265358979323846264
+#define SMALLNUMBER 10E-10
 
-void HFStability::HEG::calc_exc_energy() {
-    exc_energies.zeros(Nexc);
-    for (arma::uword i = 0; i < Nexc; ++i) { 
-        exc_energies(i) = vir_energies(excitations(i, 1)) 
-                        - occ_energies(excitations(i, 0));
+int main() {
+return 0;
+}
+
+void HFS::get_params() {
+    if (HFS::ndim == 1) {
+        HFS::kf = PI / (4.0 * HFS::rs);
+    } else if (HFS::ndim == 2) {
+        HFS::kf = sqrt(2.0) / HFS::rs;
+    } else if (HFS::ndim == 3) {
+        HFS::kf = std::pow((9.0 * PI / 4.0), (1.0/3.0)) * (1.0 / HFS::rs);
+    }
+    HFS::kmax = 2.0 * HFS::kf
+    HFS::fermi_energy = 0.5 * HFS::kf * HFS::kf;
+    HFS::kgrid = arma::linspace(-HFS::kmax, HFS::kmax, HFS::Nk);
+    HFS::deltaK = HFS::kgrid(1) - HFS::kgrid(0);
+
+    HFS::calc_occ_states();
+
+    if (HFS::ndim == 1) {
+        HFS::vol = HFS::N_elec * 2.0 * HFS::rs;
+    } else if (HFS::ndim == 2) {
+        HFS::vol = HFS::N_elec * PI * std::pow(HFS::rs, 2);
+        HFS::two_e_const = 2.0 * PI / HFS::vol;
+    } else if (HFS::ndim == 3) {
+        HFS::vol = HFS::N_elec * 4.0 / 3.0 * PI * std::pow(HFS::rs, 3);
+        HFS::two_e_const = 4.0 * PI / HFS::vol;
+    }
+
+    HFS::calc_occ_energies()
+    HFS::calc_vir_states()
+    HFS::calc_vir_energies()
+    HFS::calc_exc_energies()
+    HFS::get_inv_exc_map()
+    HFS::get_vir_N_to_1_map()
+}
+
+void HFS::get_occ_states() {
+    arma::uword Nrows = std::pow(HFS::Nk, HFS::ndim);
+    arma::mat combos(Nrows, HFS::ndim);
+    if (HFS::ndim == 1) {
+        for (arma::uword i = 0; i < HFS::Nk; ++i) {
+            combos(i) = HFS::kgrid(i); 
+        }
+    } else if (HFS::ndim == 2) {
+        for (arma::uword i = 0; i < HFS::Nk; ++i) {
+            for (arma::uword j = 0; j < HFS::Nk; ++j) {
+                combos(HFS::Nk * i + j, 0) = HFS::kgrid(i);
+                combos(HFS::Nk * i + j, 1) = HFS::kgrid(j);
+            }
+        }
+    } else if (HFS::ndim == 3) {
+        for (arma::uword i = 0; i < HFS::Nk; ++i) {
+            for (arma::uword j = 0; j < HFS::Nk; ++j) {
+                for (arma::uword k = 0; k < HFS::Nk; ++k) {
+                    combos(HFS::Nk * HFS::Nk * i + HFs::Nk * j + k, 0) = HFS::kgrid(i);
+                    combos(HFS::Nk * HFS::Nk * i + HFs::Nk * j + k, 1) = HFS::kgrid(j);
+                    combos(HFS::Nk * HFS::Nk * i + HFs::Nk * j + k, 2) = HFS::kgrid(k);
+                }
+            }
+        }
+    }
+    double row_norm;
+    for (arma::uword i = 0; i < Nrows; ++i) {
+        row_norm = arma::norm(combos.row(i))
+        if (row_norm <= HFS::kf + SMALLNUMBER) {
+            arma::uvec idx = arma::round((combos.row(i) + HFS::kmax) / HFS::deltaK);
+            HFS::occ_states
+        }
     }
 }
 
-void HFStability::HEG::calc_energy_wrap(bool is_vir) {
-    if (is_vir) {
-        calc_energies(vir_states, vir_energies);
-    }else{
-        calc_energies(occ_states, occ_energies);
+void HFS::calc_exc_energy() {
+    HFS::exc_energies.zeros(HFS::Nexc);
+    for (arma::uword i = 0; i < HFS::Nexc; ++i) { 
+        HFS::exc_energies(i) = HFS::vir_energies(HFS::excitations(i, 1)) 
+                             - HFS::occ_energies(HFS::excitations(i, 0));
     }
 }
 
-void HFStability::HEG::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
+void HFS::calc_occ_energies() {
+    HFS::calc_energies(HFS::occ_states, HFS::occ_energies);
+}
+
+void HFS::calc_vir_energies() {
+    HFS::calc_energies(HFS::vir_states, HFS::vir_energies);
+}
+
+void HFS::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
     arma::uword num_inp_states = inp_states.n_rows;
     energy_vec.set_size(num_inp_states);
     energy_vec.fill(0.0);
     for (arma::uword i = 0; i < num_inp_states; ++i) {
-        for (int j = 0; j < ndim; ++j) {
-            energy_vec(i) += kgrid(inp_states(i,j)) * kgrid(inp_states(i,j)); 
+        for (int j = 0; j < HFS::ndim; ++j) {
+            energy_vec(i) += HFS::kgrid(inp_states(i,j)) * HFS::kgrid(inp_states(i,j)); 
         }  
         energy_vec[i] /= 2.0; //Is now filled with kinetic energy
-        energy_vec[i] += exchange(inp_states, i); 
+        energy_vec[i] += HFS::exchange(inp_states, i); 
     }
 }
 
-double HFStability::HEG::exchange(arma::umat& inp_states, arma::uword i) {
+double HFS::exchange(arma::umat& inp_states, arma::uword i) {
 
     double exch = 0.0;
     arma::vec ki(ndim), k2(ndim);
-    
-
-    for (int j = 0; j < ndim; ++j) {
-        ki(j) = kgrid(inp_states(i, j));
+    for (int j = 0; j < HFS::ndim; ++j) {
+        ki(j) = HFS::kgrid(inp_states(i, j));
     }
-
-    for (arma::uword k = 0; k < Nocc; ++k) {
-        for (int j = 0; j < ndim; ++j) {
-            k2(j) = kgrid(occ_states(k, j));
+    for (arma::uword k = 0; k < HFS::Nocc; ++k) {
+        for (int j = 0; j < HFS::ndim; ++j) {
+            k2(j) = HFS::kgrid(HFS::occ_states(k, j));
         }
-
-        exch += two_electron(ki, k2);
+        exch += HFS::two_electron(ki, k2);
     } 
-
     exch *= -1.0;
     return exch;
 }
 
-double HFStability::HEG::two_electron(arma::vec k1, arma::vec k2) {
+double HFS::two_electron(arma::vec k1, arma::vec k2) {
     double norm = 0.0;
-    arma::vec k(ndim);
+    arma::vec k(HFS::ndim);
     k = k1 - k2;
 
-    to_first_BZ(k);
+    HFS::to_first_BZ(k);
     norm = arma::norm(k);
     if (norm < 10E-10) {
         return 0.0;
     }else{
-        return two_e_const / std::pow(norm, ndim - 1);
+        return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
     }
 }
 
-double HFStability::HEG::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::vec k4) {
+double HFS::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::vec k4) {
     // Same as two_electron, except checks for momentum conservation
     // In the other, conservation is assumed
     double sum_sqrs = 0.0;
-    arma::vec k(ndim);
+    arma::vec k(HFS::ndim);
 
     k = k1 + k2 - k3 - k4;
-    to_first_BZ(k);
+    HFS::to_first_BZ(k);
 
     // If not momentum conserving:
     if (arma::any(arma::abs(k) > 10E-10)) {
@@ -86,251 +155,241 @@ double HFStability::HEG::two_electron_check(arma::vec k1, arma::vec k2, arma::ve
     }
 
     k =  k1 - k3;
-    to_first_BZ(k);
+    HFS::to_first_BZ(k);
     double norm = arma::norm(k);
 
     if (norm < 10E-10) {
         return 0.0;
     }else{
-        return two_e_const / std::pow(norm, ndim - 1);
+        return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
     }
 }
 
-void HFStability::HEG::get_vir_N_to_1_map() {
-    for (arma::uword i = 0; i < Nvir; ++i) {
-        std::vector<arma::uword> key(ndim);
-        for (int j = 0; j < ndim; ++j) {
-            key[j] = vir_states(i, j);
+void HFS::get_vir_N_to_1_map() {
+    for (arma::uword i = 0; i < HFS::Nvir; ++i) {
+        std::vector<arma::uword> key(HFS::ndim);
+        for (int j = 0; j < HFS::ndim; ++j) {
+            key[j] = HFS::vir_states(i, j);
         }
-        vir_N_to_1_map[key] = i;
+        HFS::vir_N_to_1_map[key] = i;
     }
 }
 
-std::vector<arma::uword> HFStability::HEG::k_to_idx(arma::vec k) {
-    arma::vec idx = arma::round((k + kmax) / deltaK);
+std::vector<arma::uword> HFS::k_to_idx(arma::vec k) {
+    arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
     std::vector<arma::uword> indices = arma::conv_to<std::vector<arma::uword>>::from(idx);
     return indices;
 }
 
-arma::vec HFStability::HEG::occ_idx_to_k(arma::uword idx) {
-    arma::vec k(ndim);
-    for (int i = 0; i < ndim; ++i) {
-        k[i] = kgrid(occ_states(idx, i));
+arma::vec HFS::occ_idx_to_k(arma::uword idx) {
+    arma::vec k(HFS::ndim);
+    for (int i = 0; i < HFS::ndim; ++i) {
+        k[i] = HFS::kgrid(HFS::occ_states(idx, i));
     }
     return k;
 }
 
-arma::vec HFStability::HEG::vir_idx_to_k(arma::uword idx) {
-    arma::vec k(ndim);
-    for (int i = 0; i < ndim; ++i) {
-        k[i] = kgrid(vir_states(idx, i));
+arma::vec HFS::vir_idx_to_k(arma::uword idx) {
+    arma::vec k(HFS::ndim);
+    for (int i = 0; i < HFS::ndim; ++i) {
+        k[i] = HFS::kgrid(vir_states(idx, i));
     }
     return k;
 
 }
 
-void HFStability::HEG::get_inv_exc_map() { 
-    for (arma::uword i = 0; i < Nexc; ++i) {
-        std::vector<arma::uword> key {excitations(i,0), excitations(i,1)};
-        inv_exc_map[key] = i;
+void HFS::get_inv_exc_map() { 
+    for (arma::uword i = 0; i < HFS::Nexc; ++i) {
+        std::vector<arma::uword> key {HFS::excitations(i,0), HFS::excitations(i,1)};
+        HFS::inv_exc_map[key] = i;
     }
 
     // Testing 
-    inv_exc_map_test.set_size(Nexc);
-    for (arma::uword i = 0; i < Nexc; ++i) {
-        std::vector<arma::uword> key {excitations(i,0), excitations(i,1)};
-        inv_exc_map_test(i) = inv_exc_map[key];
+    HFS::inv_exc_map_test.set_size(Nexc);
+    for (arma::uword i = 0; i < HFS::Nexc; ++i) {
+        std::vector<arma::uword> key {HFS::excitations(i,0), HFS::excitations(i,1)};
+        HFS::inv_exc_map_test(i) = HFS::inv_exc_map[key];
     }
 }
 
-double HFStability::HEG::get_1B(arma::uword s, arma::uword t) {
-    arma::uword i = excitations(s, 0);
-    arma::uword a = excitations(s, 1);
-    arma::uword j = excitations(t, 0);
-    arma::uword b = excitations(t, 1);
-    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
-    for (int idx = 0; idx < ndim; ++idx) {
-        ki[idx] = kgrid(occ_states(i, idx));
-        kj[idx] = kgrid(occ_states(j, idx));
-        ka[idx] = kgrid(vir_states(a, idx));
-        kb[idx] = kgrid(vir_states(b, idx));
+double HFS::get_1B(arma::uword s, arma::uword t) {
+    arma::uword i =  HFS::excitations(s, 0);
+    arma::uword a =  HFS::excitations(s, 1);
+    arma::uword j =  HFS::excitations(t, 0);
+    arma::uword b =  HFS::excitations(t, 1);
+    arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+    for (int idx = 0; idx < HFS::ndim; ++idx) {
+        ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
+        kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
+        ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
+        kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
     }
     return 2.0 * two_electron_check(ka, kb, ki, kj) - two_electron_check(ka, kb, kj, ki);
 }
 
-double HFStability::HEG::get_3B(arma::uword s, arma::uword t) {
+double HFS::get_3B(arma::uword s, arma::uword t) {
 //    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
-    arma::uword i = excitations(s, 0);
-    arma::uword a = excitations(s, 1);
-    arma::uword j = excitations(t, 0);
-    arma::uword b = excitations(t, 1);
-    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
+    arma::uword i = HFS::excitations(s, 0);
+    arma::uword a = HFS::excitations(s, 1);
+    arma::uword j = HFS::excitations(t, 0);
+    arma::uword b = HFS::excitations(t, 1);
+    arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
     for (int idx = 0; idx < ndim; ++idx) {
-        ki[idx] = kgrid(occ_states(i, idx));
-        kj[idx] = kgrid(occ_states(j, idx));
-        ka[idx] = kgrid(vir_states(a, idx));
-        kb[idx] = kgrid(vir_states(b, idx));
+        ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
+        kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
+        ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
+        kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
     }
 //    std::cout << "Finish get_3A s =" << s << " t =" << t << std::endl; //DEBUG
-    return -1.0 * two_electron_check(ka, kb, kj, ki);
+    return -1.0 * HFS::two_electron_check(ka, kb, kj, ki);
 }
 
-double HFStability::HEG::get_1A(arma::uword s, arma::uword t) {
-    arma::uword i = excitations(s, 0);
-    arma::uword a = excitations(s, 1);
-    arma::uword j = excitations(t, 0);
-    arma::uword b = excitations(t, 1);
-    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
-    for (int idx = 0; idx < ndim; ++idx) {
-        ki[idx] = kgrid(occ_states(i, idx));
-        kj[idx] = kgrid(occ_states(j, idx));
-        ka[idx] = kgrid(vir_states(a, idx));
-        kb[idx] = kgrid(vir_states(b, idx));
+double HFS::get_1A(arma::uword s, arma::uword t) {
+    arma::uword i = HFS::excitations(s, 0);
+    arma::uword a = HFS::excitations(s, 1);
+    arma::uword j = HFS::excitations(t, 0);
+    arma::uword b = HFS::excitations(t, 1);
+    arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+    for (int idx = 0; idx < HFS::ndim; ++idx) {
+        ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
+        kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
+        ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
+        kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
     }
     double val = 0.0;
     if ((i == j) && (a == b)) {
-        val = exc_energies(s);
+        val = HFS::exc_energies(s);
     }
-    val += 2.0 * two_electron_check(ka, kj, ki, kb) - two_electron_check(ka, kj, kb, ki);
+    val += 2.0 * HFS::two_electron_check(ka, kj, ki, kb) - HFS::two_electron_check(ka, kj, kb, ki);
     return val;
 }
 
-double HFStability::HEG::get_3A(arma::uword s, arma::uword t) {
+double HFS::get_3A(arma::uword s, arma::uword t) {
 //    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
-    arma::uword i = excitations(s, 0);
-    arma::uword a = excitations(s, 1);
-    arma::uword j = excitations(t, 0);
-    arma::uword b = excitations(t, 1);
+    arma::uword i = HFS::excitations(s, 0);
+    arma::uword a = HFS::excitations(s, 1);
+    arma::uword j = HFS::excitations(t, 0);
+    arma::uword b = HFS::excitations(t, 1);
 //    std::cout << "i =" << i << std::endl; //DEBUG 
 //    std::cout << "j =" << j << std::endl; //DEBUG 
 //    std::cout << "a =" << a << std::endl; //DEBUG 
 //    std::cout << "b =" << b << std::endl; //DEBUG
-    arma::vec ki(ndim), kj(ndim), ka(ndim), kb(ndim);
-    for (int idx = 0; idx < ndim; ++idx) {
-        ki[idx] = kgrid(occ_states(i, idx));
-        kj[idx] = kgrid(occ_states(j, idx));
-        ka[idx] = kgrid(vir_states(a, idx));
-        kb[idx] = kgrid(vir_states(b, idx));
+    arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+    for (int idx = 0; idx < HFS::ndim; ++idx) {
+        ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
+        kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
+        ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
+        kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
     }
     double val = 0.0;
     if ((i == j) && (a == b)) {
-        val = exc_energies(s);
+        val = HFS::exc_energies(s);
     }
-    val += -1.0 * two_electron_check(ka, kj, kb, ki);
+    val += -1.0 * HFS::two_electron_check(ka, kj, kb, ki);
 //    std::cout << "Finish get_3A s =" << s << " t =" << t << std::endl; //DEBUG
     return val;
 
 }
 
-double HFStability::HEG::get_3H(arma::uword i, arma::uword j) {
-//    std::cout << "Start get_3H i =" << i << " j =" << j << std::endl; //DEBUG
-    if (i < Nexc) {
-        if (j < Nexc) {
+double HFS::get_3H(arma::uword i, arma::uword j) {
+    if (i < HFS::Nexc) {
+        if (j < HFS::Nexc) {
             // First quadrant
-//            std::cout << "1" << std::endl; //DEBUG
-            return get_3A(i,j);
+            return HFS::get_3A(i, j);
         }else{
             // Second quadrant
-//            std::cout << "2" << std::endl; //DEBUG
-            return get_3B(i, j-Nexc);
+            return HFS::get_3B(i, j - HFS::Nexc);
         }
     }else{
-        if (j < Nexc) {
+        if (j < HFS::Nexc) {
             // Third quadrant
-//            std::cout << "3" << std::endl; //DEBUG
-            return get_3B(i-Nexc,j);
+            return HFS::get_3B(i - HFS::Nexc, j);
         }else{
             // Second quadrant
-//            std::cout << "4" << std::endl; //DEBUG
-            return get_3A(i-Nexc, j-Nexc);
+            return HFS::get_3A(i-HFS::Nexc, j-HFS::Nexc);
         }
     }
 }
 
-void HFStability::HEG::build_mattest() {
-    mattest.set_size(2*Nexc, 2*Nexc);
-    for (arma::uword i = 0; i < 2*Nexc; ++i) {
-        for (arma::uword j = 0; j < 2*Nexc; ++j) {
-            mattest(i,j) =  get_3H(i,j);
+void HFS::build_mattest() {
+    HFS::mattest.set_size(2*HFS::Nexc, 2*HFS::Nexc);
+    for (arma::uword i = 0; i < 2*HFS::Nexc; ++i) {
+        for (arma::uword j = 0; j < 2*HFS::Nexc; ++j) {
+            HFS::mattest(i,j) =  HFS::get_3H(i,j);
         }
     }
 }
 
-void HFStability::HEG::matvec_prod_arma() {
-    out_vec1 = mattest * inp_test_vec;
-}
-
-void HFStability::HEG::matvec_prod_me() {
-    out_vec2 = matvec_prod_3H(inp_test_vec);
+void HFS::matvec_prod_me() {
+    HFS::out_vec2 = HFS::matvec_prod_3H(HFS::inp_test_vec);
 
 }
 
-void HFStability::HEG::to_first_BZ(arma::vec& k) {
+void HFS::to_first_BZ(arma::vec& k) {
     // Translate to first brillioun zone, defined on the
     // interval [-pi/a .. pi/a)  
     
-    for (int i = 0; i < ndim; ++i) {
-        if (k[i] < -kmax - 10E-10) {
-            k[i] += bzone_length;
-        }else if (k[i] > kmax - 10E-10) {
-            k[i] -= bzone_length;
+    for (int i = 0; i < HFS::ndim; ++i) {
+        if (k[i] < -HFS::kmax - 10E-10) {
+            k[i] += HFS::bzone_length;
+        }else if (k[i] > HFS::kmax - 10E-10) {
+            k[i] -= HFS::bzone_length;
         }
     }
 }
 
-arma::vec HFStability::HEG::matvec_prod_3H(arma::vec v) {
+arma::vec HFS::matvec_prod_3H(arma::vec v) {
 
-    arma::vec Mv(Nexc*2.0, arma::fill::zeros);  // matrix vector product
+    arma::vec Mv(HFS::Nexc*2.0, arma::fill::zeros);  // matrix vector product
     /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
                                          | B* A*| |v2|     | Mv2 |
         Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
         Mv1 = Av1  + Bv2
         Mv2 = B*v1 + A*v2 
     */
-    arma::vec v1 = v.head(Nexc);
-    arma::vec v2 = v.tail(Nexc);
-    arma::vec Mv1(Nexc, arma::fill::zeros), Mv2(Nexc, arma::fill::zeros);
+    arma::vec v1 = v.head(HFS::Nexc);
+    arma::vec v2 = v.tail(HFS::Nexc);
+    arma::vec Mv1(HFS::Nexc, arma::fill::zeros), Mv2(HFS::Nexc, arma::fill::zeros);
     clock_t t;
     t = clock();
-    Mv1 = matvec_prod_3A(v1) + matvec_prod_3B(v2);
+    Mv1 = HFS::matvec_prod_3A(v1) + HFS::matvec_prod_3B(v2);
     t = clock() - t;
     std::cout << "Mv1 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
     t = clock();
-    Mv2 = matvec_prod_3B(v1) + matvec_prod_3A(v2);
+    Mv2 = HFS::matvec_prod_3B(v1) + HFS::matvec_prod_3A(v2);
     t = clock() - t;
     std::cout << "Mv2 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
     Mv = arma::join_cols(Mv1, Mv2);
     return Mv;
 }
 
-arma::uword HFStability::HEG::kb_j_to_t(arma::vec kb, arma::uword j) {
-    std::vector<arma::uword> b_N_idx = k_to_idx(kb);
-    arma::uword b = vir_N_to_1_map.at(b_N_idx);
+arma::uword HFS::kb_j_to_t(arma::vec kb, arma::uword j) {
+    std::vector<arma::uword> b_N_idx = HFS::k_to_idx(kb);
+    arma::uword b = HFS::vir_N_to_1_map.at(b_N_idx);
     std::vector<arma::uword> key {j, b};
-    arma::uword t = inv_exc_map.at(key);
+    arma::uword t = HFS::inv_exc_map.at(key);
     return t;
 }
 
-arma::vec HFStability::HEG::matvec_prod_3A(arma::vec v) {
-    assert (v.n_elem == Nexc);
-    arma::vec Mv(Nexc, arma::fill::zeros);
-    for (arma::uword s = 0; s < Nexc; ++s) {
-        arma::uword i = excitations(s, 0), a = excitations(s, 1);
-        arma::vec ki(ndim), ka(ndim);
-        ki = occ_idx_to_k(i);
-        ka = vir_idx_to_k(a);
-        for (arma::uword j = 0; j < Nocc; ++j) {
-            arma::vec kj(ndim), kb(ndim);
-            kj = occ_idx_to_k(j);
+arma::vec HFS::matvec_prod_3A(arma::vec v) {
+    arma::vec Mv(HFS::Nexc, arma::fill::zeros);
+    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
+        arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+        arma::vec ki(HFS::ndim), ka(HFS::ndim);
+        ki = HFS::occ_idx_to_k(i);
+        ka = HFS::vir_idx_to_k(a);
+        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+            arma::vec kj(HFS::ndim), kb(HFS::ndim);
+            kj = HFS::occ_idx_to_k(j);
             kb = ka + kj - ki; // Momentum conservation for <aj|bi>
-            to_first_BZ(kb);
-            if (arma::norm(kb) > (kf + 10E-8)) {
+            HFS::to_first_BZ(kb);
+            if (arma::norm(kb) > (HFS::kf + 10E-8)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = kb_j_to_t(kb, j);
+                arma::uword t = HFS::kb_j_to_t(kb, j);
                 if (s == t) {
-                    Mv(s) += exc_energies(s) * v(t);
+                    Mv(s) += HFS::exc_energies(s) * v(t);
                 } else { 
-                    Mv(s) += -1.0 * two_electron(ka, kb) * v(t);
+                    Mv(s) += -1.0 * HFS::two_electron(ka, kb) * v(t);
                 }
 
             }
@@ -339,30 +398,29 @@ arma::vec HFStability::HEG::matvec_prod_3A(arma::vec v) {
     return Mv;
 }
 
-arma::vec HFStability::HEG::matvec_prod_3B(arma::vec v) {
-    assert (v.n_elem == Nexc);
-    arma::vec Mv(Nexc, arma::fill::zeros);
-    for (arma::uword s = 0; s < Nexc; ++s) {
-        arma::uword i = excitations(s, 0), a = excitations(s, 1);
-        arma::vec ki(ndim), ka(ndim);
-        ki = occ_idx_to_k(i);
-        ka = vir_idx_to_k(a);
-        for (arma::uword j = 0; j < Nocc; ++j) {
-            arma::vec kj(ndim), kb(ndim);
-            kj = occ_idx_to_k(j); 
+arma::vec HFS::matvec_prod_3B(arma::vec v) {
+    arma::vec Mv(HFS::Nexc, arma::fill::zeros);
+    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
+        arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+        arma::vec ki(HFS::ndim), ka(HFS::ndim);
+        ki = HFS::occ_idx_to_k(i);
+        ka = HFS::vir_idx_to_k(a);
+        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+            arma::vec kj(HFS::ndim), kb(HFS::ndim);
+            kj = HFS::occ_idx_to_k(j); 
             kb = kj + ki - ka; // Momentum conservation for <ab|ji>
-            to_first_BZ(kb);
-            if (arma::norm(kb) > (kf + 10E-8)) {
+            HFS::to_first_BZ(kb);
+            if (arma::norm(kb) > (HFS::kf + 10E-8)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = kb_j_to_t(kb, j);
-                Mv(s) += -1.0 * two_electron(ka, kj) * v(t);
+                arma::uword t = HFS::kb_j_to_t(kb, j);
+                Mv(s) += -1.0 * HFS::two_electron(ka, kj) * v(t);
             }
         }
     }
     return Mv;
 }
 
-void HFStability::HEG::davidson_wrapper(arma::uword max_its 
+void HFS::davidson_wrapper(arma::uword max_its 
                                        ,arma::uword max_sub_size
                                        ,arma::uword num_of_roots
                                        ,arma::uword block_size
@@ -371,21 +429,21 @@ void HFStability::HEG::davidson_wrapper(arma::uword max_its
                                        ,int         which 
                                        )
 {
-    arma::uword N = 2.0 * Nexc;
+    arma::uword N = 2.0 * HFS::Nexc;
     davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance, 
-                       &HEG::get_3H, 
-                       &HEG::matvec_prod_3H);
+                       &HFS::get_3H, 
+                       &HFS::matvec_prod_3H);
 }
 
-void HFStability::HEG::davidson_algorithm(arma::uword N
+void HFS::davidson_algorithm(arma::uword N
                                          ,arma::uword max_its
                                          ,arma::uword max_sub_size
                                          ,arma::uword num_of_roots
                                          ,arma::uword block_size
                                          ,arma::mat   guess_evecs
                                          ,double      tolerance 
-                                         ,double      (HFStability::HEG::*matrix)(arma::uword, arma::uword)
-                                         ,arma::vec   (HFStability::HEG::*matvec_product)(arma::vec v)
+                                         ,double      (*matrix)(arma::uword, arma::uword)
+                                         ,arma::vec   (*matvec_product)(arma::vec v)
                                          )
 {
     
@@ -414,9 +472,7 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
             arma::vec temp = guess_evecs.col(old_sub_size+j);
             arma::vec Mv(N); 
             t = clock();
-            //Mv = (this->*matvec_product)(guess_evecs.col(old_sub_size + j));
-            //Mv = (this->*matvec_product)(temp);
-            Mv = matvec_prod_3H(temp);
+            Mv = matvec_product(guess_evecs.col(old_sub_size + j));
             t2 = clock() - t;
             std::cout << "Mv took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
             Mvmat = arma::join_rows(Mvmat, Mv);
@@ -451,7 +507,7 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
             for (arma::uword k = 0; k < N; ++k) {
                 x_k = ritz_vecs(k,j);    
                 for (arma::uword l = 0; l < N; ++l) {
-                    rayq += x_k * (this->*matrix)(k,l) * ritz_vecs(l,j);
+                    rayq += x_k * matrix(k,l) * ritz_vecs(l,j);
                 }
             }
 
@@ -459,9 +515,9 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
                 sum = 0.0;
                 for (arma::uword m = 0; m < N; ++m) {    
                     if (m == k){
-                        sum += ((this->*matrix)(k,k) - rayq) * ritz_vecs(m,j);
+                        sum += (matrix(k,k) - rayq) * ritz_vecs(m,j);
                     }else{
-                        sum += (this->*matrix)(k,m) * ritz_vecs(m,j);
+                        sum += matrix(k,m) * ritz_vecs(m,j);
                     }
                 res(k) = sum;
                 }
@@ -476,14 +532,14 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
                 //If diagonal element = eval, get singularity
                 bool apply_corr = true;
                 for (arma::uword k = 0; k < old_sub_size; ++k) {
-                    if ( fabs( (this->*matrix)(k,k) - sub_evals(j) ) <= 10E-10) {
+                    if ( fabs( matrix(k,k) - sub_evals(j) ) <= 10E-10) {
                         apply_corr = false;
                     }
                 }
 
                 //This is the DPR corr
                 for (arma::uword k=0 ; k < N ; ++k) {
-                    corr(k) = ( -1.0/ ( (this->*matrix)(k,k) - rayq ) ) * res(k);
+                    corr(k) = ( -1.0/ ( matrix(k,k) - rayq ) ) * res(k);
                 }
 
                 //Only add if no problems encountered
@@ -507,19 +563,19 @@ void HFStability::HEG::davidson_algorithm(arma::uword N
         }
         guess_evecs = Q;
 
-        dav_vecs =  guess_evecs;
-        dav_vals = sub_evals; 
-        dav_its  = i;
+        HFS::dav_vecs =  guess_evecs;
+        HFS::dav_vals = sub_evals; 
+        HFS::dav_its  = i;
 
         t3 = clock() - t1;
         std::cout << "Iteration took " << ((float)t3) / CLOCKS_PER_SEC << " seconds" << std::endl;
 
         if (old_sub_size == sub_size) {
-            dav_message = "Subspace Converged";
+            HFS::dav_message = "Subspace Converged";
             break;
         }
         else if ((sub_size + block_size) > max_sub_size) {
-            dav_message = "Subspace Size Too Large";
+            HFS::dav_message = "Subspace Size Too Large";
             break;
         }
     }
