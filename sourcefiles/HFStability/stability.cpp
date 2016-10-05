@@ -4,14 +4,20 @@
 #include <cmath>
 #include <assert.h>
 #include <time.h>
-#include "stability.h"
+#include "HFSnamespace.h"
 
-int main() {
-    HFS::Nk = 7;
-    HFS::ndim = 2;
-    HFS::rs = 1.0;
-    HFS::get_params();
-return 0;
+
+void HFS::print_params() {
+    std::cout << "DeltaK = " << HFS::deltaK << std::endl;
+    std::cout << "Nk = " << HFS::Nk << std::endl;
+    std::cout << "ndim = " << HFS::ndim << std::endl;
+    std::cout << "rs = " << HFS::rs << std::endl;
+    std::cout << "kf = " << HFS::kf << std::endl;
+    HFS::kgrid.print("Kgrid");
+    HFS::occ_states.print("Occupied States");
+    HFS::vir_states.print("Virtual States");
+    HFS::occ_energies.print("Occ Energy");
+    HFS::vir_energies.print("Vir Energy");
 }
 
 void HFS::get_params() {
@@ -44,7 +50,7 @@ void HFS::get_params() {
     //HFS::calc_vir_states()
 
     HFS::calc_vir_energies();
-    HFS::calc_exc_energies();
+    HFS::calc_excitations();
     HFS::get_inv_exc_map();
     HFS::get_vir_N_to_1_map();
 }
@@ -58,7 +64,7 @@ void HFS::calc_occ_states() {
     states.set_size(Nrows, HFS::ndim);
     if (HFS::ndim == 1) {
         for (arma::uword i = 0; i < HFS::Nk; ++i) {
-            states(i) = HFS::kgrid(i); 
+            states(i) = HFS::kgrid(i);
         }
     } else if (HFS::ndim == 2) {
         for (arma::uword i = 0; i < HFS::Nk; ++i) {
@@ -87,7 +93,7 @@ void HFS::calc_occ_states() {
         if (HFS::is_vir(row_norm)) {
             occ_indices(HFS::Nocc) = i;
             ++HFS::Nocc;
-        } else { 
+        } else {
             vir_indices(HFS::Nvir) = i;
             ++HFS::Nvir;
         }
@@ -96,14 +102,15 @@ void HFS::calc_occ_states() {
     vir_indices = vir_indices.head(HFS::Nvir);
     arma::mat occ_states  = states.rows(occ_indices);
     arma::mat vir_states  = states.rows(vir_indices);
-    HFS::occ_states = k_to_uword(occ_states);
-    HFS::vir_states = k_to_uword(vir_states);
+    HFS::occ_states = k_to_index(occ_states);
+    HFS::vir_states = k_to_index(vir_states);
+    HFS::N_elec = 2 * HFS::Nocc;
 }
 
 void HFS::calc_exc_energy() {
     HFS::exc_energies.zeros(HFS::Nexc);
-    for (arma::uword i = 0; i < HFS::Nexc; ++i) { 
-        HFS::exc_energies(i) = HFS::vir_energies(HFS::excitations(i, 1)) 
+    for (arma::uword i = 0; i < HFS::Nexc; ++i) {
+        HFS::exc_energies(i) = HFS::vir_energies(HFS::excitations(i, 1))
                              - HFS::occ_energies(HFS::excitations(i, 0));
     }
 }
@@ -117,7 +124,7 @@ void HFS::calc_vir_energies() {
 }
 
 void HFS::calc_excitations() {
-    arma::vec kexc(HFS::ndim); 
+    arma::vec kexc(HFS::ndim);
     arma::uvec exc_idx(HFS::ndim);
     HFS::excitations.set_size(HFS::Nocc * HFS::Nvir, 2);
     HFS::exc_energies.set_size(HFS::Nocc * HFS::Nvir);
@@ -126,9 +133,9 @@ void HFS::calc_excitations() {
         // Excite only in +x direction
         for (arma::uword j = 0; j < HFS::Nk; ++j) {
             kexc = HFS::kgrid(HFS::occ_states.row(i));
-            kexc(0) += HFS::deltaK * j; 
+            kexc(0) += HFS::deltaK * j;
             HFS::to_first_BZ(kexc);
-            exc_idx = HFS::k_to_uword(kexc);
+            exc_idx = HFS::k_to_index(kexc);
             // Find the vir state
             for (arma::uword k = 0; k < HFS::vir_states.n_rows; ++k) {
                 if (arma::all(exc_idx == HFS::vir_states(k))) {
@@ -138,16 +145,13 @@ void HFS::calc_excitations() {
                     ++HFS::Nexc;
                 }
             }
-            
+
         }
     }
     HFS::excitations  = HFS::excitations.head_rows(HFS::Nexc);
     HFS::exc_energies = HFS::exc_energies.head(HFS::Nexc);
 }
 
-void HFS::calc_exc_energies() {
-    int x=0;
-}
 
 void HFS::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
     arma::uword num_inp_states = inp_states.n_rows;
@@ -155,10 +159,10 @@ void HFS::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
     energy_vec.fill(0.0);
     for (arma::uword i = 0; i < num_inp_states; ++i) {
         for (int j = 0; j < HFS::ndim; ++j) {
-            energy_vec(i) += HFS::kgrid(inp_states(i,j)) * HFS::kgrid(inp_states(i,j)); 
-        }  
+            energy_vec(i) += HFS::kgrid(inp_states(i,j)) * HFS::kgrid(inp_states(i,j));
+        }
         energy_vec[i] /= 2.0; //Is now filled with kinetic energy
-        energy_vec[i] += HFS::exchange(inp_states, i); 
+        energy_vec[i] += HFS::exchange(inp_states, i);
     }
 }
 
@@ -174,7 +178,7 @@ double HFS::exchange(arma::umat& inp_states, arma::uword i) {
             k2(j) = HFS::kgrid(HFS::occ_states(k, j));
         }
         exch += HFS::two_electron(ki, k2);
-    } 
+    }
     exch *= -1.0;
     return exch;
 }
@@ -183,9 +187,12 @@ double HFS::two_electron(arma::vec k1, arma::vec k2) {
     double norm = 0.0;
     arma::vec k(HFS::ndim);
     k = k1 - k2;
+    k.print("k before");
 
     HFS::to_first_BZ(k);
     norm = arma::norm(k);
+    k.print("k after");
+    std::cout << "norm = " << norm << std::endl;
     if (norm < 10E-10) {
         return 0.0;
     }else{
@@ -196,14 +203,13 @@ double HFS::two_electron(arma::vec k1, arma::vec k2) {
 double HFS::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::vec k4) {
     // Same as two_electron, except checks for momentum conservation
     // In the other, conservation is assumed
-    double sum_sqrs = 0.0;
     arma::vec k(HFS::ndim);
 
     k = k1 + k2 - k3 - k4;
     HFS::to_first_BZ(k);
 
     // If not momentum conserving:
-    if (arma::any(arma::abs(k) > 10E-10)) {
+    if (arma::any(arma::abs(k) > SMALLNUMBER)) {
             return 0.0;
     }
 
@@ -228,12 +234,13 @@ void HFS::get_vir_N_to_1_map() {
     }
 }
 
-arma::uvec HFS::k_to_uword(arma::vec k) {
+arma::uvec HFS::k_to_index(arma::vec k) {
     arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
     arma::uvec indices = arma::conv_to<arma::uvec>::from(idx);
     return indices;
 }
-arma::uvec HFS::k_to_uword(arma::mat k) {
+
+arma::umat HFS::k_to_index(arma::mat k) {
     arma::mat idx = arma::round((k + HFS::kmax) / HFS::deltaK);
     arma::umat indices = arma::conv_to<arma::umat>::from(idx);
     return indices;
@@ -262,13 +269,13 @@ arma::vec HFS::vir_idx_to_k(arma::uword idx) {
 
 }
 
-void HFS::get_inv_exc_map() { 
+void HFS::get_inv_exc_map() {
     for (arma::uword i = 0; i < HFS::Nexc; ++i) {
         std::vector<arma::uword> key {HFS::excitations(i,0), HFS::excitations(i,1)};
         HFS::inv_exc_map[key] = i;
     }
 
-    // Testing 
+    // Testing
     HFS::inv_exc_map_test.set_size(Nexc);
     for (arma::uword i = 0; i < HFS::Nexc; ++i) {
         std::vector<arma::uword> key {HFS::excitations(i,0), HFS::excitations(i,1)};
@@ -334,9 +341,9 @@ double HFS::get_3A(arma::uword s, arma::uword t) {
     arma::uword a = HFS::excitations(s, 1);
     arma::uword j = HFS::excitations(t, 0);
     arma::uword b = HFS::excitations(t, 1);
-//    std::cout << "i =" << i << std::endl; //DEBUG 
-//    std::cout << "j =" << j << std::endl; //DEBUG 
-//    std::cout << "a =" << a << std::endl; //DEBUG 
+//    std::cout << "i =" << i << std::endl; //DEBUG
+//    std::cout << "j =" << j << std::endl; //DEBUG
+//    std::cout << "a =" << a << std::endl; //DEBUG
 //    std::cout << "b =" << b << std::endl; //DEBUG
     arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
     for (int idx = 0; idx < HFS::ndim; ++idx) {
@@ -391,8 +398,8 @@ void HFS::matvec_prod_me() {
 
 void HFS::to_first_BZ(arma::vec& k) {
     // Translate to first brillioun zone, defined on the
-    // interval [-pi/a .. pi/a)  
-    
+    // interval [-pi/a .. pi/a)
+
     for (int i = 0; i < HFS::ndim; ++i) {
         if (k[i] < -HFS::kmax - 10E-10) {
             k[i] += HFS::bzone_length;
@@ -409,7 +416,7 @@ arma::vec HFS::matvec_prod_3H(arma::vec v) {
                                          | B* A*| |v2|     | Mv2 |
         Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
         Mv1 = Av1  + Bv2
-        Mv2 = B*v1 + A*v2 
+        Mv2 = B*v1 + A*v2
     */
     arma::vec v1 = v.head(HFS::Nexc);
     arma::vec v2 = v.tail(HFS::Nexc);
@@ -452,7 +459,7 @@ arma::vec HFS::matvec_prod_3A(arma::vec v) {
                 arma::uword t = HFS::kb_j_to_t(kb, j);
                 if (s == t) {
                     Mv(s) += HFS::exc_energies(s) * v(t);
-                } else { 
+                } else {
                     Mv(s) += -1.0 * HFS::two_electron(ka, kb) * v(t);
                 }
 
@@ -471,7 +478,7 @@ arma::vec HFS::matvec_prod_3B(arma::vec v) {
         ka = HFS::vir_idx_to_k(a);
         for (arma::uword j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(HFS::ndim), kb(HFS::ndim);
-            kj = HFS::occ_idx_to_k(j); 
+            kj = HFS::occ_idx_to_k(j);
             kb = kj + ki - ka; // Momentum conservation for <ab|ji>
             HFS::to_first_BZ(kb);
             if (arma::norm(kb) > (HFS::kf + 10E-8)) {
@@ -484,18 +491,18 @@ arma::vec HFS::matvec_prod_3B(arma::vec v) {
     return Mv;
 }
 
-void HFS::davidson_wrapper(arma::uword max_its 
+void HFS::davidson_wrapper(arma::uword max_its
                                        ,arma::uword max_sub_size
                                        ,arma::uword num_of_roots
                                        ,arma::uword block_size
                                        ,arma::mat   guess_evecs
                                        ,double      tolerance
-                                       ,int         which 
+                                       ,int         which
                                        )
 {
     arma::uword N = 2.0 * HFS::Nexc;
-    davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance, 
-                       &HFS::get_3H, 
+    davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
+                       &HFS::get_3H,
                        &HFS::matvec_prod_3H);
 }
 
@@ -505,14 +512,14 @@ void HFS::davidson_algorithm(arma::uword N
                                          ,arma::uword num_of_roots
                                          ,arma::uword block_size
                                          ,arma::mat   guess_evecs
-                                         ,double      tolerance 
+                                         ,double      tolerance
                                          ,double      (*matrix)(arma::uword, arma::uword)
                                          ,arma::vec   (*matvec_product)(arma::vec v)
                                          )
 {
-    
+
     arma::uword sub_size = guess_evecs.n_cols;
-    arma::uword old_sub_size = 0;    
+    arma::uword old_sub_size = 0;
     arma::uword num_new_vecs = sub_size;
     arma::vec old_evals;
     arma::mat old_evecs = guess_evecs;
@@ -530,11 +537,11 @@ void HFS::davidson_algorithm(arma::uword N
     for (arma::uword i = 0 ; i < max_its ; ++i){
         t1 = clock();
         arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
-        num_new_vecs = sub_size - old_sub_size; 
-        for (arma::uword j = 0; j < num_new_vecs; ++j) 
-        { 
+        num_new_vecs = sub_size - old_sub_size;
+        for (arma::uword j = 0; j < num_new_vecs; ++j)
+        {
             arma::vec temp = guess_evecs.col(old_sub_size+j);
-            arma::vec Mv(N); 
+            arma::vec Mv(N);
             t = clock();
             Mv = matvec_product(guess_evecs.col(old_sub_size + j));
             t2 = clock() - t;
@@ -547,17 +554,17 @@ void HFS::davidson_algorithm(arma::uword N
         arma::mat sub_evecs;
         arma::eig_sym(sub_evals, sub_evecs, sub_mat);
 
-        //sort eigenvals, vecs by value 
+        //sort eigenvals, vecs by value
         arma::uvec indices = arma::sort_index(sub_evals);
         sub_evecs = sub_evecs.cols(indices);
         sub_evals = sub_evals.elem(indices);
-        
+
         //old_evecs = sub_evecs;
         ritz_vecs = guess_evecs * sub_evecs;
-        /*Current implementation is the Diagonally Preconditioned Residue (DPR) method. 
+        /*Current implementation is the Diagonally Preconditioned Residue (DPR) method.
           As far as I know right now, this is the original method propossed by Davidson
-          Apparently, sometimes people simply call this the Davidson method. */            
-        
+          Apparently, sometimes people simply call this the Davidson method. */
+
         //Get the res and append to subspace if needed.
         //Sub_size changes within this loop
         double sum;
@@ -569,7 +576,7 @@ void HFS::davidson_algorithm(arma::uword N
             double x_k = 0.0;
             //rayleigh quotient is x.T * M * x
             for (arma::uword k = 0; k < N; ++k) {
-                x_k = ritz_vecs(k,j);    
+                x_k = ritz_vecs(k,j);
                 for (arma::uword l = 0; l < N; ++l) {
                     rayq += x_k * matrix(k,l) * ritz_vecs(l,j);
                 }
@@ -577,7 +584,7 @@ void HFS::davidson_algorithm(arma::uword N
 
             for (arma::uword k = 0; k < N; ++k) {
                 sum = 0.0;
-                for (arma::uword m = 0; m < N; ++m) {    
+                for (arma::uword m = 0; m < N; ++m) {
                     if (m == k){
                         sum += (matrix(k,k) - rayq) * ritz_vecs(m,j);
                     }else{
@@ -586,7 +593,7 @@ void HFS::davidson_algorithm(arma::uword N
                 res(k) = sum;
                 }
             }
-        
+
             //Append only the res with norm > tolerance.
             double norm = arma::norm(res);
             norms(j) = norm;
@@ -619,7 +626,7 @@ void HFS::davidson_algorithm(arma::uword N
         arma::mat Q, R;
         arma::qr_econ(Q, R, guess_evecs);
         //Enforce sums of elements of eigenvector matrix are positive
-        //with no loss of generality. 
+        //with no loss of generality.
         for (arma::uword i = 0; i < Q.n_cols; ++i) {
             if (arma::sum(Q.col(i)) < 0.0) {
                 Q.col(i) = -1.0 * Q.col(i);
@@ -628,7 +635,7 @@ void HFS::davidson_algorithm(arma::uword N
         guess_evecs = Q;
 
         HFS::dav_vecs =  guess_evecs;
-        HFS::dav_vals = sub_evals; 
+        HFS::dav_vals = sub_evals;
         HFS::dav_its  = i;
 
         t3 = clock() - t1;

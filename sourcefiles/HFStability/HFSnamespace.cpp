@@ -1,4 +1,4 @@
-#ifndef CPP_STABILITY // header guards 
+#ifndef CPP_STABILITY // header guards
 #define CPP_STABILITY
 #ifndef PI
     #define PI 3.14159265358979323846264338327
@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <time.h>
+#include "HFSnamespace.h"
 
 namespace HFS {
 //Attributes
@@ -30,10 +31,10 @@ int dav_its;
 std::string dav_message;
 
 //Methods
+void print_params();
 void calc_occ_states();
 void calc_occ_energies();
 void calc_vir_energies();
-void calc_exc_energies();
 void calc_excitations();
 bool is_vir(double);
 double mvec_test();
@@ -54,21 +55,14 @@ void to_first_BZ(arma::vec&);
 void get_params();
 void get_inv_exc_map();
 void get_vir_N_to_1_map();
-arma::uvec k_to_uword(arma::vec);
-arma::uvec k_to_uword(arma::mat);
+arma::uvec k_to_index(arma::vec);
+arma::umat k_to_index(arma::mat);
 arma::uvec inv_exc_map_test;
 void build_mattest();
 void matvec_prod_arma();
 void matvec_prod_me();
 arma::vec matvec_prod_3H(arma::vec);
-void davidson_wrapper(arma::uword 
-                     ,arma::uword 
-                     ,arma::uword 
-                     ,arma::uword 
-                     ,arma::mat   
-                     ,double      
-                     ,int         
-                     );
+void davidson_wrapper(arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, int);
 arma::uword kb_j_to_t(arma::vec, arma::uword);
 arma::vec matvec_prod_3A(arma::vec);
 arma::vec matvec_prod_3B(arma::vec);
@@ -77,16 +71,7 @@ arma::vec vir_idx_to_k(arma::uword);
 std::vector<arma::uword> k_to_idx(arma::vec);
 std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
 std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
-void davidson_algorithm(arma::uword  
-		       ,arma::uword 
-	   	       ,arma::uword  
-		       ,arma::uword  
-		       ,arma::uword
-	   	       ,arma::mat
-		       ,double
-	   	       ,double (*matrix)(arma::uword, arma::uword)
-                       ,arma::vec (*matvec_product)(arma::vec v)
-                       ); 
+void davidson_algorithm(arma::uword, arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec v));
 }
 
 #endif
