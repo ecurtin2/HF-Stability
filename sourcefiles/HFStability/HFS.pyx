@@ -26,7 +26,7 @@ from lib import general_methods as gm
 ########################################################################
 #                      Generated cpp->pyx Header                       #
 ########################################################################
-cdef extern from "HFSnamespace.h" namespace "HFS":
+cdef extern from "HFStability/HFSnamespace.h" namespace "HFS":
 
     #Attributes
      double  bzone_length, vol, rs, kf, kmax, fermi_energy
@@ -81,6 +81,91 @@ cdef extern from "HFSnamespace.h" namespace "HFS":
      vec occ_idx_to_k(long long unsigned int)
      vec vir_idx_to_k(long long unsigned int)
      void davidson_algorithm(long long unsigned int,long long unsigned int, long long unsigned int, long long unsigned int, long long unsigned int, mat, double, double (*matrix)(long long unsigned int, long long unsigned int), vec (*matvec_product)(vec v))
+
+
+########################################################################
+#                               Py Funcs                               #
+########################################################################
+def py_print_params():    print_params()
+def py_calc_occ_states():    calc_occ_states()
+def py_calc_occ_energies():    calc_occ_energies()
+def py_calc_vir_energies():    calc_vir_energies()
+def py_calc_excitations():    calc_excitations()
+def py_is_vir(float val):    return is_vir(val)
+def py_mvec_test():    return mvec_test()
+def py_calc_energy_wrap(bool val):    calc_energy_wrap(val)
+def py_calc_exc_energy():    calc_exc_energy()
+def py_get_k_to_idx(double& val):    return get_k_to_idx(val)
+def py_get_vir_states_inv():    get_vir_states_inv()
+def py_calc_energies(np.ndarray[long long unsigned int, ndim=2, mode="fortran"] val1, 
+                     np.ndarray[double, ndim=1] val2):    VAL1 = numpy_to_umat_d(val1)
+    VAL2 = numpy_to_vec_d(val2)
+    calc_energies(VAL1, VAL2)
+def py_exchange(np.ndarray[long long unsigned int, ndim=2, mode="fortran"] val1, 
+                int val2):    VAL1 = numpy_to_umat_d(val1)
+    return exchange(VAL1, val2)
+def py_two_electron(np.ndarray[double, ndim=1] val1, 
+                    np.ndarray[double, ndim=1] val2):    VAL1 = numpy_to_vec_d(val1)
+    VAL2 = numpy_to_vec_d(val2)
+    return two_electron(VAL1, VAL2)
+def py_two_electron_check(np.ndarray[double, ndim=1] val1, 
+                          np.ndarray[double, ndim=1] val2, 
+                          np.ndarray[double, ndim=1] val3, 
+                          np.ndarray[double, ndim=1] val4):    VAL1 = numpy_to_vec_d(val1)
+    VAL2 = numpy_to_vec_d(val2)
+    VAL3 = numpy_to_vec_d(val3)
+    VAL4 = numpy_to_vec_d(val4)
+    return two_electron_check(VAL1, VAL2, VAL3, VAL4)
+def py_get_1B(int val1, 
+              int val2):    return get_1B(val1, val2)
+def py_get_3B(int val1, 
+              int val2):    return get_3B(val1, val2)
+def py_get_1A(int val1, 
+              int val2):    return get_1A(val1, val2)
+def py_get_3A(int val1, 
+              int val2):    return get_3A(val1, val2)
+def py_get_3H(int val1, 
+              int val2):    return get_3H(val1, val2)
+def py_to_first_BZ(np.ndarray[double, ndim=1] val1):    VAL1 = numpy_to_vec_d(val1)
+    to_first_BZ(VAL1)
+def py_get_params():    get_params()
+def py_get_inv_exc_map():    get_inv_exc_map()
+def py_get_vir_N_to_1_map():    get_vir_N_to_1_map()
+def py_k_to_index(np.ndarray[double, ndim=1] val1):    VAL1 = numpy_to_vec_d(val1)
+    return uvec_to_numpy(k_to_index(VAL1))
+def py_k_to_index(np.ndarray[double, ndim=2, mode="fortran"] val1):    VAL1 = numpy_to_mat_d(val1)
+    return umat_to_numpy(k_to_index(VAL1))
+def py_build_mattest():    build_mattest()
+def py_matvec_prod_arma():    matvec_prod_arma()
+def py_matvec_prod_me():    matvec_prod_me()
+def py_matvec_prod_3H(np.ndarray[double, ndim=1] val1):    VAL1 = numpy_to_vec_d(val1)
+    return vec_to_numpy(matvec_prod_3H(VAL1))
+def py_davidson_wrapper(int val1, 
+                        int val2, 
+                        int val3, 
+                        int val4, 
+                        np.ndarray[double, ndim=2, mode="fortran"] val5, 
+                        float val6, 
+                        int val7):    VAL5 = numpy_to_mat_d(val5)
+    davidson_wrapper(val1, val2, val3, val4, VAL5, val6, val7)
+def py_kb_j_to_t(np.ndarray[double, ndim=1] val1, 
+                 int val2):    VAL1 = numpy_to_vec_d(val1)
+    return kb_j_to_t(VAL1, val2)
+def py_matvec_prod_3A(np.ndarray[double, ndim=1] val1):    VAL1 = numpy_to_vec_d(val1)
+    return vec_to_numpy(matvec_prod_3A(VAL1))
+def py_matvec_prod_3B(np.ndarray[double, ndim=1] val1):    VAL1 = numpy_to_vec_d(val1)
+    return vec_to_numpy(matvec_prod_3B(VAL1))
+def py_occ_idx_to_k(int val):    return vec_to_numpy(occ_idx_to_k(val))
+def py_vir_idx_to_k(int val):    return vec_to_numpy(vir_idx_to_k(val))
+def py_davidson_algorithm(int val1, 
+                          int val2, 
+                          int val3, 
+                          int val4, 
+                          int val5, 
+                          np.ndarray[double, ndim=2, mode="fortran"] val6, 
+                          float val7, 
+                          float val8):    VAL6 = numpy_to_mat_d(val6)
+    davidson_algorithm(val1, val2, val3, val4, val5, VAL6, val7, val8)
 
 
 ########################################################################
