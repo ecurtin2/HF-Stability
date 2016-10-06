@@ -6,7 +6,6 @@
 #include <time.h>
 #include "HFSnamespace.h"
 
-
 void HFS::print_params() {
     std::cout << "DeltaK = " << HFS::deltaK << std::endl;
     std::cout << "Nk = " << HFS::Nk << std::endl;
@@ -20,7 +19,7 @@ void HFS::print_params() {
     HFS::vir_energies.print("Vir Energy");
 }
 
-void HFS::get_params() {
+void HFS::calc_params() {
     if (HFS::ndim == 1) {
         HFS::kf = PI / (4.0 * HFS::rs);
     } else if (HFS::ndim == 2) {
@@ -51,8 +50,8 @@ void HFS::get_params() {
 
     HFS::calc_vir_energies();
     HFS::calc_excitations();
-    HFS::get_inv_exc_map();
-    HFS::get_vir_N_to_1_map();
+    HFS::calc_inv_exc_map();
+    HFS::calc_vir_N_to_1_map();
 }
 
 bool HFS::is_vir(double k) {
@@ -60,26 +59,28 @@ bool HFS::is_vir(double k) {
 }
 
 void HFS::calc_occ_states() {
-    arma::uword Nrows = std::pow(HFS::Nk, HFS::ndim);
+    arma::uword N = Nk - 1;  // Unique Brillioun Zone
+    arma::uword Nrows = std::pow(N, HFS::ndim);
     states.set_size(Nrows, HFS::ndim);
+
     if (HFS::ndim == 1) {
-        for (arma::uword i = 0; i < HFS::Nk; ++i) {
+        for (arma::uword i = 0; i < N; ++i) {
             states(i) = HFS::kgrid(i);
         }
     } else if (HFS::ndim == 2) {
-        for (arma::uword i = 0; i < HFS::Nk; ++i) {
-            for (arma::uword j = 0; j < HFS::Nk; ++j) {
-                states(HFS::Nk * i + j, 0) = HFS::kgrid(i);
-                states(HFS::Nk * i + j, 1) = HFS::kgrid(j);
+        for (arma::uword i = 0; i < N; ++i) {
+            for (arma::uword j = 0; j < N; ++j) {
+                states(N*i + j, 0) = HFS::kgrid(i);
+                states(N*i + j, 1) = HFS::kgrid(j);
             }
         }
     } else if (HFS::ndim == 3) {
-        for (arma::uword i = 0; i < HFS::Nk; ++i) {
-            for (arma::uword j = 0; j < HFS::Nk; ++j) {
-                for (arma::uword k = 0; k < HFS::Nk; ++k) {
-                    states(HFS::Nk * HFS::Nk * i + HFS::Nk * j + k, 0) = HFS::kgrid(i);
-                    states(HFS::Nk * HFS::Nk * i + HFS::Nk * j + k, 1) = HFS::kgrid(j);
-                    states(HFS::Nk * HFS::Nk * i + HFS::Nk * j + k, 2) = HFS::kgrid(k);
+        for (arma::uword i = 0; i < N; ++i) {
+            for (arma::uword j = 0; j < N; ++j) {
+                for (arma::uword k = 0; k < N; ++k) {
+                    states(N*N*i + N*j + k, 0) = HFS::kgrid(i);
+                    states(N*N*i + N*j + k, 1) = HFS::kgrid(j);
+                    states(N*N*i + N*j + k, 2) = HFS::kgrid(k);
                 }
             }
         }
@@ -152,7 +153,6 @@ void HFS::calc_excitations() {
     HFS::exc_energies = HFS::exc_energies.head(HFS::Nexc);
 }
 
-
 void HFS::calc_energies(arma::umat& inp_states, arma::vec& energy_vec) {
     arma::uword num_inp_states = inp_states.n_rows;
     energy_vec.set_size(num_inp_states);
@@ -187,12 +187,9 @@ double HFS::two_electron(arma::vec k1, arma::vec k2) {
     double norm = 0.0;
     arma::vec k(HFS::ndim);
     k = k1 - k2;
-    k.print("k before");
 
     HFS::to_first_BZ(k);
     norm = arma::norm(k);
-    k.print("k after");
-    std::cout << "norm = " << norm << std::endl;
     if (norm < 10E-10) {
         return 0.0;
     }else{
@@ -224,7 +221,7 @@ double HFS::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::v
     }
 }
 
-void HFS::get_vir_N_to_1_map() {
+void HFS::calc_vir_N_to_1_map() {
     for (arma::uword i = 0; i < HFS::Nvir; ++i) {
         std::vector<arma::uword> key(HFS::ndim);
         for (int j = 0; j < HFS::ndim; ++j) {
@@ -269,7 +266,7 @@ arma::vec HFS::vir_idx_to_k(arma::uword idx) {
 
 }
 
-void HFS::get_inv_exc_map() {
+void HFS::calc_inv_exc_map() {
     for (arma::uword i = 0; i < HFS::Nexc; ++i) {
         std::vector<arma::uword> key {HFS::excitations(i,0), HFS::excitations(i,1)};
         HFS::inv_exc_map[key] = i;
@@ -283,7 +280,7 @@ void HFS::get_inv_exc_map() {
     }
 }
 
-double HFS::get_1B(arma::uword s, arma::uword t) {
+double HFS::calc_1B(arma::uword s, arma::uword t) {
     arma::uword i =  HFS::excitations(s, 0);
     arma::uword a =  HFS::excitations(s, 1);
     arma::uword j =  HFS::excitations(t, 0);
@@ -298,7 +295,7 @@ double HFS::get_1B(arma::uword s, arma::uword t) {
     return 2.0 * two_electron_check(ka, kb, ki, kj) - two_electron_check(ka, kb, kj, ki);
 }
 
-double HFS::get_3B(arma::uword s, arma::uword t) {
+double HFS::calc_3B(arma::uword s, arma::uword t) {
 //    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
     arma::uword i = HFS::excitations(s, 0);
     arma::uword a = HFS::excitations(s, 1);
@@ -315,7 +312,7 @@ double HFS::get_3B(arma::uword s, arma::uword t) {
     return -1.0 * HFS::two_electron_check(ka, kb, kj, ki);
 }
 
-double HFS::get_1A(arma::uword s, arma::uword t) {
+double HFS::calc_1A(arma::uword s, arma::uword t) {
     arma::uword i = HFS::excitations(s, 0);
     arma::uword a = HFS::excitations(s, 1);
     arma::uword j = HFS::excitations(t, 0);
@@ -335,7 +332,7 @@ double HFS::get_1A(arma::uword s, arma::uword t) {
     return val;
 }
 
-double HFS::get_3A(arma::uword s, arma::uword t) {
+double HFS::calc_3A(arma::uword s, arma::uword t) {
 //    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
     arma::uword i = HFS::excitations(s, 0);
     arma::uword a = HFS::excitations(s, 1);
@@ -362,22 +359,22 @@ double HFS::get_3A(arma::uword s, arma::uword t) {
 
 }
 
-double HFS::get_3H(arma::uword i, arma::uword j) {
+double HFS::calc_3H(arma::uword i, arma::uword j) {
     if (i < HFS::Nexc) {
         if (j < HFS::Nexc) {
             // First quadrant
-            return HFS::get_3A(i, j);
+            return HFS::calc_3A(i, j);
         }else{
             // Second quadrant
-            return HFS::get_3B(i, j - HFS::Nexc);
+            return HFS::calc_3B(i, j - HFS::Nexc);
         }
     }else{
         if (j < HFS::Nexc) {
             // Third quadrant
-            return HFS::get_3B(i - HFS::Nexc, j);
+            return HFS::calc_3B(i - HFS::Nexc, j);
         }else{
             // Second quadrant
-            return HFS::get_3A(i-HFS::Nexc, j-HFS::Nexc);
+            return HFS::calc_3A(i-HFS::Nexc, j-HFS::Nexc);
         }
     }
 }
@@ -386,7 +383,7 @@ void HFS::build_mattest() {
     HFS::mattest.set_size(2*HFS::Nexc, 2*HFS::Nexc);
     for (arma::uword i = 0; i < 2*HFS::Nexc; ++i) {
         for (arma::uword j = 0; j < 2*HFS::Nexc; ++j) {
-            HFS::mattest(i,j) =  HFS::get_3H(i,j);
+            HFS::mattest(i,j) =  HFS::calc_3H(i,j);
         }
     }
 }
@@ -502,7 +499,7 @@ void HFS::davidson_wrapper(arma::uword max_its
 {
     arma::uword N = 2.0 * HFS::Nexc;
     davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
-                       &HFS::get_3H,
+                       &HFS::calc_3H,
                        &HFS::matvec_prod_3H);
 }
 

@@ -1,5 +1,6 @@
 import os
 import shutil
+from lib import CppPyxWrap
 from distutils.core import setup 
 from Cython.Build import cythonize 
 from distutils.extension import Extension
@@ -9,10 +10,29 @@ from distutils.extension import Extension
 remove_assertions_at_compile = True
 check_unused_functions = False
 check_unused_variables = False
+debug = False
+optimize = False
 
-sourcefiles  = ['HFS.pyx', 'stability.cpp', 'HFSnamespace.cpp']
-compile_opts = ['-O3', '-ffast-math', '-std=c++11']
+WrapOut = 'HFS.pyx'
+
+blist = ['davidson_algorithm']        
+Wrap = CppPyxWrap.Wrapper(pyx_lines = 'HFS_pyfuncs.pyx' 
+                         ,pyx_header='HFStability_h.pyx'
+                         ,cpp_header='HFSnamespace.h'
+                         ,func_blacklist=blist)
+Wrap.combine_sections()
+f = open(WrapOut, 'w')
+for line in Wrap.output:
+    f.write(line)
+f.close()
+
+sourcefiles  = [WrapOut, 'stability.cpp', 'HFSnamespace.cpp']
+if optimize:
+    compile_opts = ['-O3', '-ffast-math', '-std=c++11']
+else:
+    compile_opts = ['-O0',  '-std=c++11']
 my_libraries = ['armadillo']
+
 
 if not check_unused_variables:
     compile_opts.append('-Wno-unused-variable')
@@ -32,6 +52,7 @@ if remove_assertions_at_compile:
 
 ext=[Extension('*', sourcefiles, extra_compile_args=compile_opts, language='c++', libraries=my_libraries)] 
  
-setup( 
-  ext_modules=cythonize(ext, gdb_debug=True)
+
+setup(
+  ext_modules=cythonize(ext, gdb_debug=debug)
 ) 
