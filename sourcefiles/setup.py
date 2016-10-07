@@ -1,28 +1,38 @@
 import os
 import shutil
+from pyfiles.lib import CppPyxWrap
 from distutils.core import setup 
 from Cython.Build import cythonize 
 from distutils.extension import Extension
-from lib import ClassBlender
 
 # Don't touch this if you're not 100% sure
 # seriously I know you
 remove_assertions_at_compile = True
 check_unused_functions = False
 check_unused_variables = False
+debug = False
+optimize = False
 
-#rewrites the c class wrapping .pyx part at before compiling
-a = ClassBlender.CppClassWrapper(pyx_header='HFStability_h.pyx', pyx_class='HFStability_class.pyx', 
-                    cpp_header='stability.h',       cpp_class='stability.cpp')
-a.combine_sections()
-f = open('ClassWrap.pyx', 'w')
-for line in a.output:
+WrapOut = 'HFS_CythonGenerated.pyx'
+
+blist = ['davidson_algorithm']        
+Wrap = CppPyxWrap.Wrapper(pyx_lines = 'pyfiles/HFS_pyfuncs.pyx' 
+                         ,pyx_header='pyfiles/HFStability_h.pyx'
+                         ,cpp_header='cppfiles/HFSnamespace.h'
+                         ,func_blacklist=blist)
+Wrap.combine_sections()
+f = open(WrapOut, 'w')
+for line in Wrap.output:
     f.write(line)
 f.close()
 
-sourcefiles  = ['ClassWrap.pyx', 'stability.cpp']
-compile_opts = ['-O3', '-ffast-math', '-std=c++11', '-g']
+sourcefiles  = [WrapOut, 'cppfiles/stability.cpp', 'cppfiles/HFSnamespace.cpp']
+if optimize:
+    compile_opts = ['-O3', '-ffast-math', '-std=c++11']
+else:
+    compile_opts = ['-O0',  '-std=c++11']
 my_libraries = ['armadillo']
+
 
 if not check_unused_variables:
     compile_opts.append('-Wno-unused-variable')
@@ -42,10 +52,13 @@ if remove_assertions_at_compile:
 
 ext=[Extension('*', sourcefiles, extra_compile_args=compile_opts, language='c++', libraries=my_libraries)] 
  
-setup( 
-  ext_modules=cythonize(ext, gdb_debug=True)
+
+setup(
+  ext_modules=cythonize(ext, gdb_debug=debug)
 ) 
 
-shutil.move('ClassWrap.so', 'lib/ClassWrap.so')       
-shutil.move('ClassWrap.pyx', 'lib/ClassWrap.pyx')       
-shutil.move('ClassWrap.cpp', 'lib/ClassWrap.cpp')       
+filename, file_extension = os.path.splitext(WrapOut)
+shutil.move(filename + '.pyx', 'pyfiles')
+shutil.move(filename + '.so', 'pyfiles/lib')
+shutil.move(filename + '.cpp', 'cppfiles/lib')
+
