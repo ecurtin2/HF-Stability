@@ -58,7 +58,7 @@ setup(
 ) 
 
 filename, file_extension = os.path.splitext(WrapOut)
-shutil.move(filename + '.pyx', 'pyfiles')
-shutil.move(filename + '.so', 'pyfiles/lib')
-shutil.move(filename + '.cpp', 'cppfiles/lib')
+os.system('mv ' + filename + '.pyx' + ' pyfiles')
+os.system('mv ' + filename + '.so'  + ' pyfiles/lib')
+os.system('mv ' + filename + '.cpp' + ' cppfiles/lib')
 
