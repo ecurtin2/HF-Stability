@@ -1,0 +1,55 @@
+# depslib dependency file v1.0
+1475707585 source:/home/evan/git/HF-Stability/sourcefiles/HFStability/main.cpp
+	"HFSnamespace.h"
+
+1475675752 /home/evan/git/HF-Stability/sourcefiles/HFStability/stability.h
+	"armadillo"
+	<map>
+	<vector>
+	<time.h>
+
+1475707585 source:/home/evan/git/HF-Stability/sourcefiles/HFStability/HFSnamespace.cpp
+	"armadillo"
+	<map>
+	<vector>
+	<time.h>
+	"HFSnamespace.h"
+
+1475707585 source:/home/evan/git/HF-Stability/sourcefiles/HFStability/stability.cpp
+	<iostream>
+	<iomanip>
+	<cmath>
+	<assert.h>
+	<time.h>
+	"HFSnamespace.h"
+
+1475707585 /home/evan/git/HF-Stability/sourcefiles/HFStability/HFSnamespace.h
+	"armadillo"
+	<map>
+	<vector>
+	<time.h>
+
+1476386696 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/HFSnamespace.cpp
+	"armadillo"
+	<map>
+	<vector>
+	<time.h>
+	"HFSnamespace.h"
+
+1476386696 /home/evan/git/HF-Stability/sourcefiles/cppfiles/HFSnamespace.h
+	"armadillo"
+	<map>
+	<vector>
+	<time.h>
+
+1476387661 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/stability.cpp
+	<iostream>
+	<iomanip>
+	<cmath>
+	<assert.h>
+	<time.h>
+	"HFSnamespace.h"
+
+1476387817 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/main.cpp
+	"HFSnamespace.h"
+

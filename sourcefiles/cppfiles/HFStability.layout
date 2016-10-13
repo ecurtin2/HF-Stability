@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<FileVersion major="1" minor="0" />
+	<ActiveTarget name="Debug" />
+	<File name="stability.cpp" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="13523" topLine="59" />
+		</Cursor>
+		<Folding>
+			<Collapse line="8" />
+			<Collapse line="33" />
+			<Collapse line="49" />
+			<Collapse line="59" />
+			<Collapse line="111" />
+			<Collapse line="123" />
+			<Collapse line="127" />
+			<Collapse line="131" />
+			<Collapse line="144" />
+			<Collapse line="175" />
+			<Collapse line="183" />
+			<Collapse line="197" />
+			<Collapse line="270" />
+			<Collapse line="276" />
+			<Collapse line="282" />
+			<Collapse line="288" />
+			<Collapse line="296" />
+			<Collapse line="305" />
+			<Collapse line="321" />
+			<Collapse line="336" />
+			<Collapse line="353" />
+			<Collapse line="373" />
+			<Collapse line="396" />
+			<Collapse line="416" />
+			<Collapse line="425" />
+			<Collapse line="430" />
+			<Collapse line="440" />
+			<Collapse line="465" />
+			<Collapse line="492" />
+			<Collapse line="523" />
+			<Collapse line="539" />
+		</Folding>
+	</File>
+	<File name="HFSnamespace.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="118" topLine="10" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="186" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="HFSnamespace.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="145" topLine="27" />
+		</Cursor>
+	</File>
+</CodeBlocks_layout_file>
