@@ -45,8 +45,8 @@ extern bool is_vir(double);
 extern void   calc_exc_energy();
 extern void   calc_energies(arma::umat&, arma::vec&);
 extern double exchange(arma::umat&, arma::uword);
-extern double two_electron(arma::vec, arma::vec);
-extern double two_electron_check(arma::vec, arma::vec, arma::vec, arma::vec);
+extern double two_electron(arma::vec&, arma::vec&);
+extern double two_electron_check(arma::vec&, arma::vec&, arma::vec&, arma::vec&);
 extern double calc_1B(arma::uword, arma::uword);
 extern double calc_3B(arma::uword, arma::uword);
 extern double calc_1A(arma::uword, arma::uword);
@@ -57,24 +57,24 @@ extern void calc_params();
 extern void calc_inv_exc_map();
 extern void calc_vir_N_to_1_map();
 extern arma::uvec k_to_index(arma::vec&);
-extern arma::umat k_to_index(arma::mat);
+extern arma::umat k_to_index(arma::mat&);
 extern arma::uvec inv_exc_map_test;
 extern void build_matrix();
-extern arma::vec matvec_prod_3H(arma::vec);
-extern void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye(2*HFS::Nexc,1), arma::uword block_size=1, int which=0,arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-5);
+extern arma::vec matvec_prod_3H(arma::vec&);
+extern void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye(2*HFS::Nexc,1), arma::uword block_size=1, int which=0,arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-8);
 extern bool davidson_agrees_fulldiag();
 extern bool mv_is_working(double tol=SMALLNUMBER);
 extern bool everything_works();
 
 extern arma::uword kb_j_to_t(arma::vec&, arma::uword);
-extern arma::vec matvec_prod_3A(arma::vec);
-extern arma::vec matvec_prod_3B(arma::vec);
+extern arma::vec matvec_prod_3A(arma::vec&);
+extern arma::vec matvec_prod_3B(arma::vec&);
 extern arma::vec occ_idx_to_k(arma::uword);
 extern arma::vec vir_idx_to_k(arma::uword);
-extern std::vector<arma::uword> k_to_idx(arma::vec);
+extern std::vector<arma::uword> k_to_idx(arma::vec&);
 extern std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
 extern std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
-extern void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec v));
+extern void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
 }
 
 #endif

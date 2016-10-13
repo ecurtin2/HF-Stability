@@ -46,8 +46,8 @@ void   calc_exc_energy();
 //arma::uword get_k_to_idx(double[]);
 void   calc_energies(arma::umat&, arma::vec&);
 double exchange(arma::umat&, arma::uword);
-double two_electron(arma::vec, arma::vec);
-double two_electron_check(arma::vec, arma::vec, arma::vec, arma::vec);
+double two_electron(arma::vec&, arma::vec&);
+double two_electron_check(arma::vec&, arma::vec&, arma::vec&, arma::vec&);
 double calc_1B(arma::uword, arma::uword);
 double calc_3B(arma::uword, arma::uword);
 double calc_1A(arma::uword, arma::uword);
@@ -60,26 +60,26 @@ void calc_vir_N_to_1_map();
 void calc_inv_exc_mat();
 arma::umat inv_exc_mat;
 arma::uvec k_to_index(arma::vec&);
-arma::umat k_to_index(arma::mat);
+arma::umat k_to_index(arma::mat&);
 arma::uvec inv_exc_map_test;
 void build_matrix();
 void matvec_prod_arma();
-arma::vec matvec_prod_3H(arma::vec);
-void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye<arma::mat>(2*HFS::Nexc,1), arma::uword block_size=1, int which=0, arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-5);
+arma::vec matvec_prod_3H(arma::vec&);
+void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye<arma::mat>(2*HFS::Nexc,1), arma::uword block_size=1, int which=0, arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-8);
 bool davidson_agrees_fulldiag();
 bool mv_is_working(double tol=SMALLNUMBER);
 bool everything_works();
 
 
 arma::uword kb_j_to_t(arma::vec&, arma::uword);
-arma::vec matvec_prod_3A(arma::vec);
-arma::vec matvec_prod_3B(arma::vec);
+arma::vec matvec_prod_3A(arma::vec&);
+arma::vec matvec_prod_3B(arma::vec&);
 arma::vec occ_idx_to_k(arma::uword);
 arma::vec vir_idx_to_k(arma::uword);
-std::vector<arma::uword> k_to_idx(arma::vec);
+std::vector<arma::uword> k_to_idx(arma::vec&);
 std::map<std::vector<arma::uword>, arma::uword> inv_exc_map;
 std::map<std::vector<arma::uword>, arma::uword> vir_N_to_1_map;
-void davidson_algorithm(arma::uword, arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec v));
+void davidson_algorithm(arma::uword, arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
 }
 
 #endif

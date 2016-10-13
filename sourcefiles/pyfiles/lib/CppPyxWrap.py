@@ -164,7 +164,11 @@ class Wrapper(object):
                     if breaker in line:
                         break
                 words = line.split()
-                if words:
+                blacklisted = False
+                for item in self.func_blacklist:
+                    if item in line:
+                        blacklisted = True
+                if words and not blacklisted:
                     if words[0] == 'namespace':
                         self.my_ns = words[1]
                     elif words[0] == 'class':

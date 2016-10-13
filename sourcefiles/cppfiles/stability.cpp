@@ -53,6 +53,8 @@ void HFS::calc_params() {
     HFS::calc_excitations();
     HFS::calc_inv_exc_map();
     HFS::calc_vir_N_to_1_map();
+    HFS::calc_vir_N_to_1_mat();
+    HFS::calc_inv_exc_mat();
 }
 
 void HFS::calc_kf () {
@@ -251,7 +253,7 @@ double HFS::exchange(arma::umat& inp_states, arma::uword i) {
     return exch;
 }
 
-double HFS::two_electron(arma::vec k1, arma::vec k2) {
+double HFS::two_electron(arma::vec& k1, arma::vec& k2) {
     double norm = 0.0;
     arma::vec k(HFS::ndim);
     k = k1 - k2;
@@ -265,7 +267,7 @@ double HFS::two_electron(arma::vec k1, arma::vec k2) {
     }
 }
 
-double HFS::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::vec k4) {
+double HFS::two_electron_check(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
     // Same as two_electron, except checks for momentum conservation
     // In the other, conservation is assumed
     arma::vec k(HFS::ndim);
@@ -282,10 +284,11 @@ double HFS::two_electron_check(arma::vec k1, arma::vec k2, arma::vec k3, arma::v
     HFS::to_first_BZ(k);
     double norm = arma::norm(k);
 
-    if (norm < 10E-10) {
+    if (norm < SMALLNUMBER) {
         return 0.0;
     }else{
         return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
+        //return HFS::two_e_const / norm;   //  < 1% speedup in davidson, keep general
     }
 }
 
@@ -295,13 +298,13 @@ arma::uvec HFS::k_to_index(arma::vec& k) {
     return indices;
 }
 
-arma::umat HFS::k_to_index(arma::mat k) {
+arma::umat HFS::k_to_index(arma::mat& k) {
     arma::mat idx = arma::round((k + HFS::kmax) / HFS::deltaK);
     arma::umat indices = arma::conv_to<arma::umat>::from(idx);
     return indices;
 }
 
-std::vector<arma::uword> HFS::k_to_idx(arma::vec k) {
+std::vector<arma::uword> HFS::k_to_idx(arma::vec& k) {
     arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
     std::vector<arma::uword>indices = arma::conv_to<std::vector<arma::uword>>::from(idx);
     return indices;
@@ -457,7 +460,7 @@ arma::uword HFS::kb_j_to_t(arma::vec& kb, arma::uword j) {
     //std::vector<arma::uword> b_N_idx(HFS::ndim);
     //b_N_idx = HFS::k_to_idx(kb);
     arma::uvec b_N_idx =  k_to_index(kb);
-    //arma::uword b = HFS::vir_N_to_1_map.at(b_N_idx);
+    //arma::uword b = HFS::vir_N_to_1_map(b_N_idx);
     //std::cout << "b = " << b << std::endl;
     arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
     //std::cout << "b2 = " << b << std::endl;
@@ -468,7 +471,7 @@ arma::uword HFS::kb_j_to_t(arma::vec& kb, arma::uword j) {
 }
 
 
-arma::vec HFS::matvec_prod_3H(arma::vec v) {
+arma::vec HFS::matvec_prod_3H(arma::vec& v) {
 
     arma::vec Mv(HFS::Nexc*2.0, arma::fill::zeros);  // matrix vector product
     /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
@@ -480,20 +483,20 @@ arma::vec HFS::matvec_prod_3H(arma::vec v) {
     arma::vec v1 = v.head(HFS::Nexc);
     arma::vec v2 = v.tail(HFS::Nexc);
     arma::vec Mv1(HFS::Nexc, arma::fill::zeros), Mv2(HFS::Nexc, arma::fill::zeros);
-    clock_t t;
-    t = clock();
+    //clock_t t;
+    //t = clock();
     Mv1 = HFS::matvec_prod_3A(v1) + HFS::matvec_prod_3B(v2);
-    t = clock() - t;
+    //t = clock() - t;
     //std::cout << "Mv1 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
-    t = clock();
+    //t = clock();
     Mv2 = HFS::matvec_prod_3B(v1) + HFS::matvec_prod_3A(v2);
-    t = clock() - t;
+    //t = clock() - t;
     //std::cout << "Mv2 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
     Mv = arma::join_cols(Mv1, Mv2);
     return Mv;
 }
 
-arma::vec HFS::matvec_prod_3A(arma::vec v) {
+arma::vec HFS::matvec_prod_3A(arma::vec& v) {
     arma::vec Mv(HFS::Nexc, arma::fill::zeros);
     for (arma::uword s = 0; s < HFS::Nexc; ++s) {
         arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
@@ -520,7 +523,7 @@ arma::vec HFS::matvec_prod_3A(arma::vec v) {
     return Mv;
 }
 
-arma::vec HFS::matvec_prod_3B(arma::vec v) {
+arma::vec HFS::matvec_prod_3B(arma::vec& v) {
     arma::vec Mv(HFS::Nexc, arma::fill::zeros);
     for (arma::uword s = 0; s < HFS::Nexc; ++s) {
         arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
@@ -579,7 +582,7 @@ void HFS::davidson_algorithm(arma::uword N
                                          ,arma::mat   guess_evecs
                                          ,double      tolerance
                                          ,double      (*matrix)(arma::uword, arma::uword)
-                                         ,arma::vec   (*matvec_product)(arma::vec v)
+                                         ,arma::vec   (*matvec_product)(arma::vec& v)
                                          )
 {
 
@@ -608,10 +611,8 @@ void HFS::davidson_algorithm(arma::uword N
         {
             arma::vec temp = guess_evecs.col(old_sub_size+j);
             arma::vec Mv(N);
-
-            Mv = matvec_product(guess_evecs.col(old_sub_size + j));
-
-
+            arma::vec guess_vec = guess_evecs.col(old_sub_size + j);
+            Mv = matvec_product(guess_vec);
             Mvmat = arma::join_rows(Mvmat, Mv);
         }
         t2 = clock() - t;

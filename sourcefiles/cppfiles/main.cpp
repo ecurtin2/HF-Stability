@@ -8,9 +8,8 @@ int main()
     HFS::Nk = 25;
     HFS::ndim = 2;
     HFS::calc_params();
-    HFS::calc_vir_N_to_1_mat();
-    HFS::calc_inv_exc_mat();
-    arma::mat guess = arma::eye<arma::mat>(2*HFS::Nexc, 100);
+
+    arma::mat guess = arma::eye<arma::mat>(2*HFS::Nexc, 60);
     t = clock();
     HFS::davidson_wrapper(2*HFS::Nexc, guess, 10, 0, 1, 50, 2*HFS::Nexc);
     t2 = clock() - t;

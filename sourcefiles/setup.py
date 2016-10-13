@@ -15,7 +15,7 @@ optimize = False
 
 WrapOut = 'HFS_CythonGenerated.pyx'
 
-blist = ['davidson_algorithm']        
+blist = ['davidson_algorithm', 'davidson_wrapper', 'mv_is_working']        
 Wrap = CppPyxWrap.Wrapper(pyx_lines = 'pyfiles/HFS_pyfuncs.pyx' 
                          ,pyx_header='pyfiles/HFStability_h.pyx'
                          ,cpp_header='cppfiles/HFSnamespace.h'

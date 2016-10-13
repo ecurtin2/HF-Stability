@@ -35,12 +35,16 @@ cdef extern from "cppfiles/HFSnamespace.h" namespace "HFS":
      int ndim
      vec  occ_energies, vir_energies, exc_energies, kgrid
      vec inp_test_vec, out_vec1, out_vec2
-     mat mattest
+     mat full_matrix
      umat occ_states, vir_states, excitations
      vec dav_vals
      mat dav_vecs
      mat states
      int dav_its
+     umat vir_N_to_1_mat
+     void calc_vir_N_to_1_mat()
+     void calc_inv_exc_mat()
+     umat inv_exc_mat
      string dav_message
     #Methods
      void calc_kf()
@@ -65,19 +69,18 @@ cdef extern from "cppfiles/HFSnamespace.h" namespace "HFS":
      void calc_params()
      void calc_inv_exc_map()
      void calc_vir_N_to_1_map()
-     uvec k_to_index(vec)
+     uvec k_to_index(vec&)
      umat k_to_index(mat)
      uvec inv_exc_map_test
-     void build_mattest()
-     void matvec_prod_me()
+     void build_matrix()
      vec matvec_prod_3H(vec)
-     void davidson_wrapper(long long unsigned int, long long unsigned int, long long unsigned int, long long unsigned int, mat, double, int)
-     long long unsigned int kb_j_to_t(vec, long long unsigned int)
+     bool davidson_agrees_fulldiag()
+     bool everything_works()
+     long long unsigned int kb_j_to_t(vec&, long long unsigned int)
      vec matvec_prod_3A(vec)
      vec matvec_prod_3B(vec)
      vec occ_idx_to_k(long long unsigned int)
      vec vir_idx_to_k(long long unsigned int)
-     void davidson_algorithm(long long unsigned int,long long unsigned int, long long unsigned int, long long unsigned int, long long unsigned int, mat, double, double (*matrix)(long long unsigned int, long long unsigned int), vec (*matvec_product)(vec v))
 
 
 ########################################################################
@@ -193,6 +196,12 @@ def plot_exc_hist():
 ########################################################################
 #                               Py Funcs                               #
 ########################################################################
+def py_calc_vir_N_to_1_mat():
+    calc_vir_N_to_1_mat()
+
+def py_calc_inv_exc_mat():
+    calc_inv_exc_mat()
+
 def py_calc_kf():
     calc_kf()
 
@@ -288,25 +297,18 @@ def py_k_to_index(np.ndarray[double, ndim=2, mode="fortran"] val1):
     VAL1 = numpy_to_mat_d(val1)
     return umat_to_numpy(k_to_index(VAL1))
 
-def py_build_mattest():
-    build_mattest()
-
-def py_matvec_prod_me():
-    matvec_prod_me()
+def py_build_matrix():
+    build_matrix()
 
 def py_matvec_prod_3H(np.ndarray[double, ndim=1] val1):
     VAL1 = numpy_to_vec_d(val1)
     return vec_to_numpy(matvec_prod_3H(VAL1))
 
-def py_davidson_wrapper(int val1, 
-                        int val2, 
-                        int val3, 
-                        int val4, 
-                        np.ndarray[double, ndim=2, mode="fortran"] val5, 
-                        float val6, 
-                        int val7):
-    VAL5 = numpy_to_mat_d(val5)
-    davidson_wrapper(val1, val2, val3, val4, VAL5, val6, val7)
+def py_davidson_agrees_fulldiag():
+    return davidson_agrees_fulldiag()
+
+def py_everything_works():
+    return everything_works()
 
 def py_kb_j_to_t(np.ndarray[double, ndim=1] val1, 
                  int val2):
@@ -549,15 +551,15 @@ def set_out_vec2(np.ndarray[double, ndim=1]
     out_vec2 = numpy_to_vec_d(value)
 
 
-def get_mattest():
-    """(np.ndarray[double, ndim=2, mode="fortran"]) Get mattest"""
-    global mattest
-    return mat_to_numpy(mattest)
-def set_mattest(np.ndarray[double, ndim=2, mode="fortran"] 
+def get_full_matrix():
+    """(np.ndarray[double, ndim=2, mode="fortran"]) Get full_matrix"""
+    global full_matrix
+    return mat_to_numpy(full_matrix)
+def set_full_matrix(np.ndarray[double, ndim=2, mode="fortran"] 
                      value not None):
-    """(np.ndarray[double, ndim=2, mode="fortran"]) Set mattest"""
-    global mattest
-    mattest = numpy_to_mat_d(value)
+    """(np.ndarray[double, ndim=2, mode="fortran"]) Set full_matrix"""
+    global full_matrix
+    full_matrix = numpy_to_mat_d(value)
 
 
 def get_occ_states():
@@ -634,6 +636,28 @@ def set_dav_its(value):
     """(t) Set dav_its"""
     global dav_its
     dav_its = int(value)
+
+
+def get_vir_N_to_1_mat():
+    """(np.ndarray[long long unsigned int, ndim=2, mode="fortran"]) Get vir_N_to_1_mat"""
+    global vir_N_to_1_mat
+    return umat_to_numpy(vir_N_to_1_mat)
+def set_vir_N_to_1_mat(np.ndarray[long long unsigned int, ndim=2, mode="fortran"] 
+                     value not None):
+    """(np.ndarray[long long unsigned int, ndim=2, mode="fortran"]) Set vir_N_to_1_mat"""
+    global vir_N_to_1_mat
+    vir_N_to_1_mat = numpy_to_umat_d(value)
+
+
+def get_inv_exc_mat():
+    """(np.ndarray[long long unsigned int, ndim=2, mode="fortran"]) Get inv_exc_mat"""
+    global inv_exc_mat
+    return umat_to_numpy(inv_exc_mat)
+def set_inv_exc_mat(np.ndarray[long long unsigned int, ndim=2, mode="fortran"] 
+                     value not None):
+    """(np.ndarray[long long unsigned int, ndim=2, mode="fortran"]) Set inv_exc_mat"""
+    global inv_exc_mat
+    inv_exc_mat = numpy_to_umat_d(value)
 
 
 def get_dav_message():
