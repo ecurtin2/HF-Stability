@@ -26,8 +26,6 @@ void HFS::print_params() {
     HFS::occ_energies.print("Occ Energy");
     HFS::vir_energies.print("Vir Energy");
     HFS::excitations.print("Excitations");
-    HFS::inv_exc_map_test.print("Inv Exc Map Test");
-
     }
 }
 
@@ -51,8 +49,6 @@ void HFS::calc_params() {
     HFS::calc_occ_energies();
     HFS::calc_vir_energies();
     HFS::calc_excitations();
-    HFS::calc_inv_exc_map();
-    HFS::calc_vir_N_to_1_map();
     HFS::calc_vir_N_to_1_mat();
     HFS::calc_inv_exc_mat();
 }
@@ -70,7 +66,8 @@ void HFS::calc_kf () {
 void HFS::calc_occ_states() {
     arma::uword N = Nk - 1;  // Unique Brillioun Zone
     arma::uword Nrows = std::pow(N, HFS::ndim);
-    states.set_size(Nrows, HFS::ndim);
+    //states.set_size(Nrows, HFS::ndim);
+    arma::mat states(Nrows, HFS::ndim);
 
     if (HFS::ndim == 1) {
         for (arma::uword i = 0; i < N; ++i) {
@@ -191,36 +188,16 @@ void HFS::calc_exc_energy() {
     }
 }
 
-void HFS::calc_inv_exc_map() {
-    for (arma::uword i = 0; i < HFS::Nexc; ++i) {
-        std::vector<arma::uword> key {HFS::excitations(i,0), HFS::excitations(i,1)};
-        HFS::inv_exc_map[key] = i;
-        //std::cout << key[0] << ", " << key[1] << " => " << i << std::endl;
-    }
-}
-
 void HFS::calc_inv_exc_mat() {
     HFS::inv_exc_mat.set_size(HFS::Nocc, HFS::Nvir);
     HFS::inv_exc_mat.fill(HFS::Nexc+1); // will make errors if accessing wrong one
     for (arma::uword i = 0; i < HFS::Nexc; ++i) {
         HFS::inv_exc_mat(HFS::excitations(i,0), HFS::excitations(i,1)) = i;
-        //std::cout << "map2" << key[0] << ", " << key[1] << " => " << i << std::endl;
     }
 }
 
 
-/* NOT NEEDED  NEED 3D VERSION THO*/
-void HFS::calc_vir_N_to_1_map() {
-    for (arma::uword i = 0; i < HFS::Nvir; ++i) {
-        std::vector<arma::uword> key(HFS::ndim);
-        for (int j = 0; j < HFS::ndim; ++j) {
-            key[j] = HFS::vir_states(i, j);
-        }
-        HFS::vir_N_to_1_map[key] = i;
-    }
-}
-
-
+/* NEED 3D VERSION THO*/
 void HFS::calc_vir_N_to_1_mat() {
     HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1);
     HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
@@ -304,12 +281,6 @@ arma::umat HFS::k_to_index(arma::mat& k) {
     return indices;
 }
 
-std::vector<arma::uword> HFS::k_to_idx(arma::vec& k) {
-    arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
-    std::vector<arma::uword>indices = arma::conv_to<std::vector<arma::uword>>::from(idx);
-    return indices;
-}
-
 arma::vec HFS::occ_idx_to_k(arma::uword idx) {
     arma::vec k(HFS::ndim);
     for (int i = 0; i < HFS::ndim; ++i) {
@@ -342,10 +313,10 @@ void HFS::to_first_BZ(arma::vec& k) {
 
 bool HFS::mv_is_working(double tol) {
     arma::vec v(2*HFS::Nexc, arma::fill::randu);
+    arma::vec Mv = HFS::matvec_prod_3H(v);
     HFS::build_matrix();
-    arma::vec v_me = HFS::matvec_prod_3H(v);
     arma::vec v_arma = HFS::full_matrix * v;
-    arma::vec diff = arma::abs(v_me - v_arma);
+    arma::vec diff = arma::abs(Mv - v_arma);
     bool is_working = arma::all(diff < tol);
     return is_working;
 }
@@ -470,31 +441,11 @@ arma::uword HFS::kb_j_to_t(arma::vec& kb, arma::uword j) {
     return t;
 }
 
-
-arma::vec HFS::matvec_prod_3H(arma::vec& v) {
-
-    arma::vec Mv(HFS::Nexc*2.0, arma::fill::zeros);  // matrix vector product
-    /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
-                                         | B* A*| |v2|     | Mv2 |
-        Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
-        Mv1 = Av1  + Bv2
-        Mv2 = B*v1 + A*v2
-    */
-    arma::vec v1 = v.head(HFS::Nexc);
-    arma::vec v2 = v.tail(HFS::Nexc);
-    arma::vec Mv1(HFS::Nexc, arma::fill::zeros), Mv2(HFS::Nexc, arma::fill::zeros);
-    //clock_t t;
-    //t = clock();
-    Mv1 = HFS::matvec_prod_3A(v1) + HFS::matvec_prod_3B(v2);
-    //t = clock() - t;
-    //std::cout << "Mv1 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
-    //t = clock();
-    Mv2 = HFS::matvec_prod_3B(v1) + HFS::matvec_prod_3A(v2);
-    //t = clock() - t;
-    //std::cout << "Mv2 took " << ((float)t) / CLOCKS_PER_SEC << " seconds" << std::endl;
-    Mv = arma::join_cols(Mv1, Mv2);
-    return Mv;
+/* arma::mat HFS::build_guess_vecs () {
+    arma::mat ayy;
+    return ayy;
 }
+*/
 
 arma::vec HFS::matvec_prod_3A(arma::vec& v) {
     arma::vec Mv(HFS::Nexc, arma::fill::zeros);
@@ -544,6 +495,23 @@ arma::vec HFS::matvec_prod_3B(arma::vec& v) {
     }
     return Mv;
 }
+
+arma::vec HFS::matvec_prod_3H(arma::vec& v) {
+    /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
+                                         | B* A*| |v2|     | Mv2 |
+        Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
+        Mv1 = A*v1 + B*v2
+        Mv2 = B*v1 + A*v2
+    */
+    arma::vec v1 = v.head(HFS::Nexc);
+    arma::vec v2 = v.tail(HFS::Nexc);
+
+    arma::vec Mv1 = HFS::matvec_prod_3A(v1) + HFS::matvec_prod_3B(v2);
+    arma::vec Mv2 = HFS::matvec_prod_3B(v1) + HFS::matvec_prod_3A(v2);
+    arma::vec Mv = arma::join_cols(Mv1, Mv2);
+    return Mv;
+}
+
 
 void HFS::davidson_wrapper(arma::uword N
                           ,arma::mat   guess_evecs
@@ -597,10 +565,6 @@ void HFS::davidson_algorithm(arma::uword N
 
     clock_t t, t1, t2, t3;
 
-   // for (arma::uword i = 0; i < num_of_roots; ++i) {
-   //     init_guess.col(i) = guess_evecs.col(i);
-    //}
-
     //Iterate the block Davidson algorithm.
     for (arma::uword i = 0 ; i < max_its ; ++i){
         t1 = clock();
@@ -609,11 +573,9 @@ void HFS::davidson_algorithm(arma::uword N
         t = clock();
         for (arma::uword j = 0; j < num_new_vecs; ++j)
         {
-            arma::vec temp = guess_evecs.col(old_sub_size+j);
-            arma::vec Mv(N);
             arma::vec guess_vec = guess_evecs.col(old_sub_size + j);
-            Mv = matvec_product(guess_vec);
-            Mvmat = arma::join_rows(Mvmat, Mv);
+            arma::vec Matvec = matvec_product(guess_vec);
+            Mvmat = arma::join_rows(Mvmat, Matvec);
         }
         t2 = clock() - t;
         std::cout << "Mv took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
