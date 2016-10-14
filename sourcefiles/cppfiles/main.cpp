@@ -1,4 +1,12 @@
-#include "HFSnamespace.h"
+#include <iostream>
+#include <cmath>
+#include "HFS_params.h"
+#include "HFS_base_funcs.h"
+#include "HFS_params_calc.h"
+#include "HFS_matrix_utils.h"
+#include "HFS_davidson.h"
+#include "HFS_debug.h"
+#include "HFS_fileIO.h"
 
 int main()
 {
