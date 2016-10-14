@@ -29,18 +29,11 @@
 	<vector>
 	<time.h>
 
-1476473753 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/HFSnamespace.cpp
-	"armadillo"
-	<map>
-	<vector>
-	<time.h>
+1476475973 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/HFSnamespace.cpp
 	"HFSnamespace.h"
 
-1476475820 /home/evan/git/HF-Stability/sourcefiles/cppfiles/HFSnamespace.h
+1476475973 /home/evan/git/HF-Stability/sourcefiles/cppfiles/HFSnamespace.h
 	"armadillo"
-	<map>
-	<vector>
-	<time.h>
 
 1476473612 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/stability.cpp
 	<iostream>

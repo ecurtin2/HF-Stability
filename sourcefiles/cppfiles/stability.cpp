@@ -2,7 +2,6 @@
 #include <iostream>
 #include <cmath>
 #include <assert.h>
-#include <time.h>
 #include "HFSnamespace.h"
 
 //Parameter Calculation
@@ -500,22 +499,21 @@ void HFS::davidson_algorithm(arma::uword N
     arma::mat ritz_vecs = guess_evecs;
     arma::mat init_guess(N, num_of_roots);
 
-    clock_t t, t1, t2, t3;
+    arma::wall_clock timer;
 
     //Iterate the block Davidson algorithm.
     for (arma::uword i = 0 ; i < max_its ; ++i){
-        t1 = clock();
+        timer.tic();
         arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
         num_new_vecs = sub_size - old_sub_size;
-        t = clock();
         for (arma::uword j = 0; j < num_new_vecs; ++j)
         {
             arma::vec guess_vec = guess_evecs.col(old_sub_size + j);
             arma::vec Matvec = matvec_product(guess_vec);
             Mvmat = arma::join_rows(Mvmat, Matvec);
         }
-        t2 = clock() - t;
-        std::cout << "Mv took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
+        double t = timer.toc();
+        std::cout << "Mv took " << t << " seconds" << std::endl;
         sub_mat = guess_evecs.t() * Mvmat;
         //Diagonalize subspace matrix.
         arma::vec sub_evals;
@@ -609,8 +607,8 @@ void HFS::davidson_algorithm(arma::uword N
         HFS::dav_vals = sub_evals;
         HFS::dav_its  = i;
 
-        t3 = clock() - t1;
-        std::cout << "Iteration took " << ((float)t3) / CLOCKS_PER_SEC << " seconds" << std::endl;
+        double t2 = timer.toc();
+        std::cout << "Iteration took " << t2 << " seconds" << std::endl;
         std::cout << "min eigval = " << dav_vals.min() << std::endl;
 
         if (old_sub_size == sub_size) {

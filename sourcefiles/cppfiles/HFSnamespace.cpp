@@ -1,16 +1,3 @@
-/*
-#ifndef PI
-    #define PI 3.14159265358979323846264338327
-#endif
-#ifndef SMALLNUMBER
-    #define SMALLNUMBER 10E-10
-#endif
-//#define ARMA_NO_DEBUG
-#include "armadillo"
-#include <map>
-#include <vector>
-#include <time.h>
-*/
 #include "HFSnamespace.h"
 
 namespace HFS {

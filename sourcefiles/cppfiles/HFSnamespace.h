@@ -8,9 +8,6 @@
 #endif
 //#define ARMA_NO_DEBUG
 #include "armadillo"
-#include <map>
-#include <vector>
-#include <time.h>
 
 namespace HFS {
 //Attributes
