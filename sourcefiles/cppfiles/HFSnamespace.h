@@ -1,5 +1,5 @@
-#ifndef CPP_STABILITY // header guards
-#define CPP_STABILITY
+#ifndef HFSnamespace_included
+#define HFSnamespace_included
 #ifndef PI
     #define PI 3.14159265358979323846264338327
 #endif
@@ -23,6 +23,7 @@ extern arma::umat occ_states, vir_states, excitations;
 extern arma::umat vir_N_to_1_mat, inv_exc_mat;
 
 //Davidson stuff
+extern arma::mat guess_evecs;
 extern std::string dav_message;
 extern arma::vec dav_vals;
 extern arma::mat dav_vecs;
@@ -70,17 +71,17 @@ extern double calc_3H(arma::uword, arma::uword);
 extern arma::uword kb_j_to_t(arma::vec&, arma::uword);  // only used in matvec_prod_3A & 3B
 
 //Davidson Algorithm
-extern void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye(2*HFS::Nexc,1), arma::uword block_size=1, int which=0,arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-8);
-extern void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
+extern void build_guess_evecs (int N, int which=0);
+extern void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye(2*HFS::Nexc,1), arma::uword block_size=1, int which=0, arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-8);
+extern void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat&, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
 
 // Testing/Debugging Functions
 extern bool davidson_agrees_fulldiag();
-extern bool mv_is_working(double tol=SMALLNUMBER);
+extern bool mv_is_working();
 extern bool everything_works();
 extern void build_matrix();
 
 // Output Control
 extern void print_params();
 }
-
 #endif

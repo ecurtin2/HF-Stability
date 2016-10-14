@@ -1,5 +1,4 @@
-#ifndef CPP_STABILITY // header guards
-#define CPP_STABILITY
+/*
 #ifndef PI
     #define PI 3.14159265358979323846264338327
 #endif
@@ -11,6 +10,7 @@
 #include <map>
 #include <vector>
 #include <time.h>
+*/
 #include "HFSnamespace.h"
 
 namespace HFS {
@@ -24,6 +24,7 @@ arma::umat occ_states, vir_states, excitations;
 arma::umat vir_N_to_1_mat, inv_exc_mat;
 
 //Davidson stuff
+arma::mat guess_evecs;
 std::string dav_message;
 arma::vec dav_vals;
 arma::mat dav_vecs;
@@ -69,16 +70,17 @@ double calc_3H(arma::uword, arma::uword);
 arma::uword kb_j_to_t(arma::vec&, arma::uword);  // only used in matvec_prod_3A & 3B
 
 //Davidson Algorithm
-void davidson_wrapper(arma::uword N, arma::mat guess_evecs=arma::eye(2*HFS::Nexc,1), arma::uword block_size=1, int which=0,arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=HFS::Nocc, double tolerance=10E-8);
-void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
+void build_guess_evecs (int N, int which);
+void davidson_wrapper(arma::uword N, arma::mat guess_evecs, arma::uword block_size, int which, arma::uword num_of_roots, arma::uword max_its, arma::uword max_sub_size, double tolerance);
+void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat&, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
 
 // Testing/Debugging Functions
 bool davidson_agrees_fulldiag();
-bool mv_is_working(double tol=SMALLNUMBER);
+bool mv_is_working();
 bool everything_works();
 void build_matrix();
 
 //Output Control
 void print_params();
 }
-#endif
+//#endif

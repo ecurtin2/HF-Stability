@@ -1,6 +1,5 @@
 //Stability analysis, the state information is passed in from python
 #include <iostream>
-#include <iomanip>
 #include <cmath>
 #include <assert.h>
 #include <time.h>
@@ -456,14 +455,6 @@ arma::uword HFS::kb_j_to_t(arma::vec& kb, arma::uword j) {
     return t;
 }
 
-
-
-/* arma::mat HFS::build_guess_vecs () {
-    arma::mat ayy;
-    return ayy;
-}
-*/
-
 //Davidson Algorithm
 void HFS::davidson_wrapper(arma::uword N
                           ,arma::mat   guess_evecs
@@ -480,12 +471,20 @@ void HFS::davidson_wrapper(arma::uword N
                        &HFS::matvec_prod_3H);
 }
 
+void HFS::build_guess_evecs (int N, int which) {
+    if (which == 0) {
+        HFS::guess_evecs = arma::eye<arma::mat>(2*HFS::Nexc, N);
+    } else if (which == 1) {
+        HFS::guess_evecs = arma::eye<arma::mat>(2*HFS::Nexc, N);
+    }
+}
+
 void HFS::davidson_algorithm(arma::uword N
                                          ,arma::uword max_its
                                          ,arma::uword max_sub_size
                                          ,arma::uword num_of_roots
                                          ,arma::uword block_size
-                                         ,arma::mat   guess_evecs
+                                         ,arma::mat&   guess_evecs
                                          ,double      tolerance
                                          ,double      (*matrix)(arma::uword, arma::uword)
                                          ,arma::vec   (*matvec_product)(arma::vec& v)
@@ -644,13 +643,13 @@ bool HFS::davidson_agrees_fulldiag() {
     return agrees;
 }
 
-bool HFS::mv_is_working(double tol) {
+bool HFS::mv_is_working() {
     arma::vec v(2*HFS::Nexc, arma::fill::randu);
     arma::vec Mv = HFS::matvec_prod_3H(v);
     HFS::build_matrix();
     arma::vec v_arma = HFS::full_matrix * v;
     arma::vec diff = arma::abs(Mv - v_arma);
-    bool is_working = arma::all(diff < tol);
+    bool is_working = arma::all(diff < SMALLNUMBER);
     return is_working;
 }
 
