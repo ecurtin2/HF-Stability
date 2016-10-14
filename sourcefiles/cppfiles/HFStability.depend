@@ -78,16 +78,16 @@
 	"HFS_params_calc.h"
 	"HFS_matrix_utils.h"
 
-1476480582 /home/evan/git/HF-Stability/sourcefiles/cppfiles/HFS_debug.h
+1476482392 /home/evan/git/HF-Stability/sourcefiles/cppfiles/HFS_debug.h
+	<assert.h>
 	"HFS_params.h"
 	"HFS_base_funcs.h"
 	"HFS_params_calc.h"
 	"HFS_matrix_utils.h"
 	"HFS_davidson.h"
 
-1476480701 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/HFS_debug.cpp
+1476482392 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/HFS_debug.cpp
 	"HFS_debug.h"
-	<assert.h>
 
 1476480949 source:/home/evan/git/HF-Stability/sourcefiles/cppfiles/HFS_fileIO.cpp
 	"HFS_fileIO.h"

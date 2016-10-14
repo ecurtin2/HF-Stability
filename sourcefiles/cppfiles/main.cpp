@@ -11,7 +11,7 @@
 int main()
 {
     HFS::rs = 1.2;
-    HFS::Nk = 10;
+    HFS::Nk = 15;
     HFS::ndim = 2;
     HFS::calc_params();
     arma::wall_clock timer;

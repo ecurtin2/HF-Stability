@@ -30,12 +30,11 @@
 				<Compiler>
 					<Add option="-O3" />
 					<Add option="-std=c++11" />
-					<Add option="-pg" />
+					<Add option="-g" />
 					<Add option="-larmadillo" />
 					<Add option="-ffast-math" />
 				</Compiler>
 				<Linker>
-					<Add option="-pg" />
 					<Add option="-larmadillo" />
 				</Linker>
 			</Target>
@@ -44,10 +43,21 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="HFSnamespace.cpp" />
-		<Unit filename="HFSnamespace.h" />
+		<Unit filename="HFS_base_funcs.cpp" />
+		<Unit filename="HFS_base_funcs.h" />
+		<Unit filename="HFS_davidson.cpp" />
+		<Unit filename="HFS_davidson.h" />
+		<Unit filename="HFS_debug.cpp" />
+		<Unit filename="HFS_debug.h" />
+		<Unit filename="HFS_fileIO.cpp" />
+		<Unit filename="HFS_fileIO.h" />
+		<Unit filename="HFS_matrix_utils.cpp" />
+		<Unit filename="HFS_matrix_utils.h" />
+		<Unit filename="HFS_params.cpp" />
+		<Unit filename="HFS_params.h" />
+		<Unit filename="HFS_params_calc.cpp" />
+		<Unit filename="HFS_params_calc.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="stability.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
