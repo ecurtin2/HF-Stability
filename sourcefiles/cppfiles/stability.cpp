@@ -6,36 +6,7 @@
 #include <time.h>
 #include "HFSnamespace.h"
 
-void HFS::print_params() {
-    std::cout << "DeltaK = " << HFS::deltaK << std::endl;
-    std::cout << "Nk = " << HFS::Nk << std::endl;
-    std::cout << "ndim = " << HFS::ndim << std::endl;
-    std::cout << "rs = " << HFS::rs << std::endl;
-    std::cout << "kf = " << HFS::kf << std::endl;
-    std::cout << "kmax = " << HFS::kmax << std::endl;
-    std::cout << "Nocc = " << HFS::Nocc << std::endl;
-    std::cout << "Nvir = " << HFS::Nvir << std::endl;
-    std::cout << "Nexc = " << HFS::Nexc << std::endl;
-    std::cout << "DavIts=" << HFS::dav_its << std::endl;
-    std::cout << "Smallest Eval = " << HFS::dav_vals.min() << std::endl;
-    std::cout << HFS::dav_message << std::endl;
-    if (Nk < 10) {
-    HFS::kgrid.print("Kgrid");
-    HFS::occ_states.print("Occupied States");
-    HFS::vir_states.print("Virtual States");
-    HFS::occ_energies.print("Occ Energy");
-    HFS::vir_energies.print("Vir Energy");
-    HFS::excitations.print("Excitations");
-    }
-}
-
-bool HFS::everything_works() {
-    assert(mv_is_working() && "There is a problem in the matrix-vector product.");
-    std::cout << "Mv is working" << std::endl;
-    assert(davidson_agrees_fulldiag() && "Davidson's Algorithm Didn't get the lowest eigenvalue.");
-    std::cout << "Davidson is working" << std::endl;
-    return true;
-}
+//Parameter Calculation
 
 void HFS::calc_params() {
     HFS::calc_kf();
@@ -60,6 +31,18 @@ void HFS::calc_kf () {
         HFS::kf = sqrt(2.0) / HFS::rs;
     } else if (HFS::ndim == 3) {
         HFS::kf = std::pow((9.0 * PI / 4.0), (1.0/3.0)) * (1.0 / HFS::rs);
+    }
+}
+
+void HFS::calc_vol_and_two_e_const () {
+    if (HFS::ndim == 1) {
+        HFS::vol = HFS::N_elec * 2.0 * HFS::rs;
+    } else if (HFS::ndim == 2) {
+        HFS::vol = HFS::N_elec * PI * std::pow(HFS::rs, 2);
+        HFS::two_e_const = 2.0 * PI / HFS::vol;
+    } else if (HFS::ndim == 3) {
+        HFS::vol = HFS::N_elec * 4.0 / 3.0 * PI * std::pow(HFS::rs, 3);
+        HFS::two_e_const = 4.0 * PI / HFS::vol;
     }
 }
 
@@ -114,18 +97,6 @@ void HFS::calc_occ_states() {
     HFS::occ_states = k_to_index(occ_states);
     HFS::vir_states = k_to_index(vir_states);
     HFS::N_elec = 2 * HFS::Nocc;
-}
-
-void HFS::calc_vol_and_two_e_const () {
-    if (HFS::ndim == 1) {
-        HFS::vol = HFS::N_elec * 2.0 * HFS::rs;
-    } else if (HFS::ndim == 2) {
-        HFS::vol = HFS::N_elec * PI * std::pow(HFS::rs, 2);
-        HFS::two_e_const = 2.0 * PI / HFS::vol;
-    } else if (HFS::ndim == 3) {
-        HFS::vol = HFS::N_elec * 4.0 / 3.0 * PI * std::pow(HFS::rs, 3);
-        HFS::two_e_const = 4.0 * PI / HFS::vol;
-    }
 }
 
 void HFS::calc_occ_energies() {
@@ -188,15 +159,6 @@ void HFS::calc_exc_energy() {
     }
 }
 
-void HFS::calc_inv_exc_mat() {
-    HFS::inv_exc_mat.set_size(HFS::Nocc, HFS::Nvir);
-    HFS::inv_exc_mat.fill(HFS::Nexc+1); // will make errors if accessing wrong one
-    for (arma::uword i = 0; i < HFS::Nexc; ++i) {
-        HFS::inv_exc_mat(HFS::excitations(i,0), HFS::excitations(i,1)) = i;
-    }
-}
-
-
 /* NEED 3D VERSION THO*/
 void HFS::calc_vir_N_to_1_mat() {
     HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1);
@@ -206,12 +168,15 @@ void HFS::calc_vir_N_to_1_mat() {
     }
 }
 
-
-
-
-bool HFS::is_vir(double k) {
-        return (k <= HFS::kf + SMALLNUMBER);
+void HFS::calc_inv_exc_mat() {
+    HFS::inv_exc_mat.set_size(HFS::Nocc, HFS::Nvir);
+    HFS::inv_exc_mat.fill(HFS::Nexc+1); // will make errors if accessing wrong one
+    for (arma::uword i = 0; i < HFS::Nexc; ++i) {
+        HFS::inv_exc_mat(HFS::excitations(i,0), HFS::excitations(i,1)) = i;
+    }
 }
+
+//Common functions needed multiple places
 
 double HFS::exchange(arma::umat& inp_states, arma::uword i) {
 
@@ -269,6 +234,23 @@ double HFS::two_electron_check(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma
     }
 }
 
+void HFS::to_first_BZ(arma::vec& k) {
+    // Translate to first brillioun zone, defined on the
+    // interval [-pi/a .. pi/a)
+
+    for (int i = 0; i < HFS::ndim; ++i) {
+        if (k[i] < -HFS::kmax - SMALLNUMBER) {
+            k[i] += HFS::bzone_length;
+        }else if (k[i] > HFS::kmax - SMALLNUMBER) {
+            k[i] -= HFS::bzone_length;
+        }
+    }
+}
+
+bool HFS::is_vir(double k) {
+        return (k <= HFS::kf + SMALLNUMBER);
+}
+
 arma::uvec HFS::k_to_index(arma::vec& k) {
     arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
     arma::uvec indices = arma::conv_to<arma::uvec>::from(idx);
@@ -298,29 +280,7 @@ arma::vec HFS::vir_idx_to_k(arma::uword idx) {
 
 }
 
-void HFS::to_first_BZ(arma::vec& k) {
-    // Translate to first brillioun zone, defined on the
-    // interval [-pi/a .. pi/a)
-
-    for (int i = 0; i < HFS::ndim; ++i) {
-        if (k[i] < -HFS::kmax - SMALLNUMBER) {
-            k[i] += HFS::bzone_length;
-        }else if (k[i] > HFS::kmax - SMALLNUMBER) {
-            k[i] -= HFS::bzone_length;
-        }
-    }
-}
-
-bool HFS::mv_is_working(double tol) {
-    arma::vec v(2*HFS::Nexc, arma::fill::randu);
-    arma::vec Mv = HFS::matvec_prod_3H(v);
-    HFS::build_matrix();
-    arma::vec v_arma = HFS::full_matrix * v;
-    arma::vec diff = arma::abs(Mv - v_arma);
-    bool is_working = arma::all(diff < tol);
-    return is_working;
-}
-
+// Matrix and Matrix-Vector Products
 
 double HFS::calc_1B(arma::uword s, arma::uword t) {
     arma::uword i =  HFS::excitations(s, 0);
@@ -417,36 +377,6 @@ double HFS::calc_3H(arma::uword i, arma::uword j) {
     }
 }
 
-void HFS::build_matrix() {
-    HFS::full_matrix.set_size(2*HFS::Nexc, 2*HFS::Nexc);
-    for (arma::uword i = 0; i < 2*HFS::Nexc; ++i) {
-        for (arma::uword j = 0; j < 2*HFS::Nexc; ++j) {
-            HFS::full_matrix(i,j) =  HFS::calc_3H(i,j);
-        }
-    }
-}
-
-
-arma::uword HFS::kb_j_to_t(arma::vec& kb, arma::uword j) {
-    //std::vector<arma::uword> b_N_idx(HFS::ndim);
-    //b_N_idx = HFS::k_to_idx(kb);
-    arma::uvec b_N_idx =  k_to_index(kb);
-    //arma::uword b = HFS::vir_N_to_1_map(b_N_idx);
-    //std::cout << "b = " << b << std::endl;
-    arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
-    //std::cout << "b2 = " << b << std::endl;
-    //std::vector<arma::uword> key {j, b};
-    //arma::uword t = HFS::inv_exc_map.at(key);
-    arma::uword t = HFS::inv_exc_mat(j, b);
-    return t;
-}
-
-/* arma::mat HFS::build_guess_vecs () {
-    arma::mat ayy;
-    return ayy;
-}
-*/
-
 arma::vec HFS::matvec_prod_3A(arma::vec& v) {
     arma::vec Mv(HFS::Nexc, arma::fill::zeros);
     for (arma::uword s = 0; s < HFS::Nexc; ++s) {
@@ -512,7 +442,29 @@ arma::vec HFS::matvec_prod_3H(arma::vec& v) {
     return Mv;
 }
 
+arma::uword HFS::kb_j_to_t(arma::vec& kb, arma::uword j) {
+    //std::vector<arma::uword> b_N_idx(HFS::ndim);
+    //b_N_idx = HFS::k_to_idx(kb);
+    arma::uvec b_N_idx =  k_to_index(kb);
+    //arma::uword b = HFS::vir_N_to_1_map(b_N_idx);
+    //std::cout << "b = " << b << std::endl;
+    arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
+    //std::cout << "b2 = " << b << std::endl;
+    //std::vector<arma::uword> key {j, b};
+    //arma::uword t = HFS::inv_exc_map.at(key);
+    arma::uword t = HFS::inv_exc_mat(j, b);
+    return t;
+}
 
+
+
+/* arma::mat HFS::build_guess_vecs () {
+    arma::mat ayy;
+    return ayy;
+}
+*/
+
+//Davidson Algorithm
 void HFS::davidson_wrapper(arma::uword N
                           ,arma::mat   guess_evecs
                           ,arma::uword block_size
@@ -526,20 +478,6 @@ void HFS::davidson_wrapper(arma::uword N
     davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
                        &HFS::calc_3H,
                        &HFS::matvec_prod_3H);
-}
-
-bool HFS::davidson_agrees_fulldiag() {
-    HFS::build_matrix();
-    arma::vec eigvals;
-    arma::mat eigvecs;
-    clock_t t, t2;
-    t = clock();
-    arma::eig_sym(eigvals, eigvecs, HFS::full_matrix);
-    t2 = clock() - t;
-    std::cout << "Full took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
-    double diff = fabs(arma::min(eigvals) - arma::min(HFS::dav_vals));
-    bool agrees = (diff < 10E-5);
-    return agrees;
 }
 
 void HFS::davidson_algorithm(arma::uword N
@@ -689,3 +627,73 @@ void HFS::davidson_algorithm(arma::uword N
         }
     }
 }
+
+// Testing/Debugging Functions
+
+bool HFS::davidson_agrees_fulldiag() {
+    HFS::build_matrix();
+    arma::vec eigvals;
+    arma::mat eigvecs;
+    clock_t t, t2;
+    t = clock();
+    arma::eig_sym(eigvals, eigvecs, HFS::full_matrix);
+    t2 = clock() - t;
+    std::cout << "Full took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
+    double diff = fabs(arma::min(eigvals) - arma::min(HFS::dav_vals));
+    bool agrees = (diff < 10E-5);
+    return agrees;
+}
+
+bool HFS::mv_is_working(double tol) {
+    arma::vec v(2*HFS::Nexc, arma::fill::randu);
+    arma::vec Mv = HFS::matvec_prod_3H(v);
+    HFS::build_matrix();
+    arma::vec v_arma = HFS::full_matrix * v;
+    arma::vec diff = arma::abs(Mv - v_arma);
+    bool is_working = arma::all(diff < tol);
+    return is_working;
+}
+
+void HFS::build_matrix() {
+    HFS::full_matrix.set_size(2*HFS::Nexc, 2*HFS::Nexc);
+    for (arma::uword i = 0; i < 2*HFS::Nexc; ++i) {
+        for (arma::uword j = 0; j < 2*HFS::Nexc; ++j) {
+            HFS::full_matrix(i,j) =  HFS::calc_3H(i,j);
+        }
+    }
+}
+
+bool HFS::everything_works() {
+    assert(mv_is_working() && "There is a problem in the matrix-vector product.");
+    std::cout << "Mv is working" << std::endl;
+    assert(davidson_agrees_fulldiag() && "Davidson's Algorithm Didn't get the lowest eigenvalue.");
+    std::cout << "Davidson is working" << std::endl;
+    return true;
+}
+
+// Output Control
+
+void HFS::print_params() {
+    std::cout << "DeltaK = " << HFS::deltaK << std::endl;
+    std::cout << "Nk = " << HFS::Nk << std::endl;
+    std::cout << "ndim = " << HFS::ndim << std::endl;
+    std::cout << "rs = " << HFS::rs << std::endl;
+    std::cout << "kf = " << HFS::kf << std::endl;
+    std::cout << "kmax = " << HFS::kmax << std::endl;
+    std::cout << "Nocc = " << HFS::Nocc << std::endl;
+    std::cout << "Nvir = " << HFS::Nvir << std::endl;
+    std::cout << "Nexc = " << HFS::Nexc << std::endl;
+    std::cout << "DavIts=" << HFS::dav_its << std::endl;
+    std::cout << "Smallest Eval = " << HFS::dav_vals.min() << std::endl;
+    std::cout << HFS::dav_message << std::endl;
+    if (Nk < 10) {
+    HFS::kgrid.print("Kgrid");
+    HFS::occ_states.print("Occupied States");
+    HFS::vir_states.print("Virtual States");
+    HFS::occ_energies.print("Occ Energy");
+    HFS::vir_energies.print("Vir Energy");
+    HFS::excitations.print("Excitations");
+    }
+}
+
+
