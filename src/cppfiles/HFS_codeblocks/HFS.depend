@@ -1,0 +1,76 @@
+# depslib dependency file v1.0
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_base_funcs.cpp
+	"HFS_base_funcs.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_base_funcs.hpp
+	"HFS_params.hpp"
+
+1476554379 /home/evan/git/HF-Stability/src/cppfiles/HFS_params.hpp
+	"armadillo"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_davidson.cpp
+	"HFS_davidson.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_davidson.hpp
+	"HFS_params.hpp"
+	"HFS_base_funcs.hpp"
+	"HFS_params_calc.hpp"
+	"HFS_matrix_utils.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_params_calc.hpp
+	"HFS_params.hpp"
+	"HFS_base_funcs.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_matrix_utils.hpp
+	"HFS_params.hpp"
+	"HFS_base_funcs.hpp"
+	"HFS_params_calc.hpp"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_debug.cpp
+	"HFS_debug.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_debug.hpp
+	<assert.h>
+	"HFS_params.hpp"
+	"HFS_base_funcs.hpp"
+	"HFS_params_calc.hpp"
+	"HFS_matrix_utils.hpp"
+	"HFS_davidson.hpp"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_fileIO.cpp
+	"HFS_fileIO.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_fileIO.hpp
+	"HFS_params.hpp"
+	"HFS_base_funcs.hpp"
+	"HFS_params_calc.hpp"
+	"HFS_matrix_utils.hpp"
+	"HFS_davidson.hpp"
+	"HFS_debug.hpp"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_main.cpp
+	"HFS_main.hpp"
+
+1476574746 /home/evan/git/HF-Stability/src/cppfiles/HFS_main.hpp
+	<iostream>
+	<cmath>
+	"HFS_params.hpp"
+	"HFS_base_funcs.hpp"
+	"HFS_params_calc.hpp"
+	"HFS_matrix_utils.hpp"
+	"HFS_davidson.hpp"
+	"HFS_debug.hpp"
+	"HFS_fileIO.hpp"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_matrix_utils.cpp
+	"HFS_matrix_utils.hpp"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_params.cpp
+	"HFS_params.hpp"
+
+1476574746 source:/home/evan/git/HF-Stability/src/cppfiles/HFS_params_calc.cpp
+	"HFS_params_calc.hpp"
+
+1476574441 source:/home/evan/git/HF-Stability/src/cppfiles/HFS/main.cpp
+	<iostream>
+

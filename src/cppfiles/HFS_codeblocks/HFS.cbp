@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="HFS" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/HFS" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-larmadillo" />
+					<Add option="-O0" />
+					<Add option="-gdwarf-2" />
+					<Add option="-g" />
+					<Add option="-std=c++11" />
+				</Compiler>
+				<Linker>
+					<Add option="-larmadillo" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/HFS" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O3" />
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+					<Add option="-larmadillo" />
+					<Add option="-ffast-math" />
+				</Compiler>
+				<Linker>
+					<Add option="-larmadillo" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+		</Compiler>
+		<Unit filename="../HFS_base_funcs.cpp" />
+		<Unit filename="../HFS_base_funcs.hpp" />
+		<Unit filename="../HFS_davidson.cpp" />
+		<Unit filename="../HFS_davidson.hpp" />
+		<Unit filename="../HFS_debug.cpp" />
+		<Unit filename="../HFS_debug.hpp" />
+		<Unit filename="../HFS_fileIO.cpp" />
+		<Unit filename="../HFS_fileIO.hpp" />
+		<Unit filename="../HFS_main.cpp" />
+		<Unit filename="../HFS_main.hpp" />
+		<Unit filename="../HFS_matrix_utils.cpp" />
+		<Unit filename="../HFS_matrix_utils.hpp" />
+		<Unit filename="../HFS_params.cpp" />
+		<Unit filename="../HFS_params.hpp" />
+		<Unit filename="../HFS_params_calc.cpp" />
+		<Unit filename="../HFS_params_calc.hpp" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
