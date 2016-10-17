@@ -1,0 +1,21 @@
+19:56:41 **** Incremental Build of configuration Debug for project HFS ****
+make Debug all 
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_params.cpp  -o HFS_params.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_davidson.cpp  -o HFS_davidson.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_main.cpp  -o HFS_main.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_matrix_utils.cpp  -o HFS_matrix_utils.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_debug.cpp  -o HFS_debug.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_fileIO.cpp  -o HFS_fileIO.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_base_funcs.cpp  -o HFS_base_funcs.o
+Compiling object:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -c HFS_params_calc.cpp  -o HFS_params_calc.o
+Linking:
+g++ -Wall -larmadillo -std=c++11 -g -o0  -o HFS HFS_params.o HFS_main.o HFS_debug.o HFS_base_funcs.o HFS_davidson.o HFS_matrix_utils.o HFS_fileIO.o HFS_params_calc.o  -larmadillo
+Build successful to target: HFS

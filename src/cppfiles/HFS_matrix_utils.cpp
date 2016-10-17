@@ -18,7 +18,6 @@ namespace HFS {
     }
 
     double calc_3B(arma::uword s, arma::uword t) {
-    //    std::cout << "Start get_3A s =" << s << " t =" << t << std::endl; //DEBUG
         arma::uword i = HFS::excitations(s, 0);
         arma::uword a = HFS::excitations(s, 1);
         arma::uword j = HFS::excitations(t, 0);
@@ -30,7 +29,6 @@ namespace HFS {
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
             kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
         }
-    //    std::cout << "Finish get_3A s =" << s << " t =" << t << std::endl; //DEBUG
         return -1.0 * HFS::two_electron_check(ka, kb, kj, ki);
     }
 

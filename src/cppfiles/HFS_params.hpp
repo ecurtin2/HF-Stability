@@ -7,7 +7,6 @@
 #ifndef SMALLNUMBER
     #define SMALLNUMBER 10E-10
 #endif
-
 #include "armadillo"
 
 namespace HFS {

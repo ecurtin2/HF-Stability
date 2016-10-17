@@ -9,7 +9,7 @@ int main(){
 int main_()
 {
     HFS::rs = 1.2;
-    HFS::Nk = 15;
+    HFS::Nk = 11;
     HFS::ndim = 2;
     HFS::calc_params();
     arma::wall_clock timer;
