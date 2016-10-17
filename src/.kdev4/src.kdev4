@@ -7,7 +7,7 @@ Path=gcc
 Type=GCC
 
 [Filters]
-size=25
+size=29
 
 [Filters][0]
 inclusive=0
@@ -97,6 +97,26 @@ targets=1
 [Filters][24]
 inclusive=0
 pattern=/depend
+targets=1
+
+[Filters][25]
+inclusive=0
+pattern=/Debug
+targets=1
+
+[Filters][26]
+inclusive=0
+pattern=/Profile
+targets=1
+
+[Filters][27]
+inclusive=0
+pattern=/Release
+targets=1
+
+[Filters][28]
+inclusive=0
+pattern=/clean
 targets=1
 
 [Filters][3]
