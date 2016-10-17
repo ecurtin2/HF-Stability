@@ -1,0 +1,195 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x04\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x10\x00H\x00F\x00S\x00_\x00k\x00d\x00e\x00v\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x10\x00H\x00F\x00S\x00_\x00k\x00d\x00e\x00v\x00\x00\x00\x0e\x00P\x00r\x00o\x00f\x00i\x00l\x00e\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x10\x00H\x00F\x00S\x00_\x00k\x00d\x00e\x00v\x00\x00\x00\n\x00c\x00l\x00e\x00a\x00n\x00\x00\x00\x0b\x00\x00\x00\x00\x02\x00\x00\x00\x10\x00H\x00F\x00S\x00_\x00k\x00d\x00e\x00v\x00\x00\x00\x0e\x00R\x00e\x00l\x00e\x00a\x00s\x00e)
+
+[Defines And Includes][Compiler]
+Name=GCC
+Path=gcc
+Type=GCC
+
+[Filters]
+size=25
+
+[Filters][0]
+inclusive=0
+pattern=.*
+targets=3
+
+[Filters][1]
+inclusive=0
+pattern=.git
+targets=2
+
+[Filters][10]
+inclusive=0
+pattern=*.o
+targets=1
+
+[Filters][11]
+inclusive=0
+pattern=*.a
+targets=1
+
+[Filters][12]
+inclusive=0
+pattern=*.so
+targets=1
+
+[Filters][13]
+inclusive=0
+pattern=*.so.*
+targets=1
+
+[Filters][14]
+inclusive=0
+pattern=moc_*.cpp
+targets=1
+
+[Filters][15]
+inclusive=0
+pattern=*.moc
+targets=1
+
+[Filters][16]
+inclusive=0
+pattern=ui_*.h
+targets=1
+
+[Filters][17]
+inclusive=0
+pattern=qrc_*.cpp
+targets=1
+
+[Filters][18]
+inclusive=0
+pattern=*~
+targets=1
+
+[Filters][19]
+inclusive=0
+pattern=*.orig
+targets=1
+
+[Filters][2]
+inclusive=0
+pattern=CVS
+targets=2
+
+[Filters][20]
+inclusive=0
+pattern=.*.kate-swp
+targets=1
+
+[Filters][21]
+inclusive=0
+pattern=.*.swp
+targets=1
+
+[Filters][22]
+inclusive=0
+pattern=*.pyc
+targets=1
+
+[Filters][23]
+inclusive=0
+pattern=*.pyo
+targets=1
+
+[Filters][24]
+inclusive=0
+pattern=/depend
+targets=1
+
+[Filters][3]
+inclusive=0
+pattern=.svn
+targets=2
+
+[Filters][4]
+inclusive=0
+pattern=_svn
+targets=2
+
+[Filters][5]
+inclusive=0
+pattern=SCCS
+targets=2
+
+[Filters][6]
+inclusive=0
+pattern=_darcs
+targets=2
+
+[Filters][7]
+inclusive=0
+pattern=.hg
+targets=2
+
+[Filters][8]
+inclusive=0
+pattern=.bzr
+targets=2
+
+[Filters][9]
+inclusive=0
+pattern=__pycache__
+targets=2
+
+[Launch]
+Launch Configurations=Launch Configuration 0,Launch Configuration 1,Launch Configuration 2
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=New Compiled Binary Launcher
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///home/evan/git/HF-Stability/src/HFS
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=
+Use External Terminal=false
+Working Directory=
+isExecutable=true
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=execute
+Configured Launchers=scriptAppLauncher
+Name=setup.py
+Type=Script Application
+
+[Launch][Launch Configuration 1][Data]
+Arguments=build_ext --inplace
+Configured from ProjectItem=HFS_kdev,setup.py
+EnvironmentGroup=
+Executable=file:///home/evan/git/HF-Stability/src/setup.py
+Execute on Remote Host=false
+Interpreter=python
+Output Filtering Mode=2
+Remote Host=
+Run current file=false
+Working Directory=
+
+[Launch][Launch Configuration 2]
+Configured Launch Modes=execute
+Configured Launchers=scriptAppLauncher
+Name=launch.py
+Type=Script Application
+
+[Launch][Launch Configuration 2][Data]
+Arguments=
+Configured from ProjectItem=HFS_kdev,launch.py
+EnvironmentGroup=
+Executable=file:///home/evan/git/HF-Stability/src/launch.py
+Execute on Remote Host=false
+Interpreter=python
+Output Filtering Mode=2
+Remote Host=
+Run current file=false
+Working Directory=
+
+[Project]
+VersionControlSupport=kdevgit
