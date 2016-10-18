@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <assert.h>
 #include "HFS_params.hpp"
 #include "HFS_base_funcs.hpp"
 #include "HFS_params_calc.hpp"
@@ -9,4 +10,4 @@
 #include "HFS_fileIO.hpp"
 
 int main();
-int main_();
+int main_(double rs, int Nk, int ndim);

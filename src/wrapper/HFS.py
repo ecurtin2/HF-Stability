@@ -95,8 +95,8 @@ def main():
     return _HFS.main()
 main = _HFS.main
 
-def main_():
-    return _HFS.main_()
+def main_(rs, Nk, ndim):
+    return _HFS.main_(rs, Nk, ndim)
 main_ = _HFS.main_
 
 _HFS.PI_swigconstant(_HFS)
@@ -245,9 +245,13 @@ def build_matrix():
     return _HFS.build_matrix()
 build_matrix = _HFS.build_matrix
 
-def print_params():
-    return _HFS.print_params()
-print_params = _HFS.print_params
+def write_output(detail=False):
+    return _HFS.write_output(detail)
+write_output = _HFS.write_output
+
+def centerstring(s, width):
+    return _HFS.centerstring(s, width)
+centerstring = _HFS.centerstring
 # This file is compatible with both classic and new-style classes.
 
 cvar = _HFS.cvar

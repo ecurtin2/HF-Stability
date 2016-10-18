@@ -8,8 +8,8 @@
 
 namespace HFS{
     extern arma::mat guess_evecs;
-    extern std::string dav_message;
-    extern arma::vec dav_vals;
+    extern std::string Davidson_Stopping_Criteria;
+    extern arma::vec dav_vals, dav_lowest_vals;
     extern arma::mat dav_vecs;
     extern int dav_its;
     extern void build_guess_evecs (int N, int which=0);

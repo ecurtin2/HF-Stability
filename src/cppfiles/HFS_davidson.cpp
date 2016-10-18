@@ -2,8 +2,8 @@
 
 namespace HFS {
     arma::mat guess_evecs;
-    std::string dav_message;
-    arma::vec dav_vals;
+    std::string Davidson_Stopping_Criteria;
+    arma::vec dav_vals, dav_lowest_vals;
     arma::mat dav_vecs;
     int dav_its;
 
@@ -48,6 +48,7 @@ namespace HFS {
         arma::mat Mvmat(N, 0, arma::fill::zeros);
         arma::mat ritz_vecs = guess_evecs;
         arma::mat init_guess(N, num_of_roots);
+        dav_lowest_vals.set_size(max_its);
 
         arma::wall_clock timer;
 
@@ -62,8 +63,8 @@ namespace HFS {
                 arma::vec Matvec = matvec_product(guess_vec);
                 Mvmat = arma::join_rows(Mvmat, Matvec);
             }
-            double t = timer.toc();
-            std::cout << "Mv took " << t << " seconds" << std::endl;
+            //double t = timer.toc();
+            //std::cout << "Mv took " << t << " seconds" << std::endl;
             sub_mat = guess_evecs.t() * Mvmat;
             //Diagonalize subspace matrix.
             arma::vec sub_evals;
@@ -156,20 +157,24 @@ namespace HFS {
             HFS::dav_vecs =  guess_evecs;
             HFS::dav_vals = sub_evals;
             HFS::dav_its  = i;
+            HFS::dav_lowest_vals(i) = dav_vals.min();
 
             double t2 = timer.toc();
-            std::cout << "Iteration took " << t2 << " seconds" << std::endl;
-            std::cout << "min eigval = " << dav_vals.min() << std::endl;
+            //std::cout << "Iteration took " << t2 << " seconds" << std::endl;
+            //std::cout << "min eigval = " << dav_vals.min() << std::endl;
 
             if (old_sub_size == sub_size) {
-                HFS::dav_message = "Subspace Converged";
+                HFS::Davidson_Stopping_Criteria = "Subspace Converged";
+                HFS::dav_lowest_vals.resize(i);
                 break;
             }
             else if ((sub_size + block_size) > max_sub_size) {
-                HFS::dav_message = "Subspace Size Too Large";
+                HFS::Davidson_Stopping_Criteria = "Subspace Size Too Large";
+                HFS::dav_lowest_vals.resize(i);
                 break;
             } else if (arma::all(norms < tolerance)) {
-                HFS::dav_message = "All requested norms below tolerance";
+                HFS::Davidson_Stopping_Criteria = "All requested norms below tolerance";
+                HFS::dav_lowest_vals.resize(i);
                 break;
             }
         }

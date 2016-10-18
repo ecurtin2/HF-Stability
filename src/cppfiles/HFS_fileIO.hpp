@@ -9,7 +9,8 @@
 #include "HFS_debug.hpp"
 
 namespace HFS{
-    extern void print_params();
+    extern void write_output(bool detail=false);
+    extern std::string centerstring(std::string s, int width);
 }
 
 #endif // HFS_fileIO_included

@@ -1,5 +1,5 @@
 #
-# 'make depend'  uses makedepend to automatically generate dependencies 
+# 'make depend'  uses makedepend to automatically generate dependencies
 #                (dependencies are added to end of Makefile)
 # 'make'         build executable file
 # 'make Debug'   Compile with debugging flags
@@ -23,10 +23,10 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 Debug: CFLAGS +=-g -o0
 Debug: $(TARGET)
 
-Profile: CFLAGS +=-g -O3 -ffast-math -D ARMA_NO_DEBUG
+Profile: CFLAGS +=-pg -O3 -ffast-math -D ARMA_NO_DEBUG -D NDEBUG
 Profile:  $(TARGET)
 
-Release: CFLAGS +=-O3 -ffast-math -D ARMA_NO_DEBUG
+Release: CFLAGS +=-O3 -ffast-math -D ARMA_NO_DEBUG -D NDEBUG
 Release: $(TARGET)
 
 .PHONY: depend clean
@@ -40,7 +40,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
 clean:
-	@echo " Cleaning..."; 
+	@echo " Cleaning...";
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
 
 

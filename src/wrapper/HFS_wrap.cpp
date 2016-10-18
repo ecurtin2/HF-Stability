@@ -3166,9 +3166,6 @@ SWIGINTERNINLINE PyObject*
 }
 
 
-  #define SWIG_From_double   PyFloat_FromDouble 
-
-
 SWIGINTERN int
 SWIG_AsVal_double (PyObject *obj, double *val)
 {
@@ -3318,6 +3315,9 @@ SWIG_AsVal_int (PyObject * obj, int *val)
   }  
   return res;
 }
+
+
+  #define SWIG_From_double   PyFloat_FromDouble 
 
 
 #if NPY_API_VERSION < 0x00000007
@@ -4132,6 +4132,20 @@ SWIGINTERNINLINE PyObject*
   return PyBool_FromLong(value ? 1 : 0);
 }
 
+
+SWIGINTERN int
+SWIG_AsVal_bool (PyObject *obj, bool *val)
+{
+  int r;
+  if (!PyBool_Check(obj))
+    return SWIG_ERROR;
+  r = PyObject_IsTrue(obj);
+  if (r == -1)
+    return SWIG_ERROR;
+  if (val) *val = r ? true : false;
+  return SWIG_OK;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -4157,12 +4171,39 @@ fail:
 
 SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
+  double arg1 ;
+  int arg2 ;
+  int arg3 ;
+  double val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  int val3 ;
+  int ecode3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
   int result;
   
-  if (!PyArg_ParseTuple(args,(char *)":main_")) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOO:main_",&obj0,&obj1,&obj2)) SWIG_fail;
+  ecode1 = SWIG_AsVal_double(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "main_" "', argument " "1"" of type '" "double""'");
+  } 
+  arg1 = static_cast< double >(val1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "main_" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "main_" "', argument " "3"" of type '" "int""'");
+  } 
+  arg3 = static_cast< int >(val3);
   {
     try {
-      result = (int)main_();
+      result = (int)main_(arg1,arg2,arg3);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
@@ -4377,6 +4418,29 @@ SWIGINTERN PyObject *Swig_var_deltaK_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_From_double(static_cast< double >(HFS::deltaK));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Total_Calculation_Time_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Total_Calculation_Time""' of type '""double""'");
+    }
+    HFS::Total_Calculation_Time = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Total_Calculation_Time_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::Total_Calculation_Time));
   return pyobj;
 }
 
@@ -6055,19 +6119,19 @@ SWIGINTERN PyObject *Swig_var_guess_evecs_get(void) {
 }
 
 
-SWIGINTERN int Swig_var_dav_message_set(PyObject *_val) {
+SWIGINTERN int Swig_var_Davidson_Stopping_Criteria_set(PyObject *_val) {
   {
     void *argp = 0;
     int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_std__string,  0  | 0);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_message""' of type '""std::string""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Davidson_Stopping_Criteria""' of type '""std::string""'");
     }
     if (!argp) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_message""' of type '""std::string""'");
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::Davidson_Stopping_Criteria""' of type '""std::string""'");
     } else {
       std::string * temp;
       temp  = reinterpret_cast< std::string * >(argp);
-      HFS::dav_message = *temp;
+      HFS::Davidson_Stopping_Criteria = *temp;
       if (SWIG_IsNewObj(res)) delete temp;
     }
   }
@@ -6077,10 +6141,10 @@ fail:
 }
 
 
-SWIGINTERN PyObject *Swig_var_dav_message_get(void) {
+SWIGINTERN PyObject *Swig_var_Davidson_Stopping_Criteria_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_message), SWIGTYPE_p_std__string,  0 );
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::Davidson_Stopping_Criteria), SWIGTYPE_p_std__string,  0 );
   return pyobj;
 }
 
@@ -6111,6 +6175,36 @@ SWIGINTERN PyObject *Swig_var_dav_vals_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vals), SWIGTYPE_p_arma__vec,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_dav_lowest_vals_set(PyObject *_val) {
+  {
+    void *argp = 0;
+    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__vec,  0  | 0);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_lowest_vals""' of type '""arma::vec""'");
+    }
+    if (!argp) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_lowest_vals""' of type '""arma::vec""'");
+    } else {
+      arma::vec * temp;
+      temp  = reinterpret_cast< arma::vec * >(argp);
+      HFS::dav_lowest_vals = *temp;
+      if (SWIG_IsNewObj(res)) delete temp;
+    }
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_dav_lowest_vals_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_lowest_vals), SWIGTYPE_p_arma__vec,  0 );
   return pyobj;
 }
 
@@ -7439,19 +7533,128 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_print_params(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_write_output__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
+  bool arg1 ;
+  bool val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)":print_params")) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:write_output",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_bool(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "write_output" "', argument " "1"" of type '" "bool""'");
+  } 
+  arg1 = static_cast< bool >(val1);
   {
     try {
-      HFS::print_params();
+      HFS::write_output(arg1);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
     } 
   }
   resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_write_output__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)":write_output")) SWIG_fail;
+  {
+    try {
+      HFS::write_output();
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_write_output(PyObject *self, PyObject *args) {
+  Py_ssize_t argc;
+  PyObject *argv[2] = {
+    0
+  };
+  Py_ssize_t ii;
+  
+  if (!PyTuple_Check(args)) SWIG_fail;
+  argc = args ? PyObject_Length(args) : 0;
+  for (ii = 0; (ii < 1) && (ii < argc); ii++) {
+    argv[ii] = PyTuple_GET_ITEM(args,ii);
+  }
+  if (argc == 0) {
+    return _wrap_write_output__SWIG_1(self, args);
+  }
+  if (argc == 1) {
+    int _v;
+    {
+      int res = SWIG_AsVal_bool(argv[0], NULL);
+      _v = SWIG_CheckState(res);
+    }
+    if (_v) {
+      return _wrap_write_output__SWIG_0(self, args);
+    }
+  }
+  
+fail:
+  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'write_output'.\n"
+    "  Possible C/C++ prototypes are:\n"
+    "    HFS::write_output(bool)\n"
+    "    HFS::write_output()\n");
+  return 0;
+}
+
+
+SWIGINTERN PyObject *_wrap_centerstring(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  std::string arg1 ;
+  int arg2 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  std::string result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:centerstring",&obj0,&obj1)) SWIG_fail;
+  {
+    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_std__string,  0  | 0);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "centerstring" "', argument " "1"" of type '" "std::string""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "centerstring" "', argument " "1"" of type '" "std::string""'");
+    } else {
+      std::string * temp = reinterpret_cast< std::string * >(argp1);
+      arg1 = *temp;
+      if (SWIG_IsNewObj(res1)) delete temp;
+    }
+  }
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "centerstring" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  {
+    try {
+      result = HFS::centerstring(arg1,arg2);
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_NewPointerObj((new std::string(static_cast< const std::string& >(result))), SWIGTYPE_p_std__string, SWIG_POINTER_OWN |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -7499,7 +7702,8 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"mv_is_working", _wrap_mv_is_working, METH_VARARGS, NULL},
 	 { (char *)"everything_works", _wrap_everything_works, METH_VARARGS, NULL},
 	 { (char *)"build_matrix", _wrap_build_matrix, METH_VARARGS, NULL},
-	 { (char *)"print_params", _wrap_print_params, METH_VARARGS, NULL},
+	 { (char *)"write_output", _wrap_write_output, METH_VARARGS, NULL},
+	 { (char *)"centerstring", _wrap_centerstring, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
@@ -8351,6 +8555,7 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"fermi_energy",Swig_var_fermi_energy_get, Swig_var_fermi_energy_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"two_e_const",Swig_var_two_e_const_get, Swig_var_two_e_const_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"deltaK",Swig_var_deltaK_get, Swig_var_deltaK_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Total_Calculation_Time",Swig_var_Total_Calculation_Time_get, Swig_var_Total_Calculation_Time_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nocc",Swig_var_Nocc_get, Swig_var_Nocc_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nvir",Swig_var_Nvir_get, Swig_var_Nvir_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nexc",Swig_var_Nexc_get, Swig_var_Nexc_set);
@@ -8367,8 +8572,9 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"vir_N_to_1_mat",Swig_var_vir_N_to_1_mat_get, Swig_var_vir_N_to_1_mat_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"inv_exc_mat",Swig_var_inv_exc_mat_get, Swig_var_inv_exc_mat_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"guess_evecs",Swig_var_guess_evecs_get, Swig_var_guess_evecs_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"dav_message",Swig_var_dav_message_get, Swig_var_dav_message_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Davidson_Stopping_Criteria",Swig_var_Davidson_Stopping_Criteria_get, Swig_var_Davidson_Stopping_Criteria_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_vals",Swig_var_dav_vals_get, Swig_var_dav_vals_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"dav_lowest_vals",Swig_var_dav_lowest_vals_get, Swig_var_dav_lowest_vals_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_vecs",Swig_var_dav_vecs_get, Swig_var_dav_vecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_its",Swig_var_dav_its_get, Swig_var_dav_its_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"full_matrix",Swig_var_full_matrix_get, Swig_var_full_matrix_set);

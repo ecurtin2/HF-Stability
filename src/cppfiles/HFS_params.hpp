@@ -11,7 +11,8 @@
 
 namespace HFS {
     extern double  bzone_length, vol, rs, kf, kmax, fermi_energy;
-    extern double  two_e_const, deltaK;
+    extern double  two_e_const, deltaK, Total_Calculation_Time;
+    extern std::string Computation_Starttime;
     extern arma::uword Nocc, Nvir, Nexc, N_elec, Nk;
     extern int ndim;
     extern arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
