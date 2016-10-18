@@ -86,7 +86,6 @@
 		<Unit filename="cppfiles/HFS_params.hpp" />
 		<Unit filename="cppfiles/HFS_params_calc.cpp" />
 		<Unit filename="cppfiles/HFS_params_calc.hpp" />
-		<Unit filename="files2dataframe.py" />
 		<Unit filename="launch.py">
 			<Option compiler="gcc" use="0" buildCommand="python launch.py" />
 		</Unit>
