@@ -4351,20 +4351,32 @@ SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   double arg1 ;
   int arg2 ;
   int arg3 ;
-  std::string arg4 ;
+  int arg4 ;
+  int arg5 ;
+  int arg6 ;
+  std::string arg7 ;
   double val1 ;
   int ecode1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
   int val3 ;
   int ecode3 = 0 ;
+  int val4 ;
+  int ecode4 = 0 ;
+  int val5 ;
+  int ecode5 = 0 ;
+  int val6 ;
+  int ecode6 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
   int result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:main_",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOO:main_",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6)) SWIG_fail;
   ecode1 = SWIG_AsVal_double(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "main_" "', argument " "1"" of type '" "double""'");
@@ -4380,18 +4392,33 @@ SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
     SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "main_" "', argument " "3"" of type '" "int""'");
   } 
   arg3 = static_cast< int >(val3);
+  ecode4 = SWIG_AsVal_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "main_" "', argument " "4"" of type '" "int""'");
+  } 
+  arg4 = static_cast< int >(val4);
+  ecode5 = SWIG_AsVal_int(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "main_" "', argument " "5"" of type '" "int""'");
+  } 
+  arg5 = static_cast< int >(val5);
+  ecode6 = SWIG_AsVal_int(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "main_" "', argument " "6"" of type '" "int""'");
+  } 
+  arg6 = static_cast< int >(val6);
   {
     std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj3, &ptr);
+    int res = SWIG_AsPtr_std_string(obj6, &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "main_" "', argument " "4"" of type '" "std::string""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "main_" "', argument " "7"" of type '" "std::string""'"); 
     }
-    arg4 = *ptr;
+    arg7 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   {
     try {
-      result = (int)main_(arg1,arg2,arg3,arg4);
+      result = (int)main_(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
@@ -6488,6 +6515,75 @@ SWIGINTERN PyObject *Swig_var_dav_its_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_From_int(static_cast< int >(HFS::dav_its));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_num_guess_evecs_set(PyObject *_val) {
+  {
+    int val;
+    int res = SWIG_AsVal_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::num_guess_evecs""' of type '""int""'");
+    }
+    HFS::num_guess_evecs = static_cast< int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_num_guess_evecs_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_int(static_cast< int >(HFS::num_guess_evecs));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_blocksize_set(PyObject *_val) {
+  {
+    int val;
+    int res = SWIG_AsVal_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_blocksize""' of type '""int""'");
+    }
+    HFS::Dav_blocksize = static_cast< int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_blocksize_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_int(static_cast< int >(HFS::Dav_blocksize));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_Num_evals_set(PyObject *_val) {
+  {
+    int val;
+    int res = SWIG_AsVal_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_Num_evals""' of type '""int""'");
+    }
+    HFS::Dav_Num_evals = static_cast< int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_Num_evals_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_int(static_cast< int >(HFS::Dav_Num_evals));
   return pyobj;
 }
 
@@ -8822,6 +8918,9 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_lowest_vals",Swig_var_dav_lowest_vals_get, Swig_var_dav_lowest_vals_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_vecs",Swig_var_dav_vecs_get, Swig_var_dav_vecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_its",Swig_var_dav_its_get, Swig_var_dav_its_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"num_guess_evecs",Swig_var_num_guess_evecs_get, Swig_var_num_guess_evecs_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_blocksize",Swig_var_Dav_blocksize_get, Swig_var_Dav_blocksize_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_Num_evals",Swig_var_Dav_Num_evals_get, Swig_var_Dav_Num_evals_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"full_matrix",Swig_var_full_matrix_get, Swig_var_full_matrix_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"full_diag_min",Swig_var_full_diag_min_get, Swig_var_full_diag_min_set);
 #if PY_VERSION_HEX >= 0x03000000

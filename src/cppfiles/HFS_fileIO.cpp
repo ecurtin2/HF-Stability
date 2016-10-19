@@ -60,6 +60,12 @@ namespace HFS {
         PRINTVAL(Nvir)
         PRINTVAL(Nexc)
         PRINTVAL(dav_its)
+        PRINTVAL(num_guess_evecs)
+        PRINTVAL(Dav_blocksize)
+        PRINTVAL(Dav_Num_evals)
+
+        PRINTVAL(Davidson_Stopping_Criteria)
+        assert (HFS::everything_works());
         double Dav_Final_Val = dav_lowest_vals(dav_lowest_vals.size() - 1);
         PRINTVAL(Dav_Final_Val)
         if (Nk < 30){
@@ -88,11 +94,8 @@ namespace HFS {
             ENDSECTION("Matrices")
         }
 
-        SECTION("Calculation Details")
 
-        PRINTVAL(Davidson_Stopping_Criteria)
-        assert (HFS::everything_works());
-        ENDSECTION("Calculation Details")
+
 
         NEWLINE HASHTAGLINE NEWLINE
         PRINT(CENTERED("End of Output File."))

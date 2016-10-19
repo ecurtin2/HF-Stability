@@ -27,7 +27,8 @@ def file_to_df(fname, idx):
 
     keys = ['Nk', 'ndim', 'rs', 'deltaK', 'kf', 'kmax', 
             'Nocc', 'Nvir', 'Nexc', 'dav_its', 'Dav_Final_Val', 
-            'Davidson_Stopping_Criteria', 'full_diag_min']
+            'Davidson_Stopping_Criteria', 'full_diag_min', 'Total Elapsed Time', 
+            'num_guess_evecs','Dav_blocksize','Dav_Num_evals' ]
     vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies',
                   'Kgrid', 'All Davidson Eigenvalues at Last Iteration',
                   'Davidson lowest eigenvalues at each iteration']
@@ -64,9 +65,13 @@ def file_to_df(fname, idx):
 
     for key in matrixdic:
         mat = pd.read_table(fname, skiprows=matrixdic[key][0],
-                                  nrows=matrixdic[key][1], delim_whitespace=True)
+                                  nrows=matrixdic[key][1], delim_whitespace=False)
         cleanmat = mat.dropna(axis=1, how='any')
-        dic[key] = cleanmat.as_matrix()
+        cleanmat = cleanmat.as_matrix()
+        cleanmat = np.asarray([[int(j) for j in i[0].split()] for i in cleanmat])
+        dic[key] = cleanmat
+
+        
 
     cols = []
     data = []
@@ -162,12 +167,13 @@ def df_ApplyAxplotToRows(df, shape, axplot_func, *args, **kwargs):
         axes = np.asarray([axes])  
     for idx, ax in enumerate(axes.flatten()):
         if idx == N:
-            fig.delaxes(ax)
+            for j in range(N, rows*cols):
+                fig.delaxes(axes.flatten()[j])
             break
         ax = axplot_func(df, ax, idx, *args, **kwargs)
     return fig, axes
 
-def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale):
+def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     # Draw Shapes
     kmax = df.iloc[df_idx]['kmax']
     kf   = df.iloc[df_idx]['kf']
@@ -204,10 +210,11 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale):
     Nk = df.iloc[df_idx]['Nk']
     ndim = df.iloc[df_idx]['ndim']
     title = 'rs = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
-    ax.set_title(title)
-    ax.set_xlabel('kx')
-    ax.set_ylabel('ky')
-    ax.legend(loc='center left', bbox_to_anchor=[0.95, 0.5])
+    if labels:
+        ax.set_title(title)
+        ax.set_xlabel('kx')
+        ax.set_ylabel('ky')
+        ax.legend(loc='center left', bbox_to_anchor=[0.95, 0.5])
     sns.despine(left=True, bottom=True)
 #ax.axis('off')
     return ax

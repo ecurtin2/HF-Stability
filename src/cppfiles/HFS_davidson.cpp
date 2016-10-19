@@ -6,6 +6,11 @@ namespace HFS {
     arma::vec dav_vals, dav_lowest_vals;
     arma::mat dav_vecs;
     int dav_its;
+    int num_guess_evecs;
+    int Dav_blocksize;
+    int Dav_Num_evals;
+
+
 
     void davidson_wrapper(arma::uword N
                          ,arma::mat   guess_evecs
@@ -51,10 +56,10 @@ namespace HFS {
         dav_lowest_vals.set_size(max_its);
 
         arma::wall_clock timer;
+        timer.tic();
 
         //Iterate the block Davidson algorithm.
-        for (arma::uword i = 0 ; i < max_its ; ++i){
-            timer.tic();
+        for (arma::uword i = 0; i < max_its; ++i){
             arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
             num_new_vecs = sub_size - old_sub_size;
             for (arma::uword j = 0; j < num_new_vecs; ++j)
@@ -63,8 +68,7 @@ namespace HFS {
                 arma::vec Matvec = matvec_product(guess_vec);
                 Mvmat = arma::join_rows(Mvmat, Matvec);
             }
-            //double t = timer.toc();
-            //std::cout << "Mv took " << t << " seconds" << std::endl;
+
             sub_mat = guess_evecs.t() * Mvmat;
             //Diagonalize subspace matrix.
             arma::vec sub_evals;
@@ -160,11 +164,10 @@ namespace HFS {
             HFS::dav_lowest_vals(i) = dav_vals.min();
 
             double t2 = timer.toc();
-            //std::cout << "Iteration took " << t2 << " seconds" << std::endl;
-            //std::cout << "min eigval = " << dav_vals.min() << std::endl;
+
 
             if (old_sub_size == sub_size) {
-                HFS::Davidson_Stopping_Criteria = "Subspace Converged";
+                HFS::Davidson_Stopping_Criteria = "All Norms in Block Converged";
                 HFS::dav_lowest_vals.resize(i);
                 break;
             }
@@ -173,11 +176,13 @@ namespace HFS {
                 HFS::dav_lowest_vals.resize(i);
                 break;
             } else if (arma::all(norms < tolerance)) {
-                HFS::Davidson_Stopping_Criteria = "All requested norms below tolerance";
+                HFS::Davidson_Stopping_Criteria = "All Requested Eigenvalue Norms Converged";
                 HFS::dav_lowest_vals.resize(i);
                 break;
             }
         }
+
+    HFS::Dav_time = timer.toc();
     }
 
 }

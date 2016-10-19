@@ -1,5 +1,6 @@
 **.so
 source/build/
+src/log
 HFStability.cpp
 cyarma.cpp
 general_methods.pyc

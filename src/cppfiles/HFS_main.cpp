@@ -7,13 +7,15 @@ int main(){
     double rs = 1.2;
     int Nk = 11;
     int ndim = 2;
+    int num_guess_evecs = 10;
+    int Dav_blocksize = 10;
+    int Dav_Num_evals = 5;
     std::string outputfilename="test.log";
-    return main_(rs, Nk, ndim, outputfilename);
-
+    return main_(rs, Nk, ndim, num_guess_evecs, Dav_blocksize, Dav_Num_evals, outputfilename);
 }
 
 // The two mains thing is because of SWIG, so I can call main_() from python
-int main_(double rs, int Nk, int ndim, std::string outputfilename)
+int main_(double rs, int Nk, int ndim, int num_guess_vecs, int dav_blocksize, int num_evals, std::string outputfilename)
 {
 
     // Start the timers
@@ -35,9 +37,15 @@ int main_(double rs, int Nk, int ndim, std::string outputfilename)
         HFS::davidson_agrees_fulldiag();
     }
 
+    HFS::num_guess_evecs = num_guess_vecs;
+    HFS::Dav_blocksize = dav_blocksize;
+    HFS::Dav_Num_evals = num_evals;
 
-    HFS::build_guess_evecs(60);
-    HFS::davidson_wrapper(2*HFS::Nexc, HFS::guess_evecs, 15, 0, 5, 50, 2*HFS::Nexc);
+    HFS::build_guess_evecs(HFS::num_guess_evecs);
+    HFS::davidson_wrapper(2*HFS::Nexc, HFS::guess_evecs, HFS::Dav_blocksize,
+                          0,                // which
+                          HFS::Dav_Num_evals);
+
     HFS::Total_Calculation_Time = timer.toc();
 
     const char* fname = HFS::OutputFileName.c_str();
