@@ -63,6 +63,7 @@ namespace HFS {
         PRINTVAL(num_guess_evecs)
         PRINTVAL(Dav_blocksize)
         PRINTVAL(Dav_Num_evals)
+        PRINTVAL(Dav_time)
 
         PRINTVAL(Davidson_Stopping_Criteria)
         assert (HFS::everything_works());

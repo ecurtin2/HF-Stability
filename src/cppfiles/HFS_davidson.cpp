@@ -9,6 +9,7 @@ namespace HFS {
     int num_guess_evecs;
     int Dav_blocksize;
     int Dav_Num_evals;
+    double Dav_time;
 
 
 
@@ -55,6 +56,14 @@ namespace HFS {
         arma::mat init_guess(N, num_of_roots);
         dav_lowest_vals.set_size(max_its);
 
+        arma::vec diagonals(N);
+        arma::vec ones(N, arma::fill::ones);
+
+        // Need diagonals in the diagonal preconditioning step
+        for (arma::uword i = 0; i < N; ++i) {
+            diagonals(i) = matrix(i,i);
+        }
+
         arma::wall_clock timer;
         timer.tic();
 
@@ -88,14 +97,46 @@ namespace HFS {
 
             //Get the res and append to subspace if needed.
             //Sub_size changes within this loop
-            double sum;
+            //double sum;
             old_sub_size = sub_size;
             arma::vec norms(num_of_roots, arma::fill::zeros);
             for (arma::uword j = 0; j < block_size; ++j){
-                arma::vec res(N, arma::fill::zeros);
-                double rayq = 0.0;
+                arma::vec ritz_vec = ritz_vecs.col(j);
+                double rayq = arma::dot(ritz_vec.t(), matvec_product(ritz_vec)); // x.T * M * x
+                if (arma::any(arma::abs(diagonals - rayq) < SMALLNUMBER)) { // Don't try to add more
+                    // if diagonal = rayq , we get a divide by zero
+                } else { // continue
+
+                    arma::vec res = matvec_product(ritz_vec) - (sub_evals(j) * ritz_vec);
+                    double norm = arma::norm(res);
+
+                    if (j < num_of_roots) {
+                        norms(j) = norm;
+                    }
+
+                    if (norm > tolerance) {
+                        arma::vec c = 1.0 / ((rayq * ones) - diagonals);
+                        arma::vec corr = c % res; // elementwise multiply
+                        //arma::vec corr(N);
+                        //for (arma::uword idx = 0; idx < N; ++idx){
+                        //    corr(idx) = (1.0 / (rayq - diagonals(idx))) *res(idx);
+                        //}
+                        corr /= arma::norm(corr);
+                        guess_evecs = arma::join_rows(guess_evecs, corr);
+                        sub_size += 1;
+                    }
+                }
+            }
+
+
+
+/*
                 double x_k = 0.0;
+                double rayq = 0.0;
+                double sum = 0.0;
+                arma::vec res(N);
                 //rayleigh quotient is x.T * M * x
+
                 for (arma::uword k = 0; k < N; ++k) {
                     x_k = ritz_vecs(k,j);
                     for (arma::uword l = 0; l < N; ++l) {
@@ -126,7 +167,7 @@ namespace HFS {
                     //If diagonal element = eval, get singularity
                     bool apply_corr = true;
                     for (arma::uword k = 0; k < old_sub_size; ++k) {
-                        if ( fabs( matrix(k,k) - sub_evals(j) ) <= SMALLNUMBER) {
+                        if ( fabs( matrix(k,k) - rayq ) <= SMALLNUMBER) {
                             apply_corr = false;
                         }
                     }
@@ -143,8 +184,16 @@ namespace HFS {
                         guess_evecs = arma::join_rows(guess_evecs, corr);
                         sub_size += 1;
                     }
+                    if (j == 0) {
+                        std::cout << rayq << std::endl;
+                        //res.print("res");
+                        //corr.print("corr");
+                    }
+
                 }
             }
+            */
+
 
             //Make sure the new guess space is orthonormal
             arma::mat Q, R;
@@ -177,6 +226,10 @@ namespace HFS {
                 break;
             } else if (arma::all(norms < tolerance)) {
                 HFS::Davidson_Stopping_Criteria = "All Requested Eigenvalue Norms Converged";
+                HFS::dav_lowest_vals.resize(i);
+                break;
+            } else if (i == (max_its - 1)) {
+                HFS::Davidson_Stopping_Criteria = "Maximum Iterations Reached";
                 HFS::dav_lowest_vals.resize(i);
                 break;
             }
