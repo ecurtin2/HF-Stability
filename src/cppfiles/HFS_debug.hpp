@@ -10,7 +10,7 @@
 
 namespace HFS{
     extern arma::mat full_matrix;
-
+    extern double full_diag_min;
     extern bool davidson_agrees_fulldiag();
     extern bool mv_is_working();
     extern bool everything_works();

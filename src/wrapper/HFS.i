@@ -1,6 +1,7 @@
 // This is a SWIG wrapper file
 
 %module HFS
+%include <std_string.i>
 %{
 #define SWIG_FILE_WITH_INIT
 

@@ -10,4 +10,4 @@
 #include "HFS_fileIO.hpp"
 
 int main();
-int main_(double rs, int Nk, int ndim);
+int main_(double rs, int Nk, int ndim, std::string outputfilename);

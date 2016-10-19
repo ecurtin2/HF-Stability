@@ -60,8 +60,11 @@ namespace HFS {
         PRINTVAL(Nvir)
         PRINTVAL(Nexc)
         PRINTVAL(dav_its)
-        double Dav_Lowest_Val = dav_lowest_vals(dav_lowest_vals.size() - 1);
-        PRINTVAL(Dav_Lowest_Val)
+        double Dav_Final_Val = dav_lowest_vals(dav_lowest_vals.size() - 1);
+        PRINTVAL(Dav_Final_Val)
+        if (Nk < 30){
+            PRINTVAL(full_diag_min)
+        }
 
         ENDSECTION("Output")
 
@@ -69,6 +72,7 @@ namespace HFS {
             SECTION("Vectors")
             std::cout << "Occ Energies: " << occ_energies.n_rows << std::endl; occ_energies.raw_print();
             std::cout << "Vir Energies: " << vir_energies.n_rows << std::endl; vir_energies.raw_print();
+            std::cout << "Excitation Energies: " << exc_energies.n_rows << std::endl; exc_energies.raw_print();
             std::cout << "Kgrid: " << kgrid.n_rows << std::endl; kgrid.raw_print();
             std::cout << "All Davidson Eigenvalues at Last Iteration: " << dav_vals.n_rows << std::endl; dav_vals.raw_print();
             std::cout << "Davidson lowest eigenvalues at each iteration: " << dav_lowest_vals.n_rows << std::endl; dav_lowest_vals.raw_print();

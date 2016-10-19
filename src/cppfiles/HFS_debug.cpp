@@ -3,16 +3,15 @@
 namespace HFS{
 
     arma::mat full_matrix;
+    double full_diag_min;
 
     bool davidson_agrees_fulldiag() {
         HFS::build_matrix();
         arma::vec eigvals;
         arma::mat eigvecs;
-        clock_t t, t2;
-        t = clock();
         arma::eig_sym(eigvals, eigvecs, HFS::full_matrix);
-        t2 = clock() - t;
-        std::cout << "Full took " << ((float)t2) / CLOCKS_PER_SEC << " seconds" << std::endl;
+        HFS::full_diag_min = eigvals.min();
+
         double diff = fabs(arma::min(eigvals) - arma::min(HFS::dav_vals));
         bool agrees = (diff < 10E-5);
         return agrees;

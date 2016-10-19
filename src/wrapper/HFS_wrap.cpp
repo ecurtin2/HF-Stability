@@ -3013,9 +3013,8 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 #define SWIGTYPE_p_char swig_types[4]
 #define SWIGTYPE_p_f_arma__uword_arma__uword__double swig_types[5]
 #define SWIGTYPE_p_f_r_arma__vec__arma__vec swig_types[6]
-#define SWIGTYPE_p_std__string swig_types[7]
-static swig_type_info *swig_types[9];
-static swig_module_info swig_module = {swig_types, 8, 0, 0, 0, 0};
+static swig_type_info *swig_types[8];
+static swig_module_info swig_module = {swig_types, 7, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3118,6 +3117,9 @@ namespace swig {
     }
   };
 }
+
+
+#include <string>
 
 
 #define SWIG_FILE_WITH_INIT
@@ -3317,7 +3319,182 @@ SWIG_AsVal_int (PyObject * obj, int *val)
 }
 
 
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
+{
+  static int init = 0;
+  static swig_type_info* info = 0;
+  if (!init) {
+    info = SWIG_TypeQuery("_p_char");
+    init = 1;
+  }
+  return info;
+}
+
+
+SWIGINTERN int
+SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc)
+{
+#if PY_VERSION_HEX>=0x03000000
+  if (PyUnicode_Check(obj))
+#else  
+  if (PyString_Check(obj))
+#endif
+  {
+    char *cstr; Py_ssize_t len;
+#if PY_VERSION_HEX>=0x03000000
+    if (!alloc && cptr) {
+        /* We can't allow converting without allocation, since the internal
+           representation of string in Python 3 is UCS-2/UCS-4 but we require
+           a UTF-8 representation.
+           TODO(bhy) More detailed explanation */
+        return SWIG_RuntimeError;
+    }
+    obj = PyUnicode_AsUTF8String(obj);
+    PyBytes_AsStringAndSize(obj, &cstr, &len);
+    if(alloc) *alloc = SWIG_NEWOBJ;
+#else
+    PyString_AsStringAndSize(obj, &cstr, &len);
+#endif
+    if (cptr) {
+      if (alloc) {
+	/* 
+	   In python the user should not be able to modify the inner
+	   string representation. To warranty that, if you define
+	   SWIG_PYTHON_SAFE_CSTRINGS, a new/copy of the python string
+	   buffer is always returned.
+
+	   The default behavior is just to return the pointer value,
+	   so, be careful.
+	*/ 
+#if defined(SWIG_PYTHON_SAFE_CSTRINGS)
+	if (*alloc != SWIG_OLDOBJ) 
+#else
+	if (*alloc == SWIG_NEWOBJ) 
+#endif
+	{
+	  *cptr = reinterpret_cast< char* >(memcpy((new char[len + 1]), cstr, sizeof(char)*(len + 1)));
+	  *alloc = SWIG_NEWOBJ;
+	} else {
+	  *cptr = cstr;
+	  *alloc = SWIG_OLDOBJ;
+	}
+      } else {
+	#if PY_VERSION_HEX>=0x03000000
+	assert(0); /* Should never reach here in Python 3 */
+	#endif
+	*cptr = SWIG_Python_str_AsChar(obj);
+      }
+    }
+    if (psize) *psize = len + 1;
+#if PY_VERSION_HEX>=0x03000000
+    Py_XDECREF(obj);
+#endif
+    return SWIG_OK;
+  } else {
+#if defined(SWIG_PYTHON_2_UNICODE)
+#if PY_VERSION_HEX<0x03000000
+    if (PyUnicode_Check(obj)) {
+      char *cstr; Py_ssize_t len;
+      if (!alloc && cptr) {
+        return SWIG_RuntimeError;
+      }
+      obj = PyUnicode_AsUTF8String(obj);
+      if (PyString_AsStringAndSize(obj, &cstr, &len) != -1) {
+        if (cptr) {
+          if (alloc) *alloc = SWIG_NEWOBJ;
+          *cptr = reinterpret_cast< char* >(memcpy((new char[len + 1]), cstr, sizeof(char)*(len + 1)));
+        }
+        if (psize) *psize = len + 1;
+
+        Py_XDECREF(obj);
+        return SWIG_OK;
+      } else {
+        Py_XDECREF(obj);
+      }
+    }
+#endif
+#endif
+
+    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+    if (pchar_descriptor) {
+      void* vptr = 0;
+      if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+	if (cptr) *cptr = (char *) vptr;
+	if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
+	if (alloc) *alloc = SWIG_OLDOBJ;
+	return SWIG_OK;
+      }
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsPtr_std_string (PyObject * obj, std::string **val) 
+{
+  char* buf = 0 ; size_t size = 0; int alloc = SWIG_OLDOBJ;
+  if (SWIG_IsOK((SWIG_AsCharPtrAndSize(obj, &buf, &size, &alloc)))) {
+    if (buf) {
+      if (val) *val = new std::string(buf, size - 1);
+      if (alloc == SWIG_NEWOBJ) delete[] buf;
+      return SWIG_NEWOBJ;
+    } else {
+      if (val) *val = 0;
+      return SWIG_OLDOBJ;
+    }
+  } else {
+    static int init = 0;
+    static swig_type_info* descriptor = 0;
+    if (!init) {
+      descriptor = SWIG_TypeQuery("std::string" " *");
+      init = 1;
+    }
+    if (descriptor) {
+      std::string *vptr;
+      int res = SWIG_ConvertPtr(obj, (void**)&vptr, descriptor, 0);
+      if (SWIG_IsOK(res) && val) *val = vptr;
+      return res;
+    }
+  }
+  return SWIG_ERROR;
+}
+
+
   #define SWIG_From_double   PyFloat_FromDouble 
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_FromCharPtrAndSize(const char* carray, size_t size)
+{
+  if (carray) {
+    if (size > INT_MAX) {
+      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+      return pchar_descriptor ? 
+	SWIG_InternalNewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
+    } else {
+#if PY_VERSION_HEX >= 0x03000000
+#if PY_VERSION_HEX >= 0x03010000
+      return PyUnicode_DecodeUTF8(carray, static_cast< Py_ssize_t >(size), "surrogateescape");
+#else
+      return PyUnicode_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+#endif
+#else
+      return PyString_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+#endif
+    }
+  } else {
+    return SWIG_Py_Void();
+  }
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_std_string  (const std::string& s)
+{
+  return SWIG_FromCharPtrAndSize(s.data(), s.size());
+}
 
 
 #if NPY_API_VERSION < 0x00000007
@@ -4174,6 +4351,7 @@ SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   double arg1 ;
   int arg2 ;
   int arg3 ;
+  std::string arg4 ;
   double val1 ;
   int ecode1 = 0 ;
   int val2 ;
@@ -4183,9 +4361,10 @@ SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
   int result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOO:main_",&obj0,&obj1,&obj2)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOO:main_",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
   ecode1 = SWIG_AsVal_double(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "main_" "', argument " "1"" of type '" "double""'");
@@ -4202,8 +4381,17 @@ SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   } 
   arg3 = static_cast< int >(val3);
   {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj3, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "main_" "', argument " "4"" of type '" "std::string""'"); 
+    }
+    arg4 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  {
     try {
-      result = (int)main_(arg1,arg2,arg3);
+      result = (int)main_(arg1,arg2,arg3,arg4);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
@@ -4441,6 +4629,54 @@ SWIGINTERN PyObject *Swig_var_Total_Calculation_Time_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_From_double(static_cast< double >(HFS::Total_Calculation_Time));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Computation_Starttime_set(PyObject *_val) {
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(_val, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in variable '""HFS::Computation_Starttime""' of type '""std::string""'"); 
+    }
+    HFS::Computation_Starttime = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Computation_Starttime_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_std_string(static_cast< std::string >(HFS::Computation_Starttime));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_OutputFileName_set(PyObject *_val) {
+  {
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(_val, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in variable '""HFS::OutputFileName""' of type '""std::string""'"); 
+    }
+    HFS::OutputFileName = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_OutputFileName_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_std_string(static_cast< std::string >(HFS::OutputFileName));
   return pyobj;
 }
 
@@ -6121,19 +6357,13 @@ SWIGINTERN PyObject *Swig_var_guess_evecs_get(void) {
 
 SWIGINTERN int Swig_var_Davidson_Stopping_Criteria_set(PyObject *_val) {
   {
-    void *argp = 0;
-    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_std__string,  0  | 0);
-    if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Davidson_Stopping_Criteria""' of type '""std::string""'");
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(_val, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in variable '""HFS::Davidson_Stopping_Criteria""' of type '""std::string""'"); 
     }
-    if (!argp) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::Davidson_Stopping_Criteria""' of type '""std::string""'");
-    } else {
-      std::string * temp;
-      temp  = reinterpret_cast< std::string * >(argp);
-      HFS::Davidson_Stopping_Criteria = *temp;
-      if (SWIG_IsNewObj(res)) delete temp;
-    }
+    HFS::Davidson_Stopping_Criteria = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
   return 0;
 fail:
@@ -6144,7 +6374,7 @@ fail:
 SWIGINTERN PyObject *Swig_var_Davidson_Stopping_Criteria_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::Davidson_Stopping_Criteria), SWIGTYPE_p_std__string,  0 );
+  pyobj = SWIG_From_std_string(static_cast< std::string >(HFS::Davidson_Stopping_Criteria));
   return pyobj;
 }
 
@@ -7454,6 +7684,29 @@ SWIGINTERN PyObject *Swig_var_full_matrix_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_full_diag_min_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::full_diag_min""' of type '""double""'");
+    }
+    HFS::full_diag_min = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_full_diag_min_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::full_diag_min));
+  return pyobj;
+}
+
+
 SWIGINTERN PyObject *_wrap_davidson_agrees_fulldiag(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   bool result;
@@ -7619,8 +7872,6 @@ SWIGINTERN PyObject *_wrap_centerstring(PyObject *SWIGUNUSEDPARM(self), PyObject
   PyObject *resultobj = 0;
   std::string arg1 ;
   int arg2 ;
-  void *argp1 ;
-  int res1 = 0 ;
   int val2 ;
   int ecode2 = 0 ;
   PyObject * obj0 = 0 ;
@@ -7629,17 +7880,13 @@ SWIGINTERN PyObject *_wrap_centerstring(PyObject *SWIGUNUSEDPARM(self), PyObject
   
   if (!PyArg_ParseTuple(args,(char *)"OO:centerstring",&obj0,&obj1)) SWIG_fail;
   {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_std__string,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "centerstring" "', argument " "1"" of type '" "std::string""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "centerstring" "', argument " "1"" of type '" "std::string""'");
-    } else {
-      std::string * temp = reinterpret_cast< std::string * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
+    std::string *ptr = (std::string *)0;
+    int res = SWIG_AsPtr_std_string(obj0, &ptr);
+    if (!SWIG_IsOK(res) || !ptr) {
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "centerstring" "', argument " "1"" of type '" "std::string""'"); 
     }
+    arg1 = *ptr;
+    if (SWIG_IsNewObj(res)) delete ptr;
   }
   ecode2 = SWIG_AsVal_int(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
@@ -7654,7 +7901,7 @@ SWIGINTERN PyObject *_wrap_centerstring(PyObject *SWIGUNUSEDPARM(self), PyObject
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
     } 
   }
-  resultobj = SWIG_NewPointerObj((new std::string(static_cast< const std::string& >(result))), SWIGTYPE_p_std__string, SWIG_POINTER_OWN |  0 );
+  resultobj = SWIG_From_std_string(static_cast< std::string >(result));
   return resultobj;
 fail:
   return NULL;
@@ -7717,7 +7964,6 @@ static swig_type_info _swigt__p_arma__vec = {"_p_arma__vec", "arma::vec *", 0, 0
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_f_arma__uword_arma__uword__double = {"_p_f_arma__uword_arma__uword__double", "double (*)(arma::uword,arma::uword)", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_f_r_arma__vec__arma__vec = {"_p_f_r_arma__vec__arma__vec", "arma::vec (*)(arma::vec &)", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_arma__mat,
@@ -7727,7 +7973,6 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_char,
   &_swigt__p_f_arma__uword_arma__uword__double,
   &_swigt__p_f_r_arma__vec__arma__vec,
-  &_swigt__p_std__string,
 };
 
 static swig_cast_info _swigc__p_arma__mat[] = {  {&_swigt__p_arma__mat, 0, 0, 0},{0, 0, 0, 0}};
@@ -7737,7 +7982,6 @@ static swig_cast_info _swigc__p_arma__vec[] = {  {&_swigt__p_arma__vec, 0, 0, 0}
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_f_arma__uword_arma__uword__double[] = {  {&_swigt__p_f_arma__uword_arma__uword__double, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_f_r_arma__vec__arma__vec[] = {  {&_swigt__p_f_r_arma__vec__arma__vec, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_arma__mat,
@@ -7747,7 +7991,6 @@ static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_char,
   _swigc__p_f_arma__uword_arma__uword__double,
   _swigc__p_f_r_arma__vec__arma__vec,
-  _swigc__p_std__string,
 };
 
 
@@ -8556,6 +8799,8 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"two_e_const",Swig_var_two_e_const_get, Swig_var_two_e_const_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"deltaK",Swig_var_deltaK_get, Swig_var_deltaK_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Total_Calculation_Time",Swig_var_Total_Calculation_Time_get, Swig_var_Total_Calculation_Time_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Computation_Starttime",Swig_var_Computation_Starttime_get, Swig_var_Computation_Starttime_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"OutputFileName",Swig_var_OutputFileName_get, Swig_var_OutputFileName_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nocc",Swig_var_Nocc_get, Swig_var_Nocc_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nvir",Swig_var_Nvir_get, Swig_var_Nvir_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nexc",Swig_var_Nexc_get, Swig_var_Nexc_set);
@@ -8578,6 +8823,7 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_vecs",Swig_var_dav_vecs_get, Swig_var_dav_vecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_its",Swig_var_dav_its_get, Swig_var_dav_its_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"full_matrix",Swig_var_full_matrix_get, Swig_var_full_matrix_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"full_diag_min",Swig_var_full_diag_min_get, Swig_var_full_diag_min_set);
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

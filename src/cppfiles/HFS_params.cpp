@@ -4,6 +4,7 @@ namespace HFS{
     double  bzone_length, vol, rs, kf, kmax, fermi_energy;
     double  two_e_const, deltaK, Total_Calculation_Time;
     std::string Computation_Starttime;
+    std::string OutputFileName;
     arma::uword Nocc, Nvir, Nexc, N_elec, Nk;
     int ndim;
     arma::vec  occ_energies, vir_energies, exc_energies, kgrid;

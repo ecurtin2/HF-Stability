@@ -95,8 +95,8 @@ def main():
     return _HFS.main()
 main = _HFS.main
 
-def main_(rs, Nk, ndim):
-    return _HFS.main_(rs, Nk, ndim)
+def main_(rs, Nk, ndim, outputfilename):
+    return _HFS.main_(rs, Nk, ndim, outputfilename)
 main_ = _HFS.main_
 
 _HFS.PI_swigconstant(_HFS)

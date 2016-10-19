@@ -7,11 +7,13 @@ int main(){
     double rs = 1.2;
     int Nk = 11;
     int ndim = 2;
-    return main_(rs, Nk, ndim);
+    std::string outputfilename="test.log";
+    return main_(rs, Nk, ndim, outputfilename);
+
 }
 
 // The two mains thing is because of SWIG, so I can call main_() from python
-int main_(double rs, int Nk, int ndim)
+int main_(double rs, int Nk, int ndim, std::string outputfilename)
 {
 
     // Start the timers
@@ -26,14 +28,20 @@ int main_(double rs, int Nk, int ndim)
     HFS::rs = rs;
     HFS::Nk = Nk;
     HFS::ndim = ndim;
+    HFS::OutputFileName = outputfilename;
     HFS::calc_params();
+
+    if (Nk < 30) {
+        HFS::davidson_agrees_fulldiag();
+    }
 
 
     HFS::build_guess_evecs(60);
-    HFS::davidson_wrapper(2*HFS::Nexc, HFS::guess_evecs, 10, 0, 1, 50, 2*HFS::Nexc);
+    HFS::davidson_wrapper(2*HFS::Nexc, HFS::guess_evecs, 15, 0, 5, 50, 2*HFS::Nexc);
     HFS::Total_Calculation_Time = timer.toc();
 
-    freopen("test.log", "w", stdout);
+    const char* fname = HFS::OutputFileName.c_str();
+    freopen(fname, "w", stdout);
     HFS::write_output(true);
     fclose(stdout);
     return 0;
