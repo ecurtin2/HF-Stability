@@ -35,6 +35,11 @@ namespace HFS {
         }
     }
 
+    double get_rayleigh_quotient(){
+
+
+    }
+
     void davidson_algorithm(arma::uword N
                            ,arma::uword max_its
                            ,arma::uword max_sub_size
@@ -101,7 +106,9 @@ namespace HFS {
             old_sub_size = sub_size;
             arma::vec norms(num_of_roots, arma::fill::zeros);
             for (arma::uword j = 0; j < block_size; ++j){
-                arma::vec ritz_vec = ritz_vecs.col(j);
+                //arma::vec ritz_vec = ritz_vecs.col(j);
+
+                /*
                 double rayq = arma::dot(ritz_vec.t(), matvec_product(ritz_vec)); // x.T * M * x
                 if (arma::any(arma::abs(diagonals - rayq) < SMALLNUMBER)) { // Don't try to add more
                     // if diagonal = rayq , we get a divide by zero
@@ -127,23 +134,24 @@ namespace HFS {
                     }
                 }
             }
+*/
 
 
 
-/*
                 double x_k = 0.0;
                 double rayq = 0.0;
                 double sum = 0.0;
                 arma::vec res(N);
                 //rayleigh quotient is x.T * M * x
 
+                //get_rayleigh_quotient();
                 for (arma::uword k = 0; k < N; ++k) {
                     x_k = ritz_vecs(k,j);
                     for (arma::uword l = 0; l < N; ++l) {
                         rayq += x_k * matrix(k,l) * ritz_vecs(l,j);
                     }
                 }
-
+                //get_residual();
                 for (arma::uword k = 0; k < N; ++k) {
                     sum = 0.0;
                     for (arma::uword m = 0; m < N; ++m) {
@@ -184,15 +192,9 @@ namespace HFS {
                         guess_evecs = arma::join_rows(guess_evecs, corr);
                         sub_size += 1;
                     }
-                    if (j == 0) {
-                        std::cout << rayq << std::endl;
-                        //res.print("res");
-                        //corr.print("corr");
-                    }
-
                 }
             }
-            */
+
 
 
             //Make sure the new guess space is orthonormal
@@ -210,7 +212,7 @@ namespace HFS {
             HFS::dav_vecs =  guess_evecs;
             HFS::dav_vals = sub_evals;
             HFS::dav_its  = i;
-            HFS::dav_lowest_vals(i) = dav_vals.min();
+            //HFS::dav_lowest_vals(i) = dav_vals.min();
 
             double t2 = timer.toc();
 
