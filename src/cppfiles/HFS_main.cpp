@@ -5,7 +5,7 @@
 
 int main(){
     double rs = 1.2;
-    int Nk = 15;
+    int Nk = 10;
     int ndim = 2;
     int num_guess_evecs = 10;
     int Dav_blocksize = 10;
