@@ -60,7 +60,7 @@ def file_to_df(fname, idx):
                  ,'Kgrid'
                  ,'Dav Vals Per Iteration'
                  ,'All Davidson Eigenvalues at Last Iteration'
-                 ,'UniqueName'
+                 ,'DavVals'
                  ,'Davidson Times Per Iteration'
                  ,'Davidson lowest eigenvalues at each iteration'
                  ]
@@ -270,27 +270,38 @@ def axplot_exc_hist(df, ax, df_idx, bindivisor=4):
         return ax
 
 
-def axplot_eval_convergence(df, ax, df_idx, palette='husl'):
+def axplot_eval_convergence(df, ax, df_idx):
     df_row = df.iloc[df_idx]
     rs = df_row['rs']
     Nk = df_row['Nk']
+    eigval = df_row['full_diag_min']
     ndim = df_row['ndim']
-    davvals = df_row['UniqueName']
+    davvals = df_row['DavVals']
     its = df_row['dav_its']
     num_evals = df_row['Dav_Num_evals']
     davvals = davvals.reshape(its, num_evals)
     its = len(davvals)
     x = range(1, its + 1)
     idx = np.argsort(davvals[:, -1])
-    cols = sns.color_palette(palette, num_evals)
+
+
+
+    blues= sns.color_palette('GnBu_d', num_evals)
+    reds = sns.color_palette('Reds_r', num_evals)
+            
+    cols = blues
+    
+    if abs(eigval - np.amin(davvals[-1, :])) > 1E-4:
+        cols = reds
+    
     title = 'r_s = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
     ax.set_title(title)
     for i in range(num_evals):
         ax.plot(x, davvals[:, i], 'o-', c=cols[i])
     return ax
 
-
 def plot_dav_vs_full(df):
+    print len(df)
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     Nks_full = df_with_fulldiags.Nk.as_matrix()
     davmins = []
@@ -298,7 +309,7 @@ def plot_dav_vs_full(df):
         row = df.iloc[i]
         its = row['dav_its']
         num_evals = row['Dav_Num_evals']
-        davvals = row['UniqueName']
+        davvals = row['DavVals']
         davvals = davvals.reshape(its, num_evals)
         davmin = np.amin(davvals[-1])
         davmins.append(davmin)    
@@ -306,7 +317,7 @@ def plot_dav_vs_full(df):
     Nks = df.Nk.as_matrix()
     xmin = np.amin(Nks)-1
     xmax = np.amax(Nks) + 1
-    plt.xlim(xmin, xmax)
+    plt.xlim=(xmin, xmax)
     fullmins= df_with_fulldiags.full_diag_min.as_matrix()
     npts = 10
     zeros = np.zeros(npts)

@@ -102,7 +102,7 @@ namespace HFS {
                 }
             }
 
-            std::cout << "UniqueName: " << davvals.n_rows << std::endl; davvals.raw_print();
+            std::cout << "DavVals: " << davvals.n_rows << std::endl; davvals.raw_print();
 
             std::cout << "Davidson Times Per Iteration: " << dav_iteration_timer.n_rows << std::endl; dav_iteration_timer.raw_print();
             ENDSECTION("Vectors")
