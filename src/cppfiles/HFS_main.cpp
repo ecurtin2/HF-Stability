@@ -5,7 +5,7 @@
 
 int main(){
     double rs = 1.2;
-    unsigned Nk = 14;
+    unsigned Nk = 10;
     unsigned ndim = 2;
     unsigned num_guess_evecs = 60;
     unsigned Dav_blocksize = 20;
@@ -47,6 +47,9 @@ int main_(double rs
     HFS::OutputFileName = outputfilename;
     HFS::calc_params();
 
+
+
+
     HFS::Dav_tol = tol;
     HFS::Dav_minits = minits;
     HFS::Dav_maxits = maxits;
@@ -54,6 +57,10 @@ int main_(double rs
     HFS::num_guess_evecs = num_guess_vecs;
     HFS::Dav_blocksize = dav_blocksize;
     HFS::Dav_Num_evals = num_evals;
+
+    HFS::num_guess_evecs = HFS::ground_state_degeneracy * 5;
+    HFS::Dav_Num_evals = HFS::ground_state_degeneracy;
+    HFS::Dav_blocksize = HFS::ground_state_degeneracy * 2;
 
     HFS::build_guess_evecs(HFS::num_guess_evecs);
     HFS::davidson_wrapper(2*HFS::Nexc

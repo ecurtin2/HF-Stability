@@ -14,6 +14,7 @@ namespace HFS {
     extern void calc_energies(arma::umat&, arma::vec&);
     extern void calc_excitations();
     extern void calc_exc_energy();
+    extern void calc_ground_state_degeneracy();
     extern void calc_vir_N_to_1_mat();
     extern void calc_inv_exc_mat();
 }

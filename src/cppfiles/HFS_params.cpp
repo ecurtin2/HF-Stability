@@ -6,7 +6,7 @@ namespace HFS{
     std::string Computation_Starttime;
     std::string OutputFileName;
     arma::uword Nocc, Nvir, Nexc, N_elec;
-    unsigned ndim, Nk;
+    unsigned ndim, Nk, ground_state_degeneracy;
     arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
     arma::umat occ_states, vir_states, excitations;
     arma::umat vir_N_to_1_mat, inv_exc_mat;

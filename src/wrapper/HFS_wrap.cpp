@@ -4981,6 +4981,29 @@ SWIGINTERN PyObject *Swig_var_Nk_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_ground_state_degeneracy_set(PyObject *_val) {
+  {
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::ground_state_degeneracy""' of type '""unsigned int""'");
+    }
+    HFS::ground_state_degeneracy = static_cast< unsigned int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_ground_state_degeneracy_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::ground_state_degeneracy));
+  return pyobj;
+}
+
+
 SWIGINTERN int Swig_var_occ_energies_set(PyObject *_val) {
   {
     void *argp = 0;
@@ -5953,6 +5976,25 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_calc_ground_state_degeneracy(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)":calc_ground_state_degeneracy")) SWIG_fail;
+  {
+    try {
+      HFS::calc_ground_state_degeneracy();
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_calc_vir_N_to_1_mat(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   
@@ -6506,36 +6548,6 @@ SWIGINTERN PyObject *Swig_var_Davidson_Stopping_Criteria_get(void) {
 }
 
 
-SWIGINTERN int Swig_var_dav_vals_set(PyObject *_val) {
-  {
-    void *argp = 0;
-    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__vec,  0  | 0);
-    if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_vals""' of type '""arma::vec""'");
-    }
-    if (!argp) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_vals""' of type '""arma::vec""'");
-    } else {
-      arma::vec * temp;
-      temp  = reinterpret_cast< arma::vec * >(argp);
-      HFS::dav_vals = *temp;
-      if (SWIG_IsNewObj(res)) delete temp;
-    }
-  }
-  return 0;
-fail:
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_dav_vals_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vals), SWIGTYPE_p_arma__vec,  0 );
-  return pyobj;
-}
-
-
 SWIGINTERN int Swig_var_dav_lowest_vals_set(PyObject *_val) {
   {
     void *argp = 0;
@@ -6592,6 +6604,36 @@ SWIGINTERN PyObject *Swig_var_dav_vecs_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vecs), SWIGTYPE_p_arma__mat,  0 );
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_dav_vals_set(PyObject *_val) {
+  {
+    void *argp = 0;
+    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__mat,  0  | 0);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_vals""' of type '""arma::mat""'");
+    }
+    if (!argp) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_vals""' of type '""arma::mat""'");
+    } else {
+      arma::mat * temp;
+      temp  = reinterpret_cast< arma::mat * >(argp);
+      HFS::dav_vals = *temp;
+      if (SWIG_IsNewObj(res)) delete temp;
+    }
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_dav_vals_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vals), SWIGTYPE_p_arma__mat,  0 );
   return pyobj;
 }
 
@@ -7530,6 +7572,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"calc_energies", _wrap_calc_energies, METH_VARARGS, NULL},
 	 { (char *)"calc_excitations", _wrap_calc_excitations, METH_VARARGS, NULL},
 	 { (char *)"calc_exc_energy", _wrap_calc_exc_energy, METH_VARARGS, NULL},
+	 { (char *)"calc_ground_state_degeneracy", _wrap_calc_ground_state_degeneracy, METH_VARARGS, NULL},
 	 { (char *)"calc_vir_N_to_1_mat", _wrap_calc_vir_N_to_1_mat, METH_VARARGS, NULL},
 	 { (char *)"calc_inv_exc_mat", _wrap_calc_inv_exc_mat, METH_VARARGS, NULL},
 	 { (char *)"matvec_prod_3A", _wrap_matvec_prod_3A, METH_VARARGS, NULL},
@@ -8407,6 +8450,7 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"N_elec",Swig_var_N_elec_get, Swig_var_N_elec_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"ndim",Swig_var_ndim_get, Swig_var_ndim_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nk",Swig_var_Nk_get, Swig_var_Nk_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"ground_state_degeneracy",Swig_var_ground_state_degeneracy_get, Swig_var_ground_state_degeneracy_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"occ_energies",Swig_var_occ_energies_get, Swig_var_occ_energies_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"vir_energies",Swig_var_vir_energies_get, Swig_var_vir_energies_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"exc_energies",Swig_var_exc_energies_get, Swig_var_exc_energies_set);
@@ -8418,9 +8462,9 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"inv_exc_mat",Swig_var_inv_exc_mat_get, Swig_var_inv_exc_mat_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"guess_evecs",Swig_var_guess_evecs_get, Swig_var_guess_evecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Davidson_Stopping_Criteria",Swig_var_Davidson_Stopping_Criteria_get, Swig_var_Davidson_Stopping_Criteria_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"dav_vals",Swig_var_dav_vals_get, Swig_var_dav_vals_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_lowest_vals",Swig_var_dav_lowest_vals_get, Swig_var_dav_lowest_vals_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_vecs",Swig_var_dav_vecs_get, Swig_var_dav_vecs_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"dav_vals",Swig_var_dav_vals_get, Swig_var_dav_vals_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_its",Swig_var_dav_its_get, Swig_var_dav_its_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"num_guess_evecs",Swig_var_num_guess_evecs_get, Swig_var_num_guess_evecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_blocksize",Swig_var_Dav_blocksize_get, Swig_var_Dav_blocksize_set);

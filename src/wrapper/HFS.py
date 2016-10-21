@@ -173,6 +173,10 @@ def calc_exc_energy():
     return _HFS.calc_exc_energy()
 calc_exc_energy = _HFS.calc_exc_energy
 
+def calc_ground_state_degeneracy():
+    return _HFS.calc_ground_state_degeneracy()
+calc_ground_state_degeneracy = _HFS.calc_ground_state_degeneracy
+
 def calc_vir_N_to_1_mat():
     return _HFS.calc_vir_N_to_1_mat()
 calc_vir_N_to_1_mat = _HFS.calc_vir_N_to_1_mat

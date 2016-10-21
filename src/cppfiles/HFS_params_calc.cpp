@@ -13,6 +13,8 @@ namespace HFS {
         HFS::calc_occ_energies();
         HFS::calc_vir_energies();
         HFS::calc_excitations();
+        HFS::calc_exc_energy();
+        HFS::calc_ground_state_degeneracy();
         HFS::calc_vir_N_to_1_mat();
         HFS::calc_inv_exc_mat();
     }
@@ -132,8 +134,7 @@ namespace HFS {
                     vir_idx = HFS::vir_states.row(k).t();
                     if (arma::all(exc_idx == vir_idx)) {
                         HFS::excitations(HFS::Nexc, 0) = i;
-                        HFS::excitations(HFS::Nexc, 1) = k; //THIS SHOULDNT BE K IT SHOULD BNE Soemth else
-                        HFS::exc_energies(HFS::Nexc) = HFS::vir_energies(k) - HFS::occ_energies(i);
+                        HFS::excitations(HFS::Nexc, 1) = k;
                         ++HFS::Nexc;
                     }
                 }
@@ -150,6 +151,10 @@ namespace HFS {
             HFS::exc_energies(i) = HFS::vir_energies(HFS::excitations(i, 1))
                                  - HFS::occ_energies(HFS::excitations(i, 0));
         }
+
+        arma::uvec indices = arma::sort_index(HFS::exc_energies);
+        HFS::exc_energies = HFS::exc_energies(indices);
+        HFS::excitations = HFS::excitations.rows(indices);
     }
 
     /* NEED 3D VERSION THO*/
@@ -169,4 +174,15 @@ namespace HFS {
         }
     }
 
+    void calc_ground_state_degeneracy() {
+        double lowest_energy = HFS::exc_energies(0);
+        HFS::ground_state_degeneracy = 1;
+        for (arma::uword i = 1; i < HFS::Nexc; ++i) {
+            if (HFS::exc_energies(i) < (lowest_energy + SMALLNUMBER) ) {
+                HFS::ground_state_degeneracy += 1;
+            } else {
+                break;
+            }
+        }
+    }
 }

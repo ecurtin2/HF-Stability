@@ -17,11 +17,11 @@ def get_fname(rs, Nk, ndim):
     return fname
 
 
-Nkrange = range(24,60)
+Nkrange = range(10,15)
 rs = 1.2
 ndim = 2
 Nk = 24
-nguess = 80
+nguess = 20
 blocksize = 10
 num_evals = 5
 minits = 2

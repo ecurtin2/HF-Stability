@@ -3,8 +3,8 @@
 namespace HFS {
     arma::mat guess_evecs;
     std::string Davidson_Stopping_Criteria;
-    arma::vec dav_vals, dav_lowest_vals;
-    arma::mat dav_vecs;
+    arma::vec dav_lowest_vals;
+    arma::mat dav_vecs, dav_vals;
     unsigned dav_its;
     unsigned num_guess_evecs;
     unsigned Dav_blocksize;
@@ -60,8 +60,9 @@ namespace HFS {
         arma::mat ritz_vecs = guess_evecs;
         arma::mat init_guess(N, num_of_roots);
 
-        dav_lowest_vals.set_size(max_its);      // make as big as possible then resize @ end.
+        HFS::dav_vals.set_size(max_its, num_of_roots);      // make as big as possible then resize @ end.
         dav_iteration_timer.set_size(max_its);
+        dav_lowest_vals.set_size(max_its);
 
         arma::vec diagonals(N);
         arma::vec ones(N, arma::fill::ones);
@@ -146,31 +147,40 @@ namespace HFS {
             guess_evecs = Q;
 
             HFS::dav_vecs =  guess_evecs;
-            HFS::dav_vals = sub_evals;
+            for (arma::uword index = 0; index < num_of_roots; ++index){
+                HFS::dav_vals(i, index) = sub_evals(index);
+            }
+
             HFS::dav_its  = i;
-            HFS::dav_lowest_vals(i) = dav_vals.min();
+            HFS::dav_lowest_vals(i) = sub_evals.min();
             HFS::dav_iteration_timer(i) = iteration_timer.toc();
+
 
             if (old_sub_size == sub_size) {
                 HFS::Davidson_Stopping_Criteria = "All Norms in Block Converged";
                 HFS::dav_lowest_vals.resize(i);
                 HFS::dav_iteration_timer.resize(i);
+                HFS::dav_vals = HFS::dav_vals.head_rows(i);
                 break;
             }
             else if ((sub_size + block_size) > max_sub_size) {
                 HFS::Davidson_Stopping_Criteria = "Subspace Size Too Large";
                 HFS::dav_lowest_vals.resize(i);
                 HFS::dav_iteration_timer.resize(i);
+                HFS::dav_vals = HFS::dav_vals.head_rows(i);
                 break;
             } else if ((arma::all(norms < tolerance)) && (i >= min_its)) {
                 HFS::Davidson_Stopping_Criteria = "All Requested Eigenvalue Norms Converged";
                 HFS::dav_lowest_vals.resize(i);
                 HFS::dav_iteration_timer.resize(i);
+                HFS::dav_vals = HFS::dav_vals.head_rows(i);
+
                 break;
             } else if (i == (max_its - 1)) {
                 HFS::Davidson_Stopping_Criteria = "Maximum Iterations Reached";
                 HFS::dav_lowest_vals.resize(i);
                 HFS::dav_iteration_timer.resize(i);
+                HFS::dav_vals = HFS::dav_vals.head_rows(i);
                 break;
             }
         }

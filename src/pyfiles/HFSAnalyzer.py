@@ -37,6 +37,7 @@ def file_to_df(fname, idx):
            ,'Nocc'
            ,'Nvir'
            ,'Nexc'
+           ,'ground_state_degeneracy'
            ,'dav_its'
            ,'num_guess_evecs'
            ,'Dav_blocksize'
@@ -52,13 +53,16 @@ def file_to_df(fname, idx):
            ,'Dav_minits'
            ,'Dav_maxits'
            ,'Dav_maxsubsize'
+           ,'Dav_Vals_Per_Iteration'
            ]
 
     vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies'
                  ,'Kgrid'
+                 ,'Dav Vals Per Iteration'
                  ,'All Davidson Eigenvalues at Last Iteration'
-                 ,'Davidson lowest eigenvalues at each iteration'
+                 ,'UniqueName'
                  ,'Davidson Times Per Iteration'
+                 ,'Davidson lowest eigenvalues at each iteration'
                  ]
 
     matrixkeys = ['Occupied States', 'Virtual States', 'Excitations']
@@ -265,25 +269,57 @@ def axplot_exc_hist(df, ax, df_idx, bindivisor=4):
         ax.set_ylabel('Count')
         return ax
 
-def axplot_dav_convergence_wrt_its(df, ax, df_idx):
-    davmins = df.iloc[df_idx]['Davidson lowest eigenvalues at each iteration']
-    iterations = len(davmins)
-    rs = df.iloc[df_idx]['rs']
-    Nk = df.iloc[df_idx]['Nk']
-    ndim = df.iloc[df_idx]['ndim']
-    x = range(1, iterations + 1)
-    title = 'rs = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
-    ax.scatter(x, davmins, c=sns.color_palette()[0], zorder=2)
-    conv_val = np.ones(100) * davmins[-1]
-    x2 = np.linspace(-1, iterations + 1, 100)
-    ax.plot(x2, conv_val, 'k:', linewidth=1, zorder=1)
+
+def axplot_eval_convergence(df, ax, df_idx, palette='husl'):
+    df_row = df.iloc[df_idx]
+    rs = df_row['rs']
+    Nk = df_row['Nk']
+    ndim = df_row['ndim']
+    davvals = df_row['UniqueName']
+    its = df_row['dav_its']
+    num_evals = df_row['Dav_Num_evals']
+    davvals = davvals.reshape(its, num_evals)
+    its = len(davvals)
+    x = range(1, its + 1)
+    idx = np.argsort(davvals[:, -1])
+    cols = sns.color_palette(palette, num_evals)
+    title = 'r_s = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
     ax.set_title(title)
-    ax.set_xlabel('Iteration')
-    ax.set_ylabel('Lowest Eigenvalue')
-    pad = 0.1
-    ax.set_xlim(1 - pad, iterations + pad)
+    for i in range(num_evals):
+        ax.plot(x, davvals[:, i], 'o-', c=cols[i])
     return ax
 
+
+def plot_dav_vs_full(df):
+    df_with_fulldiags = df[df['full_diag_min'].notnull()]
+    Nks_full = df_with_fulldiags.Nk.as_matrix()
+    davmins = []
+    for i in range(len(df)):
+        row = df.iloc[i]
+        its = row['dav_its']
+        num_evals = row['Dav_Num_evals']
+        davvals = row['UniqueName']
+        davvals = davvals.reshape(its, num_evals)
+        davmin = np.amin(davvals[-1])
+        davmins.append(davmin)    
+
+    Nks = df.Nk.as_matrix()
+    xmin = np.amin(Nks)-1
+    xmax = np.amax(Nks) + 1
+    plt.xlim(xmin, xmax)
+    fullmins= df_with_fulldiags.full_diag_min.as_matrix()
+    npts = 10
+    zeros = np.zeros(npts)
+    x = np.linspace(xmin, xmax, npts)
+    
+    plt.title('Stability for rs = 1.2 in 2D')
+    plt.xlabel("Number of k-points per dimension")
+    plt.ylabel('Lowest Eigenvalue')
+    plt.plot(x, zeros   , 'k--', zorder=1)
+    plt.plot(Nks, davmins , '-o' , zorder=3, label='Davidson lowest Eigenvalue')
+    plt.plot(Nks_full, fullmins, 'o' , markersize=11, c=sns.color_palette()[2], 
+             zorder=2, label='Exact Lowest Eigenvalue')
+    plt.legend(loc='best')
 
 if __name__ == "__main__":
     print 'Import this module and analyze some logfiles!'

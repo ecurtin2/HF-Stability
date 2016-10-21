@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <ctime>
+#include <iomanip>
 
 #define PRINTVAL(x) std::cout << #x << " = " << x << std::endl;
 #define PRINT(x) std::cout << x << std::endl;
@@ -59,6 +60,7 @@ namespace HFS {
         PRINTVAL(Nocc)
         PRINTVAL(Nvir)
         PRINTVAL(Nexc)
+        PRINTVAL(ground_state_degeneracy)
         PRINTVAL(dav_its)
         PRINTVAL(num_guess_evecs)
         PRINTVAL(Dav_blocksize)
@@ -75,8 +77,7 @@ namespace HFS {
 
         PRINTVAL(Davidson_Stopping_Criteria)
         assert (HFS::everything_works());
-        double Dav_Final_Val = dav_lowest_vals(dav_lowest_vals.size() - 1);
-        PRINTVAL(Dav_Final_Val)
+
         if (Nk < 31){
             PRINTVAL(full_diag_min)
             PRINTVAL(full_diag_time)
@@ -90,8 +91,19 @@ namespace HFS {
             std::cout << "Vir Energies: " << vir_energies.n_rows << std::endl; vir_energies.raw_print();
             std::cout << "Excitation Energies: " << exc_energies.n_rows << std::endl; exc_energies.raw_print();
             std::cout << "Kgrid: " << kgrid.n_rows << std::endl; kgrid.raw_print();
-            std::cout << "All Davidson Eigenvalues at Last Iteration: " << dav_vals.n_rows << std::endl; dav_vals.raw_print();
             std::cout << "Davidson lowest eigenvalues at each iteration: " << dav_lowest_vals.n_rows << std::endl; dav_lowest_vals.raw_print();
+
+            arma::vec davvals(dav_vals.n_rows * dav_vals.n_cols);
+            unsigned counter = 0;
+            for (unsigned i = 0; i < dav_vals.n_rows; ++i) {
+                for (unsigned j = 0; j < dav_vals.n_cols; ++j){
+                davvals(counter) = dav_vals(i, j);
+                counter += 1;
+                }
+            }
+
+            std::cout << "UniqueName: " << davvals.n_rows << std::endl; davvals.raw_print();
+
             std::cout << "Davidson Times Per Iteration: " << dav_iteration_timer.n_rows << std::endl; dav_iteration_timer.raw_print();
             ENDSECTION("Vectors")
 
@@ -102,11 +114,9 @@ namespace HFS {
             vir_states.print();
             std::cout << "Excitations: " << excitations.n_rows << " x " << excitations.n_cols << std::endl;
             excitations.print();
+            std::setw(0);
             ENDSECTION("Matrices")
         }
-
-
-
 
         NEWLINE HASHTAGLINE NEWLINE
         PRINT(CENTERED("End of Output File."))
