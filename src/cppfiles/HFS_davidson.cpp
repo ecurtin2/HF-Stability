@@ -5,24 +5,28 @@ namespace HFS {
     std::string Davidson_Stopping_Criteria;
     arma::vec dav_vals, dav_lowest_vals;
     arma::mat dav_vecs;
-    int dav_its;
-    int num_guess_evecs;
-    int Dav_blocksize;
-    int Dav_Num_evals;
+    unsigned dav_its;
+    unsigned num_guess_evecs;
+    unsigned Dav_blocksize;
+    unsigned Dav_Num_evals;
+    arma::vec dav_iteration_timer;
     double Dav_time;
-
-
+    double Dav_tol;
+    unsigned Dav_minits;
+    unsigned Dav_maxits;
+    unsigned Dav_maxsubsize;
 
     void davidson_wrapper(arma::uword N
                          ,arma::mat   guess_evecs
-                         ,arma::uword block_size
-                         ,int         which
-                         ,arma::uword num_of_roots
-                         ,arma::uword max_its
-                         ,arma::uword max_sub_size
+                         ,unsigned block_size
+                         ,unsigned which
+                         ,unsigned num_of_roots
+                         ,unsigned min_its
+                         ,unsigned max_its
+                         ,unsigned max_sub_size
                          ,double      tolerance
                          ){
-        davidson_algorithm(N, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
+        davidson_algorithm(N, min_its, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
                            &HFS::calc_3H,
                            &HFS::matvec_prod_3H);
     }
@@ -35,16 +39,12 @@ namespace HFS {
         }
     }
 
-    double get_rayleigh_quotient(){
-
-
-    }
-
     void davidson_algorithm(arma::uword N
-                           ,arma::uword max_its
-                           ,arma::uword max_sub_size
-                           ,arma::uword num_of_roots
-                           ,arma::uword block_size
+                           ,unsigned min_its
+                           ,unsigned max_its
+                           ,unsigned max_sub_size
+                           ,unsigned num_of_roots
+                           ,unsigned block_size
                            ,arma::mat&  guess_evecs
                            ,double      tolerance
                            ,double      (*matrix)(arma::uword, arma::uword)
@@ -59,7 +59,9 @@ namespace HFS {
         arma::mat Mvmat(N, 0, arma::fill::zeros);
         arma::mat ritz_vecs = guess_evecs;
         arma::mat init_guess(N, num_of_roots);
-        dav_lowest_vals.set_size(max_its);
+
+        dav_lowest_vals.set_size(max_its);      // make as big as possible then resize @ end.
+        dav_iteration_timer.set_size(max_its);
 
         arma::vec diagonals(N);
         arma::vec ones(N, arma::fill::ones);
@@ -69,11 +71,13 @@ namespace HFS {
             diagonals(i) = matrix(i,i);
         }
 
-        arma::wall_clock timer;
+        arma::wall_clock timer, iteration_timer;
         timer.tic();
 
         //Iterate the block Davidson algorithm.
         for (arma::uword i = 0; i < max_its; ++i){
+            iteration_timer.tic();
+
             arma::mat sub_mat(sub_size, sub_size, arma::fill::zeros);
             num_new_vecs = sub_size - old_sub_size;
             for (arma::uword j = 0; j < num_new_vecs; ++j)
@@ -102,18 +106,16 @@ namespace HFS {
 
             //Get the res and append to subspace if needed.
             //Sub_size changes within this loop
-            //double sum;
             old_sub_size = sub_size;
             arma::vec norms(num_of_roots, arma::fill::zeros);
-            for (arma::uword j = 0; j < block_size; ++j){
-                //arma::vec ritz_vec = ritz_vecs.col(j);
 
-                /*
-                double rayq = arma::dot(ritz_vec.t(), matvec_product(ritz_vec)); // x.T * M * x
+            for (arma::uword j = 0; j < block_size; ++j){
+                arma::vec ritz_vec = ritz_vecs.col(j);
+                double rayq = arma::dot(ritz_vec.t(), matvec_product(ritz_vec)); // rayleigh quotient
+
                 if (arma::any(arma::abs(diagonals - rayq) < SMALLNUMBER)) { // Don't try to add more
                     // if diagonal = rayq , we get a divide by zero
                 } else { // continue
-
                     arma::vec res = matvec_product(ritz_vec) - (sub_evals(j) * ritz_vec);
                     double norm = arma::norm(res);
 
@@ -124,78 +126,12 @@ namespace HFS {
                     if (norm > tolerance) {
                         arma::vec c = 1.0 / ((rayq * ones) - diagonals);
                         arma::vec corr = c % res; // elementwise multiply
-                        //arma::vec corr(N);
-                        //for (arma::uword idx = 0; idx < N; ++idx){
-                        //    corr(idx) = (1.0 / (rayq - diagonals(idx))) *res(idx);
-                        //}
                         corr /= arma::norm(corr);
                         guess_evecs = arma::join_rows(guess_evecs, corr);
                         sub_size += 1;
                     }
                 }
             }
-*/
-
-
-
-                double x_k = 0.0;
-                double rayq = 0.0;
-                double sum = 0.0;
-                arma::vec res(N);
-                //rayleigh quotient is x.T * M * x
-
-                //get_rayleigh_quotient();
-                for (arma::uword k = 0; k < N; ++k) {
-                    x_k = ritz_vecs(k,j);
-                    for (arma::uword l = 0; l < N; ++l) {
-                        rayq += x_k * matrix(k,l) * ritz_vecs(l,j);
-                    }
-                }
-                //get_residual();
-                for (arma::uword k = 0; k < N; ++k) {
-                    sum = 0.0;
-                    for (arma::uword m = 0; m < N; ++m) {
-                        if (m == k){
-                            sum += (matrix(k,k) - rayq) * ritz_vecs(m,j);
-                        }else{
-                            sum += matrix(k,m) * ritz_vecs(m,j);
-                        }
-                    res(k) = sum;
-                    }
-                }
-
-                //Append only the res with norm > tolerance.
-                double norm = arma::norm(res);
-                if (j < num_of_roots) {
-                    norms(j) = norm;
-                }
-                if (norm > tolerance) {
-                    arma::vec corr(N, arma::fill::zeros);
-
-                    //If diagonal element = eval, get singularity
-                    bool apply_corr = true;
-                    for (arma::uword k = 0; k < old_sub_size; ++k) {
-                        if ( fabs( matrix(k,k) - rayq ) <= SMALLNUMBER) {
-                            apply_corr = false;
-                        }
-                    }
-
-                    //This is the DPR corr
-                    for (arma::uword k=0; k < N; ++k) {
-                        double val = matrix(k,k) -  rayq;
-                        corr(k) = -1.0 / val * res(k);
-                    }
-
-                    //Only add if no problems encountered
-                    if (apply_corr) {
-                        corr /= arma::norm(corr);
-                        guess_evecs = arma::join_rows(guess_evecs, corr);
-                        sub_size += 1;
-                    }
-                }
-            }
-
-
 
             //Make sure the new guess space is orthonormal
             arma::mat Q, R;
@@ -212,27 +148,29 @@ namespace HFS {
             HFS::dav_vecs =  guess_evecs;
             HFS::dav_vals = sub_evals;
             HFS::dav_its  = i;
-            //HFS::dav_lowest_vals(i) = dav_vals.min();
-
-            double t2 = timer.toc();
-
+            HFS::dav_lowest_vals(i) = dav_vals.min();
+            HFS::dav_iteration_timer(i) = iteration_timer.toc();
 
             if (old_sub_size == sub_size) {
                 HFS::Davidson_Stopping_Criteria = "All Norms in Block Converged";
                 HFS::dav_lowest_vals.resize(i);
+                HFS::dav_iteration_timer.resize(i);
                 break;
             }
             else if ((sub_size + block_size) > max_sub_size) {
                 HFS::Davidson_Stopping_Criteria = "Subspace Size Too Large";
                 HFS::dav_lowest_vals.resize(i);
+                HFS::dav_iteration_timer.resize(i);
                 break;
-            } else if (arma::all(norms < tolerance)) {
+            } else if ((arma::all(norms < tolerance)) && (i >= min_its)) {
                 HFS::Davidson_Stopping_Criteria = "All Requested Eigenvalue Norms Converged";
                 HFS::dav_lowest_vals.resize(i);
+                HFS::dav_iteration_timer.resize(i);
                 break;
             } else if (i == (max_its - 1)) {
                 HFS::Davidson_Stopping_Criteria = "Maximum Iterations Reached";
                 HFS::dav_lowest_vals.resize(i);
+                HFS::dav_iteration_timer.resize(i);
                 break;
             }
         }

@@ -4,13 +4,20 @@ namespace HFS{
 
     arma::mat full_matrix;
     double full_diag_min;
+    double Mv_time;
+    double full_diag_time;
+    void time_mv();
 
     bool davidson_agrees_fulldiag() {
+        arma::wall_clock timer;
+        timer.tic();
+
         HFS::build_matrix();
         arma::vec eigvals;
         arma::mat eigvecs;
         arma::eig_sym(eigvals, eigvecs, HFS::full_matrix);
         HFS::full_diag_min = eigvals.min();
+        HFS::full_diag_time = timer.toc();
 
         double diff = fabs(arma::min(eigvals) - arma::min(HFS::dav_vals));
         bool agrees = (diff < 10E-5);
@@ -25,6 +32,14 @@ namespace HFS{
         arma::vec diff = arma::abs(Mv - v_arma);
         bool is_working = arma::all(diff < SMALLNUMBER);
         return is_working;
+    }
+
+    void time_mv() {
+        arma::wall_clock timer;
+        timer.tic();
+        arma::vec v(2*HFS::Nexc, arma::fill::randu);
+        arma::vec Mv = HFS::matvec_prod_3H(v);
+        HFS::Mv_time = timer.toc();
     }
 
     void build_matrix() {

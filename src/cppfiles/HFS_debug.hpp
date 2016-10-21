@@ -13,8 +13,11 @@ namespace HFS{
     extern double full_diag_min;
     extern bool davidson_agrees_fulldiag();
     extern bool mv_is_working();
+    extern double Mv_time;
+    extern double full_diag_time;
     extern bool everything_works();
     extern void build_matrix();
+    extern void time_mv();
 }
 
 #endif // HFS_debug_included

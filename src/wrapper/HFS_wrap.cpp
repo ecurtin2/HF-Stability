@@ -3261,16 +3261,21 @@ SWIG_CanCastAsInteger(double *d, double min, double max) {
 
 
 SWIGINTERN int
-SWIG_AsVal_long (PyObject *obj, long* val)
+SWIG_AsVal_unsigned_SS_long (PyObject *obj, unsigned long *val) 
 {
 #if PY_VERSION_HEX < 0x03000000
   if (PyInt_Check(obj)) {
-    if (val) *val = PyInt_AsLong(obj);
-    return SWIG_OK;
+    long v = PyInt_AsLong(obj);
+    if (v >= 0) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      return SWIG_OverflowError;
+    }
   } else
 #endif
   if (PyLong_Check(obj)) {
-    long v = PyLong_AsLong(obj);
+    unsigned long v = PyLong_AsUnsignedLong(obj);
     if (!PyErr_Occurred()) {
       if (val) *val = v;
       return SWIG_OK;
@@ -3282,7 +3287,7 @@ SWIG_AsVal_long (PyObject *obj, long* val)
 #ifdef SWIG_PYTHON_CAST_MODE
   {
     int dispatch = 0;
-    long v = PyInt_AsLong(obj);
+    unsigned long v = PyLong_AsUnsignedLong(obj);
     if (!PyErr_Occurred()) {
       if (val) *val = v;
       return SWIG_AddCast(SWIG_OK);
@@ -3292,8 +3297,8 @@ SWIG_AsVal_long (PyObject *obj, long* val)
     if (!dispatch) {
       double d;
       int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
-      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, LONG_MAX)) {
-	if (val) *val = (long)(d);
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, 0, ULONG_MAX)) {
+	if (val) *val = (unsigned long)(d);
 	return res;
       }
     }
@@ -3304,15 +3309,15 @@ SWIG_AsVal_long (PyObject *obj, long* val)
 
 
 SWIGINTERN int
-SWIG_AsVal_int (PyObject * obj, int *val)
+SWIG_AsVal_unsigned_SS_int (PyObject * obj, unsigned int *val)
 {
-  long v;
-  int res = SWIG_AsVal_long (obj, &v);
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
   if (SWIG_IsOK(res)) {
-    if ((v < INT_MIN || v > INT_MAX)) {
+    if ((v > UINT_MAX)) {
       return SWIG_OverflowError;
     } else {
-      if (val) *val = static_cast< int >(v);
+      if (val) *val = static_cast< unsigned int >(v);
     }
   }  
   return res;
@@ -3494,6 +3499,13 @@ SWIGINTERNINLINE PyObject *
 SWIG_From_std_string  (const std::string& s)
 {
   return SWIG_FromCharPtrAndSize(s.data(), s.size());
+}
+
+
+SWIGINTERNINLINE PyObject*
+  SWIG_From_unsigned_SS_int  (unsigned int value)
+{
+  return PyInt_FromSize_t((size_t) value);
 }
 
 
@@ -4311,6 +4323,65 @@ SWIGINTERNINLINE PyObject*
 
 
 SWIGINTERN int
+SWIG_AsVal_long (PyObject *obj, long* val)
+{
+#if PY_VERSION_HEX < 0x03000000
+  if (PyInt_Check(obj)) {
+    if (val) *val = PyInt_AsLong(obj);
+    return SWIG_OK;
+  } else
+#endif
+  if (PyLong_Check(obj)) {
+    long v = PyLong_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_OK;
+    } else {
+      PyErr_Clear();
+      return SWIG_OverflowError;
+    }
+  }
+#ifdef SWIG_PYTHON_CAST_MODE
+  {
+    int dispatch = 0;
+    long v = PyInt_AsLong(obj);
+    if (!PyErr_Occurred()) {
+      if (val) *val = v;
+      return SWIG_AddCast(SWIG_OK);
+    } else {
+      PyErr_Clear();
+    }
+    if (!dispatch) {
+      double d;
+      int res = SWIG_AddCast(SWIG_AsVal_double (obj,&d));
+      if (SWIG_IsOK(res) && SWIG_CanCastAsInteger(&d, LONG_MIN, LONG_MAX)) {
+	if (val) *val = (long)(d);
+	return res;
+      }
+    }
+  }
+#endif
+  return SWIG_TypeError;
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_int (PyObject * obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< int >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERN int
 SWIG_AsVal_bool (PyObject *obj, bool *val)
 {
   int r;
@@ -4349,24 +4420,36 @@ fail:
 SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   double arg1 ;
-  int arg2 ;
-  int arg3 ;
-  int arg4 ;
-  int arg5 ;
-  int arg6 ;
-  std::string arg7 ;
+  unsigned int arg2 ;
+  unsigned int arg3 ;
+  unsigned int arg4 ;
+  unsigned int arg5 ;
+  unsigned int arg6 ;
+  unsigned int arg7 ;
+  unsigned int arg8 ;
+  unsigned int arg9 ;
+  double arg10 ;
+  std::string arg11 ;
   double val1 ;
   int ecode1 = 0 ;
-  int val2 ;
+  unsigned int val2 ;
   int ecode2 = 0 ;
-  int val3 ;
+  unsigned int val3 ;
   int ecode3 = 0 ;
-  int val4 ;
+  unsigned int val4 ;
   int ecode4 = 0 ;
-  int val5 ;
+  unsigned int val5 ;
   int ecode5 = 0 ;
-  int val6 ;
+  unsigned int val6 ;
   int ecode6 = 0 ;
+  unsigned int val7 ;
+  int ecode7 = 0 ;
+  unsigned int val8 ;
+  int ecode8 = 0 ;
+  unsigned int val9 ;
+  int ecode9 = 0 ;
+  double val10 ;
+  int ecode10 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -4374,51 +4457,75 @@ SWIGINTERN PyObject *_wrap_main_(PyObject *SWIGUNUSEDPARM(self), PyObject *args)
   PyObject * obj4 = 0 ;
   PyObject * obj5 = 0 ;
   PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  PyObject * obj10 = 0 ;
   int result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOO:main_",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOOO:main_",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9,&obj10)) SWIG_fail;
   ecode1 = SWIG_AsVal_double(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
     SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "main_" "', argument " "1"" of type '" "double""'");
   } 
   arg1 = static_cast< double >(val1);
-  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "main_" "', argument " "2"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "main_" "', argument " "2"" of type '" "unsigned int""'");
   } 
-  arg2 = static_cast< int >(val2);
-  ecode3 = SWIG_AsVal_int(obj2, &val3);
+  arg2 = static_cast< unsigned int >(val2);
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
   if (!SWIG_IsOK(ecode3)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "main_" "', argument " "3"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "main_" "', argument " "3"" of type '" "unsigned int""'");
   } 
-  arg3 = static_cast< int >(val3);
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
+  arg3 = static_cast< unsigned int >(val3);
+  ecode4 = SWIG_AsVal_unsigned_SS_int(obj3, &val4);
   if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "main_" "', argument " "4"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "main_" "', argument " "4"" of type '" "unsigned int""'");
   } 
-  arg4 = static_cast< int >(val4);
-  ecode5 = SWIG_AsVal_int(obj4, &val5);
+  arg4 = static_cast< unsigned int >(val4);
+  ecode5 = SWIG_AsVal_unsigned_SS_int(obj4, &val5);
   if (!SWIG_IsOK(ecode5)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "main_" "', argument " "5"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "main_" "', argument " "5"" of type '" "unsigned int""'");
   } 
-  arg5 = static_cast< int >(val5);
-  ecode6 = SWIG_AsVal_int(obj5, &val6);
+  arg5 = static_cast< unsigned int >(val5);
+  ecode6 = SWIG_AsVal_unsigned_SS_int(obj5, &val6);
   if (!SWIG_IsOK(ecode6)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "main_" "', argument " "6"" of type '" "int""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "main_" "', argument " "6"" of type '" "unsigned int""'");
   } 
-  arg6 = static_cast< int >(val6);
+  arg6 = static_cast< unsigned int >(val6);
+  ecode7 = SWIG_AsVal_unsigned_SS_int(obj6, &val7);
+  if (!SWIG_IsOK(ecode7)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "main_" "', argument " "7"" of type '" "unsigned int""'");
+  } 
+  arg7 = static_cast< unsigned int >(val7);
+  ecode8 = SWIG_AsVal_unsigned_SS_int(obj7, &val8);
+  if (!SWIG_IsOK(ecode8)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "main_" "', argument " "8"" of type '" "unsigned int""'");
+  } 
+  arg8 = static_cast< unsigned int >(val8);
+  ecode9 = SWIG_AsVal_unsigned_SS_int(obj8, &val9);
+  if (!SWIG_IsOK(ecode9)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "main_" "', argument " "9"" of type '" "unsigned int""'");
+  } 
+  arg9 = static_cast< unsigned int >(val9);
+  ecode10 = SWIG_AsVal_double(obj9, &val10);
+  if (!SWIG_IsOK(ecode10)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode10), "in method '" "main_" "', argument " "10"" of type '" "double""'");
+  } 
+  arg10 = static_cast< double >(val10);
   {
     std::string *ptr = (std::string *)0;
-    int res = SWIG_AsPtr_std_string(obj6, &ptr);
+    int res = SWIG_AsPtr_std_string(obj10, &ptr);
     if (!SWIG_IsOK(res) || !ptr) {
-      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "main_" "', argument " "7"" of type '" "std::string""'"); 
+      SWIG_exception_fail(SWIG_ArgError((ptr ? res : SWIG_TypeError)), "in method '" "main_" "', argument " "11"" of type '" "std::string""'"); 
     }
-    arg7 = *ptr;
+    arg11 = *ptr;
     if (SWIG_IsNewObj(res)) delete ptr;
   }
   {
     try {
-      result = (int)main_(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
+      result = (int)main_(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
@@ -4448,7 +4555,7 @@ SWIGINTERN PyObject *SMALLNUMBER_swigconstant(PyObject *SWIGUNUSEDPARM(self), Py
   if (!PyArg_ParseTuple(args,(char*)"O:swigconstant", &module)) return NULL;
   d = PyModule_GetDict(module);
   if (!d) return NULL;
-  SWIG_Python_SetConstant(d, "SMALLNUMBER",SWIG_From_double(static_cast< double >(10E-10)));
+  SWIG_Python_SetConstant(d, "SMALLNUMBER",SWIG_From_double(static_cast< double >(1E-10)));
   return SWIG_Py_Void();
 }
 
@@ -4828,44 +4935,14 @@ SWIGINTERN PyObject *Swig_var_N_elec_get(void) {
 }
 
 
-SWIGINTERN int Swig_var_Nk_set(PyObject *_val) {
-  {
-    void *argp = 0;
-    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Nk""' of type '""arma::uword""'");
-    }
-    if (!argp) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::Nk""' of type '""arma::uword""'");
-    } else {
-      arma::uword * temp;
-      temp  = reinterpret_cast< arma::uword * >(argp);
-      HFS::Nk = *temp;
-      if (SWIG_IsNewObj(res)) delete temp;
-    }
-  }
-  return 0;
-fail:
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_Nk_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::Nk), SWIGTYPE_p_arma__uword,  0 );
-  return pyobj;
-}
-
-
 SWIGINTERN int Swig_var_ndim_set(PyObject *_val) {
   {
-    int val;
-    int res = SWIG_AsVal_int(_val, &val);
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::ndim""' of type '""int""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::ndim""' of type '""unsigned int""'");
     }
-    HFS::ndim = static_cast< int >(val);
+    HFS::ndim = static_cast< unsigned int >(val);
   }
   return 0;
 fail:
@@ -4876,7 +4953,30 @@ fail:
 SWIGINTERN PyObject *Swig_var_ndim_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_int(static_cast< int >(HFS::ndim));
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::ndim));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Nk_set(PyObject *_val) {
+  {
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Nk""' of type '""unsigned int""'");
+    }
+    HFS::Nk = static_cast< unsigned int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Nk_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Nk));
   return pyobj;
 }
 
@@ -6498,12 +6598,12 @@ SWIGINTERN PyObject *Swig_var_dav_vecs_get(void) {
 
 SWIGINTERN int Swig_var_dav_its_set(PyObject *_val) {
   {
-    int val;
-    int res = SWIG_AsVal_int(_val, &val);
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_its""' of type '""int""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_its""' of type '""unsigned int""'");
     }
-    HFS::dav_its = static_cast< int >(val);
+    HFS::dav_its = static_cast< unsigned int >(val);
   }
   return 0;
 fail:
@@ -6514,19 +6614,19 @@ fail:
 SWIGINTERN PyObject *Swig_var_dav_its_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_int(static_cast< int >(HFS::dav_its));
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::dav_its));
   return pyobj;
 }
 
 
 SWIGINTERN int Swig_var_num_guess_evecs_set(PyObject *_val) {
   {
-    int val;
-    int res = SWIG_AsVal_int(_val, &val);
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::num_guess_evecs""' of type '""int""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::num_guess_evecs""' of type '""unsigned int""'");
     }
-    HFS::num_guess_evecs = static_cast< int >(val);
+    HFS::num_guess_evecs = static_cast< unsigned int >(val);
   }
   return 0;
 fail:
@@ -6537,19 +6637,19 @@ fail:
 SWIGINTERN PyObject *Swig_var_num_guess_evecs_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_int(static_cast< int >(HFS::num_guess_evecs));
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::num_guess_evecs));
   return pyobj;
 }
 
 
 SWIGINTERN int Swig_var_Dav_blocksize_set(PyObject *_val) {
   {
-    int val;
-    int res = SWIG_AsVal_int(_val, &val);
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_blocksize""' of type '""int""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_blocksize""' of type '""unsigned int""'");
     }
-    HFS::Dav_blocksize = static_cast< int >(val);
+    HFS::Dav_blocksize = static_cast< unsigned int >(val);
   }
   return 0;
 fail:
@@ -6560,19 +6660,19 @@ fail:
 SWIGINTERN PyObject *Swig_var_Dav_blocksize_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_int(static_cast< int >(HFS::Dav_blocksize));
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Dav_blocksize));
   return pyobj;
 }
 
 
 SWIGINTERN int Swig_var_Dav_Num_evals_set(PyObject *_val) {
   {
-    int val;
-    int res = SWIG_AsVal_int(_val, &val);
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_Num_evals""' of type '""int""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_Num_evals""' of type '""unsigned int""'");
     }
-    HFS::Dav_Num_evals = static_cast< int >(val);
+    HFS::Dav_Num_evals = static_cast< unsigned int >(val);
   }
   return 0;
 fail:
@@ -6583,7 +6683,152 @@ fail:
 SWIGINTERN PyObject *Swig_var_Dav_Num_evals_get(void) {
   PyObject *pyobj = 0;
   
-  pyobj = SWIG_From_int(static_cast< int >(HFS::Dav_Num_evals));
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Dav_Num_evals));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_tol_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_tol""' of type '""double""'");
+    }
+    HFS::Dav_tol = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_tol_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::Dav_tol));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_maxits_set(PyObject *_val) {
+  {
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_maxits""' of type '""unsigned int""'");
+    }
+    HFS::Dav_maxits = static_cast< unsigned int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_maxits_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Dav_maxits));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_minits_set(PyObject *_val) {
+  {
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_minits""' of type '""unsigned int""'");
+    }
+    HFS::Dav_minits = static_cast< unsigned int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_minits_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Dav_minits));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_maxsubsize_set(PyObject *_val) {
+  {
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_maxsubsize""' of type '""unsigned int""'");
+    }
+    HFS::Dav_maxsubsize = static_cast< unsigned int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_maxsubsize_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Dav_maxsubsize));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_time_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_time""' of type '""double""'");
+    }
+    HFS::Dav_time = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_time_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::Dav_time));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_dav_iteration_timer_set(PyObject *_val) {
+  {
+    void *argp = 0;
+    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__vec,  0  | 0);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_iteration_timer""' of type '""arma::vec""'");
+    }
+    if (!argp) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_iteration_timer""' of type '""arma::vec""'");
+    } else {
+      arma::vec * temp;
+      temp  = reinterpret_cast< arma::vec * >(argp);
+      HFS::dav_iteration_timer = *temp;
+      if (SWIG_IsNewObj(res)) delete temp;
+    }
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_dav_iteration_timer_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_iteration_timer), SWIGTYPE_p_arma__vec,  0 );
   return pyobj;
 }
 
@@ -6701,930 +6946,34 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_0(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_davidson_wrapper(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   arma::uword arg1 ;
   arma::mat arg2 ;
-  arma::uword arg3 ;
-  int arg4 ;
-  arma::uword arg5 ;
-  arma::uword arg6 ;
-  arma::uword arg7 ;
-  double arg8 ;
+  unsigned int arg3 ;
+  unsigned int arg4 ;
+  unsigned int arg5 ;
+  unsigned int arg6 ;
+  unsigned int arg7 ;
+  unsigned int arg8 ;
+  double arg9 ;
   void *argp1 ;
   int res1 = 0 ;
   PyArrayObject *array2 = NULL ;
-  void *argp3 ;
-  int res3 = 0 ;
-  int val4 ;
+  unsigned int val3 ;
+  int ecode3 = 0 ;
+  unsigned int val4 ;
   int ecode4 = 0 ;
-  void *argp5 ;
-  int res5 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  void *argp7 ;
-  int res7 = 0 ;
-  double val8 ;
-  int ecode8 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  PyObject * obj7 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOO:davidson_wrapper",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_wrapper" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  {
-    res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp5) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp5);
-      arg5 = *temp;
-      if (SWIG_IsNewObj(res5)) delete temp;
-    }
-  }
-  {
-    res6 = SWIG_ConvertPtr(obj5, &argp6, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "davidson_wrapper" "', argument " "6"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "6"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp6);
-      arg6 = *temp;
-      if (SWIG_IsNewObj(res6)) delete temp;
-    }
-  }
-  {
-    res7 = SWIG_ConvertPtr(obj6, &argp7, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res7)) {
-      SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "davidson_wrapper" "', argument " "7"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp7) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "7"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp7);
-      arg7 = *temp;
-      if (SWIG_IsNewObj(res7)) delete temp;
-    }
-  }
-  ecode8 = SWIG_AsVal_double(obj7, &val8);
-  if (!SWIG_IsOK(ecode8)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "davidson_wrapper" "', argument " "8"" of type '" "double""'");
-  } 
-  arg8 = static_cast< double >(val8);
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_1(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::mat arg2 ;
-  arma::uword arg3 ;
-  int arg4 ;
-  arma::uword arg5 ;
-  arma::uword arg6 ;
-  arma::uword arg7 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  void *argp3 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  void *argp5 ;
-  int res5 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  void *argp7 ;
-  int res7 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  PyObject * obj6 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOO:davidson_wrapper",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_wrapper" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  {
-    res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp5) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp5);
-      arg5 = *temp;
-      if (SWIG_IsNewObj(res5)) delete temp;
-    }
-  }
-  {
-    res6 = SWIG_ConvertPtr(obj5, &argp6, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "davidson_wrapper" "', argument " "6"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "6"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp6);
-      arg6 = *temp;
-      if (SWIG_IsNewObj(res6)) delete temp;
-    }
-  }
-  {
-    res7 = SWIG_ConvertPtr(obj6, &argp7, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res7)) {
-      SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "davidson_wrapper" "', argument " "7"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp7) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "7"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp7);
-      arg7 = *temp;
-      if (SWIG_IsNewObj(res7)) delete temp;
-    }
-  }
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_2(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::mat arg2 ;
-  arma::uword arg3 ;
-  int arg4 ;
-  arma::uword arg5 ;
-  arma::uword arg6 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  void *argp3 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  void *argp5 ;
-  int res5 = 0 ;
-  void *argp6 ;
-  int res6 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  PyObject * obj5 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOO:davidson_wrapper",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_wrapper" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  {
-    res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp5) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp5);
-      arg5 = *temp;
-      if (SWIG_IsNewObj(res5)) delete temp;
-    }
-  }
-  {
-    res6 = SWIG_ConvertPtr(obj5, &argp6, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res6)) {
-      SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "davidson_wrapper" "', argument " "6"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp6) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "6"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp6);
-      arg6 = *temp;
-      if (SWIG_IsNewObj(res6)) delete temp;
-    }
-  }
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2,arg3,arg4,arg5,arg6);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_3(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::mat arg2 ;
-  arma::uword arg3 ;
-  int arg4 ;
-  arma::uword arg5 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  void *argp3 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  void *argp5 ;
-  int res5 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  PyObject * obj4 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:davidson_wrapper",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_wrapper" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  {
-    res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp5) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "5"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp5);
-      arg5 = *temp;
-      if (SWIG_IsNewObj(res5)) delete temp;
-    }
-  }
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2,arg3,arg4,arg5);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_4(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::mat arg2 ;
-  arma::uword arg3 ;
-  int arg4 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  void *argp3 ;
-  int res3 = 0 ;
-  int val4 ;
-  int ecode4 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  PyObject * obj3 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOOO:davidson_wrapper",&obj0,&obj1,&obj2,&obj3)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  ecode4 = SWIG_AsVal_int(obj3, &val4);
-  if (!SWIG_IsOK(ecode4)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_wrapper" "', argument " "4"" of type '" "int""'");
-  } 
-  arg4 = static_cast< int >(val4);
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2,arg3,arg4);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_5(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::mat arg2 ;
-  arma::uword arg3 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  void *argp3 ;
-  int res3 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  PyObject * obj2 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OOO:davidson_wrapper",&obj0,&obj1,&obj2)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2,arg3);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper__SWIG_6(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::mat arg2 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  PyArrayObject *array2 = NULL ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:davidson_wrapper",&obj0,&obj1)) SWIG_fail;
-  {
-    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res1)) {
-      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp1) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
-      arg1 = *temp;
-      if (SWIG_IsNewObj(res1)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
-    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
-    if( !array2 ) SWIG_fail;
-    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
-  }
-  {
-    try {
-      HFS::davidson_wrapper(arg1,arg2);
-    }
-    catch( std::exception & e  ) {
-      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
-    } 
-  }
-  resultobj = SWIG_Py_Void();
-  {
-    
-  }
-  {
-    
-  }
-  return resultobj;
-fail:
-  {
-    
-  }
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_wrapper(PyObject *self, PyObject *args) {
-  Py_ssize_t argc;
-  PyObject *argv[9] = {
-    0
-  };
-  Py_ssize_t ii;
-  
-  if (!PyTuple_Check(args)) SWIG_fail;
-  argc = args ? PyObject_Length(args) : 0;
-  for (ii = 0; (ii < 8) && (ii < argc); ii++) {
-    argv[ii] = PyTuple_GET_ITEM(args,ii);
-  }
-  if (argc == 2) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        return _wrap_davidson_wrapper__SWIG_6(self, args);
-      }
-    }
-  }
-  if (argc == 3) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_arma__uword, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          return _wrap_davidson_wrapper__SWIG_5(self, args);
-        }
-      }
-    }
-  }
-  if (argc == 4) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_arma__uword, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            return _wrap_davidson_wrapper__SWIG_4(self, args);
-          }
-        }
-      }
-    }
-  }
-  if (argc == 5) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_arma__uword, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_arma__uword, 0);
-            _v = SWIG_CheckState(res);
-            if (_v) {
-              return _wrap_davidson_wrapper__SWIG_3(self, args);
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 6) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_arma__uword, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_arma__uword, 0);
-            _v = SWIG_CheckState(res);
-            if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_arma__uword, 0);
-              _v = SWIG_CheckState(res);
-              if (_v) {
-                return _wrap_davidson_wrapper__SWIG_2(self, args);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 7) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_arma__uword, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_arma__uword, 0);
-            _v = SWIG_CheckState(res);
-            if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_arma__uword, 0);
-              _v = SWIG_CheckState(res);
-              if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_arma__uword, 0);
-                _v = SWIG_CheckState(res);
-                if (_v) {
-                  return _wrap_davidson_wrapper__SWIG_1(self, args);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (argc == 8) {
-    int _v;
-    int res = SWIG_ConvertPtr(argv[0], 0, SWIGTYPE_p_arma__uword, 0);
-    _v = SWIG_CheckState(res);
-    if (_v) {
-      {
-        _v = armanpy_basic_typecheck< arma::mat >( argv[1], false );
-      }
-      if (_v) {
-        int res = SWIG_ConvertPtr(argv[2], 0, SWIGTYPE_p_arma__uword, 0);
-        _v = SWIG_CheckState(res);
-        if (_v) {
-          {
-            int res = SWIG_AsVal_int(argv[3], NULL);
-            _v = SWIG_CheckState(res);
-          }
-          if (_v) {
-            int res = SWIG_ConvertPtr(argv[4], 0, SWIGTYPE_p_arma__uword, 0);
-            _v = SWIG_CheckState(res);
-            if (_v) {
-              int res = SWIG_ConvertPtr(argv[5], 0, SWIGTYPE_p_arma__uword, 0);
-              _v = SWIG_CheckState(res);
-              if (_v) {
-                int res = SWIG_ConvertPtr(argv[6], 0, SWIGTYPE_p_arma__uword, 0);
-                _v = SWIG_CheckState(res);
-                if (_v) {
-                  {
-                    int res = SWIG_AsVal_double(argv[7], NULL);
-                    _v = SWIG_CheckState(res);
-                  }
-                  if (_v) {
-                    return _wrap_davidson_wrapper__SWIG_0(self, args);
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-fail:
-  SWIG_SetErrorMsg(PyExc_NotImplementedError,"Wrong number or type of arguments for overloaded function 'davidson_wrapper'.\n"
-    "  Possible C/C++ prototypes are:\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat,arma::uword,int,arma::uword,arma::uword,arma::uword,double)\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat,arma::uword,int,arma::uword,arma::uword,arma::uword)\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat,arma::uword,int,arma::uword,arma::uword)\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat,arma::uword,int,arma::uword)\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat,arma::uword,int)\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat,arma::uword)\n"
-    "    HFS::davidson_wrapper(arma::uword,arma::mat)\n");
-  return 0;
-}
-
-
-SWIGINTERN PyObject *_wrap_davidson_algorithm(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  arma::uword arg1 ;
-  arma::uword arg2 ;
-  arma::uword arg3 ;
-  arma::uword arg4 ;
-  arma::uword arg5 ;
-  arma::mat *arg6 = 0 ;
-  double arg7 ;
-  double (*arg8)(arma::uword,arma::uword) = (double (*)(arma::uword,arma::uword)) 0 ;
-  arma::vec (*arg9)(arma::vec &) = (arma::vec (*)(arma::vec &)) 0 ;
-  void *argp1 ;
-  int res1 = 0 ;
-  void *argp2 ;
-  int res2 = 0 ;
-  void *argp3 ;
-  int res3 = 0 ;
-  void *argp4 ;
-  int res4 = 0 ;
-  void *argp5 ;
-  int res5 = 0 ;
-  double val7 ;
+  unsigned int val5 ;
+  int ecode5 = 0 ;
+  unsigned int val6 ;
+  int ecode6 = 0 ;
+  unsigned int val7 ;
   int ecode7 = 0 ;
+  unsigned int val8 ;
+  int ecode8 = 0 ;
+  double val9 ;
+  int ecode9 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
@@ -7635,7 +6984,123 @@ SWIGINTERN PyObject *_wrap_davidson_algorithm(PyObject *SWIGUNUSEDPARM(self), Py
   PyObject * obj7 = 0 ;
   PyObject * obj8 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOO:davidson_algorithm",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOO:davidson_wrapper",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8)) SWIG_fail;
+  {
+    res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
+    if (!SWIG_IsOK(res1)) {
+      SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'"); 
+    }  
+    if (!argp1) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_wrapper" "', argument " "1"" of type '" "arma::uword""'");
+    } else {
+      arma::uword * temp = reinterpret_cast< arma::uword * >(argp1);
+      arg1 = *temp;
+      if (SWIG_IsNewObj(res1)) delete temp;
+    }
+  }
+  {
+    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true ) ) SWIG_fail;
+    array2 = obj_to_array_no_conversion( obj1, ArmaTypeInfo< arma::mat >::type );
+    if( !array2 ) SWIG_fail;
+    arg2 = arma::mat( ( arma::mat::elem_type *)array_data(array2), array_dimensions(array2)[0], array_dimensions(array2)[1], false );
+  }
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "davidson_wrapper" "', argument " "3"" of type '" "unsigned int""'");
+  } 
+  arg3 = static_cast< unsigned int >(val3);
+  ecode4 = SWIG_AsVal_unsigned_SS_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_wrapper" "', argument " "4"" of type '" "unsigned int""'");
+  } 
+  arg4 = static_cast< unsigned int >(val4);
+  ecode5 = SWIG_AsVal_unsigned_SS_int(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "davidson_wrapper" "', argument " "5"" of type '" "unsigned int""'");
+  } 
+  arg5 = static_cast< unsigned int >(val5);
+  ecode6 = SWIG_AsVal_unsigned_SS_int(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "davidson_wrapper" "', argument " "6"" of type '" "unsigned int""'");
+  } 
+  arg6 = static_cast< unsigned int >(val6);
+  ecode7 = SWIG_AsVal_unsigned_SS_int(obj6, &val7);
+  if (!SWIG_IsOK(ecode7)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "davidson_wrapper" "', argument " "7"" of type '" "unsigned int""'");
+  } 
+  arg7 = static_cast< unsigned int >(val7);
+  ecode8 = SWIG_AsVal_unsigned_SS_int(obj7, &val8);
+  if (!SWIG_IsOK(ecode8)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "davidson_wrapper" "', argument " "8"" of type '" "unsigned int""'");
+  } 
+  arg8 = static_cast< unsigned int >(val8);
+  ecode9 = SWIG_AsVal_double(obj8, &val9);
+  if (!SWIG_IsOK(ecode9)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode9), "in method '" "davidson_wrapper" "', argument " "9"" of type '" "double""'");
+  } 
+  arg9 = static_cast< double >(val9);
+  {
+    try {
+      HFS::davidson_wrapper(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  {
+    
+  }
+  {
+    
+  }
+  return resultobj;
+fail:
+  {
+    
+  }
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_davidson_algorithm(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  arma::uword arg1 ;
+  unsigned int arg2 ;
+  unsigned int arg3 ;
+  unsigned int arg4 ;
+  unsigned int arg5 ;
+  unsigned int arg6 ;
+  arma::mat *arg7 = 0 ;
+  double arg8 ;
+  double (*arg9)(arma::uword,arma::uword) = (double (*)(arma::uword,arma::uword)) 0 ;
+  arma::vec (*arg10)(arma::vec &) = (arma::vec (*)(arma::vec &)) 0 ;
+  void *argp1 ;
+  int res1 = 0 ;
+  unsigned int val2 ;
+  int ecode2 = 0 ;
+  unsigned int val3 ;
+  int ecode3 = 0 ;
+  unsigned int val4 ;
+  int ecode4 = 0 ;
+  unsigned int val5 ;
+  int ecode5 = 0 ;
+  unsigned int val6 ;
+  int ecode6 = 0 ;
+  double val8 ;
+  int ecode8 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  PyObject * obj7 = 0 ;
+  PyObject * obj8 = 0 ;
+  PyObject * obj9 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOOOOO:davidson_algorithm",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6,&obj7,&obj8,&obj9)) SWIG_fail;
   {
     res1 = SWIG_ConvertPtr(obj0, &argp1, SWIGTYPE_p_arma__uword,  0  | 0);
     if (!SWIG_IsOK(res1)) {
@@ -7649,86 +7114,59 @@ SWIGINTERN PyObject *_wrap_davidson_algorithm(PyObject *SWIGUNUSEDPARM(self), Py
       if (SWIG_IsNewObj(res1)) delete temp;
     }
   }
+  ecode2 = SWIG_AsVal_unsigned_SS_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "davidson_algorithm" "', argument " "2"" of type '" "unsigned int""'");
+  } 
+  arg2 = static_cast< unsigned int >(val2);
+  ecode3 = SWIG_AsVal_unsigned_SS_int(obj2, &val3);
+  if (!SWIG_IsOK(ecode3)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode3), "in method '" "davidson_algorithm" "', argument " "3"" of type '" "unsigned int""'");
+  } 
+  arg3 = static_cast< unsigned int >(val3);
+  ecode4 = SWIG_AsVal_unsigned_SS_int(obj3, &val4);
+  if (!SWIG_IsOK(ecode4)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode4), "in method '" "davidson_algorithm" "', argument " "4"" of type '" "unsigned int""'");
+  } 
+  arg4 = static_cast< unsigned int >(val4);
+  ecode5 = SWIG_AsVal_unsigned_SS_int(obj4, &val5);
+  if (!SWIG_IsOK(ecode5)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode5), "in method '" "davidson_algorithm" "', argument " "5"" of type '" "unsigned int""'");
+  } 
+  arg5 = static_cast< unsigned int >(val5);
+  ecode6 = SWIG_AsVal_unsigned_SS_int(obj5, &val6);
+  if (!SWIG_IsOK(ecode6)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode6), "in method '" "davidson_algorithm" "', argument " "6"" of type '" "unsigned int""'");
+  } 
+  arg6 = static_cast< unsigned int >(val6);
   {
-    res2 = SWIG_ConvertPtr(obj1, &argp2, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res2)) {
-      SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "davidson_algorithm" "', argument " "2"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp2) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_algorithm" "', argument " "2"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp2);
-      arg2 = *temp;
-      if (SWIG_IsNewObj(res2)) delete temp;
-    }
-  }
-  {
-    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "davidson_algorithm" "', argument " "3"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_algorithm" "', argument " "3"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  {
-    res4 = SWIG_ConvertPtr(obj3, &argp4, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res4)) {
-      SWIG_exception_fail(SWIG_ArgError(res4), "in method '" "davidson_algorithm" "', argument " "4"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp4) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_algorithm" "', argument " "4"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp4);
-      arg4 = *temp;
-      if (SWIG_IsNewObj(res4)) delete temp;
-    }
-  }
-  {
-    res5 = SWIG_ConvertPtr(obj4, &argp5, SWIGTYPE_p_arma__uword,  0  | 0);
-    if (!SWIG_IsOK(res5)) {
-      SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "davidson_algorithm" "', argument " "5"" of type '" "arma::uword""'"); 
-    }  
-    if (!argp5) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "davidson_algorithm" "', argument " "5"" of type '" "arma::uword""'");
-    } else {
-      arma::uword * temp = reinterpret_cast< arma::uword * >(argp5);
-      arg5 = *temp;
-      if (SWIG_IsNewObj(res5)) delete temp;
-    }
-  }
-  {
-    if( ! armanpy_basic_typecheck< arma::mat >( obj5, true, true )            ) {
+    if( ! armanpy_basic_typecheck< arma::mat >( obj6, true, true )            ) {
       PyErr_SetString( PyExc_RuntimeError, "Argument not a valid armadillo matrix" ); SWIG_fail; 
     }
-    if( ! armanpy_numpy_as_mat_with_shared_memory< arma::mat >( obj5, &(arg6) ) ) {
+    if( ! armanpy_numpy_as_mat_with_shared_memory< arma::mat >( obj6, &(arg7) ) ) {
       PyErr_SetString( PyExc_RuntimeError, "Numpy array can not be wrapped as armadillo matrix" ); SWIG_fail; 
     }
   }
-  ecode7 = SWIG_AsVal_double(obj6, &val7);
-  if (!SWIG_IsOK(ecode7)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode7), "in method '" "davidson_algorithm" "', argument " "7"" of type '" "double""'");
+  ecode8 = SWIG_AsVal_double(obj7, &val8);
+  if (!SWIG_IsOK(ecode8)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode8), "in method '" "davidson_algorithm" "', argument " "8"" of type '" "double""'");
   } 
-  arg7 = static_cast< double >(val7);
+  arg8 = static_cast< double >(val8);
   {
-    int res = SWIG_ConvertFunctionPtr(obj7, (void**)(&arg8), SWIGTYPE_p_f_arma__uword_arma__uword__double);
+    int res = SWIG_ConvertFunctionPtr(obj8, (void**)(&arg9), SWIGTYPE_p_f_arma__uword_arma__uword__double);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "davidson_algorithm" "', argument " "8"" of type '" "double (*)(arma::uword,arma::uword)""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "davidson_algorithm" "', argument " "9"" of type '" "double (*)(arma::uword,arma::uword)""'"); 
     }
   }
   {
-    int res = SWIG_ConvertFunctionPtr(obj8, (void**)(&arg9), SWIGTYPE_p_f_r_arma__vec__arma__vec);
+    int res = SWIG_ConvertFunctionPtr(obj9, (void**)(&arg10), SWIGTYPE_p_f_r_arma__vec__arma__vec);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "davidson_algorithm" "', argument " "9"" of type '" "arma::vec (*)(arma::vec &)""'"); 
+      SWIG_exception_fail(SWIG_ArgError(res), "in method '" "davidson_algorithm" "', argument " "10"" of type '" "arma::vec (*)(arma::vec &)""'"); 
     }
   }
   {
     try {
-      HFS::davidson_algorithm(arg1,arg2,arg3,arg4,arg5,*arg6,arg7,arg8,arg9);
+      HFS::davidson_algorithm(arg1,arg2,arg3,arg4,arg5,arg6,*arg7,arg8,arg9,arg10);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
@@ -7736,7 +7174,7 @@ SWIGINTERN PyObject *_wrap_davidson_algorithm(PyObject *SWIGUNUSEDPARM(self), Py
   }
   resultobj = SWIG_Py_Void();
   {
-    armanpy_mat_as_numpy_with_shared_memory( arg6, obj5 );
+    armanpy_mat_as_numpy_with_shared_memory( arg7, obj6 );
   }
   {
     // NOOP
@@ -7843,6 +7281,52 @@ fail:
 }
 
 
+SWIGINTERN int Swig_var_Mv_time_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Mv_time""' of type '""double""'");
+    }
+    HFS::Mv_time = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Mv_time_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::Mv_time));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_full_diag_time_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::full_diag_time""' of type '""double""'");
+    }
+    HFS::full_diag_time = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_full_diag_time_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::full_diag_time));
+  return pyobj;
+}
+
+
 SWIGINTERN PyObject *_wrap_everything_works(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   bool result;
@@ -7870,6 +7354,25 @@ SWIGINTERN PyObject *_wrap_build_matrix(PyObject *SWIGUNUSEDPARM(self), PyObject
   {
     try {
       HFS::build_matrix();
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_time_mv(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)":time_mv")) SWIG_fail;
+  {
+    try {
+      HFS::time_mv();
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
@@ -8045,6 +7548,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"mv_is_working", _wrap_mv_is_working, METH_VARARGS, NULL},
 	 { (char *)"everything_works", _wrap_everything_works, METH_VARARGS, NULL},
 	 { (char *)"build_matrix", _wrap_build_matrix, METH_VARARGS, NULL},
+	 { (char *)"time_mv", _wrap_time_mv, METH_VARARGS, NULL},
 	 { (char *)"write_output", _wrap_write_output, METH_VARARGS, NULL},
 	 { (char *)"centerstring", _wrap_centerstring, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
@@ -8901,8 +8405,8 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"Nvir",Swig_var_Nvir_get, Swig_var_Nvir_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Nexc",Swig_var_Nexc_get, Swig_var_Nexc_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"N_elec",Swig_var_N_elec_get, Swig_var_N_elec_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"Nk",Swig_var_Nk_get, Swig_var_Nk_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"ndim",Swig_var_ndim_get, Swig_var_ndim_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Nk",Swig_var_Nk_get, Swig_var_Nk_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"occ_energies",Swig_var_occ_energies_get, Swig_var_occ_energies_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"vir_energies",Swig_var_vir_energies_get, Swig_var_vir_energies_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"exc_energies",Swig_var_exc_energies_get, Swig_var_exc_energies_set);
@@ -8921,8 +8425,16 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"num_guess_evecs",Swig_var_num_guess_evecs_get, Swig_var_num_guess_evecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_blocksize",Swig_var_Dav_blocksize_get, Swig_var_Dav_blocksize_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_Num_evals",Swig_var_Dav_Num_evals_get, Swig_var_Dav_Num_evals_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_tol",Swig_var_Dav_tol_get, Swig_var_Dav_tol_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_maxits",Swig_var_Dav_maxits_get, Swig_var_Dav_maxits_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_minits",Swig_var_Dav_minits_get, Swig_var_Dav_minits_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_maxsubsize",Swig_var_Dav_maxsubsize_get, Swig_var_Dav_maxsubsize_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_time",Swig_var_Dav_time_get, Swig_var_Dav_time_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"dav_iteration_timer",Swig_var_dav_iteration_timer_get, Swig_var_dav_iteration_timer_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"full_matrix",Swig_var_full_matrix_get, Swig_var_full_matrix_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"full_diag_min",Swig_var_full_diag_min_get, Swig_var_full_diag_min_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Mv_time",Swig_var_Mv_time_get, Swig_var_Mv_time_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"full_diag_time",Swig_var_full_diag_time_get, Swig_var_full_diag_time_set);
 #if PY_VERSION_HEX >= 0x03000000
   return m;
 #else

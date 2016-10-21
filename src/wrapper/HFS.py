@@ -95,8 +95,8 @@ def main():
     return _HFS.main()
 main = _HFS.main
 
-def main_(rs, Nk, ndim, num_guess_vecs, dav_blocksize, num_evals, outputfilename):
-    return _HFS.main_(rs, Nk, ndim, num_guess_vecs, dav_blocksize, num_evals, outputfilename)
+def main_(rs, Nk, ndim, num_guess_vecs, dav_blocksize, num_evals, minits, maxits, maxsubsize, tol, outputfilename):
+    return _HFS.main_(rs, Nk, ndim, num_guess_vecs, dav_blocksize, num_evals, minits, maxits, maxsubsize, tol, outputfilename)
 main_ = _HFS.main_
 
 _HFS.PI_swigconstant(_HFS)
@@ -221,12 +221,12 @@ def build_guess_evecs(N, which=0):
     return _HFS.build_guess_evecs(N, which)
 build_guess_evecs = _HFS.build_guess_evecs
 
-def davidson_wrapper(N, guess_evecs, block_size=1, which=0, num_of_roots=1, max_its=20, max_sub_size=1000, tolerance=10E-8):
-    return _HFS.davidson_wrapper(N, guess_evecs, block_size, which, num_of_roots, max_its, max_sub_size, tolerance)
+def davidson_wrapper(N, guess_evecs, block_size, which, num_of_roots, min_its, max_its, max_sub_size, tolerance):
+    return _HFS.davidson_wrapper(N, guess_evecs, block_size, which, num_of_roots, min_its, max_its, max_sub_size, tolerance)
 davidson_wrapper = _HFS.davidson_wrapper
 
-def davidson_algorithm(arg1, arg2, arg3, arg4, arg5, arg6, arg7, matrix, matvec_product):
-    return _HFS.davidson_algorithm(arg1, arg2, arg3, arg4, arg5, arg6, arg7, matrix, matvec_product)
+def davidson_algorithm(N, min_its, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance, matrix, matvec_product):
+    return _HFS.davidson_algorithm(N, min_its, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance, matrix, matvec_product)
 davidson_algorithm = _HFS.davidson_algorithm
 
 def davidson_agrees_fulldiag():
@@ -244,6 +244,10 @@ everything_works = _HFS.everything_works
 def build_matrix():
     return _HFS.build_matrix()
 build_matrix = _HFS.build_matrix
+
+def time_mv():
+    return _HFS.time_mv()
+time_mv = _HFS.time_mv
 
 def write_output(detail=False):
     return _HFS.write_output(detail)

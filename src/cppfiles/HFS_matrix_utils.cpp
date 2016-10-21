@@ -8,7 +8,7 @@ namespace HFS {
         arma::uword j =  HFS::excitations(t, 0);
         arma::uword b =  HFS::excitations(t, 1);
         arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        for (int idx = 0; idx < HFS::ndim; ++idx) {
+        for (unsigned idx = 0; idx < HFS::ndim; ++idx) {
             ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
             kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
@@ -23,7 +23,7 @@ namespace HFS {
         arma::uword j = HFS::excitations(t, 0);
         arma::uword b = HFS::excitations(t, 1);
         arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        for (int idx = 0; idx < ndim; ++idx) {
+        for (unsigned idx = 0; idx < ndim; ++idx) {
             ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
             kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
@@ -38,7 +38,7 @@ namespace HFS {
         arma::uword j = HFS::excitations(t, 0);
         arma::uword b = HFS::excitations(t, 1);
         arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        for (int idx = 0; idx < HFS::ndim; ++idx) {
+        for (unsigned idx = 0; idx < HFS::ndim; ++idx) {
             ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
             kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
@@ -59,7 +59,7 @@ namespace HFS {
         arma::uword b = HFS::excitations(t, 1);
 
         arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        for (int idx = 0; idx < HFS::ndim; ++idx) {
+        for (unsigned idx = 0; idx < HFS::ndim; ++idx) {
             ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
             kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));

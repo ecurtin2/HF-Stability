@@ -9,7 +9,7 @@ import os
 
 #################################################################################
 #                                                                               #
-#                      Parsing -> DataFrame Functions                           # 
+#                      Parsing -> DataFrame Functions                           #
 #                                                                               #
 #################################################################################
 
@@ -25,13 +25,42 @@ def str_to_float_or_int(s):
 def file_to_df(fname, idx):
     f = open(fname, 'r')
 
-    keys = ['Nk', 'ndim', 'rs', 'deltaK', 'kf', 'kmax', 
-            'Nocc', 'Nvir', 'Nexc', 'dav_its', 'Dav_Final_Val', 
-            'Davidson_Stopping_Criteria', 'full_diag_min', 'Total Elapsed Time', 
-            'num_guess_evecs','Dav_blocksize','Dav_Num_evals' ]
-    vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies',
-                  'Kgrid', 'All Davidson Eigenvalues at Last Iteration',
-                  'Davidson lowest eigenvalues at each iteration']
+    keys = [
+            'Computation Started'
+           ,'Computation Finished'
+           ,'Nk'
+           ,'ndim'
+           ,'rs'
+           ,'deltaK'
+           ,'kf'
+           ,'kmax'
+           ,'Nocc'
+           ,'Nvir'
+           ,'Nexc'
+           ,'dav_its'
+           ,'num_guess_evecs'
+           ,'Dav_blocksize'
+           ,'Dav_Num_evals'
+           ,'Dav_time'
+           ,'Mv_time'
+           ,'Davidson_Stopping_Criteria'
+           ,'Dav_Final_Val'
+           ,'full_diag_min'
+           ,'full_diag_time'
+           ,'Total Elapsed Time'
+           ,'Davidson Tolerance'
+           ,'Dav_minits'
+           ,'Dav_maxits'
+           ,'Dav_maxsubsize'
+           ]
+
+    vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies'
+                 ,'Kgrid'
+                 ,'All Davidson Eigenvalues at Last Iteration'
+                 ,'Davidson lowest eigenvalues at each iteration'
+                 ,'Davidson Times Per Iteration'
+                 ]
+
     matrixkeys = ['Occupied States', 'Virtual States', 'Excitations']
     allkeys = keys + vectorkeys + matrixkeys
 
@@ -42,8 +71,12 @@ def file_to_df(fname, idx):
     for lineno, line in enumerate(f):
         for key in keys:
             if (key + " =" in line):
-                str_value = line.split("=")[1]
+                str_value = line.split("=", 1)[1].rstrip('\n')
                 dic[key] = str_to_float_or_int(str_value)
+            if (key + " :" in line) or (key + ":" in line):
+                str_value = line.split(": ", 1)[1].rstrip('\n')
+                dic[key] = str_to_float_or_int(str_value)
+
         for key in vectorkeys:
             if (key in line):
                 begin = lineno
@@ -71,7 +104,7 @@ def file_to_df(fname, idx):
         cleanmat = np.asarray([[int(j) for j in i[0].split()] for i in cleanmat])
         dic[key] = cleanmat
 
-        
+
 
     cols = []
     data = []
@@ -101,7 +134,7 @@ def directory_to_df(dirname='log', ext='.log'):
 
 #################################################################################
 #                                                                               #
-#                         Analytic Energy Functions                             # 
+#                         Analytic Energy Functions                             #
 #                                                                               #
 #################################################################################
 
@@ -133,7 +166,7 @@ def analytic_energy(k):
 
 #################################################################################
 #                                                                               #
-#                          Plotting Functions                                   # 
+#                          Plotting Functions                                   #
 #                                                                               #
 #################################################################################
 
@@ -154,17 +187,17 @@ def subplt_shaper(N, shape):
         else:
             rows, cols = get_square_tuple(N)
     else:
-        rows, cols = shape        
+        rows, cols = shape
     return rows, cols
 
 def df_ApplyAxplotToRows(df, shape, axplot_func, *args, **kwargs):
     N = len(df)
-    rows, cols = subplt_shaper(N, shape)    
+    rows, cols = subplt_shaper(N, shape)
     fig, axes = plt.subplots(rows, cols)
     fig.set_size_inches(3*cols, 3*rows)
-    
+
     if N == 1:  # make into 1x1 ndarray to fit the rest of the stuff
-        axes = np.asarray([axes])  
+        axes = np.asarray([axes])
     for idx, ax in enumerate(axes.flatten()):
         if idx == N:
             for j in range(N, rows*cols):
@@ -177,10 +210,10 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     # Draw Shapes
     kmax = df.iloc[df_idx]['kmax']
     kf   = df.iloc[df_idx]['kf']
-    kgrid= df.iloc[df_idx]['Kgrid']    
-    vir_states = df.iloc[df_idx]['Virtual States']    
+    kgrid= df.iloc[df_idx]['Kgrid']
+    vir_states = df.iloc[df_idx]['Virtual States']
     occ_states = df.iloc[df_idx]['Occupied States']
-    
+
     circle = plt.Circle((0, 0), radius=kf, fc='none', linewidth=1)
     sqrpoints = [[kmax, kmax]
                 ,[kmax, -kmax]
@@ -198,11 +231,11 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     mask2 = np.where(np.logical_not(is_spec))
     active_virs = kgrid[vir_states[mask2]]
 
-    ax.scatter(kgrid[occ_states[:,0]], kgrid[occ_states[:,1]], 
+    ax.scatter(kgrid[occ_states[:,0]], kgrid[occ_states[:,1]],
                 c=sns.color_palette()[0], label='Occupied')
     ax.scatter(active_virs[:,0], active_virs[:,1],
                 c=sns.color_palette()[2], label='Virtual')
-    ax.scatter(spec_virs[:,0], spec_virs[:,1], 
+    ax.scatter(spec_virs[:,0], spec_virs[:,1],
                 c=sns.color_palette()[2], alpha=spec_alpha, label='Spectator Virtuals')
     ax.set_xlim(-scale*kmax, scale*kmax)
     ax.set_ylim(-scale*kmax, scale*kmax)

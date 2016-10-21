@@ -5,17 +5,31 @@
 
 int main(){
     double rs = 1.2;
-    int Nk = 10;
-    int ndim = 2;
-    int num_guess_evecs = 10;
-    int Dav_blocksize = 10;
-    int Dav_Num_evals = 5;
+    unsigned Nk = 14;
+    unsigned ndim = 2;
+    unsigned num_guess_evecs = 60;
+    unsigned Dav_blocksize = 20;
+    unsigned Dav_Num_evals = 6;
+    unsigned Dav_maxits = 30;
+    unsigned Dav_minits = 10;
+    unsigned Maxsubsize = 4000;
+    double tolerance = 1E-10;
     std::string outputfilename="test.log";
-    return main_(rs, Nk, ndim, num_guess_evecs, Dav_blocksize, Dav_Num_evals, outputfilename);
+    return main_(rs, Nk, ndim, num_guess_evecs, Dav_blocksize, Dav_Num_evals, Dav_minits, Dav_maxits, Maxsubsize, tolerance, outputfilename);
 }
 
 // The two mains thing is because of SWIG, so I can call main_() from python
-int main_(double rs, int Nk, int ndim, int num_guess_vecs, int dav_blocksize, int num_evals, std::string outputfilename)
+int main_(double rs
+         ,unsigned Nk
+         ,unsigned ndim
+         ,unsigned num_guess_vecs
+         ,unsigned dav_blocksize
+         ,unsigned num_evals
+         ,unsigned minits
+         ,unsigned maxits
+         ,unsigned maxsubsize
+         ,double tol
+         ,std::string outputfilename)
 {
 
     // Start the timers
@@ -33,20 +47,32 @@ int main_(double rs, int Nk, int ndim, int num_guess_vecs, int dav_blocksize, in
     HFS::OutputFileName = outputfilename;
     HFS::calc_params();
 
-    if (Nk < 30) {
-        HFS::davidson_agrees_fulldiag();
-    }
-
+    HFS::Dav_tol = tol;
+    HFS::Dav_minits = minits;
+    HFS::Dav_maxits = maxits;
+    HFS::Dav_maxsubsize = maxsubsize;
     HFS::num_guess_evecs = num_guess_vecs;
     HFS::Dav_blocksize = dav_blocksize;
     HFS::Dav_Num_evals = num_evals;
 
     HFS::build_guess_evecs(HFS::num_guess_evecs);
-    HFS::davidson_wrapper(2*HFS::Nexc, HFS::guess_evecs, HFS::Dav_blocksize,
-                          0,                // which
-                          HFS::Dav_Num_evals);
+    HFS::davidson_wrapper(2*HFS::Nexc
+                          ,HFS::guess_evecs
+                          ,HFS::Dav_blocksize
+                          ,0
+                          ,HFS::Dav_Num_evals
+                          ,HFS::Dav_minits
+                          ,HFS::Dav_maxits
+                          ,HFS::Dav_maxsubsize
+                          ,HFS::Dav_tol);
 
+
+    if (Nk < 31) {
+        HFS::davidson_agrees_fulldiag();
+    }
     HFS::Total_Calculation_Time = timer.toc();
+
+    HFS::time_mv();
 
     const char* fname = HFS::OutputFileName.c_str();
     freopen(fname, "w", stdout);

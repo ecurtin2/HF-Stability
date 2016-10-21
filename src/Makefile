@@ -23,10 +23,10 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 Debug: CFLAGS +=-g -o0
 Debug: $(TARGET)
 
-Profile: CFLAGS +=-pg -O3 -ffast-math -D ARMA_NO_DEBUG -D NDEBUG
+Profile: CFLAGS +=-pg -O3  -D ARMA_NO_DEBUG -D NDEBUG
 Profile:  $(TARGET)
 
-Release: CFLAGS +=-O3 -ffast-math -D ARMA_NO_DEBUG -D NDEBUG
+Release: CFLAGS +=-O3  -D ARMA_NO_DEBUG -D NDEBUG
 Release: $(TARGET)
 
 .PHONY: depend clean

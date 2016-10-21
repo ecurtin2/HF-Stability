@@ -105,7 +105,7 @@ namespace HFS {
         energy_vec.set_size(num_inp_states);
         energy_vec.fill(0.0);
         for (arma::uword i = 0; i < num_inp_states; ++i) {
-            for (int j = 0; j < HFS::ndim; ++j) {
+            for (unsigned j = 0; j < HFS::ndim; ++j) {
                 energy_vec(i) += HFS::kgrid(inp_states(i,j)) * HFS::kgrid(inp_states(i,j));
             }
             energy_vec[i] /= 2.0; //Is now filled with kinetic energy

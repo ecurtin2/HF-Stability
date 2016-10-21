@@ -11,14 +11,43 @@ namespace HFS{
     extern std::string Davidson_Stopping_Criteria;
     extern arma::vec dav_vals, dav_lowest_vals;
     extern arma::mat dav_vecs;
-    extern int dav_its;
-    extern int num_guess_evecs;
-    extern int Dav_blocksize;
-    extern int Dav_Num_evals;
+    extern unsigned dav_its;
+    extern unsigned num_guess_evecs;
+    extern unsigned Dav_blocksize;
+    extern unsigned Dav_Num_evals;
+    extern double Dav_tol;
+    extern unsigned Dav_maxits;
+    extern unsigned Dav_minits;
+    extern unsigned Dav_maxsubsize;
     extern double Dav_time;
+    extern arma::vec dav_iteration_timer;
     extern void build_guess_evecs (int N, int which=0);
-    extern void davidson_wrapper(arma::uword N, arma::mat guess_evecs, arma::uword block_size=1, int which=0, arma::uword num_of_roots=1, arma::uword max_its=20, arma::uword max_sub_size=1000, double tolerance=10E-8);
-    extern void davidson_algorithm(arma::uword,arma::uword, arma::uword, arma::uword, arma::uword, arma::mat&, double, double (*matrix)(arma::uword, arma::uword), arma::vec (*matvec_product)(arma::vec& v));
+
+    extern void davidson_wrapper(arma::uword N
+                         ,arma::mat   guess_evecs
+                         ,unsigned  block_size
+                         ,unsigned  which
+                         ,unsigned  num_of_roots
+                         ,unsigned  min_its
+                         ,unsigned  max_its
+                         ,unsigned  max_sub_size
+                         ,double    tolerance
+                         );
+
+    extern void davidson_algorithm(arma::uword N
+                           ,unsigned min_its
+                           ,unsigned max_its
+                           ,unsigned max_sub_size
+                           ,unsigned num_of_roots
+                           ,unsigned block_size
+                           ,arma::mat&  guess_evecs
+                           ,double      tolerance
+                           ,double      (*matrix)(arma::uword, arma::uword)
+                           ,arma::vec   (*matvec_product)(arma::vec& v)
+                           );
+
+
+
 }
 
 #endif // HFS_davidson_included

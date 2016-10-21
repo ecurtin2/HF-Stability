@@ -64,13 +64,22 @@ namespace HFS {
         PRINTVAL(Dav_blocksize)
         PRINTVAL(Dav_Num_evals)
         PRINTVAL(Dav_time)
+        PRINTVAL(Mv_time)
+
+        std::cout.precision(2);
+        std::cout << "Davidson Tolerance = " << std::scientific << Dav_tol << std::fixed << std::endl;
+        std::cout.precision(__DBL_DIG__);
+        PRINTVAL(Dav_minits)
+        PRINTVAL(Dav_maxits)
+        PRINTVAL(Dav_maxsubsize)
 
         PRINTVAL(Davidson_Stopping_Criteria)
         assert (HFS::everything_works());
         double Dav_Final_Val = dav_lowest_vals(dav_lowest_vals.size() - 1);
         PRINTVAL(Dav_Final_Val)
-        if (Nk < 30){
+        if (Nk < 31){
             PRINTVAL(full_diag_min)
+            PRINTVAL(full_diag_time)
         }
 
         ENDSECTION("Output")
@@ -83,6 +92,7 @@ namespace HFS {
             std::cout << "Kgrid: " << kgrid.n_rows << std::endl; kgrid.raw_print();
             std::cout << "All Davidson Eigenvalues at Last Iteration: " << dav_vals.n_rows << std::endl; dav_vals.raw_print();
             std::cout << "Davidson lowest eigenvalues at each iteration: " << dav_lowest_vals.n_rows << std::endl; dav_lowest_vals.raw_print();
+            std::cout << "Davidson Times Per Iteration: " << dav_iteration_timer.n_rows << std::endl; dav_iteration_timer.raw_print();
             ENDSECTION("Vectors")
 
             SECTION("Matrices")

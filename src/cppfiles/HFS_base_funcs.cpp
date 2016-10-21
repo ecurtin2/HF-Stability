@@ -6,11 +6,11 @@ namespace HFS {
 
         double exch = 0.0;
         arma::vec ki(ndim), k2(ndim);
-        for (int j = 0; j < HFS::ndim; ++j) {
+        for (unsigned j = 0; j < HFS::ndim; ++j) {
             ki(j) = HFS::kgrid(inp_states(i, j));
         }
         for (arma::uword k = 0; k < HFS::Nocc; ++k) {
-            for (int j = 0; j < HFS::ndim; ++j) {
+            for (unsigned j = 0; j < HFS::ndim; ++j) {
                 k2(j) = HFS::kgrid(HFS::occ_states(k, j));
             }
             exch += HFS::two_electron(ki, k2);
@@ -26,7 +26,7 @@ namespace HFS {
 
         HFS::to_first_BZ(k);
         norm = arma::norm(k);
-        if (norm < 10E-10) {
+        if (norm < SMALLNUMBER) {
             return 0.0;
         }else{
             return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
@@ -62,7 +62,7 @@ namespace HFS {
         // Translate to first brillioun zone, defined on the
         // interval [-pi/a .. pi/a)
 
-        for (int i = 0; i < HFS::ndim; ++i) {
+        for (unsigned i = 0; i < HFS::ndim; ++i) {
             if (k[i] < -HFS::kmax - SMALLNUMBER) {
                 k[i] += HFS::bzone_length;
             }else if (k[i] > HFS::kmax - SMALLNUMBER) {
@@ -89,7 +89,7 @@ namespace HFS {
 
     arma::vec occ_idx_to_k(arma::uword idx) {
         arma::vec k(HFS::ndim);
-        for (int i = 0; i < HFS::ndim; ++i) {
+        for (unsigned i = 0; i < HFS::ndim; ++i) {
             k[i] = HFS::kgrid(HFS::occ_states(idx, i));
         }
         return k;
@@ -97,7 +97,7 @@ namespace HFS {
 
     arma::vec vir_idx_to_k(arma::uword idx) {
         arma::vec k(HFS::ndim);
-        for (int i=0; i < HFS::ndim; ++i) {
+        for (unsigned i=0; i < HFS::ndim; ++i) {
             k[i] = HFS::kgrid(vir_states(idx, i));
         }
         return k;
