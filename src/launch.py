@@ -17,7 +17,7 @@ def get_fname(rs, Nk, ndim):
     return fname
 
 
-Nkrange = range(10,35)
+Nkrange = range(10,250)
 rs = 1.2
 ndim = 2
 Nk = 24

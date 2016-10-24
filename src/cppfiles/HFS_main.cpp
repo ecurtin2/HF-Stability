@@ -59,8 +59,8 @@ int main_(double rs
     HFS::Dav_Num_evals = num_evals;
 
     //HFS::num_guess_evecs = HFS::ground_state_degeneracy * 5;
-    HFS::Dav_Num_evals = HFS::ground_state_degeneracy;
-    HFS::Dav_blocksize = 20;
+    //HFS::Dav_Num_evals = HFS::ground_state_degeneracy;
+    //HFS::Dav_blocksize = 20;
     HFS::build_guess_evecs(HFS::num_guess_evecs);
     HFS::davidson_wrapper(2*HFS::Nexc
                           ,HFS::guess_evecs
