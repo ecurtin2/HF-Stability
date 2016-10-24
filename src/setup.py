@@ -17,7 +17,7 @@ obj_files = []
 for file in os.listdir(cpp_build_dir):
     if file.endswith(".o"):
         obj_files.append(cpp_build_dir + '/' + file)
-        
+
 swigops = ['-c++', '-ignoremissing','-w509']
 
 # Don't touch this if you're not 100% sure
@@ -28,13 +28,13 @@ check_unused_variables = False
 debug = False
 optimize = False
 my_libraries = ['armadillo', 'tcl']
-compile_opts = ['-O3', '-ffast-math', '-std=c++11']
+compile_opts = ['-O3', '-ffast-math', '-std=c++11', '-larmadillo']
 
 
 ################################################################################
 #                                                                              #
 #                DONT CHANGE BELOW UNLESS YOU KNOW WHAT'S UP                   #
-#                                                                              #        
+#                                                                              #
 ################################################################################
 
 if not check_unused_variables:
@@ -49,12 +49,12 @@ for key, value in cfg_vars.items():
     if type(value) == str:
         cfg_vars[key] = value.replace("-Wstrict-prototypes", "")
 
-modules=[Extension('_'+modulename 
-                  ,sourcefiles 
+modules=[Extension('_'+modulename
+                  ,sourcefiles
                   ,extra_compile_args=compile_opts
                   ,language='c++'
                   ,libraries=my_libraries
                   ,swig_opts=swigops
                   ,extra_objects=obj_files
-                  )] 
+                  )]
 setup(name=modulename, ext_modules=modules, py_modules=[modulename])

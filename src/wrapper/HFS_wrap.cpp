@@ -6988,6 +6988,63 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_mod_gram_schmidt(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  arma::vec *arg1 = 0 ;
+  arma::mat *arg2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:mod_gram_schmidt",&obj0,&obj1)) SWIG_fail;
+  {
+    if( ! armanpy_basic_typecheck< arma::vec >( obj0, true, true )            ) {
+      PyErr_SetString( PyExc_RuntimeError, "Argument not a valid armadillo matrix" ); SWIG_fail; 
+    }
+    if( ! armanpy_numpy_as_vec_with_shared_memory< arma::vec >( obj0, &(arg1) ) ) {
+      PyErr_SetString( PyExc_RuntimeError, "Numpy array can not be wrapped as armadillo vector" ); SWIG_fail; 
+    }
+  }
+  {
+    if( ! armanpy_basic_typecheck< arma::mat >( obj1, true, true )            ) {
+      PyErr_SetString( PyExc_RuntimeError, "Argument not a valid armadillo matrix" ); SWIG_fail; 
+    }
+    if( ! armanpy_numpy_as_mat_with_shared_memory< arma::mat >( obj1, &(arg2) ) ) {
+      PyErr_SetString( PyExc_RuntimeError, "Numpy array can not be wrapped as armadillo matrix" ); SWIG_fail; 
+    }
+  }
+  {
+    try {
+      HFS::mod_gram_schmidt(*arg1,*arg2);
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  {
+    armanpy_vec_as_numpy_with_shared_memory( arg1, obj0 );
+  }
+  {
+    armanpy_mat_as_numpy_with_shared_memory( arg2, obj1 );
+  }
+  {
+    // NOOP
+  }
+  {
+    // NOOP
+  }
+  return resultobj;
+fail:
+  {
+    // NOOP
+  }
+  {
+    // NOOP
+  }
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_davidson_wrapper(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   arma::uword arg1 ;
@@ -7585,6 +7642,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"calc_3H", _wrap_calc_3H, METH_VARARGS, NULL},
 	 { (char *)"kb_j_to_t", _wrap_kb_j_to_t, METH_VARARGS, NULL},
 	 { (char *)"build_guess_evecs", _wrap_build_guess_evecs, METH_VARARGS, NULL},
+	 { (char *)"mod_gram_schmidt", _wrap_mod_gram_schmidt, METH_VARARGS, NULL},
 	 { (char *)"davidson_wrapper", _wrap_davidson_wrapper, METH_VARARGS, NULL},
 	 { (char *)"davidson_algorithm", _wrap_davidson_algorithm, METH_VARARGS, NULL},
 	 { (char *)"davidson_agrees_fulldiag", _wrap_davidson_agrees_fulldiag, METH_VARARGS, NULL},

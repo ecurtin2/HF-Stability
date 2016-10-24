@@ -23,6 +23,7 @@ namespace HFS{
     extern arma::vec dav_iteration_timer;
     extern void build_guess_evecs (int N, int which=0);
 
+    extern void mod_gram_schmidt(arma::vec& v, arma::mat& V);
     extern void davidson_wrapper(arma::uword N
                          ,arma::mat   guess_evecs
                          ,unsigned  block_size

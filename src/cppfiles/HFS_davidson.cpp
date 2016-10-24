@@ -16,6 +16,18 @@ namespace HFS {
     unsigned Dav_maxits;
     unsigned Dav_maxsubsize;
 
+
+    void mod_gram_schmidt(arma::vec& v, arma::mat& matrix){
+        // orthogonalize vector to columns of matrix
+        v /= arma::norm(v);
+        for (arma::uword i = 0; i < matrix.n_cols; ++i) {
+            v -= arma::dot(matrix.col(i).t(), v) * matrix.col(i);
+        }
+        v /= arma::norm(v);
+    }
+
+
+
     void davidson_wrapper(arma::uword N
                          ,arma::mat   guess_evecs
                          ,unsigned block_size
@@ -64,6 +76,12 @@ namespace HFS {
         dav_iteration_timer.set_size(max_its);
         dav_lowest_vals.set_size(max_its);
 
+        unsigned nconv = 0;  // number of converged eigenpairs
+
+
+        //      #define DEFLATE
+        #define OLD
+
         arma::vec diagonals(N);
         arma::vec ones(N, arma::fill::ones);
 
@@ -93,16 +111,18 @@ namespace HFS {
             arma::vec sub_evals;
             arma::mat sub_evecs;
             arma::eig_sym(sub_evals, sub_evecs, sub_mat);
+            arma::mat Qsub, Rsub;
+            arma::qr(Qsub, Rsub, sub_evecs);
+            sub_evecs = Qsub;
 
             //sort eigenvals, vecs by value
             arma::uvec indices = arma::sort_index(sub_evals);
             sub_evecs = sub_evecs.cols(indices);
             sub_evals = sub_evals.elem(indices);
 
-            //old_evecs = sub_evecs;
             ritz_vecs = guess_evecs * sub_evecs;
             /*Current implementation is the Diagonally Preconditioned Residue (DPR) method.
-              As far as I know right now, this is the original method propossed by Davidson
+              This is the original method proposed by Davidson
               Apparently, sometimes people simply call this the Davidson method. */
 
             //Get the res and append to subspace if needed.
@@ -110,7 +130,7 @@ namespace HFS {
             old_sub_size = sub_size;
             arma::vec norms(num_of_roots, arma::fill::zeros);
 
-            for (arma::uword j = 0; j < block_size; ++j){
+            for (arma::uword j = nconv; j < block_size; ++j){
                 arma::vec ritz_vec = ritz_vecs.col(j);
                 double rayq = arma::dot(ritz_vec.t(), matvec_product(ritz_vec)); // rayleigh quotient
 
@@ -123,28 +143,31 @@ namespace HFS {
                     if (j < num_of_roots) {
                         norms(j) = norm;
                     }
-
                     if (norm > tolerance) {
                         arma::vec c = 1.0 / ((rayq * ones) - diagonals);
                         arma::vec corr = c % res; // elementwise multiply
-                        corr /= arma::norm(corr);
+                        HFS::mod_gram_schmidt(corr, guess_evecs);
                         guess_evecs = arma::join_rows(guess_evecs, corr);
                         sub_size += 1;
                     }
                 }
             }
 
+
+            guess_evecs.print("guess");
             //Make sure the new guess space is orthonormal
-            arma::mat Q, R;
-            arma::qr_econ(Q, R, guess_evecs);
+            //arma::mat Q, R;
+            //arma::qr_econ(Q, R, guess_evecs);
             //Enforce sums of elements of eigenvector matrix are positive
             //with no loss of generality.
-            for (arma::uword i = 0; i < Q.n_cols; ++i) {
-                if (arma::sum(Q.col(i)) < 0.0) {
-                    Q.col(i) = -1.0 * Q.col(i);
-                }
-            }
-            guess_evecs = Q;
+            //for (arma::uword i = 0; i < Q.n_cols; ++i) {
+            //    if (Q(i,i) < 0.0) {
+            //        Q.col(i) = -1.0 * Q.col(i);
+            //    }
+            //}
+            //Q.print("Q");
+            //guess_evecs = Q;
+
 
             HFS::dav_vecs =  guess_evecs;
             for (arma::uword index = 0; index < num_of_roots; ++index){

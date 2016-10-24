@@ -225,6 +225,10 @@ def build_guess_evecs(N, which=0):
     return _HFS.build_guess_evecs(N, which)
 build_guess_evecs = _HFS.build_guess_evecs
 
+def mod_gram_schmidt(v, V):
+    return _HFS.mod_gram_schmidt(v, V)
+mod_gram_schmidt = _HFS.mod_gram_schmidt
+
 def davidson_wrapper(N, guess_evecs, block_size, which, num_of_roots, min_its, max_its, max_sub_size, tolerance):
     return _HFS.davidson_wrapper(N, guess_evecs, block_size, which, num_of_roots, min_its, max_its, max_sub_size, tolerance)
 davidson_wrapper = _HFS.davidson_wrapper
