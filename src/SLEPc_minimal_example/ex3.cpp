@@ -78,8 +78,32 @@ int main(int argc,char **argv)
     ierr = EPSSetProblemType(eps,EPS_HEP);  // Hermitian eigenvalue?
     CHKERRQ(ierr);
 
-    ierr = EPSSetFromOptions(eps); // Setting solver params at runtime
+    ierr = EPSSetWhichEigenpairs(eps, EPS_SMALLEST_REAL);  // Set default searchign
     CHKERRQ(ierr);
+
+    ierr = EPSSetType(eps, EPSJD); // Set default solver to Jacobi-Davidson
+    CHKERRQ(ierr);
+
+    int num_evals = 5;
+    int max_subspace_size = 50;
+    ierr = EPSSetDimensions(eps, num_evals, max_subspace_size, PETSC_DEFAULT); // set defaults, the last arg, mpd is a max
+    CHKERRQ(ierr);
+                                                                               // projected dimension and is needed for 
+                                                                               // solving many eigenpairs. 
+
+    int blocksize = 5;
+    ierr = EPSJDSetBlockSize(eps, blocksize);
+
+    ierr = EPSSetFromOptions(eps); // Setting solver params at runtime (overrides what came before)
+    CHKERRQ(ierr);
+
+    Vec x;
+    Vec vecs[2];
+    MatCreateVecs(A, &x, NULL);
+    VecSet(x, 1.0);
+    vecs[0] = x;
+    vecs[1] = x;
+    EPSSetInitialSpace(eps, 2, vecs);
 
     ierr = EPSSolve(eps); // Solve the eigensystem
     CHKERRQ(ierr);
@@ -122,7 +146,6 @@ int main(int argc,char **argv)
     ierr = SlepcFinalize();
     return ierr;
 }
-
 
 void myarma_Matvec_Prodec(arma::vec& v, arma::vec& Mv) {
     arma::uword N = v.n_elem;
