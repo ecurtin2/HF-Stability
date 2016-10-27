@@ -9,11 +9,12 @@ static char help[] = "Solves the same eigenproblem as in example ex2, but using 
 #include <armadillo>
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 
 PetscErrorCode Petsc_MatVecProd(Mat A, Vec x, Vec y);
-arma::uword nmat = 100;
-arma::mat mymat(nmat, nmat);
+arma::uword nmat;
+arma::mat mymat;
 
 #undef __FUNCT__
 #define __FUNCT__ "main"
@@ -23,9 +24,14 @@ int main(int argc,char **argv)
     EPS            eps;             /* eigenproblem solver context */
     EPSType        type;
     PetscMPIInt    size;
-    PetscInt       N, n=nmat, nev;
     PetscBool      terse;
     PetscErrorCode ierr;
+
+    std::cout << "Enter nmat:" << std::endl;
+    std::cin >> nmat;
+    mymat.set_size(nmat, nmat);
+    PetscInt       N, n=nmat, nev;
+    N = n;
 
     SlepcInitialize(&argc,&argv,(char*)0,help);
     ierr = MPI_Comm_size(PETSC_COMM_WORLD, &size);
@@ -34,7 +40,6 @@ int main(int argc,char **argv)
 
     ierr = PetscOptionsGetInt(NULL, NULL, "-n", &n, NULL);
     CHKERRQ(ierr);
-    N = n;
     ierr = PetscPrintf(PETSC_COMM_WORLD,"\nTesting SLEPC Interfaced with armadillo matrix-vector product, N=%D \n\n", N);
     CHKERRQ(ierr);
 
@@ -60,7 +65,7 @@ int main(int argc,char **argv)
             if (i == j) {
                 mymat(i, j) = i+1;
             } else {
-                mymat(i,j) = 0.0001;
+                mymat(i,j) = 0.0000001;
             }
         }
     }
@@ -68,42 +73,55 @@ int main(int argc,char **argv)
     arma::vec eigvals;
 
     arma::eig_sym(eigvals, eigvecs, mymat);
-    std::cout << "exact min = " << std::setprecision(10) << eigvals.min() << std::endl;
+    arma::vec sortvals = arma::sort(eigvals);
 
-    ierr = EPSCreate(PETSC_COMM_WORLD,&eps); // create eigensolver context
+    sortvals.head(5).print("Actual evals");
+
+
+    ierr = EPSCreate(PETSC_COMM_WORLD, &eps); // create eigensolver context
     CHKERRQ(ierr);
 
-    ierr = EPSSetOperators(eps,A,NULL); // Set Operators, null = non-general eigevalue problem
+    ierr = EPSSetOperators(eps, A, NULL); // Set Operators, null = non-general eigevalue problem
     CHKERRQ(ierr);
-    ierr = EPSSetProblemType(eps,EPS_HEP);  // Hermitian eigenvalue?
+    ierr = EPSSetProblemType(eps, EPS_HEP);  // Hermitian eigenvalue?
     CHKERRQ(ierr);
 
-    ierr = EPSSetWhichEigenpairs(eps, EPS_SMALLEST_REAL);  // Set default searchign
+    ierr = EPSSetWhichEigenpairs(eps, EPS_SMALLEST_REAL);  // Set default searching
     CHKERRQ(ierr);
 
     ierr = EPSSetType(eps, EPSJD); // Set default solver to Jacobi-Davidson
     CHKERRQ(ierr);
 
     int num_evals = 5;
-    int max_subspace_size = 50;
+    int max_subspace_size = 1000;
     ierr = EPSSetDimensions(eps, num_evals, max_subspace_size, PETSC_DEFAULT); // set defaults, the last arg, mpd is a max
     CHKERRQ(ierr);
                                                                                // projected dimension and is needed for 
                                                                                // solving many eigenpairs. 
-
     int blocksize = 5;
     ierr = EPSJDSetBlockSize(eps, blocksize);
+    CHKERRQ(ierr);
 
     ierr = EPSSetFromOptions(eps); // Setting solver params at runtime (overrides what came before)
     CHKERRQ(ierr);
 
-    Vec x;
-    Vec vecs[2];
-    MatCreateVecs(A, &x, NULL);
-    VecSet(x, 1.0);
-    vecs[0] = x;
-    vecs[1] = x;
-    EPSSetInitialSpace(eps, 2, vecs);
+
+    int nguess = 5;
+
+    std::vector<Vec> svecs(nguess);
+    std::vector<Vec*> vecpoints(nguess);
+    for (int i = 0; i < nguess; ++i) {
+        MatCreateVecs(A, &svecs[i], NULL);
+        VecSet(svecs[i], 0.0); 
+        VecSetValue(svecs[i], i, 1.0, INSERT_VALUES);
+        vecpoints[i] = &svecs[i];
+    }
+
+
+
+    //ierr = EPSSetInitialSpace(eps, nguess, *vecpoints.begin());
+    CHKERRQ(ierr);
+
 
     ierr = EPSSolve(eps); // Solve the eigensystem
     CHKERRQ(ierr);
@@ -148,19 +166,10 @@ int main(int argc,char **argv)
 }
 
 void myarma_Matvec_Prodec(arma::vec& v, arma::vec& Mv) {
-    arma::uword N = v.n_elem;
-
-    for (arma::uword j = 0; j < N; ++j) {
-        double sum = 0.0;
-        for (arma::uword i = 0; i < N; ++i) {
-            sum += mymat(j, i) * v(i);
-        }
-        Mv(j) = sum;
-    }
-    arma::vec Mv2 = mymat * v;
+    Mv = mymat * v;
 }
 
-static void My_Matvec_Prod(int nx, const PetscReal* x, PetscReal* y)
+void My_Matvec_Prod(int nx, const PetscReal* x, PetscReal* y)
 {
     double* v = (double*) x; 
     double* Mv = (double*) y; 
