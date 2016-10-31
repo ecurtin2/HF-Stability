@@ -9,6 +9,7 @@ namespace HFS{
     extern arma::vec matvec_prod_3A(arma::vec&);
     extern arma::vec matvec_prod_3B(arma::vec&);
     extern arma::vec matvec_prod_3H(arma::vec&);
+    extern void void_matvec_prod_3H(arma::vec& v, arma::vec&Mv);
     extern double calc_1B(arma::uword, arma::uword);
     extern double calc_3B(arma::uword, arma::uword);
     extern double calc_1A(arma::uword, arma::uword);

@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <vector>
 #include "SLEPcWrapper.h"
+#include <cstdio>
 
 arma::mat mymat;
 
@@ -50,10 +51,17 @@ int main(int argc, char **argv){
     
     SLEPc::EpS myeps(argc, argv, N, myarma_Matvec_Prodec);
     myeps.SetDimensions(num_evals, max_subspace_size);
+    myeps.SetTol(1E-8);
     myeps.SetBlockSize(blocksize);
     myeps.SetInitialSpace(vecs);
     myeps.Solve();
-    myeps.print();
+    myeps.PrintEvals();
+   // myeps.PrintEvecs();
+    printf("# of Values Requested: %i\n", myeps.Nevals);
+    printf("# of Values Converged: %i\n", myeps.nconv);
+    printf("Blocksize: %i\n", myeps.BlockSize);
+    printf("Number of guesses: %i\n", myeps.nguess);
+    printf("Tolerance: %8.3E\n", myeps.tol);
     myeps.clean();
     return 0;
 }

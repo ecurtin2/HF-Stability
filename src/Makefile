@@ -12,8 +12,13 @@ SRCDIR = cppfiles
 SRCEXT = cpp
 BUILDDIR = build
 TARGET = HFS
-CFLAGS = -Wall -std=c++11 -fPIC
-LIB = -larmadillo
+LIB = -larmadillo #-L/usr/lib64 -lstdc++ -L/lib/x86_64-linux-gnu/ -lm
+LOCDIR = home/evan/git/HF-Stability/
+MANSEC = EPS
+include ${SLEPC_DIR}/lib/slepc/conf/slepc_common
+CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
+DATAPATH = ${SLEPC_DIR}/share/slepc/datafiles/matrices
+INC = -I${SLEPC_DIR}/include/ -I${SLEPC_DIR}/${SLEPC_ARCH}/include/ -I${PETSC_DIR}/include
 
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
@@ -26,21 +31,21 @@ Debug: $(TARGET)
 Profile: CFLAGS +=-pg -O3  -D ARMA_NO_DEBUG -D NDEBUG
 Profile:  $(TARGET)
 
-Release: CFLAGS +=-O3  -D ARMA_NO_DEBUG -D NDEBUG
+Release: CFLAGS +=-O1  -D ARMA_NO_DEBUG -D NDEBUG -fno-strict-aliasing
 Release: $(TARGET)
 
 .PHONY: depend clean
 
 $(TARGET): $(OBJECTS)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB)"; $(CC) $^ -o $(TARGET) $(LIB)
+	@echo " $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB}"; $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB}
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
-clean:
-	@echo " Cleaning...";
+clean::
+	@echo " Cleaning..."
 	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET)
 
 

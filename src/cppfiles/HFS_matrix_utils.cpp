@@ -160,6 +160,21 @@ namespace HFS {
         return Mv;
     }
 
+    void void_matvec_prod_3H(arma::vec& v, arma::vec&Mv) {
+        /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
+                                             | B* A*| |v2|     | Mv2 |
+            Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
+            Mv1 = A*v1 + B*v2
+            Mv2 = B*v1 + A*v2
+        */
+        arma::vec v1 = v.head(HFS::Nexc);
+        arma::vec v2 = v.tail(HFS::Nexc);
+
+        arma::vec Mv1 = HFS::matvec_prod_3A(v1) + HFS::matvec_prod_3B(v2);
+        arma::vec Mv2 = HFS::matvec_prod_3B(v1) + HFS::matvec_prod_3A(v2);
+        Mv = arma::join_cols(Mv1, Mv2);
+    }
+
     arma::uword kb_j_to_t(arma::vec& kb, arma::uword j) {
         arma::uvec b_N_idx =  k_to_index(kb);
         arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
