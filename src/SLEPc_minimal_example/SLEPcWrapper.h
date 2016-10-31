@@ -7,12 +7,14 @@ namespace SLEPc {
     void (*matvec_product)(arma::vec&, arma::vec&);
     class EpS {
         public:
-            PetscErrorCode ierr;
-            EPS            eps; 
-            EPSType        eps_type;
-            PetscMPIInt    size;
-            Mat            matrix;
-            PetscInt       N;
+            PetscErrorCode                     ierr;
+            EPS                                eps; 
+            EPSType                            eps_type;
+            PetscMPIInt                        size;
+            Mat                                matrix;
+            PetscInt                           N, nconv;
+            std::vector<double>                iVals, rVals;
+            std::vector< std::vector<double> > iVecs, rVecs;
 
 
             EpS(int argc, char **argv, PetscInt N, void (*matvec_product)(arma::vec&, arma::vec&)) {
@@ -100,8 +102,41 @@ namespace SLEPc {
             PetscErrorCode Solve() {
                 ierr = EPSSetFromOptions(eps); CHKERRQ(ierr);
                 ierr = EPSSolve(eps); CHKERRQ(ierr);
+                std::cout << "Solved" << std::endl;
+                
+                // Retrieve Solutions
+                ierr = EPSGetConverged(eps, &nconv); CHKERRQ(ierr);
+                rVals.resize(nconv, 0.0);
+                iVals.resize(nconv, 0.0);
+                rVecs.resize(nconv);
+                iVecs.resize(nconv);
+
+                std::vector<PetscInt> indices(N); 
+                for (int i = 0; i < N; ++i) {
+                    indices[i] = i;
+                }
+
+                for (int i = 0; i < nconv; ++i) {
+                    // Initialize inputs to GetEigenPair
+                    PetscScalar rVal, iVal;
+                    Vec PetscrVec, PetsciVec;
+                    MatCreateVecs(matrix, &PetscrVec, NULL);
+                    VecSet(PetscrVec, 0.0); 
+                    MatCreateVecs(matrix, &PetsciVec, NULL);
+                    VecSet(PetsciVec, 0.0); 
+                    ierr = EPSGetEigenpair(eps, i, &rVal, &iVal, PetscrVec, PetsciVec); CHKERRQ(ierr);
+
+                    // Store everything in a std::vector
+                    iVals[i] = iVal;
+                    rVals[i] = rVal;
+                    iVecs[i].resize(N, 0.0);
+                    rVecs[i].resize(N, 0.0);
+                    ierr = VecGetValues(PetscrVec, N, &indices[0], &rVecs[i][0]);
+                    ierr = VecGetValues(PetsciVec, N, &indices[0], &iVecs[i][0]);
+                }
                 return ierr;
             }
+
 
             PetscErrorCode print(){
                 ierr = PetscViewerPushFormat(PETSC_VIEWER_STDOUT_WORLD, PETSC_VIEWER_ASCII_INFO_DETAIL);    CHKERRQ(ierr);

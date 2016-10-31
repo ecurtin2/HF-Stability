@@ -26,10 +26,6 @@ DATAPATH = ${SLEPC_DIR}/share/slepc/datafiles/matrices
 
 include ${SLEPC_DIR}/lib/slepc/conf/slepc_common
 
-ex1: ex1.o chkopts
-	-${CLINKER} -o ex1 ex1.o ${SLEPC_EPS_LIB}
-	${RM} ex1.o
-
-ex3: ex3.o chkopts
+ex3: ex3.o 
 	-${CLINKER} -o ex3 ex3.o -O3 -larmadillo ${SLEPC_EPS_LIB}
 	${RM} ex3.o
