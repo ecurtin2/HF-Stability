@@ -10,7 +10,7 @@
 #include "armadillo"
 
 namespace HFS {
-    extern double  bzone_length, vol, rs, kf, kmax, fermi_energy;
+    extern double  bzone_length, vol, rs, kf, kmax, fermi_energy, cond_number;
     extern double  two_e_const, deltaK, Total_Calculation_Time;
     extern std::string Computation_Starttime;
     extern std::string OutputFileName;

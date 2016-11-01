@@ -1,7 +1,7 @@
 #include "HFS_params.hpp"
 
 namespace HFS{
-    double  bzone_length, vol, rs, kf, kmax, fermi_energy;
+    double  bzone_length, vol, rs, kf, kmax, fermi_energy, cond_number;
     double  two_e_const, deltaK, Total_Calculation_Time;
     std::string Computation_Starttime;
     std::string OutputFileName;

@@ -197,6 +197,10 @@ def matvec_prod_3H(arg1):
     return _HFS.matvec_prod_3H(arg1)
 matvec_prod_3H = _HFS.matvec_prod_3H
 
+def void_matvec_prod_3H(v, Mv):
+    return _HFS.void_matvec_prod_3H(v, Mv)
+void_matvec_prod_3H = _HFS.void_matvec_prod_3H
+
 def calc_1B(arg1, arg2):
     return _HFS.calc_1B(arg1, arg2)
 calc_1B = _HFS.calc_1B

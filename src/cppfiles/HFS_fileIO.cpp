@@ -65,17 +65,18 @@ namespace HFS {
         PRINTVAL(num_guess_evecs)
         PRINTVAL(Dav_blocksize)
         PRINTVAL(Dav_Num_evals)
-        PRINTVAL(Dav_time)
         PRINTVAL(Mv_time)
+        PRINTVAL(cond_number)
+        PRINTVAL(Dav_nconv)
 
         std::cout.precision(2);
         std::cout << "Davidson Tolerance = " << std::scientific << Dav_tol << std::fixed << std::endl;
         std::cout.precision(__DBL_DIG__);
-        PRINTVAL(Dav_minits)
         PRINTVAL(Dav_maxits)
         PRINTVAL(Dav_maxsubsize)
+        PRINTVAL(Dav_final_val)
+        PRINTVAL(Dav_time)
 
-        PRINTVAL(Davidson_Stopping_Criteria)
         assert (HFS::everything_works());
 
         if (Nk < 31){
@@ -91,20 +92,8 @@ namespace HFS {
             std::cout << "Vir Energies: " << vir_energies.n_rows << std::endl; vir_energies.raw_print();
             std::cout << "Excitation Energies: " << exc_energies.n_rows << std::endl; exc_energies.raw_print();
             std::cout << "Kgrid: " << kgrid.n_rows << std::endl; kgrid.raw_print();
-            std::cout << "Davidson lowest eigenvalues at each iteration: " << dav_lowest_vals.n_rows << std::endl; dav_lowest_vals.raw_print();
 
-            arma::vec davvals(dav_vals.n_rows * dav_vals.n_cols);
-            unsigned counter = 0;
-            for (unsigned i = 0; i < dav_vals.n_rows; ++i) {
-                for (unsigned j = 0; j < dav_vals.n_cols; ++j){
-                davvals(counter) = dav_vals(i, j);
-                counter += 1;
-                }
-            }
-
-            std::cout << "DavVals: " << davvals.n_rows << std::endl; davvals.raw_print();
-
-            std::cout << "Davidson Times Per Iteration: " << dav_iteration_timer.n_rows << std::endl; dav_iteration_timer.raw_print();
+            std::cout << "DavVals: " << dav_vals.n_rows << std::endl; dav_vals.raw_print();
             ENDSECTION("Vectors")
 
             SECTION("Matrices")

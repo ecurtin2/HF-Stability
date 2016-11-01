@@ -4698,6 +4698,29 @@ SWIGINTERN PyObject *Swig_var_fermi_energy_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_cond_number_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::cond_number""' of type '""double""'");
+    }
+    HFS::cond_number = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_cond_number_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::cond_number));
+  return pyobj;
+}
+
+
 SWIGINTERN int Swig_var_two_e_const_set(PyObject *_val) {
   {
     double val;
@@ -6168,6 +6191,63 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_void_matvec_prod_3H(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  arma::vec *arg1 = 0 ;
+  arma::vec *arg2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:void_matvec_prod_3H",&obj0,&obj1)) SWIG_fail;
+  {
+    if( ! armanpy_basic_typecheck< arma::vec >( obj0, true, true )            ) {
+      PyErr_SetString( PyExc_RuntimeError, "Argument not a valid armadillo matrix" ); SWIG_fail; 
+    }
+    if( ! armanpy_numpy_as_vec_with_shared_memory< arma::vec >( obj0, &(arg1) ) ) {
+      PyErr_SetString( PyExc_RuntimeError, "Numpy array can not be wrapped as armadillo vector" ); SWIG_fail; 
+    }
+  }
+  {
+    if( ! armanpy_basic_typecheck< arma::vec >( obj1, true, true )            ) {
+      PyErr_SetString( PyExc_RuntimeError, "Argument not a valid armadillo matrix" ); SWIG_fail; 
+    }
+    if( ! armanpy_numpy_as_vec_with_shared_memory< arma::vec >( obj1, &(arg2) ) ) {
+      PyErr_SetString( PyExc_RuntimeError, "Numpy array can not be wrapped as armadillo vector" ); SWIG_fail; 
+    }
+  }
+  {
+    try {
+      HFS::void_matvec_prod_3H(*arg1,*arg2);
+    }
+    catch( std::exception & e  ) {
+      PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail; 
+    } 
+  }
+  resultobj = SWIG_Py_Void();
+  {
+    armanpy_vec_as_numpy_with_shared_memory( arg1, obj0 );
+  }
+  {
+    armanpy_vec_as_numpy_with_shared_memory( arg2, obj1 );
+  }
+  {
+    // NOOP
+  }
+  {
+    // NOOP
+  }
+  return resultobj;
+fail:
+  {
+    // NOOP
+  }
+  {
+    // NOOP
+  }
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_calc_1B(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   arma::uword arg1 ;
@@ -6578,6 +6658,36 @@ SWIGINTERN PyObject *Swig_var_dav_lowest_vals_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_dav_vals_set(PyObject *_val) {
+  {
+    void *argp = 0;
+    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__vec,  0  | 0);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_vals""' of type '""arma::vec""'");
+    }
+    if (!argp) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_vals""' of type '""arma::vec""'");
+    } else {
+      arma::vec * temp;
+      temp  = reinterpret_cast< arma::vec * >(argp);
+      HFS::dav_vals = *temp;
+      if (SWIG_IsNewObj(res)) delete temp;
+    }
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_dav_vals_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vals), SWIGTYPE_p_arma__vec,  0 );
+  return pyobj;
+}
+
+
 SWIGINTERN int Swig_var_dav_vecs_set(PyObject *_val) {
   {
     void *argp = 0;
@@ -6604,36 +6714,6 @@ SWIGINTERN PyObject *Swig_var_dav_vecs_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vecs), SWIGTYPE_p_arma__mat,  0 );
-  return pyobj;
-}
-
-
-SWIGINTERN int Swig_var_dav_vals_set(PyObject *_val) {
-  {
-    void *argp = 0;
-    int res = SWIG_ConvertPtr(_val, &argp, SWIGTYPE_p_arma__mat,  0  | 0);
-    if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::dav_vals""' of type '""arma::mat""'");
-    }
-    if (!argp) {
-      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in variable '""HFS::dav_vals""' of type '""arma::mat""'");
-    } else {
-      arma::mat * temp;
-      temp  = reinterpret_cast< arma::mat * >(argp);
-      HFS::dav_vals = *temp;
-      if (SWIG_IsNewObj(res)) delete temp;
-    }
-  }
-  return 0;
-fail:
-  return 1;
-}
-
-
-SWIGINTERN PyObject *Swig_var_dav_vals_get(void) {
-  PyObject *pyobj = 0;
-  
-  pyobj = SWIG_NewPointerObj(SWIG_as_voidptr(&HFS::dav_vals), SWIGTYPE_p_arma__mat,  0 );
   return pyobj;
 }
 
@@ -6730,6 +6810,29 @@ SWIGINTERN PyObject *Swig_var_Dav_Num_evals_get(void) {
 }
 
 
+SWIGINTERN int Swig_var_Dav_nconv_set(PyObject *_val) {
+  {
+    unsigned int val;
+    int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_nconv""' of type '""unsigned int""'");
+    }
+    HFS::Dav_nconv = static_cast< unsigned int >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_nconv_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::Dav_nconv));
+  return pyobj;
+}
+
+
 SWIGINTERN int Swig_var_Dav_tol_set(PyObject *_val) {
   {
     double val;
@@ -6749,6 +6852,29 @@ SWIGINTERN PyObject *Swig_var_Dav_tol_get(void) {
   PyObject *pyobj = 0;
   
   pyobj = SWIG_From_double(static_cast< double >(HFS::Dav_tol));
+  return pyobj;
+}
+
+
+SWIGINTERN int Swig_var_Dav_final_val_set(PyObject *_val) {
+  {
+    double val;
+    int res = SWIG_AsVal_double(_val, &val);
+    if (!SWIG_IsOK(res)) {
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::Dav_final_val""' of type '""double""'");
+    }
+    HFS::Dav_final_val = static_cast< double >(val);
+  }
+  return 0;
+fail:
+  return 1;
+}
+
+
+SWIGINTERN PyObject *Swig_var_Dav_final_val_get(void) {
+  PyObject *pyobj = 0;
+  
+  pyobj = SWIG_From_double(static_cast< double >(HFS::Dav_final_val));
   return pyobj;
 }
 
@@ -7635,6 +7761,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"matvec_prod_3A", _wrap_matvec_prod_3A, METH_VARARGS, NULL},
 	 { (char *)"matvec_prod_3B", _wrap_matvec_prod_3B, METH_VARARGS, NULL},
 	 { (char *)"matvec_prod_3H", _wrap_matvec_prod_3H, METH_VARARGS, NULL},
+	 { (char *)"void_matvec_prod_3H", _wrap_void_matvec_prod_3H, METH_VARARGS, NULL},
 	 { (char *)"calc_1B", _wrap_calc_1B, METH_VARARGS, NULL},
 	 { (char *)"calc_3B", _wrap_calc_3B, METH_VARARGS, NULL},
 	 { (char *)"calc_1A", _wrap_calc_1A, METH_VARARGS, NULL},
@@ -8497,6 +8624,7 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"kf",Swig_var_kf_get, Swig_var_kf_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"kmax",Swig_var_kmax_get, Swig_var_kmax_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"fermi_energy",Swig_var_fermi_energy_get, Swig_var_fermi_energy_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"cond_number",Swig_var_cond_number_get, Swig_var_cond_number_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"two_e_const",Swig_var_two_e_const_get, Swig_var_two_e_const_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"deltaK",Swig_var_deltaK_get, Swig_var_deltaK_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Total_Calculation_Time",Swig_var_Total_Calculation_Time_get, Swig_var_Total_Calculation_Time_set);
@@ -8521,13 +8649,15 @@ SWIG_init(void) {
   SWIG_addvarlink(SWIG_globals(),(char*)"guess_evecs",Swig_var_guess_evecs_get, Swig_var_guess_evecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Davidson_Stopping_Criteria",Swig_var_Davidson_Stopping_Criteria_get, Swig_var_Davidson_Stopping_Criteria_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_lowest_vals",Swig_var_dav_lowest_vals_get, Swig_var_dav_lowest_vals_set);
-  SWIG_addvarlink(SWIG_globals(),(char*)"dav_vecs",Swig_var_dav_vecs_get, Swig_var_dav_vecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_vals",Swig_var_dav_vals_get, Swig_var_dav_vals_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"dav_vecs",Swig_var_dav_vecs_get, Swig_var_dav_vecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"dav_its",Swig_var_dav_its_get, Swig_var_dav_its_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"num_guess_evecs",Swig_var_num_guess_evecs_get, Swig_var_num_guess_evecs_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_blocksize",Swig_var_Dav_blocksize_get, Swig_var_Dav_blocksize_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_Num_evals",Swig_var_Dav_Num_evals_get, Swig_var_Dav_Num_evals_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_nconv",Swig_var_Dav_nconv_get, Swig_var_Dav_nconv_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_tol",Swig_var_Dav_tol_get, Swig_var_Dav_tol_set);
+  SWIG_addvarlink(SWIG_globals(),(char*)"Dav_final_val",Swig_var_Dav_final_val_get, Swig_var_Dav_final_val_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_maxits",Swig_var_Dav_maxits_get, Swig_var_Dav_maxits_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_minits",Swig_var_Dav_minits_get, Swig_var_Dav_minits_set);
   SWIG_addvarlink(SWIG_globals(),(char*)"Dav_maxsubsize",Swig_var_Dav_maxsubsize_get, Swig_var_Dav_maxsubsize_set);

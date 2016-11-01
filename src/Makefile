@@ -34,13 +34,13 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 #INC = -I/home/newhall/include  -I../include
 
-Debug: CFLAGS +=-g -o0
+Debug: CFLAGS += -g -o0 -Wall
 Debug: $(TARGET)
 
-Profile: CFLAGS +=-pg -O1  -D ARMA_NO_DEBUG -D NDEBUG
+Profile: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG
 Profile:  $(TARGET)
 
-Release: CFLAGS +=-O1  -D ARMA_NO_DEBUG -D NDEBUG -fno-strict-aliasing
+Release: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -fno-strict-aliasing
 Release: $(TARGET)
 
 .PHONY: depend clean

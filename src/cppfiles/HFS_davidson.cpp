@@ -1,10 +1,27 @@
 #include "HFS_davidson.hpp"
 
+
+/*   This is how I used to do it, keeping here just in case 01Nov2016
+    HFS::build_guess_evecs(HFS::num_guess_evecs);
+    HFS::davidson_wrapper(2*HFS::Nexc
+                          ,HFS::guess_evecs
+                          ,HFS::Dav_blocksize
+                          ,0
+                          ,HFS::Dav_Num_evals
+                          ,HFS::Dav_minits
+                          ,HFS::Dav_maxits
+                          ,HFS::Dav_maxsubsize
+                          ,HFS::Dav_tol);
+
+*/
+
+
+
 namespace HFS {
     arma::mat guess_evecs;
     std::string Davidson_Stopping_Criteria;
-    arma::vec dav_lowest_vals;
-    arma::mat dav_vecs, dav_vals;
+    arma::vec dav_lowest_vals, dav_vals;
+    arma::mat dav_vecs;
     unsigned dav_its;
     unsigned num_guess_evecs;
     unsigned Dav_blocksize;
@@ -12,9 +29,11 @@ namespace HFS {
     arma::vec dav_iteration_timer;
     double Dav_time;
     double Dav_tol;
+    double Dav_final_val;
     unsigned Dav_minits;
     unsigned Dav_maxits;
     unsigned Dav_maxsubsize;
+    unsigned Dav_nconv;
 
 
     void mod_gram_schmidt(arma::vec& v, arma::mat& matrix){

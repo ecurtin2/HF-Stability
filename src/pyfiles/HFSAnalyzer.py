@@ -45,7 +45,7 @@ def file_to_df(fname, idx):
            ,'Dav_time'
            ,'Mv_time'
            ,'Davidson_Stopping_Criteria'
-           ,'Dav_Final_Val'
+           ,'Dav_final_val'
            ,'full_diag_min'
            ,'full_diag_time'
            ,'Total Elapsed Time'
@@ -53,16 +53,11 @@ def file_to_df(fname, idx):
            ,'Dav_minits'
            ,'Dav_maxits'
            ,'Dav_maxsubsize'
-           ,'Dav_Vals_Per_Iteration'
            ]
 
     vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies'
                  ,'Kgrid'
-                 ,'Dav Vals Per Iteration'
-                 ,'All Davidson Eigenvalues at Last Iteration'
                  ,'DavVals'
-                 ,'Davidson Times Per Iteration'
-                 ,'Davidson lowest eigenvalues at each iteration'
                  ]
 
     matrixkeys = ['Occupied States', 'Virtual States', 'Excitations']
@@ -288,12 +283,12 @@ def axplot_eval_convergence(df, ax, df_idx):
 
     blues= sns.color_palette('GnBu_d', num_evals)
     reds = sns.color_palette('Reds_r', num_evals)
-            
+
     cols = blues
-    
+
     if abs(eigval - np.amin(davvals[-1, :])) > 1E-4:
         cols = reds
-    
+
     title = 'r_s = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
     ax.set_title(title)
     for i in range(num_evals):
@@ -304,7 +299,7 @@ def plot_dav_vs_full(df):
     print len(df)
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     Nks_full = df_with_fulldiags.Nk.as_matrix()
-    davmins = []
+    """davmins = []
     for i in range(len(df)):
         row = df.iloc[i]
         its = row['dav_its']
@@ -312,9 +307,10 @@ def plot_dav_vs_full(df):
         davvals = row['DavVals']
         davvals = davvals.reshape(its, num_evals)
         davmin = np.amin(davvals[-1])
-        davmins.append(davmin)    
-
+        davmins.append(davmin)
+    """
     Nks = df.Nk.as_matrix()
+    davmins = df.Dav_final_val.as_matrix()
     xmin = np.amin(Nks)-1
     xmax = np.amax(Nks) + 1
     plt.xlim=(xmin, xmax)
@@ -322,13 +318,13 @@ def plot_dav_vs_full(df):
     npts = 10
     zeros = np.zeros(npts)
     x = np.linspace(xmin, xmax, npts)
-    
+
     plt.title('Stability for rs = 1.2 in 2D')
     plt.xlabel("Number of k-points per dimension")
     plt.ylabel('Lowest Eigenvalue')
     plt.plot(x, zeros   , 'k--', zorder=1)
     plt.plot(Nks, davmins , '-o' , zorder=3, label='Davidson lowest Eigenvalue')
-    plt.plot(Nks_full, fullmins, 'o' , markersize=11, c=sns.color_palette()[2], 
+    plt.plot(Nks_full, fullmins, 'o' , markersize=11, c=sns.color_palette()[2],
              zorder=2, label='Exact Lowest Eigenvalue')
     plt.legend(loc='best')
 
