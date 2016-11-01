@@ -15,10 +15,19 @@ TARGET = HFS
 LIB = -larmadillo #-L/usr/lib64 -lstdc++ -L/lib/x86_64-linux-gnu/ -lm
 LOCDIR = home/evan/git/HF-Stability/
 MANSEC = EPS
-include ${SLEPC_DIR}/lib/slepc/conf/slepc_common
+
+
+
+SLEPC_DIR=/home/evan/slepc-3.7.3
+PETSC_DIR=/home/evan/git/petsc
+
+PETSC_ARCH=linux-gnu-c-debug
+SLEPC_ARCH=linux-gnu-c-debug
+
+include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
 CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
-DATAPATH = ${SLEPC_DIR}/share/slepc/datafiles/matrices
-INC = -I${SLEPC_DIR}/include/ -I${SLEPC_DIR}/${SLEPC_ARCH}/include/ -I${PETSC_DIR}/include
+DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
+INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include
 
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
@@ -28,7 +37,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 Debug: CFLAGS +=-g -o0
 Debug: $(TARGET)
 
-Profile: CFLAGS +=-pg -O3  -D ARMA_NO_DEBUG -D NDEBUG
+Profile: CFLAGS +=-pg -O1  -D ARMA_NO_DEBUG -D NDEBUG
 Profile:  $(TARGET)
 
 Release: CFLAGS +=-O1  -D ARMA_NO_DEBUG -D NDEBUG -fno-strict-aliasing

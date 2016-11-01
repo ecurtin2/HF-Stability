@@ -76,41 +76,34 @@ int main_(double rs
     HFS::Total_Calculation_Time = timer.toc();
 */
     HFS::time_mv();
-    std::cout << "0" << std::endl;
 
-   // const char* fname = HFS::OutputFileName.c_str();
-   // freopen(fname, "w", stdout);
-   // HFS::write_output(true);
 
-    std::cout << "1" << std::endl;
+    const char* fname = HFS::OutputFileName.c_str();
+    freopen(fname, "w", stdout);
+    HFS::write_output(true);
+
     SLEPc::EpS myeps(2*HFS::Nexc, HFS::void_matvec_prod_3H);
-    std::cout << "2" << std::endl;
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
-    std::cout << "3" << std::endl;
-    myeps.SetTol(HFS::Dav_tol);
-    std::cout << "4" << std::endl;
+    myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
-    std::cout << "5" << std::endl;
+    //myeps.monitor();
 
 
     std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(2*HFS::Nexc, 0.0));
-    std::cout << "6" << std::endl;
     for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
         vecs[i][i] = 1.0;
     }
-    std::cout << "7" << std::endl;
 
     myeps.SetInitialSpace(vecs);
-    std::cout << "8" << std::endl;
     myeps.Solve();
-    std::cout << "9" << std::endl;
+
     myeps.PrintEvals();
-    std::cout << "10" << std::endl;
     printf("# of Values Requested: %i\n", myeps.Nevals);
     printf("# of Values Converged: %i\n", myeps.nconv);
     printf("Blocksize: %i\n", myeps.BlockSize);
     printf("Number of guesses: %i\n", myeps.nguess);
     printf("Tolerance: %8.3E\n", myeps.tol);
+    std::cout << myeps.niter << std::endl;
     myeps.clean();
 
     fclose(stdout);
