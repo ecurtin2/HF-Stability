@@ -5561,7 +5561,7 @@ SWIGINTERN PyObject *_wrap_is_vir(PyObject *SWIGUNUSEDPARM(self), PyObject *args
   arg1 = static_cast< double >(val1);
   {
     try {
-      result = (bool)HFS::is_vir(arg1);
+      result = (bool)HFS::is_occ(arg1);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail;

@@ -5,7 +5,7 @@
     #define PI 3.14159265358979323846264338327
 #endif
 #ifndef SMALLNUMBER
-    #define SMALLNUMBER 1E-10
+    #define SMALLNUMBER 1E-12
 #endif
 #include "armadillo"
 

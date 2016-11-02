@@ -25,11 +25,15 @@ int main(int argc, char* argv[]){
     HFS::Dav_Num_evals   = std::stoi(argv[10]);
 
     HFS::calc_params();
+    std::cout << "Nk = " << HFS::Nk << "  " << std::boolalpha
+    << arma::all(HFS::exc_energies > 0.0) << std::endl;
 
     //if (HFS::Nk < 31) {
     //    HFS::davidson_agrees_fulldiag();
     //}
 
+
+    /*
     HFS::time_mv();
 
     SLEPc::EpS myeps(2*HFS::Nexc, HFS::void_matvec_prod_3H);
@@ -60,5 +64,6 @@ int main(int argc, char* argv[]){
 
     myeps.clean();
     fclose(stdout);
+    */
     return 0;
 }

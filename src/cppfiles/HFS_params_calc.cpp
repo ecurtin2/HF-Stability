@@ -3,7 +3,8 @@
 namespace HFS {
     void calc_params() {
         HFS::calc_kf();
-        HFS::kmax = 2.0 * HFS::kf;
+        HFS::kmax = 2.000001 * HFS::kf; // The offset from 2 helps remove coincidence
+                                        // cases where the states fall exactly on kf
         HFS::bzone_length = 2.0 * HFS::kmax;
         HFS::fermi_energy = 0.5 * HFS::kf * HFS::kf;
         HFS::kgrid = arma::linspace(-HFS::kmax, HFS::kmax, HFS::Nk);
@@ -76,7 +77,7 @@ namespace HFS {
         HFS::Nvir = 0;
         for (arma::uword i = 0; i < Nrows; ++i) {
             row_norm = arma::norm(states.row(i));
-            if (HFS::is_vir(row_norm)) {
+            if (HFS::is_occ(row_norm)) {
                 occ_indices(HFS::Nocc) = i;
                 ++HFS::Nocc;
             } else {

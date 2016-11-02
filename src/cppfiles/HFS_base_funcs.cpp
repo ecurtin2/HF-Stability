@@ -13,7 +13,7 @@ namespace HFS {
             for (unsigned j = 0; j < HFS::ndim; ++j) {
                 k2(j) = HFS::kgrid(HFS::occ_states(k, j));
             }
-            exch += HFS::two_electron_safe(ki, k2);
+            exch += HFS::two_electron(ki, k2);
         }
         exch *= -1.0;
         return exch;
@@ -71,8 +71,8 @@ namespace HFS {
         }
     }
 
-    bool is_vir(double k) {
-            return (k <= HFS::kf + SMALLNUMBER);
+    bool is_occ(double k) {
+            return (k < (HFS::kf));
     }
 
     arma::uvec k_to_index(arma::vec& k) {
