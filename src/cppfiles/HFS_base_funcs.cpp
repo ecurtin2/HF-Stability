@@ -13,7 +13,7 @@ namespace HFS {
             for (unsigned j = 0; j < HFS::ndim; ++j) {
                 k2(j) = HFS::kgrid(HFS::occ_states(k, j));
             }
-            exch += HFS::two_electron(ki, k2);
+            exch += HFS::two_electron_safe(ki, k2);
         }
         exch *= -1.0;
         return exch;
@@ -33,7 +33,7 @@ namespace HFS {
         }
     }
 
-    double two_electron_check(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
+    double two_electron_safe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
         // Same as two_electron, except checks for momentum conservation
         // In the other, conservation is assumed
         arma::vec k(HFS::ndim);

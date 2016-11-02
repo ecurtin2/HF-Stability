@@ -1,8 +1,7 @@
-import _HFS as HFS
 import numpy as np
 import tempfile
-
 import sys
+import os
 
 from mpi4py import MPI
 
@@ -18,21 +17,20 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nkrange = range(10,20)
+Nkrange = range(10,40)
 rs = 1.2
 ndim = 2
-Nk = 24
-nguess = 80
-blocksize = 16
+nguess = 50
+blocksize = 20
 num_evals = 8
-minits = 5
-maxits = 30
-maxsubsize = 3000
-tolerance = 1e-5
+maxits = 50
+maxsubsize = 1000
+tolerance = 1e-8
 
 
-paramlist = [[rs, Nk, ndim, nguess, blocksize, num_evals, minits,  maxits, maxsubsize, tolerance, get_fname(rs, Nk, ndim)] for Nk in Nkrange]
-# int main_(double rs, int Nk, int ndim, int num_guess_vecs, int dav_blocksize, int num_evals, int minits, int maxits, int maxsubsize, double tol, std::string outputfilename)
+paramlist = [['./HFS', rs, Nk, ndim, get_fname(rs, Nk, ndim), tolerance, maxits,
+              maxsubsize, nguess, blocksize, num_evals] for Nk in Nkrange]
 
 for i in range(my_rank, len(paramlist), nprocs):
-    HFS.main_(*paramlist[i])
+     print ' '.join([str(j) for j in paramlist[i]])
+#    os.system(' '.join([str(j) for j in paramlist[i]]))

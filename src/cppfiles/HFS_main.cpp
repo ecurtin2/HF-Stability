@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "SLEPcWrapper.hpp"
 
-int main(){
+int main(int argc, char* argv[]){
     // Start the timers
     std::chrono::time_point<std::chrono::system_clock> thetime;
     thetime = std::chrono::system_clock::now();
@@ -13,35 +13,23 @@ int main(){
     arma::wall_clock timer;
     timer.tic();
 
-    // Get Params
-    std::cin >> HFS::rs;
-    std::cin >> HFS::Nk;
-    std::cin >> HFS::ndim;
-    std::cin >> HFS::OutputFileName;
-    std::cin >> HFS::Dav_tol;
-    std::cin >> HFS::Dav_maxits;
-    std::cin >> HFS::Dav_maxsubsize;
-    std::cin >> HFS::num_guess_evecs;
-    std::cin >> HFS::Dav_blocksize;
-    std::cin >> HFS::Dav_Num_evals;
-    HFS::calc_params();
-    // Get Params
-//    HFS::rs = 1.2;
-//    HFS::Nk = 15;
-//    HFS::ndim = 2;
-//    HFS::OutputFileName = "test.log";
-//    HFS::calc_params();
-//    HFS::Dav_tol = 1e-5;
-//    HFS::Dav_maxits = 30;
-//    HFS::Dav_maxsubsize = 1000;
-//    HFS::num_guess_evecs = 15;
-//    HFS::Dav_blocksize = 7;
-//    HFS::Dav_Num_evals = 5;
+    HFS::rs              = std::stof(argv[1]);
+    HFS::Nk              = std::stoi(argv[2]);
+    HFS::ndim            = std::stoi(argv[3]);
+    HFS::OutputFileName  = argv[4];
+    HFS::Dav_tol         = std::stof(argv[5]);
+    HFS::Dav_maxits      = std::stoi(argv[6]);
+    HFS::Dav_maxsubsize  = std::stoi(argv[7]);
+    HFS::num_guess_evecs = std::stoi(argv[8]);
+    HFS::Dav_blocksize   = std::stoi(argv[9]);
+    HFS::Dav_Num_evals   = std::stoi(argv[10]);
 
-    if (HFS::Nk < 31) {
-        HFS::davidson_agrees_fulldiag();
-    }
-    HFS::Total_Calculation_Time = timer.toc();
+    HFS::calc_params();
+
+    //if (HFS::Nk < 31) {
+    //    HFS::davidson_agrees_fulldiag();
+    //}
+
     HFS::time_mv();
 
     SLEPc::EpS myeps(2*HFS::Nexc, HFS::void_matvec_prod_3H);
@@ -59,7 +47,7 @@ int main(){
     davtimer.tic();
     myeps.Solve();
     HFS::Dav_time = davtimer.toc();
-
+    HFS::Total_Calculation_Time = timer.toc();
     arma::vec temp(myeps.rVals);
     HFS::dav_vals = temp;
     HFS::dav_its = myeps.niter;

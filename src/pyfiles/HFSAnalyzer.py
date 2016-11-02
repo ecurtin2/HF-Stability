@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import scipy.special as sp
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -53,6 +54,7 @@ def file_to_df(fname, idx):
            ,'Dav_minits'
            ,'Dav_maxits'
            ,'Dav_maxsubsize'
+           ,'cond_number'
            ]
 
     vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies'
@@ -151,16 +153,16 @@ def f3D(y):
         return 1.0
     return 0.5 + (1 - y*y) / (4*y) * math.log(abs((1+y) / (1-y)))
 
-def analytic_exch(k):
-    const = -2.0 * get_kf() / math.pi
-    if get_ndim() == 2:
-        return const * py_f2D(k / get_kf())
-    elif get_ndim() == 3:
-        return const * py_f3D(k / get_kf())
+def analytic_exch(k, kf, ndim):
+    const = -2.0 * kf / math.pi
+    if ndim == 2:
+        return const * f2D(k / kf)
+    elif ndim == 3:
+        return const * f3D(k / kf)
 
-def analytic_energy(k):
+def analytic_energy(k, kf, ndim):
     x = np.linalg.norm(k)  #works on k of any dimension
-    return (x*x / 2.0) + py_analytic_exch(x)
+    return (x*x / 2.0) + analytic_exch(x, kf, ndim)
 
 
 #################################################################################
@@ -264,6 +266,45 @@ def axplot_exc_hist(df, ax, df_idx, bindivisor=4):
         ax.set_ylabel('Count')
         return ax
 
+def axplot_energy_compare(df, ax, df_idx, discretized=True, analytic=True):
+    df_row = df.iloc[df_idx]
+    kmax = df_row['kmax']
+    ndim = df_row['ndim']
+    kf = df_row.kf
+    Ef = kf**2 / 2.0
+
+    # Analytic plots
+    k = np.linspace(0, kmax, 500)
+    kinetic = (0.5 * k*k) / Ef
+    exch    = [analytic_exch(ki, kf, ndim) for ki in k] / Ef #rescale
+    energy  = [analytic_energy(ki, kf, ndim) for ki in k] / Ef
+    
+    k = k / kf # rescale for plot
+    if analytic:
+        ax.plot(k, energy , 'k-' , label='Total')
+        ax.plot(k, kinetic, 'k:' , label='Kinetic')    
+        ax.plot(k, exch   , 'k--', label='Exchange')
+    
+    # Discrete plots
+    occ_energies = df_row['Occ Energies'] / Ef
+    vir_energies = df_row['Vir Energies'] / Ef
+    kgrid = df_row['Kgrid']
+    occ_states = df_row['Occupied States']
+    vir_states = df_row['Virtual States']
+    kocc = kgrid[occ_states]
+    kocc = [np.linalg.norm(ki) for ki in kocc] / kf
+    kvir = kgrid[vir_states]
+    kvir = [np.linalg.norm(ki) for ki in kvir] / kf
+    if discretized:
+        ax.plot(kocc, occ_energies, '.', c=sns.color_palette()[0], label='Occupied')
+        ax.plot(kvir, vir_energies, '.', c=sns.color_palette()[2], label='Virtual')
+        
+    # Plot Options
+    ax.set_xlim(0, 2)
+    ax.set_ylim(-4, 4)
+    ax.set_xlabel(r'$\frac{k}{k_f}$')
+    ax.set_ylabel(r'$\frac{\epsilon_k^{HF}}{\epsilon_F}$')
+    return ax
 
 def axplot_eval_convergence(df, ax, df_idx):
     df_row = df.iloc[df_idx]
@@ -296,19 +337,8 @@ def axplot_eval_convergence(df, ax, df_idx):
     return ax
 
 def plot_dav_vs_full(df):
-    print len(df)
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     Nks_full = df_with_fulldiags.Nk.as_matrix()
-    """davmins = []
-    for i in range(len(df)):
-        row = df.iloc[i]
-        its = row['dav_its']
-        num_evals = row['Dav_Num_evals']
-        davvals = row['DavVals']
-        davvals = davvals.reshape(its, num_evals)
-        davmin = np.amin(davvals[-1])
-        davmins.append(davmin)
-    """
     Nks = df.Nk.as_matrix()
     davmins = df.Dav_final_val.as_matrix()
     xmin = np.amin(Nks)-1

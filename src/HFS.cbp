@@ -86,9 +86,19 @@
 		<Unit filename="cppfiles/HFS_params.hpp" />
 		<Unit filename="cppfiles/HFS_params_calc.cpp" />
 		<Unit filename="cppfiles/HFS_params_calc.hpp" />
+		<Unit filename="cppfiles/SLEPcWrapper.hpp" />
 		<Unit filename="launch.py">
 			<Option compiler="gcc" use="0" buildCommand="python launch.py" />
 		</Unit>
+		<Unit filename="pyfiles/HFSAnalyzer.py" />
+		<Unit filename="pyfiles/HFSAnalyzer.pyc" />
+		<Unit filename="pyfiles/__init__.py" />
+		<Unit filename="pyfiles/__init__.pyc" />
+		<Unit filename="pyfiles/cyarma.pxd" />
+		<Unit filename="pyfiles/cyarma.pyx">
+			<Option compile="1" />
+		</Unit>
+		<Unit filename="pyfiles/general_methods.py" />
 		<Unit filename="setup.py">
 			<Option compiler="gcc" use="0" buildCommand="python setup.py" />
 		</Unit>

@@ -14,7 +14,7 @@ namespace HFS {
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
             kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
         }
-        return 2.0 * two_electron_check(ka, kb, ki, kj) - two_electron_check(ka, kb, kj, ki);
+        return 2.0 * two_electron_safe(ka, kb, ki, kj) - two_electron_safe(ka, kb, kj, ki);
     }
 
     double calc_3B(arma::uword s, arma::uword t) {
@@ -29,7 +29,7 @@ namespace HFS {
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
             kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
         }
-        return -1.0 * HFS::two_electron_check(ka, kb, kj, ki);
+        return -1.0 * HFS::two_electron_safe(ka, kb, kj, ki);
     }
 
     double calc_1A(arma::uword s, arma::uword t) {
@@ -48,7 +48,7 @@ namespace HFS {
         if ((i == j) && (a == b)) {
             val = HFS::exc_energies(s);
         }
-        val += 2.0 * HFS::two_electron_check(ka, kj, ki, kb) - HFS::two_electron_check(ka, kj, kb, ki);
+        val += 2.0 * HFS::two_electron_safe(ka, kj, ki, kb) - HFS::two_electron_safe(ka, kj, kb, ki);
         return val;
     }
 
@@ -69,7 +69,7 @@ namespace HFS {
         if ((i == j) && (a == b)) {
             val = HFS::exc_energies(s);
         }
-        val += -1.0 * HFS::two_electron_check(ka, kj, kb, ki);
+        val += -1.0 * HFS::two_electron_safe(ka, kj, kb, ki);
 
         return val;
 
