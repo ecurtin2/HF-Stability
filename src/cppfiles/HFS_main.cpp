@@ -25,21 +25,18 @@ int main(int argc, char* argv[]){
     HFS::Dav_Num_evals   = std::stoi(argv[10]);
 
     HFS::calc_params();
-    std::cout << "Nk = " << HFS::Nk << "  " << std::boolalpha
-    << arma::all(HFS::exc_energies > 0.0) << std::endl;
 
-    //if (HFS::Nk < 31) {
-    //    HFS::davidson_agrees_fulldiag();
-    //}
-
-
-    /*
     HFS::time_mv();
 
     SLEPc::EpS myeps(2*HFS::Nexc, HFS::void_matvec_prod_3H);
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
+
+    if (HFS::Nk < 31) {
+        HFS::davidson_agrees_fulldiag();
+    }
+
 
     std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(2*HFS::Nexc, 0.0));
     for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
@@ -64,6 +61,5 @@ int main(int argc, char* argv[]){
 
     myeps.clean();
     fclose(stdout);
-    */
     return 0;
 }
