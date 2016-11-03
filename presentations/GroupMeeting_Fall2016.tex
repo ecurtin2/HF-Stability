@@ -1,19 +1,24 @@
 \documentclass[10pt]{beamer}
 
 \usetheme{metropolis}
+\useoutertheme{metropolis}
+\useinnertheme{metropolis}
+\usefonttheme{metropolis}
+%\usecolortheme{seahorse}   % or your preferred color theme
 \usepackage{appendixnumberbeamer}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage[scale=2]{ccicons}
-
-\usepackage{pgfplots}
-\usepgfplotslibrary{dateplot}
-
 \usepackage{xspace}
-\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+\usepackage[justification=centering]{caption}
+
+\usepackage[version=3]{mhchem}
+\definecolor{darkgreen}{RGB}{30, 133, 12}
+\definecolor{lightgray}{gray}{0.9}
+\renewcommand{\arraystretch}{1.2}
 
 \title{Hartree-Fock Stability}
-\subtitle{Applications to the Homogeneous Electron Gas}
+\subtitle{Applications to the Homogeneous Electron Gas \\ And Implications in Electron Correlation}
 \date{\today}
 \author{Evan Curtin}
 \institute{University of Illinois at Urbana-Champaign}
@@ -30,11 +35,14 @@
 
 \section{Background Information}
 
+{%
+\setbeamertemplate{frame footer}{Seeger, R.; Pople, J. A. J. Chem. Phys. 1977, 66 (7), 3045.
+}
 \begin{frame}[fragile]{Levels of Hartree-Fock Theory}
 	\begin{center}
 		\begin{tabular}{ | c | c | c | c |}
 			\hline
-			 Method & Spinorbital & DoF & Eigenfunction of\\ 
+			 \textbf{Method} & \textbf{Spinorbital} & \textbf{DoF} & \textbf{Eigenfunction of}\\ 
 			\hline 
 
 			Restricted \rule{0pt}{7ex} & 
@@ -73,6 +81,10 @@
 	\end{center}
 \end{frame}
 
+{%+
+\setbeamertemplate{frame footer}{}
+
+
 \begin{frame}[fragile]{Restricted Minimization}
 	\begin{itemize}
 		\item<1-> Hartee-Fock SCF guarantees only stationary energy w.r.t. change in orbitals
@@ -86,276 +98,260 @@
 	\end{center}
 \end{frame}
 
-\begin{frame}[fragile]{Restricted Minimization}
-	\includegraphics[width=0.5\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_globalmin.jpeg}
+\begin{frame}{Restricted Minimization}
+	\begin{columns}[c] % align columns
+		\begin{column}{.48\textwidth}
+			\begin{itemize}[<+->]
+				\item {Restricted minima may correspond to absolute minima}
+				\item {Restricted minima may correspond to absolute maxima}
+				\item {Restricted minima may be nonstationary}
+			\end{itemize}				
+		\end{column}
+		\hfill
+		\begin{column}{0.48\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=0.9\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_globalmin.jpeg}
+				\onslide<2>\includegraphics[width=0.9\linewidth, trim={7cm, 1cm, 7cm, 1cm}, clip]{../images/const_opt_saddle.jpeg}
+				\onslide<3>\includegraphics[width=0.9\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_nonstationary.jpeg}
+			\end{overprint}
+		\end{column}	
+	\end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Restricted Minimization}
-	\includegraphics[width=0.5\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_saddle.jpeg}
-\end{frame}
+\section{Hartree-Fock Stability}
 
-\begin{frame}[fragile]{Restricted Minimization}
-	\includegraphics[width=0.5\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_nonstationary.jpeg}
-\end{frame}
+{%
+	\setbeamertemplate{frame footer}{Thouless, D. J. Nucl. Phys. 1960, 21, 225–232.}
+\begin{frame}{Outline}
+	\begin{columns}[c] % align columns
+		\begin{column}{.48\textwidth}
+			\begin{itemize}
+				\item {Inspired by biological evolution}
+				\item {Evolve a population over generations}
+				\item {Survival of the fittest}
+				\item {Requirements:}
+				\begin{itemize}
+					\item {Represent individuals as vector}
+					\item {Fitness function}
+				\end{itemize}
+				\item{$v = \left(\begin{smallmatrix}
+					x_1 & y_1 & z_1 & x_2 &  y_2 & z_2 &
+					... & x_N & y_N & z_N
+					\end{smallmatrix}\right)$}
+				\item{$F = \frac{E_{max} - E}{E_{max} - E_{min}}$}
+			\end{itemize}
 
+		\end{column}
+		\hfill
+		\begin{column}{0.48\textwidth}
 
-
-\section{Titleformats}
-
-\begin{frame}{Metropolis titleformats}
-	\themename supports 4 different titleformats:
-	\begin{itemize}
-		\item Regular
-		\item \textsc{Smallcaps}
-		\item \textsc{allsmallcaps}
-		\item ALLCAPS
-	\end{itemize}
-	They can either be set at once for every title type or individually.
-\end{frame}
-
-{
-    \metroset{titleformat frame=smallcaps}
-\begin{frame}{Small caps}
-	This frame uses the \texttt{smallcaps} titleformat.
-
-	\begin{alertblock}{Potential Problems}
-		Be aware, that not every font supports small caps. If for example you typeset your presentation with pdfTeX and the Computer Modern Sans Serif font, every text in smallcaps will be typeset with the Computer Modern Serif font instead.
-	\end{alertblock}
-\end{frame}
-}
-
-{
-\metroset{titleformat frame=allsmallcaps}
-\begin{frame}{All small caps}
-	This frame uses the \texttt{allsmallcaps} titleformat.
-
-	\begin{alertblock}{Potential problems}
-		As this titleformat also uses smallcaps you face the same problems as with the \texttt{smallcaps} titleformat. Additionally this format can cause some other problems. Please refer to the documentation if you consider using it.
-
-		As a rule of thumb: Just use it for plaintext-only titles.
-	\end{alertblock}
-\end{frame}
-}
-
-{
-\metroset{titleformat frame=allcaps}
-\begin{frame}{All caps}
-	This frame uses the \texttt{allcaps} titleformat.
-
-	\begin{alertblock}{Potential Problems}
-		This titleformat is not as problematic as the \texttt{allsmallcaps} format, but basically suffers from the same deficiencies. So please have a look at the documentation if you want to use it.
-	\end{alertblock}
+		\end{column}	
+	\end{columns}
 \end{frame}
 }
 
-\section{Elements}
-
-\begin{frame}[fragile]{Typography}
-      \begin{verbatim}The theme provides sensible defaults to
-\emph{emphasize} text, \alert{accent} parts
-or show \textbf{bold} results.\end{verbatim}
-
-  \begin{center}becomes\end{center}
-
-  The theme provides sensible defaults to \emph{emphasize} text,
-  \alert{accent} parts or show \textbf{bold} results.
+{%
+\setbeamertemplate{frame footer}{1. Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
+		
+2. http://www.chemspider.com/Chemical-Structure.2298795.html}
+\begin{frame}{From Structure to Vector}
+	\begin{columns}[c] % align columns
+		\begin{column}{.48\textwidth}
+			\begin{itemize}
+				\item<1-> {Several Ways to Define Structure
+					\begin{itemize}
+						\item[] {Cartesian}
+						\item[] {Internal Coordinates (bond length, angle ...)}
+						\item[] {SMILES, InChI}
+					\end{itemize}
+				}
+				\item<2-> {InChI$^2$= 1S/C8H16/c1-5-7(3)8(4)6-2/h5-6H2,1-4H3/b8-7-}
+				\item<only@3> {Equivalent in theory}
+				\item<only@4> {Equivalent \alert{\textbf{in theory}}}
+			\end{itemize}			
+		\end{column}
+		\hfill
+		\begin{column}{0.48\textwidth}
+			1
+		\end{column}	
+	\end{columns}
 \end{frame}
+}
 
-\begin{frame}{Font feature test}
-  \begin{itemize}
-    \item Regular
-    \item \textit{Italic}
-    \item \textsc{SmallCaps}
-    \item \textbf{Bold}
-    \item \textbf{\textit{Bold Italic}}
-    \item \textbf{\textsc{Bold SmallCaps}}
-    \item \texttt{Monospace}
-    \item \texttt{\textit{Monospace Italic}}
-    \item \texttt{\textbf{Monospace Bold}}
-    \item \texttt{\textbf{\textit{Monospace Bold Italic}}}
-  \end{itemize}
-\end{frame}
 
-\begin{frame}{Lists}
-  \begin{columns}[T,onlytextwidth]
-    \column{0.33\textwidth}
-      Items
-      \begin{itemize}
-        \item Milk \item Eggs \item Potatos
-      \end{itemize}
+\begin{frame}{Selecting Parents}
+	\begin{columns}[c] % align columns
+		\begin{column}{.48\textwidth}
+			\begin{itemize}[<+->]
+				\item {Several methods are common}
+				\item {Reinforce good characteristics}
+				\item {Still give losers a chance}
+				\item {'Breed' pairs of winners}
+				\item {'Roulette Wheel' Method}
+			\end{itemize}				
+		\end{column}
+		\hfill
+		\begin{column}{0.48\textwidth}
 
-    \column{0.33\textwidth}
-      Enumerations
-      \begin{enumerate}
-        \item First, \item Second and \item Last.
-      \end{enumerate}
-
-    \column{0.33\textwidth}
-      Descriptions
-      \begin{description}
-        \item[PowerPoint] Meeh. \item[Beamer] Yeeeha.
-      \end{description}
-  \end{columns}
-\end{frame}
-\begin{frame}{Animation}
-  \begin{itemize}[<+- | alert@+>]
-    \item \alert<4>{This is\only<4>{ really} important}
-    \item Now this
-    \item And now this
-  \end{itemize}
-\end{frame}
-\begin{frame}{Figures}
-  \begin{figure}
-    \newcounter{density}
-    \setcounter{density}{20}
-    \begin{tikzpicture}
-      \def\couleur{alerted text.fg}
-      \path[coordinate] (0,0)  coordinate(A)
-                  ++( 90:5cm) coordinate(B)
-                  ++(0:5cm) coordinate(C)
-                  ++(-90:5cm) coordinate(D);
-      \draw[fill=\couleur!\thedensity] (A) -- (B) -- (C) --(D) -- cycle;
-      \foreach \x in {1,...,40}{%
-          \pgfmathsetcounter{density}{\thedensity+20}
-          \setcounter{density}{\thedensity}
-          \path[coordinate] coordinate(X) at (A){};
-          \path[coordinate] (A) -- (B) coordinate[pos=.10](A)
-                              -- (C) coordinate[pos=.10](B)
-                              -- (D) coordinate[pos=.10](C)
-                              -- (X) coordinate[pos=.10](D);
-          \draw[fill=\couleur!\thedensity] (A)--(B)--(C)-- (D) -- cycle;
-      }
-    \end{tikzpicture}
-    \caption{Rotated square from
-    \href{http://www.texample.net/tikz/examples/rotated-polygons/}{texample.net}.}
-  \end{figure}
-\end{frame}
-\begin{frame}{Tables}
-  \begin{table}
-    \caption{Largest cities in the world (source: Wikipedia)}
-    \begin{tabular}{lr}
-      \toprule
-      City & Population\\
-      \midrule
-      Mexico City & 20,116,842\\
-      Shanghai & 19,210,000\\
-      Peking & 15,796,450\\
-      Istanbul & 14,160,467\\
-      \bottomrule
-    \end{tabular}
-  \end{table}
-\end{frame}
-\begin{frame}{Blocks}
-  Three different block environments are pre-defined and may be styled with an
-  optional background color.
-
-  \begin{columns}[T,onlytextwidth]
-    \column{0.5\textwidth}
-      \begin{block}{Default}
-        Block content.
-      \end{block}
-
-      \begin{alertblock}{Alert}
-        Block content.
-      \end{alertblock}
-
-      \begin{exampleblock}{Example}
-        Block content.
-      \end{exampleblock}
-
-    \column{0.5\textwidth}
-
-      \metroset{block=fill}
-
-      \begin{block}{Default}
-        Block content.
-      \end{block}
-
-      \begin{alertblock}{Alert}
-        Block content.
-      \end{alertblock}
-
-      \begin{exampleblock}{Example}
-        Block content.
-      \end{exampleblock}
-
-  \end{columns}
-\end{frame}
-\begin{frame}{Math}
-  \begin{equation*}
-    e = \lim_{n\to \infty} \left(1 + \frac{1}{n}\right)^n
-  \end{equation*}
-\end{frame}
-\begin{frame}{Line plots}
-  \begin{figure}
-    \begin{tikzpicture}
-      \begin{axis}[
-        mlineplot,
-        width=0.9\textwidth,
-        height=6cm,
-      ]
-
-        \addplot {sin(deg(x))};
-        \addplot+[samples=100] {sin(deg(2*x))};
-
-      \end{axis}
-    \end{tikzpicture}
-  \end{figure}
-\end{frame}
-\begin{frame}{Bar charts}
-  \begin{figure}
-    \begin{tikzpicture}
-      \begin{axis}[
-        mbarplot,
-        xlabel={Foo},
-        ylabel={Bar},
-        width=0.9\textwidth,
-        height=6cm,
-      ]
-
-      \addplot plot coordinates {(1, 20) (2, 25) (3, 22.4) (4, 12.4)};
-      \addplot plot coordinates {(1, 18) (2, 24) (3, 23.5) (4, 13.2)};
-      \addplot plot coordinates {(1, 10) (2, 19) (3, 25) (4, 15.2)};
-
-      \legend{lorem, ipsum, dolor}
-
-      \end{axis}
-    \end{tikzpicture}
-  \end{figure}
-\end{frame}
-\begin{frame}{Quotes}
-  \begin{quote}
-    Veni, Vidi, Vici
-  \end{quote}
+		\end{column}	
+	\end{columns}
 \end{frame}
 
 {%
-\setbeamertemplate{frame footer}{My custom footer}
-\begin{frame}[fragile]{Frame footer}
-    \themename defines a custom beamer template to add a text to the footer. It can be set via
-    \begin{verbatim}\setbeamertemplate{frame footer}{My custom footer}\end{verbatim}
+\setbeamertemplate{frame footer}{http://www.turingfinance.com/computational-finance
+	
+-updates-ieee-world-congress-computational-intelligence}
+\begin{frame}{The Next Generation}
+	\begin{itemize}[<+->]
+
+		\item[]{~\\Crossover distinguishes this from Monte Carlo}
+	\end{itemize}
 \end{frame}
 }
 
-\begin{frame}{References}
-  Some references to showcase [allowframebreaks] \cite{knuth92,ConcreteMath,Simpson,Er01,greenwade93}
+
+\begin{frame}{The Whole Algorithm}
+	\begin{columns}[c] % align columns
+		\begin{column}{.48\textwidth}
+			\begin{itemize}[<+->]
+				\item[1.] {Generate N random, sensible geometries}
+				\item[2.] {Add each to blacklist}
+				\item[3.] {Optimize each geometry}
+				\item[4.] {Select Parents}
+				\item[5.] {Crossover \& Mutate into sensible geometry}
+				\item[6.] {Add Children to population}
+				\item[7.] {Remove High energy individuals}
+				\item[8.] {If converged:}
+				\begin{itemize}
+					\item{Done!}
+				\end{itemize}
+				\item[] {Otherwise:}
+				\begin{itemize}
+					\item{Go to 2}
+				\end{itemize}
+			\end{itemize}
+		\end{column}
+		\hfill
+		\begin{column}{0.48\textwidth}
+			\onslide<11>\begin{itemize}
+				\medskip
+				\item[]{
+
+				}
+			    \item[]{
+
+				}
+			\end{itemize}
+		\end{column}	
+	\end{columns}
 \end{frame}
 
-\section{Conclusion}
+\section{Finding Low Energy Conformers of Dipeptides}
 
-\begin{frame}{Summary}
-
-  Get the source of this theme and the demo presentation from
-
-  \begin{center}\url{github.com/matze/mtheme}\end{center}
-
-  The theme \emph{itself} is licensed under a
-  \href{http://creativecommons.org/licenses/by-sa/4.0/}{Creative Commons
-  Attribution-ShareAlike 4.0 International License}.
-
-  \begin{center}\ccbysa\end{center}
+{%
+	\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.}
+\begin{frame}{Dipeptide Structures}
 
 \end{frame}
+}
+
+{%
+\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
+}
+\begin{frame}{Combinatorics}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {GA beats other methods if space is large}
+				\item {Space gets large \textbf{\alert{fast}}}
+			\end{itemize}		
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+
+		\end{column}	
+	\end{columns}
+\end{frame}
+}
+
+{%
+\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
+}
+\begin{frame}{Coverage}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {Smaller systems are reliably sampled}
+				\item {As \# of conformers increases, miss more and more}
+				\item {Is there a pattern to what is missed?}
+			\end{itemize}		
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+
+		\end{column}	
+	\end{columns}
+\end{frame}
+}
+
+{%
+\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
+}
+\begin{frame}{Coverage}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}[<+->]
+				\item {Most misses are very high energy}
+				\item {Algorithm favors low energy areas of the space}
+				\item {Features low in energy are favored and recombined}
+			\end{itemize}		
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+
+		\end{column}	
+	\end{columns}
+\end{frame}
+}
+
+{%
+\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.}
+\begin{frame}{Energy Cutoff}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}[<+->]
+				\item[] {
+
+				}
+				\item {GA is more sensitive to energy cutoff}
+				\item {For finding low energy ensemble, GA outperforms purely stochastic/deterministic method}
+			\end{itemize}		
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+
+		\end{column}	
+	\end{columns}
+\end{frame}
+}
+
+\section{Concluding Remarks}
+
+{%
+\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.}
+\begin{frame}{Concluding Remarks}
+	\begin{itemize}[<+->]
+		\item {Finding all the low energy conformers for a molecule is hard}
+		\item {In order to get accurate energies/structures, computationally expensive methods should be employed}
+		\item {These take time, so we want to minimize how many of these we do}
+		\item {The Genetic Algorithm provides a framework for a refined global search}
+		\item {It shines when asked to find a host of low energy solutions}
+		\item {GA wrapper can be interfaced with a variety of electronic structure packages(NWChem, ORCA) and is available under the GNU Lesser General Public License at \url{https://github.com/adrianasupady/fafoom}}
+		
+	\end{itemize}
+\end{frame}
+}
+
 
 \begin{frame}[standout]
   Questions?
@@ -363,22 +359,22 @@ or show \textbf{bold} results.\end{verbatim}
 
 \appendix
 
-\begin{frame}[fragile]{Backup slides}
-  Sometimes, it is useful to add slides at the end of your presentation to
-  refer to during audience questions.
-
-  The best way to do this is to include the \verb|appendixnumberbeamer|
-  package in your preamble and call \verb|\appendix| before your backup slides.
-
-  \themename will automatically turn off slide numbering and progress bars for
-  slides in the appendix.
+\begin{frame}[fragile]{Backup slide}
+	\begin{itemize}
+		\item Geometry optimization step makes the algorithm more Lamarckian (Jean Baptiste Larmarck, [1744-1829])
+	\end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks]{References}
+{%
+\setbeamertemplate{frame footer}{(1) Blum, V. et. al., M. Comput. Phys. Commun. 2009, 180 (11), 2175–2196.
+	
+(2) Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
 
-  \bibliography{demo}
-  \bibliographystyle{abbrv}
+	}
+\begin{frame}[fragile]{Genetic Algorithm Parameters}
+	Geometry Optimization: DFT PBE + VdW, \emph{tier1} basis in FHI-aims$^1$.
+	Convergence at 0.005 eV / \AA
 
 \end{frame}
-
+}
 \end{document}

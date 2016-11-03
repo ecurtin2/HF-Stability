@@ -17,15 +17,15 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nkrange = range(10, 20)
+Nkrange = range(53, 150, 4)
 rs = 1.2
 ndim = 2
-nguess = 50
-blocksize = 20
-num_evals = 8
+nguess = 1
+blocksize = 1
+num_evals = 1
 maxits = 50
 maxsubsize = 1000
-tolerance = 1e-8
+tolerance = 1e-6
 
 
 paramlist = [['./HFS', rs, Nk, ndim, get_fname(rs, Nk, ndim), tolerance, maxits,

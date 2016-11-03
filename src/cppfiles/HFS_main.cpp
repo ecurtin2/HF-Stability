@@ -38,10 +38,21 @@ int main(int argc, char* argv[]){
     }
 
 
+    //std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(2*HFS::Nexc, 0.0));
+    //for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
+    //    vecs[i][i] = 1.0;
+    //}
+
+    // Try this, weight by how close diags are
     std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(2*HFS::Nexc, 0.0));
     for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
-        vecs[i][i] = 1.0;
+        arma::vec guessvec;
+        arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
+        guessvec = (1.0 / temp);
+        guessvec /= arma::norm(guessvec);
+        vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
     }
+
 
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;

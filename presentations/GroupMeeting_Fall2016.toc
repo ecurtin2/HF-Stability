@@ -1,5 +1,5 @@
 \beamer@endinputifotherversion {3.36pt}
 \beamer@sectionintoc {1}{Background Information}{3}{0}{1}
-\beamer@sectionintoc {2}{Titleformats}{10}{0}{2}
-\beamer@sectionintoc {3}{Elements}{15}{0}{3}
-\beamer@sectionintoc {4}{Conclusion}{32}{0}{4}
+\beamer@sectionintoc {2}{Hartree-Fock Stability}{10}{0}{2}
+\beamer@sectionintoc {3}{Finding Low Energy Conformers of Dipeptides}{33}{0}{3}
+\beamer@sectionintoc {4}{Concluding Remarks}{43}{0}{4}
