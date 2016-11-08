@@ -425,6 +425,22 @@
 	\end{columns}
 \end{frame}
 
+\begin{frame}{Algorithm Wall time}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {Roughly quadratic wrt matrix dimension.}
+				\item {Outliers correspond to high condition number}
+			\end{itemize}				
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+		    \includegraphics[width=\linewidth]{../images/overallruntime.eps}
+		\end{column}	
+	\end{columns}
+\end{frame}
+
+
 \begin{frame}{Efficacy of Davidson's Algorithm}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
@@ -446,6 +462,7 @@
 {%
 \setbeamertemplate{frame footer}{Bernu, B.; Delyon, F.; Holzmann, M.; Baguet, L. Phys. Rev. B 2011, 84 (11), 115115.}
 \begin{frame}{Dependence on r${}_s$}
+	Crossover from stable to unstable agrees with previous results.
 	\begin{columns}[c] % align columns
 		\begin{column}{.5\textwidth}
 			\includegraphics[width=0.95\linewidth]{../images/stab_rs.eps}
@@ -454,7 +471,7 @@
 		\end{column}
 		\hfill
 		\begin{column}{0.5\textwidth}
-			\includegraphics[width=\linewidth]{../images/Bernu_2dEnergyGain.pdf}
+			\includegraphics[width=.95\linewidth]{../images/Bernu_2dEnergyGain.pdf}
 			\\
 			Published Result. Red = Square Lattice, Blue = Triangular Lattice
 		\end{column}	
@@ -475,7 +492,6 @@
 		\item {The Genetic Algorithm provides a framework for a refined global search}
 		\item {It shines when asked to find a host of low energy solutions}
 		\item {GA wrapper can be interfaced with a variety of electronic structure packages(NWChem, ORCA) and is available under the GNU Lesser General Public License at \url{https://github.com/adrianasupady/fafoom}}
-		
 	\end{itemize}
 \end{frame}
 }

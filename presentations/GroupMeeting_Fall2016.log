@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  7 NOV 2016 19:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.1)  7 NOV 2016 20:07
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1332,18 +1332,18 @@ Package caption Info: End \AtBeginDocument code.
 
 (./GroupMeeting_Fall2016.nav)
 Package epstopdf Info: Source file: <../images/imark_bold.eps>
-(epstopdf)                    date: 2008-04-04 13:26:52
+(epstopdf)                    date: 2016-11-06 10:44:54
 (epstopdf)                    size: 417226 bytes
 (epstopdf)             Output file: <../images/imark_bold-eps-converted-to.pdf>
 
-(epstopdf)                    date: 2016-09-30 15:55:43
+(epstopdf)                    date: 2016-11-06 10:44:54
 (epstopdf)                    size: 14415 bytes
 (epstopdf)             Command: <epstopdf --outfile=../images/imark_bold-eps-co
 nverted-to.pdf ../images/imark_bold.eps>
 (epstopdf)             \includegraphics on input line 31.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/imark_bold-eps-converted-to.pdf, id=41, 27.10126pt x 35.13126pt>
+<../images/imark_bold-eps-converted-to.pdf, id=33, 27.10126pt x 35.13126pt>
 File: ../images/imark_bold-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/imark_bold-eps-converted-to.pdf>
@@ -1409,7 +1409,7 @@ LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
 (Font)              for symbol `textbullet' on input line 3.
 
-<../images/1d_extrema.pdf, id=93, 578.16pt x 397.485pt>
+<../images/1d_extrema.pdf, id=85, 578.16pt x 397.485pt>
 File: ../images/1d_extrema.pdf Graphic file (type pdf)
 
 <use ../images/1d_extrema.pdf>
@@ -1426,7 +1426,7 @@ Package pdftex.def Info: ../images/1d_extrema.pdf used on input line 10.
 ) [6
 
 ]
-<../images/const_opt_globalmin.jpeg, id=112, 1204.5pt x 981.6675pt>
+<../images/const_opt_globalmin.jpeg, id=104, 1204.5pt x 981.6675pt>
 File: ../images/const_opt_globalmin.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_globalmin.jpeg>
@@ -1434,7 +1434,7 @@ Package pdftex.def Info: ../images/const_opt_globalmin.jpeg used on input line
 121.
 (pdftex.def)             Requested size: 132.74713pt x 138.21385pt.
 
-<../images/const_opt_saddle.jpeg, id=114, 1204.5pt x 826.08624pt>
+<../images/const_opt_saddle.jpeg, id=106, 1204.5pt x 826.08624pt>
 File: ../images/const_opt_saddle.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_saddle.jpeg>
@@ -1442,7 +1442,7 @@ Package pdftex.def Info: ../images/const_opt_saddle.jpeg used on input line 121
 .
 (pdftex.def)             Requested size: 132.74713pt x 126.65114pt.
 
-<../images/const_opt_nonstationary.jpeg, id=116, 1204.5pt x 981.6675pt>
+<../images/const_opt_nonstationary.jpeg, id=108, 1204.5pt x 981.6675pt>
 File: ../images/const_opt_nonstationary.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_nonstationary.jpeg>
@@ -1542,7 +1542,7 @@ Overfull \vbox (3.47342pt too high) detected at line 193
 ] [26
 
 ]
-<../images/seeger_stability.pdf, id=236, 427.63585pt x 165.71465pt>
+<../images/seeger_stability.pdf, id=228, 427.63585pt x 165.71465pt>
 File: ../images/seeger_stability.pdf Graphic file (type pdf)
 
 <use ../images/seeger_stability.pdf>
@@ -1625,17 +1625,17 @@ Missing character: There is no “ in font cmss8!
 
 ]
 Package epstopdf Info: Source file: <../images/matscale.eps>
-(epstopdf)                    date: 2016-11-07 18:48:58
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 35287 bytes
 (epstopdf)             Output file: <../images/matscale-eps-converted-to.pdf>
-(epstopdf)                    date: 2016-11-07 18:57:43
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 28648 bytes
 (epstopdf)             Command: <epstopdf --outfile=../images/matscale-eps-conv
 erted-to.pdf ../images/matscale.eps>
 (epstopdf)             \includegraphics on input line 391.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/matscale-eps-converted-to.pdf, id=372, 433.62pt x 289.08pt>
+<../images/matscale-eps-converted-to.pdf, id=364, 433.62pt x 289.08pt>
 File: ../images/matscale-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/matscale-eps-converted-to.pdf>
@@ -1646,17 +1646,17 @@ line 391.
 
  <../images/matscale-eps-converted-to.pdf>]
 Package epstopdf Info: Source file: <../images/mvscaling.eps>
-(epstopdf)                    date: 2016-11-07 18:49:00
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 38480 bytes
 (epstopdf)             Output file: <../images/mvscaling-eps-converted-to.pdf>
-(epstopdf)                    date: 2016-11-07 18:57:43
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 28734 bytes
 (epstopdf)             Command: <epstopdf --outfile=../images/mvscaling-eps-con
 verted-to.pdf ../images/mvscaling.eps>
 (epstopdf)             \includegraphics on input line 408.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/mvscaling-eps-converted-to.pdf, id=417, 433.62pt x 289.08pt>
+<../images/mvscaling-eps-converted-to.pdf, id=409, 433.62pt x 289.08pt>
 File: ../images/mvscaling-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/mvscaling-eps-converted-to.pdf>
@@ -1667,18 +1667,18 @@ Package pdftex.def Info: ../images/mvscaling-eps-converted-to.pdf used on input
 
  <../images/mvscaling-eps-converted-to.pdf>]
 Package epstopdf Info: Source file: <../images/dav_vs_exact_scaling.eps>
-(epstopdf)                    date: 2016-11-07 18:48:59
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 44028 bytes
 (epstopdf)             Output file: <../images/dav_vs_exact_scaling-eps-convert
 ed-to.pdf>
-(epstopdf)                    date: 2016-11-07 18:57:43
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 41033 bytes
 (epstopdf)             Command: <epstopdf --outfile=../images/dav_vs_exact_scal
 ing-eps-converted-to.pdf ../images/dav_vs_exact_scaling.eps>
 (epstopdf)             \includegraphics on input line 426.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/dav_vs_exact_scaling-eps-converted-to.pdf, id=458, 433.62pt x 289.08
+<../images/dav_vs_exact_scaling-eps-converted-to.pdf, id=450, 433.62pt x 289.08
 pt>
 File: ../images/dav_vs_exact_scaling-eps-converted-to.pdf Graphic file (type pd
 f)
@@ -1689,64 +1689,80 @@ ed on input line 426.
  [53
 
  <../images/dav_vs_exact_scaling-eps-converted-to.pdf>]
+Package epstopdf Info: Source file: <../images/overallruntime.eps>
+(epstopdf)                    date: 2016-11-07 19:45:40
+(epstopdf)                    size: 30562 bytes
+(epstopdf)             Output file: <../images/overallruntime-eps-converted-to.
+pdf>
+(epstopdf)                    date: 2016-11-07 20:06:31
+(epstopdf)                    size: 30964 bytes
+(epstopdf)             Command: <epstopdf --outfile=../images/overallruntime-ep
+s-converted-to.pdf ../images/overallruntime.eps>
+(epstopdf)             \includegraphics on input line 441.
+Package epstopdf Info: Output file is already uptodate.
+
+<../images/overallruntime-eps-converted-to.pdf, id=508, 433.62pt x 289.08pt>
+File: ../images/overallruntime-eps-converted-to.pdf Graphic file (type pdf)
+
+<use ../images/overallruntime-eps-converted-to.pdf>
+Package pdftex.def Info: ../images/overallruntime-eps-converted-to.pdf used on 
+input line 441.
+(pdftex.def)             Requested size: 184.3758pt x 122.91692pt.
+ [54
+
+ <../images/overallruntime-eps-converted-to.pdf>]
 Package epstopdf Info: Source file: <../images/dav_vs_exact.eps>
-(epstopdf)                    date: 2016-11-07 18:48:58
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 43948 bytes
 (epstopdf)             Output file: <../images/dav_vs_exact-eps-converted-to.pd
 f>
-(epstopdf)                    date: 2016-11-07 18:57:43
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 41966 bytes
 (epstopdf)             Command: <epstopdf --outfile=../images/dav_vs_exact-eps-
 converted-to.pdf ../images/dav_vs_exact.eps>
-(epstopdf)             \includegraphics on input line 443.
+(epstopdf)             \includegraphics on input line 459.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/dav_vs_exact-eps-converted-to.pdf, id=516, 433.62pt x 289.08pt>
+<../images/dav_vs_exact-eps-converted-to.pdf, id=549, 433.62pt x 289.08pt>
 File: ../images/dav_vs_exact-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/dav_vs_exact-eps-converted-to.pdf>
 Package pdftex.def Info: ../images/dav_vs_exact-eps-converted-to.pdf used on in
-put line 443.
+put line 459.
 (pdftex.def)             Requested size: 184.3758pt x 122.91692pt.
- [54
+ [55
 
  <../images/dav_vs_exact-eps-converted-to.pdf>]
 Package epstopdf Info: Source file: <../images/stab_rs.eps>
-(epstopdf)                    date: 2016-11-07 19:11:15
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 24657 bytes
 (epstopdf)             Output file: <../images/stab_rs-eps-converted-to.pdf>
-(epstopdf)                    date: 2016-11-07 19:11:19
+(epstopdf)                    date: 2016-11-07 19:45:40
 (epstopdf)                    size: 22116 bytes
 (epstopdf)             Command: <epstopdf --outfile=../images/stab_rs-eps-conve
 rted-to.pdf ../images/stab_rs.eps>
-(epstopdf)             \includegraphics on input line 462.
+(epstopdf)             \includegraphics on input line 479.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/stab_rs-eps-converted-to.pdf, id=569, 433.62pt x 433.62pt>
+<../images/stab_rs-eps-converted-to.pdf, id=603, 433.62pt x 433.62pt>
 File: ../images/stab_rs-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/stab_rs-eps-converted-to.pdf>
 Package pdftex.def Info: ../images/stab_rs-eps-converted-to.pdf used on input l
-ine 462.
+ine 479.
 (pdftex.def)             Requested size: 145.9622pt x 145.95998pt.
 
-<../images/Bernu_2dEnergyGain.pdf, id=570, 199.00214pt x 175.10094pt>
+<../images/Bernu_2dEnergyGain.pdf, id=604, 199.00214pt x 175.10094pt>
 File: ../images/Bernu_2dEnergyGain.pdf Graphic file (type pdf)
 
 <use ../images/Bernu_2dEnergyGain.pdf>
-Package pdftex.def Info: ../images/Bernu_2dEnergyGain.pdf used on input line 46
-2.
-(pdftex.def)             Requested size: 153.64493pt x 135.19148pt.
- [55
+Package pdftex.def Info: ../images/Bernu_2dEnergyGain.pdf used on input line 47
+9.
+(pdftex.def)             Requested size: 145.9622pt x 128.43178pt.
+ [56
 
  <../images/stab_rs-eps-converted-to.pdf> <../images/Bernu_2dEnergyGain.pdf>] [
-56
-
-]
-Missing character: There is no â in font cmss8!
-Missing character: There is no € in font cmss8!
-Missing character: There is no “ in font cmss8!
- [57
+57
 
 ]
 Missing character: There is no â in font cmss8!
@@ -1779,16 +1795,22 @@ Missing character: There is no “ in font cmss8!
  [62
 
 ]
-[63
+Missing character: There is no â in font cmss8!
+Missing character: There is no € in font cmss8!
+Missing character: There is no “ in font cmss8!
+ [63
+
+]
+[64
 
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\translate ' on input line 488.
+(hyperref)                removing `\translate ' on input line 505.
 
 \openout4 = `GroupMeeting_Fall2016.vrb'.
 
-(./GroupMeeting_Fall2016.vrb) [64
+(./GroupMeeting_Fall2016.vrb) [65
 
 ]
 \tf@nav=\write6
@@ -1800,14 +1822,20 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 \tf@snm=\write8
 \openout8 = `GroupMeeting_Fall2016.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 494.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 494.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 511.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 511.
  (./GroupMeeting_Fall2016.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 494.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 494.
-Package rerunfilecheck Info: File `GroupMeeting_Fall2016.out' has not changed.
-(rerunfilecheck)             Checksum: 491B236A2AFAE15C95BF5737BC5162C5;390.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 511.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 511.
 
+
+Package rerunfilecheck Warning: File `GroupMeeting_Fall2016.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `GroupMeeting_Fall2016.out':
+(rerunfilecheck)             Before: E9CE8C1AA9975945A7B4C04D35569661;296
+(rerunfilecheck)             After:  491B236A2AFAE15C95BF5737BC5162C5;390.
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
@@ -1815,11 +1843,11 @@ LaTeX Font Warning: Size substitutions with differences
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 494.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 511.
  )
 (\end occurred inside a group at level 14)
 
-### simple group (level 14) entered at line 446 ({)
+### simple group (level 14) entered at line 462 ({)
 ### simple group (level 13) entered at line 372 ({)
 ### simple group (level 12) entered at line 346 ({)
 ### simple group (level 11) entered at line 317 ({)
@@ -1835,13 +1863,13 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 494.
 ### simple group (level 1) entered at line 40 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 30648 strings out of 493029
- 618066 string characters out of 6136235
- 676166 words of memory out of 5000000
- 33471 multiletter control sequences out of 15000+600000
+ 30655 strings out of 493029
+ 618296 string characters out of 6136235
+ 676196 words of memory out of 5000000
+ 33475 multiletter control sequences out of 15000+600000
  16375 words of font info for 60 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 71i,18n,96p,10404b,2689s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 71i,18n,96p,10404b,2701s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></u
@@ -1858,10 +1886,10 @@ s/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
 sy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb
 ></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr
 /share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on GroupMeeting_Fall2016.pdf (64 pages, 632403 bytes).
+Output written on GroupMeeting_Fall2016.pdf (65 pages, 660736 bytes).
 PDF statistics:
- 795 PDF objects out of 1000 (max. 8388607)
- 479 compressed objects within 5 object streams
- 137 named destinations out of 1000 (max. 500000)
- 225 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 831 PDF objects out of 1000 (max. 8388607)
+ 482 compressed objects within 5 object streams
+ 139 named destinations out of 1000 (max. 500000)
+ 214 words of extra memory for PDF output out of 10000 (max. 10000000)
 
