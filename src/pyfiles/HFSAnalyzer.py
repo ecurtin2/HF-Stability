@@ -215,12 +215,12 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     vir_states = df.iloc[df_idx]['Virtual States']
     occ_states = df.iloc[df_idx]['Occupied States']
 
-    circle = plt.Circle((0, 0), radius=kf, fc='none', linewidth=1)
+    circle = plt.Circle((0, 0), radius=kf, fc='none', linewidth=1, zorder=4)
     sqrpoints = [[kmax, kmax]
                 ,[kmax, -kmax]
                 ,[-kmax, -kmax]
                 ,[-kmax, kmax]]
-    square =plt.Polygon(sqrpoints, edgecolor=sns.color_palette()[0], fill=None)
+    square =plt.Polygon(sqrpoints, edgecolor=sns.color_palette()[0], fill=None, zorder=4)
     ax.add_patch(circle)
     ax.add_patch(square)
 
@@ -233,21 +233,25 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     active_virs = kgrid[vir_states[mask2]]
 
     ax.scatter(kgrid[occ_states[:,0]], kgrid[occ_states[:,1]],
-                c=sns.color_palette()[0], label='Occupied')
+                c=sns.color_palette()[0], label='Occupied', s=8, zorder=3, edgecolors='none')
+    vir_color = sns.color_palette()[2]
+    spec_vir_color = (255.0/255, 204./255, 153./255) 
+
     ax.scatter(active_virs[:,0], active_virs[:,1],
-                c=sns.color_palette()[2], label='Virtual')
+                c=vir_color, label='Virtual', s=8, zorder=2, edgecolors='none')
     ax.scatter(spec_virs[:,0], spec_virs[:,1],
-                c=sns.color_palette()[2], alpha=spec_alpha, label='Spectator Virtuals')
+                c=spec_vir_color, alpha=spec_alpha, label='Spectator Virtuals', 
+                s=8, zorder=1, edgecolors='none')
     ax.set_xlim(-scale*kmax, scale*kmax)
     ax.set_ylim(-scale*kmax, scale*kmax)
     rs = df.iloc[df_idx]['rs']
     Nk = df.iloc[df_idx]['Nk']
     ndim = df.iloc[df_idx]['ndim']
-    title = 'rs = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
+    title = 'rs = ' + str(rs)[:3] + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
     if labels:
-        ax.set_title(title)
-        ax.set_xlabel('kx')
-        ax.set_ylabel('ky')
+#ax.set_title(title)
+        ax.set_xlabel('k${}_x$')
+        ax.set_ylabel('k${}_y$')
         ax.legend(loc='center left', bbox_to_anchor=[0.95, 0.5])
     sns.despine(left=True, bottom=True)
 #ax.axis('off')
@@ -260,8 +264,8 @@ def axplot_exc_hist(df, ax, df_idx, bindivisor=4):
         rs = df.iloc[df_idx]['rs']
         Nk = df.iloc[df_idx]['Nk']
         ndim = df.iloc[df_idx]['ndim']
-        title = 'r_s = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
-        ax.set_title(title)
+        title = 'r_s = ' + str(rs)[:3] + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
+#       ax.set_title(title)
         ax.set_xlabel('$\epsilon_{vir} - \epsilon_{occ}$ (Hartree)')
         ax.set_ylabel('Count')
         return ax
@@ -281,9 +285,9 @@ def axplot_energy_compare(df, ax, df_idx, discretized=True, analytic=True):
     
     k = k / kf # rescale for plot
     if analytic:
-        ax.plot(k, energy , 'k-' , label='Total')
-        ax.plot(k, kinetic, 'k:' , label='Kinetic')    
-        ax.plot(k, exch   , 'k--', label='Exchange')
+        ax.plot(k, energy , 'k-' , label='Total', zorder=1)
+        ax.plot(k, kinetic, 'k:' , label='Kinetic', zorder=1)    
+        ax.plot(k, exch   , 'k--', label='Exchange', zorder=1)
     
     # Discrete plots
     occ_energies = df_row['Occ Energies'] / Ef
@@ -296,8 +300,10 @@ def axplot_energy_compare(df, ax, df_idx, discretized=True, analytic=True):
     kvir = kgrid[vir_states]
     kvir = [np.linalg.norm(ki) for ki in kvir] / kf
     if discretized:
-        ax.plot(kocc, occ_energies, '.', c=sns.color_palette()[0], label='Occupied')
-        ax.plot(kvir, vir_energies, '.', c=sns.color_palette()[2], label='Virtual')
+        ax.scatter(kocc, occ_energies, c=sns.color_palette()[0], label='Occupied',
+                   s=2, zorder=2, edgecolors='none')
+        ax.scatter(kvir, vir_energies, c=sns.color_palette()[2], label='Virtual', 
+                   s=2, zorder=2, edgecolors='none')
         
     # Plot Options
     ax.set_xlim(0, 2)

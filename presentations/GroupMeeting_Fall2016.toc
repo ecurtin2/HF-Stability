@@ -2,6 +2,6 @@
 \beamer@sectionintoc {1}{Background Information}{3}{0}{1}
 \beamer@sectionintoc {2}{Hartree-Fock Stability}{10}{0}{2}
 \beamer@sectionintoc {3}{Homogeneous Electron Gas}{28}{0}{3}
-\beamer@sectionintoc {4}{Notes on Iterative Subspace Eigenvalue Methods}{36}{0}{4}
+\beamer@sectionintoc {4}{Notes on Iterative Subspace Eigenvalue Methods}{31}{0}{4}
 \beamer@sectionintoc {5}{Results}{50}{0}{5}
-\beamer@sectionintoc {6}{Concluding Remarks}{57}{0}{6}
+\beamer@sectionintoc {6}{Concluding Remarks}{60}{0}{6}

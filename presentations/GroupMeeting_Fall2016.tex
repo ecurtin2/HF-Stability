@@ -7,6 +7,7 @@
 %\usecolortheme{seahorse}   % or your preferred color theme
 \usepackage{appendixnumberbeamer}
 \usepackage{graphicx}
+\usepackage{multirow}
 \usepackage{booktabs}
 \usepackage[scale=2]{ccicons}
 \usepackage{xspace}
@@ -129,7 +130,7 @@
 	\begin{itemize}[<+->]
 		\item Solving the HF equations guarantees only that the energy is \alert{stationary}. The first order variation is therefore 0. 
 		\item We need to know if this is indeed a minimum.
-		\item We can determine this if we inspect the second order variation in the energy.
+		\item We can determine this if we inspect the \alert{second order variation} in the energy.
 		\item Thouless$^1$ showed a physically motivated derivation using Time-Dependent Hartree-Fock theory (TDHF). 
 	\end{itemize}
 \end{frame}
@@ -199,7 +200,7 @@
 	\begin{itemize}[<+->]
 		\item{The RPA frequencies represent electronic oscillations about the ground state}
 		\item{Real frequencies are stable, imaginary frequencies are unstable}
-		\item{The RPA frequencies are imaginary when the \alert{Orbital Hessian} (aka stability matrix, electronic Hessian) eigenvalues are negative
+		\item{The RPA frequencies are imaginary when the \alert{Orbital Hessian} (aka stability matrix, electronic Hessian) eigenvalues are \alert{negative}
 			\begin{eqnarray}
 				\begin{bmatrix}
 					\bf{A}   & \bf{B}   \\
@@ -211,18 +212,35 @@
 		}
 		\item{Where}
 		\begin{eqnarray}
-			A_{ia,jb} &=& \braket{{}_i^a|H-\braket{0|H|0}|{}_j^b} = \left(\epsilon_a - \epsilon_i \right) \delta_{ij}\delta_{ab} + \braket{aj||ib}
+			A_{ia,jb} &=& \braket{{}_i^a|H-E_0|{}_j^b} = \left(\epsilon_a - \epsilon_i \right) \delta_{ij}\delta_{ab} + \braket{aj||ib}
 			\nonumber \\
-			B_{ia,jb} &=& \braket{{}_{ij}^{ab}|H-\braket{0|H|0}|0} = \braket{ab||ij}.
+			B_{ia,jb} &=& \braket{{}_{ij}^{ab}|H-E_0|0} = \braket{ab||ij}.
 		\end{eqnarray}
 	\end{itemize}
 \end{frame}
 
-
+{%
+	\setbeamertemplate{frame footer}{1) Seeger, R.; Pople, J. A. J. Chem. Phys. 1977, 66 (7), 3045.}
 \begin{frame}{Hartree-Fock Stability Conditions}
 	\begin{itemize}
-		\item[]{The eigenvalue equation can be factorized depending on symmetry.}
-		\item[]{\includegraphics[width=\linewidth]{../images/seeger_stability.pdf} }
+		\item[]{The eigenvalue equation can be factorized depending on symmetry.} \\~\\
+		\item[]{
+			\resizebox{0.9\textwidth}{!}{%
+			\begin{tabular}{r@{\qquad}cccccc}
+				  \multirow{1}{*}{Solution Type} & \multicolumn{6}{c}{Space Type}  \\
+				  \cmidrule{2-7}
+				  & Real RHF & Complex RHF & Real UHF & Complex UHF & Real GHF & Complex GHF \\
+				  \midrule
+				  Real RHF    & ${}^1\mathbf{A}' + {}^1\mathbf{B}'$ & ${}^1\mathbf{A}' - {}^1\mathbf{B}'$ & ${}^3\mathbf{A}' + {}^3\mathbf{B}'$ & & & \\
+				  Complex RHF & - & ${}^1\mathbf{H}'$ & - & \alert{${}^3\mathbf{H}'$} & - & \\
+				  Real UHF    & - & - & $\mathbf{A}' + \mathbf{B}'$ & $\mathbf{A}' - \mathbf{B}'$ & $\mathbf{A}'' + \mathbf{B}''$ &  \\
+				  Complex UHF & - & - & - &  $\mathbf{H}'$ & - & $\mathbf{H}'$ \\
+				  Real GHF    & - & - & - & - & $\mathbf{A} - \mathbf{B}$ &  $\mathbf{A} - \mathbf{B}$  \\
+				  Complex GHF & - & - & - & - & - & $\mathbf{H}$ \\
+				  \bottomrule
+			\end{tabular}}
+		\item[] \tiny Table reproduced from Seeger \& Pople$^1$
+		}
 	\end{itemize}
 \end{frame}
 
@@ -255,7 +273,7 @@
 		\item{The discretized solutions are given by,
 		\begin{eqnarray}\label{eq:hf_orb_energy}
 			\epsilon_{\vec{k}}=
-				\frac{\hbar^2 k^2}{2m} - \sum\limits_{\vec{k}}^{|\vec{k}|< k_f}
+				\frac{\hbar^2 k^2}{2m} - \sum\limits_{\vec{k}'}^{|\vec{k}'|< k_f}
 				\braket{\vec{k}, \vec{k}' |\vec{k}', \vec{k}}
 		\end{eqnarray}
 		}
@@ -280,19 +298,6 @@
 		}
 	\end{itemize}
 \end{frame}
-
-{%
-\setbeamertemplate{frame footer}{Overhauser, A. W. Phys. Rev. Lett. 1960, 4 (9), 462–465.}
-\begin{frame}{Project Goal}
-	\begin{itemize}[<+->]
-		\item{Can we use the HF-Stability analysis to determine where the HEG is unstable?}
-		\item{Will this predict the known tendency of crystallization at low density?}
-		\item{It is known that the RHF-GHF instability persists at all densities for the HEG$^1$.}
-		\item{Can we show this numerically, and discriminate between RHF-UHF and RHF-GHF instability?}
-		\item{(Future) Can we combine this with to improve the efficacy of correlation theories (CC, MBPT)?}
-	\end{itemize}
-\end{frame}
-
 
 \section{Notes on Iterative Subspace Eigenvalue Methods}
 {%
@@ -326,7 +331,7 @@
 			\item{The \alert{block size} of the algorithm}
 			\item{The \alert{density} of the eigenvalue spectrum}
 			\item{The \alert{initial guess} eigenvectors}
-			\item{The \alert{condition number} of the matrix}
+			\item{The \alert{condition number} of the eigenvector matrix}
 			\item{The \alert{preconditioner} (Davidson only)}
 		\end{itemize}
 		\item{They can \alert{converge to an incorrect answer} if:}
@@ -349,7 +354,7 @@
 	\begin{itemize}
 		\item{The condition number, $\kappa$, is bound from below by
 			\begin{eqnarray}
-				\kappa \geq \frac{Max(\lambda_i)}{Min(\lambda_j)}
+				\kappa \geq \frac{Max(A_{ii})}{Min(A_{jj})}
 			\end{eqnarray}
 		}
 		\item{The Gram-Schmidt procedure has numerical issues, 
@@ -367,7 +372,87 @@
 
 \end{frame}
 
+
+{%
+\setbeamertemplate{frame footer}{Overhauser, A. W. Phys. Rev. Lett. 1960, 4 (9), 462–465.}
+\begin{frame}{Project Goal}
+	\begin{itemize}[<+->]
+		\item{Can we use the HF-Stability analysis to determine where the HEG is unstable?}
+		\item{Will this predict the known tendency of crystallization at low density?}
+		\item{It is known that the RHF-GHF instability persists at all densities for the HEG$^1$.}
+		\item{Can we show this numerically, and discriminate between RHF-UHF and RHF-GHF instability?}
+		\item{(Future) Can we combine this with to improve the efficacy of correlation theories (CC, MBPT)?}
+	\end{itemize}
+\end{frame}
+
+
+
 \section{Results}
+
+{%
+\setbeamertemplate{frame footer}{}
+
+\begin{frame}{First Brillouin Zone}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {Excite Ony in the X direction}
+				\item {-X virtuals matter due to $\vec{k}' = \vec{k} + \vec{G}$}
+			\end{itemize}				
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/1stBZ.eps}
+
+			\end{overprint}
+		\end{column}	
+	\end{columns}
+\end{frame}
+
+{%
+\setbeamertemplate{frame footer}{}
+
+\begin{frame}{Orbital Energies}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {Nk = 57 reproduces the orbital energies reasonably well}
+				\item {Worst towards $\Gamma$, better for higher $|\vec{k}|$}
+			\end{itemize}				
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/energycompare.eps}
+
+			\end{overprint}
+		\end{column}	
+	\end{columns}
+\end{frame}
+
+
+{%
+\setbeamertemplate{frame footer}{}
+
+\begin{frame}{Matrix Diagonals}
+	\begin{columns}[c] % align columns
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {Spectrum is Dense}
+			\end{itemize}				
+		\end{column}
+		\hfill
+		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/exchist.eps}
+
+			\end{overprint}
+		\end{column}	
+	\end{columns}
+\end{frame}
+
+
 
 {%
 \setbeamertemplate{frame footer}{}
@@ -390,6 +475,7 @@
 	\end{columns}
 \end{frame}
 
+
 \begin{frame}{Matrix-Vector Scaling}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
@@ -407,12 +493,16 @@
 	\end{columns}
 \end{frame}
 
+{%
+\setbeamertemplate{frame footer}{1) http://mathworld.wolfram.com/StrassenFormulas.html}
+
 \begin{frame}{Davidson Scaling}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
 			\begin{itemize}
 				\item {Davidson is Asymptotically quadratic.}
 				\item {Full diagonalization is almost cubic.}
+				\item {Matrix multiplication is order${}^1$ $log_2(7) \approx 2.807$}
 			\end{itemize}				
 		\end{column}
 		\hfill
@@ -445,7 +535,8 @@
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
 			\begin{itemize}
-				\item {Scales as $N_{exc} \times  N_{occ}$ due to momentum conservation}
+				\item {Reproduces Exact result to machine precision in all test cases.}
+				\item {Odd spikes are due to approximating circle by squares}
 			\end{itemize}				
 		\end{column}
 		\hfill
@@ -463,48 +554,37 @@
 \setbeamertemplate{frame footer}{Bernu, B.; Delyon, F.; Holzmann, M.; Baguet, L. Phys. Rev. B 2011, 84 (11), 115115.}
 \begin{frame}{Dependence on r${}_s$}
 	Crossover from stable to unstable agrees with previous results.
-	\begin{columns}[c] % align columns
-		\begin{column}{.5\textwidth}
-			\includegraphics[width=0.95\linewidth]{../images/stab_rs.eps}
-			\\
-			My Result
-		\end{column}
-		\hfill
-		\begin{column}{0.5\textwidth}
-			\includegraphics[width=.95\linewidth]{../images/Bernu_2dEnergyGain.pdf}
-			\\
-			Published Result. Red = Square Lattice, Blue = Triangular Lattice
-		\end{column}	
-	\end{columns}
+	\includegraphics[width=.95\linewidth]{../images/MeVsBernu.pdf}
 \end{frame}
-
 
 
 \section{Concluding Remarks}
 
 {%
-\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.}
-\begin{frame}{Concluding Remarks}
-	\begin{itemize}[<+->]
-		\item {Finding all the low energy conformers for a molecule is hard}
-		\item {In order to get accurate energies/structures, computationally expensive methods should be employed}
-		\item {These take time, so we want to minimize how many of these we do}
-		\item {The Genetic Algorithm provides a framework for a refined global search}
-		\item {It shines when asked to find a host of low energy solutions}
-		\item {GA wrapper can be interfaced with a variety of electronic structure packages(NWChem, ORCA) and is available under the GNU Lesser General Public License at \url{https://github.com/adrianasupady/fafoom}}
-	\end{itemize}
+\setbeamertemplate{frame footer}{}
+\begin{frame}{Next Steps}
+	\resizebox{\textwidth}{!}{%
+	\begin{tabular}{l c c}
+		Objective                 & Human Time   & Computer Time    \\
+		\midrule
+		Other instabilities in 2D & 30 mins & Week \\
+		All 3D & $\frac{1}{2}$ Day&  $>$Weeks? Parallel?
+	\end{tabular}}
 \end{frame}
 }
 
-
+{%
+\setbeamertemplate{frame footer}{}
 \begin{frame}[standout]
   Questions?
 \end{frame}
 
 \appendix
 
-\begin{frame}[fragile]{Backup slide}
-	Empty Backup
-\end{frame}
-
+%{%
+%\setbeamertemplate{frame footer}{}
+%\begin{frame}[fragile]{Backup slide}
+%	Empty Backup
+%\end{frame}
+%
 \end{document}
