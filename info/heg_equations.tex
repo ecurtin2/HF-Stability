@@ -1,20 +1,18 @@
-\documentclass[10pt]{beamer}
-
-\usetheme{metropolis}
-\useoutertheme{metropolis}
-\useinnertheme{metropolis}
-\usefonttheme{metropolis}
-\usepackage{appendixnumberbeamer}
+\documentclass{revtex4}
 \usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage[scale=2]{ccicons}
-\usepackage{xspace}
-\usepackage[justification=centering]{caption}
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{braket}
-\usepackage[version=3]{mhchem}
-\definecolor{darkgreen}{RGB}{30, 133, 12}
-\definecolor{lightgray}{gray}{0.9}
-\renewcommand{\arraystretch}{1.2}
+\usepackage{mathtools}
+\usepackage{textcomp}
+\usepackage{algorithm}
+\usepackage{booktabs}
+\usepackage[noend]{algpseudocode}
+
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
 \begin{document}
 \title{Notes on Hartree-Fock Stability of HEG}
 \author{Evan Curtin}

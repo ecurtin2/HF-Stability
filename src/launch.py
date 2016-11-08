@@ -17,8 +17,8 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nkrange = range(53, 150, 4)
-rs = 1.2
+Nk = 57
+rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
 ndim = 2
 nguess = 1
 blocksize = 1
@@ -29,7 +29,7 @@ tolerance = 1e-6
 
 
 paramlist = [['./HFS', rs, Nk, ndim, get_fname(rs, Nk, ndim), tolerance, maxits,
-              maxsubsize, nguess, blocksize, num_evals] for Nk in Nkrange]
+              maxsubsize, nguess, blocksize, num_evals] for rs in rsrange]
 
 for i in range(my_rank, len(paramlist), nprocs):
      print 'Starting Job: ',  ' '.join([str(j) for j in paramlist[i]])

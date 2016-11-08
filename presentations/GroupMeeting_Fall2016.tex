@@ -11,6 +11,8 @@
 \usepackage[scale=2]{ccicons}
 \usepackage{xspace}
 \usepackage[justification=centering]{caption}
+\usepackage{braket}
+\usepackage{amsmath}
 
 \usepackage[version=3]{mhchem}
 \definecolor{darkgreen}{RGB}{30, 133, 12}
@@ -18,7 +20,7 @@
 \renewcommand{\arraystretch}{1.2}
 
 \title{Hartree-Fock Stability}
-\subtitle{Applications to the Homogeneous Electron Gas \\ And Implications in Electron Correlation}
+\subtitle{Applications to the Homogeneous Electron Gas}
 \date{\today}
 \author{Evan Curtin}
 \institute{University of Illinois at Urbana-Champaign}
@@ -102,8 +104,8 @@
 	\begin{columns}[c] % align columns
 		\begin{column}{.48\textwidth}
 			\begin{itemize}[<+->]
-				\item {Restricted minima may correspond to absolute minima}
-				\item {Restricted minima may correspond to absolute maxima}
+				\item {Restricted minima may correspond to minima in another dimension}
+				\item {Restricted minima may correspond to maxima in another dimension}
 				\item {Restricted minima may be nonstationary}
 			\end{itemize}				
 		\end{column}
@@ -118,222 +120,348 @@
 	\end{columns}
 \end{frame}
 
+
 \section{Hartree-Fock Stability}
 
 {%
-	\setbeamertemplate{frame footer}{Thouless, D. J. Nucl. Phys. 1960, 21, 225–232.}
-\begin{frame}{Hartree Fock Stability Conditions}
-	\begin{columns}[c] % align columns
-		\begin{column}{.48\textwidth}
-			\begin{itemize}
-				\item {Inspired by biological evolution}
-				\item {Evolve a population over generations}
-				\item {Survival of the fittest}
-				\item {Requirements:}
-				\begin{itemize}
-					\item {Represent individuals as vector}
-					\item {Fitness function}
-				\end{itemize}
-				\item{$v = \left(\begin{smallmatrix}
-					x_1 & y_1 & z_1 & x_2 &  y_2 & z_2 &
-					... & x_N & y_N & z_N
-					\end{smallmatrix}\right)$}
-				\item{$F = \frac{E_{max} - E}{E_{max} - E_{min}}$}
-			\end{itemize}
-
-		\end{column}
-		\hfill
-		\begin{column}{0.48\textwidth}
-
-		\end{column}	
-	\end{columns}
+	\setbeamertemplate{frame footer}{Thouless, D. J. The Quantum Mechanics of Many-Body Systems, 2nd ed.; Dover: 1972. (p. 114)}
+\begin{frame}{Hartree-Fock Stability}
+	\begin{itemize}[<+->]
+		\item Solving the HF equations guarantees only that the energy is \alert{stationary}. The first order variation is therefore 0. 
+		\item We need to know if this is indeed a minimum.
+		\item We can determine this if we inspect the second order variation in the energy.
+		\item Thouless$^1$ showed a physically motivated derivation using Time-Dependent Hartree-Fock theory (TDHF). 
+	\end{itemize}
 \end{frame}
-}
 
 {%
-\setbeamertemplate{frame footer}{1. Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
-		
-2. http://www.chemspider.com/Chemical-Structure.2298795.html}
-\begin{frame}{From Structure to Vector}
-	\begin{columns}[c] % align columns
-		\begin{column}{.48\textwidth}
-			\begin{itemize}
-				\item<1-> {Several Ways to Define Structure
-					\begin{itemize}
-						\item[] {Cartesian}
-						\item[] {Internal Coordinates (bond length, angle ...)}
-						\item[] {SMILES, InChI}
-					\end{itemize}
-				}
-				\item<2-> {InChI$^2$= 1S/C8H16/c1-5-7(3)8(4)6-2/h5-6H2,1-4H3/b8-7-}
-				\item<only@3> {Equivalent in theory}
-				\item<only@4> {Equivalent \alert{\textbf{in theory}}}
-			\end{itemize}			
-		\end{column}
-		\hfill
-		\begin{column}{0.48\textwidth}
-			1
-		\end{column}	
-	\end{columns}
+	\setbeamertemplate{frame footer}{Thouless, D. J. The Quantum Mechanics of Many-Body Systems, 2nd ed.; Dover: 1972. (p. 114)}
+\begin{frame}{Hartree-Fock Stability Conditions}
+	\begin{itemize}[<+->]
+		\item[]{The TDHF solution is given by the Liouville Von-Neumann Equation of Motion,
+			\begin{eqnarray}
+				i\hbar\frac{\partial \rho}{\partial t} = \left[ T+U, \rho \right],
+			\end{eqnarray}
+		}
+		\item[]{Where U is the self-consistent potential,
+			\begin{eqnarray}
+				U_{pq} = \sum\limits_{p,q} \left(\rho_{pq,rs} - \braket{pr|sq} \right) \rho_{sr}.
+			\end{eqnarray}
+		}
+		\item[]{Under the restrictions,
+			\begin{eqnarray}
+				\rho^2 = \rho \quad \textrm{and} \quad \rho^{\dagger} = \rho,
+			\end{eqnarray}
+		}
+		\item[]{and to first order in $\rho_{ai}$, the elements of the density matrix are ,
+			\begin{eqnarray}
+				\rho_{ai} = C_{ai}, \quad \rho_{ia} = C_{ai}^*.
+			\end{eqnarray}
+		}
+	\end{itemize}
 \end{frame}
-}
+
+{%
+	\setbeamertemplate{frame footer}{Thouless, D. J. The Quantum Mechanics of Many-Body Systems, 2nd ed.; Dover: 1972. (p. 114)}
+
+\begin{frame}{Hartree-Fock Stability Conditions}
+	\begin{itemize}[<+->]
+		\item[]{The TDHF EoM becomes,
+			\begin{eqnarray}
+				i\hbar \frac{dC_{ai} \left(t\right) }{dt} &=& \left(\epsilon_a - \epsilon_i \right) \nonumber
+					\\ &+& \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir} 
+					  \left[\braket{aj||ib}C_{bj}   \left( t \right)
+						  +\braket{ab||ij}C_{bj}^* \left( t \right) \right]. 
+			\end{eqnarray}
+		}
+		\item[]{The solutions are complex exponentials,
+			\begin{eqnarray}
+				C_{ai} \left(t \right)  = \alpha X_{ai} e^{-i \omega t} + \alpha^* Y_{ai}^* e^{i \omega^* t},
+			\end{eqnarray}
+		}
+		\item[]{whose amplitudes, $X_{ai}$ and $Y_{ai}$ satisfy,
+			\begin{align}
+				\left(\epsilon_a - \epsilon_i \right)X_{ai} + \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir} 
+					\left[ \braket{aj||ib}X_{bj} + \braket{ab||ij}Y_{bj} \right] &= \hbar \omega X_{ai}
+				\nonumber \\
+				\left(\epsilon_a - \epsilon_i \right)Y_{ai} + \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir}
+					\left[ \braket{aj||ib}X_{bj} + \braket{ab||ij}Y_{bj} \right] &= -\hbar \omega Y_{ai}.
+			\end{align}
+		}
+		\item[]{These are the equations of the Random Phase Approximation (RPA)}		
+	\end{itemize}
+\end{frame}
+
+{%
+	\setbeamertemplate{frame footer}{Seeger, R.; Pople, J. A. J. Chem. Phys. 1977, 66 (7), 3045.}
+
+\begin{frame}{Hartree-Fock Stability Conditions}
+	\begin{itemize}[<+->]
+		\item{The RPA frequencies represent electronic oscillations about the ground state}
+		\item{Real frequencies are stable, imaginary frequencies are unstable}
+		\item{The RPA frequencies are imaginary when the \alert{Orbital Hessian} (aka stability matrix, electronic Hessian) eigenvalues are negative
+			\begin{eqnarray}
+				\begin{bmatrix}
+					\bf{A}   & \bf{B}   \\
+					\bf{B}^* & \bf{A}^* \\
+				\end{bmatrix}
+				\begin{bmatrix}  \bf{X} \\ \bf{Y}  \end{bmatrix}
+				= \omega \begin{bmatrix}  \bf{X} \\ \bf{Y}  \end{bmatrix}
+			\end{eqnarray}
+		}
+		\item{Where}
+		\begin{eqnarray}
+			A_{ia,jb} &=& \braket{{}_i^a|H-\braket{0|H|0}|{}_j^b} = \left(\epsilon_a - \epsilon_i \right) \delta_{ij}\delta_{ab} + \braket{aj||ib}
+			\nonumber \\
+			B_{ia,jb} &=& \braket{{}_{ij}^{ab}|H-\braket{0|H|0}|0} = \braket{ab||ij}.
+		\end{eqnarray}
+	\end{itemize}
+\end{frame}
 
 
-\begin{frame}{Selecting Parents}
+\begin{frame}{Hartree-Fock Stability Conditions}
+	\begin{itemize}
+		\item[]{The eigenvalue equation can be factorized depending on symmetry.}
+		\item[]{\includegraphics[width=\linewidth]{../images/seeger_stability.pdf} }
+	\end{itemize}
+\end{frame}
+
+\section{Homogeneous Electron Gas}
+
+{%
+	\setbeamertemplate{frame footer}{Phillips, P. Advanced Solid State Physics, 2nd ed.; Cambridge University Press: Cambridge, 2012.}
+
+\begin{frame}{Brief Overview}
+	\begin{itemize}
+		\item{Homogeneous Electron Gas (HEG) model, also known as Uniform Electron Gas or Jellium Model.}
+		\item{Electrons in a box with "smeared" nuclei $\rightarrow$ uniform positive background charge}
+		\item{The total charge is constrained to be neutral,}
+			\begin{eqnarray}
+				V_{bg}(\mathbf{r}) = \sum\limits_{i} \frac{-Ze^2}{|\mathbf{r}-\mathbf{R_i}|} \rightarrow -e^2 \int \frac{d\mathbf{r'}}{|\mathbf{r}-\mathbf{r'}|},
+			\end{eqnarray}
+		\item{and the background and coulomb terms cancel exactly,
+			\begin{eqnarray}
+				V_{ee} = e^2 \int \frac{d\mathbf{r'}}{|\mathbf{r}-\mathbf{r'}|}.
+			\end{eqnarray}
+		}
+	\end{itemize}
+\end{frame}
+
+{%
+	\setbeamertemplate{frame footer}{Giuliani, G.; Vignale, G. Quantum Theory of the Electron Liquid; 2005.}
+
+\begin{frame}{Brief Overview}
+	\begin{itemize}
+		\item{The discretized solutions are given by,
+		\begin{eqnarray}\label{eq:hf_orb_energy}
+			\epsilon_{\vec{k}}=
+				\frac{\hbar^2 k^2}{2m} - \sum\limits_{\vec{k}}^{|\vec{k}|< k_f}
+				\braket{\vec{k}, \vec{k}' |\vec{k}', \vec{k}}
+		\end{eqnarray}
+		}
+		\item{Where the two electron integral is given by
+		\begin{align}
+			\braket{\vec{k}, \vec{k}'|\vec{k}'',\vec{k}'''}\stackrel{\text{2D, 3D}}{=}&
+				\begin{cases} 
+				\frac{\pi}{V}\frac{2^{D-1}}{|\vec{k}-\vec{k}''|^{D-1}} 
+				& \vec{k}''' = \vec{k}+\vec{k}'-\vec{k}'' \nonumber\\
+				0 
+				& \text{else}
+				\end{cases}
+			\nonumber \\
+			\braket{k, k'|k'',k'''}\stackrel{\text{1D}}{=}&
+				\begin{cases} 
+				e^{|k-k''|^2a^2}\text{Ei}(-|k-k''|^2a^2)\text{ ;}
+				& k''' = k+k'-k'' \\
+				0\text{ ;} 
+				& \text{else}
+				\end{cases}
+		\end{align}
+		}
+	\end{itemize}
+\end{frame}
+
+{%
+\setbeamertemplate{frame footer}{Overhauser, A. W. Phys. Rev. Lett. 1960, 4 (9), 462–465.}
+\begin{frame}{Project Goal}
+	\begin{itemize}[<+->]
+		\item{Can we use the HF-Stability analysis to determine where the HEG is unstable?}
+		\item{Will this predict the known tendency of crystallization at low density?}
+		\item{It is known that the RHF-GHF instability persists at all densities for the HEG$^1$.}
+		\item{Can we show this numerically, and discriminate between RHF-UHF and RHF-GHF instability?}
+		\item{(Future) Can we combine this with to improve the efficacy of correlation theories (CC, MBPT)?}
+	\end{itemize}
+\end{frame}
+
+
+\section{Notes on Iterative Subspace Eigenvalue Methods}
+{%
+\setbeamertemplate{frame footer}{1. Saad, Y. Numerical Methods for Large Eigenvalue Problems; SIAM, 2011.
+
+ 2. Davidson, E. R. J. Comput. Phys. 1975, 17 (1), 87–94.}
+\begin{frame}{Subspace Methods in 1 Slide}
+	\begin{itemize}
+		\item{Sometimes the eigenvalue problem is too large to solve completely, and only a few eigenpairs are needed}
+		\item{Subspace methods allow for finding some eigenpairs without full diagonalization}.
+		\item{They need only a matrix-vector product (maybe diagonal elements too).}
+		\item{A small subspace is constructed, then expanded slowly until the eigenpair residual norm,
+			\begin{eqnarray}
+				||\mathbf{Ax} - \lambda \mathbf{x}||,
+			\end{eqnarray}
+		is below some threshold.
+		}
+		\item{The \alert{Lanczos} and \alert{Arnoldi} methods are the most commonly used$^1$, while the \alert{Davidson}$^2$ method is likely more useful in a majority of chemical applications. }
+	\end{itemize}
+\end{frame}
+
+{%
+\setbeamertemplate{frame footer}{1. Saad, Y. Numerical Methods for Large Eigenvalue Problems; SIAM, 2011.
+
+ 2. Li, R.-C.; Zhang, L.-H. Convergence of Block Lanczos Method for Eigenvalue Clusters; 2013.}
+\begin{frame}{Convergence Properties}
+	\begin{itemize}[<+->]
+		\item{The convergence of these subspace algorithms depends on:}
+		\begin{itemize}
+			\item{\alert{Number of eigenvalues} requested}
+			\item{The \alert{block size} of the algorithm}
+			\item{The \alert{density} of the eigenvalue spectrum}
+			\item{The \alert{initial guess} eigenvectors}
+			\item{The \alert{condition number} of the matrix}
+			\item{The \alert{preconditioner} (Davidson only)}
+		\end{itemize}
+		\item{They can \alert{converge to an incorrect answer} if:}
+		\begin{itemize}
+			\item{The block size is too small compared to degeneracy}
+			\item{The approximate eigenvectors become non-orthogonal}
+		\end{itemize}
+		\item{My recommendation for guess eigenvectors is
+		\begin{eqnarray}
+			v_j^{(i)} = normalize\left(\frac{1}{|A_{ii} - A_{jj}| + 1} \right).
+		\end{eqnarray}
+		}
+	\end{itemize}
+\end{frame}
+
+
+{%
+\setbeamertemplate{frame footer}{Hern, V.; Tom, A.; Vidal, V. SLEPc Technical Reports, 2007.}
+\begin{frame}{Orthogonalization}
+	\begin{itemize}
+		\item{The condition number, $\kappa$, is bound from below by
+			\begin{eqnarray}
+				\kappa \geq \frac{Max(\lambda_i)}{Min(\lambda_j)}
+			\end{eqnarray}
+		}
+		\item{The Gram-Schmidt procedure has numerical issues, 
+			\begin{eqnarray}
+				||\mathbf{I} - \mathbf{Q^TQ}|| \leq \frac{\alpha\kappa^2}{1-\beta\kappa^2}.	
+			\end{eqnarray}
+		}
+		\item{Modified Gram-Schmidt is better, but not perfect,
+			\begin{eqnarray}
+				||\mathbf{I} - \mathbf{Q^TQ}|| \leq \frac{\gamma\kappa}{1-\eta\kappa}	
+			\end{eqnarray}
+		}
+		\item{May need multiple orthogonalization steps}
+	\end{itemize}
+
+\end{frame}
+
+\section{Results}
+
+{%
+\setbeamertemplate{frame footer}{}
+
+\begin{frame}{Matrix Size Scaling}
 	\begin{columns}[c] % align columns
-		\begin{column}{.48\textwidth}
-			\begin{itemize}[<+->]
-				\item {Several methods are common}
-				\item {Reinforce good characteristics}
-				\item {Still give losers a chance}
-				\item {'Breed' pairs of winners}
-				\item {'Roulette Wheel' Method}
+		\begin{column}{.4\textwidth}
+			\begin{itemize}
+				\item {Scales as $2N_{exc}$}
+				\item {$N_{occ}$ and $N_{vir}$ both scale with $N_{kpoints}^D$}
 			\end{itemize}				
 		\end{column}
 		\hfill
-		\begin{column}{0.48\textwidth}
+		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/matscale.eps}
 
+			\end{overprint}
 		\end{column}	
 	\end{columns}
 \end{frame}
 
-{%
-\setbeamertemplate{frame footer}{http://www.turingfinance.com/computational-finance
-	
--updates-ieee-world-congress-computational-intelligence}
-\begin{frame}{The Next Generation}
-	\begin{itemize}[<+->]
-
-		\item[]{~\\Crossover distinguishes this from Monte Carlo}
-	\end{itemize}
-\end{frame}
-}
-
-
-\begin{frame}{The Whole Algorithm}
-	\begin{columns}[c] % align columns
-		\begin{column}{.48\textwidth}
-			\begin{itemize}[<+->]
-				\item[1.] {Generate N random, sensible geometries}
-				\item[2.] {Add each to blacklist}
-				\item[3.] {Optimize each geometry}
-				\item[4.] {Select Parents}
-				\item[5.] {Crossover \& Mutate into sensible geometry}
-				\item[6.] {Add Children to population}
-				\item[7.] {Remove High energy individuals}
-				\item[8.] {If converged:}
-				\begin{itemize}
-					\item{Done!}
-				\end{itemize}
-				\item[] {Otherwise:}
-				\begin{itemize}
-					\item{Go to 2}
-				\end{itemize}
-			\end{itemize}
-		\end{column}
-		\hfill
-		\begin{column}{0.48\textwidth}
-			\onslide<11>\begin{itemize}
-				\medskip
-				\item[]{
-
-				}
-			    \item[]{
-
-				}
-			\end{itemize}
-		\end{column}	
-	\end{columns}
-\end{frame}
-
-\section{Finding Low Energy Conformers of Dipeptides}
-
-{%
-	\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.}
-\begin{frame}{Dipeptide Structures}
-
-\end{frame}
-}
-
-{%
-\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
-}
-\begin{frame}{Combinatorics}
+\begin{frame}{Matrix-Vector Scaling}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
 			\begin{itemize}
-				\item {GA beats other methods if space is large}
-				\item {Space gets large \textbf{\alert{fast}}}
-			\end{itemize}		
+				\item {Scales as $N_{exc} \times  N_{occ}$ due to momentum conservation}
+			\end{itemize}				
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/mvscaling.eps}
 
+			\end{overprint}
 		\end{column}	
 	\end{columns}
 \end{frame}
-}
 
-{%
-\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
-}
-\begin{frame}{Coverage}
+\begin{frame}{Davidson Scaling}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
 			\begin{itemize}
-				\item {Smaller systems are reliably sampled}
-				\item {As \# of conformers increases, miss more and more}
-				\item {Is there a pattern to what is missed?}
-			\end{itemize}		
+				\item {Davidson is Asymptotically quadratic.}
+				\item {Full diagonalization is almost cubic.}
+			\end{itemize}				
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/dav_vs_exact_scaling.eps}
 
+			\end{overprint}
 		\end{column}	
 	\end{columns}
 \end{frame}
-}
 
-{%
-\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
-}
-\begin{frame}{Coverage}
+\begin{frame}{Efficacy of Davidson's Algorithm}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
-			\begin{itemize}[<+->]
-				\item {Most misses are very high energy}
-				\item {Algorithm favors low energy areas of the space}
-				\item {Features low in energy are favored and recombined}
-			\end{itemize}		
+			\begin{itemize}
+				\item {Scales as $N_{exc} \times  N_{occ}$ due to momentum conservation}
+			\end{itemize}				
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
+		    \begin{overprint}
+			    \onslide<1>\includegraphics[width=\linewidth]{../images/dav_vs_exact.eps}
 
+			\end{overprint}
 		\end{column}	
 	\end{columns}
 \end{frame}
-}
+
 
 {%
-\setbeamertemplate{frame footer}{Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.}
-\begin{frame}{Energy Cutoff}
+\setbeamertemplate{frame footer}{Bernu, B.; Delyon, F.; Holzmann, M.; Baguet, L. Phys. Rev. B 2011, 84 (11), 115115.}
+\begin{frame}{Dependence on r${}_s$}
 	\begin{columns}[c] % align columns
-		\begin{column}{.4\textwidth}
-			\begin{itemize}[<+->]
-				\item[] {
-
-				}
-				\item {GA is more sensitive to energy cutoff}
-				\item {For finding low energy ensemble, GA outperforms purely stochastic/deterministic method}
-			\end{itemize}		
+		\begin{column}{.5\textwidth}
+			\includegraphics[width=0.95\linewidth]{../images/stab_rs.eps}
+			\\
+			My Result
 		\end{column}
 		\hfill
-		\begin{column}{0.6\textwidth}
-
+		\begin{column}{0.5\textwidth}
+			\includegraphics[width=\linewidth]{../images/Bernu_2dEnergyGain.pdf}
+			\\
+			Published Result. Red = Square Lattice, Blue = Triangular Lattice
 		\end{column}	
 	\end{columns}
 \end{frame}
-}
+
+
 
 \section{Concluding Remarks}
 
@@ -360,21 +488,7 @@
 \appendix
 
 \begin{frame}[fragile]{Backup slide}
-	\begin{itemize}
-		\item Geometry optimization step makes the algorithm more Lamarckian (Jean Baptiste Larmarck, [1744-1829])
-	\end{itemize}
+	Empty Backup
 \end{frame}
 
-{%
-\setbeamertemplate{frame footer}{(1) Blum, V. et. al., M. Comput. Phys. Commun. 2009, 180 (11), 2175–2196.
-	
-(2) Supady, A.; Blum, V.; Baldauf, C. J. Chem. Inf. Model. 2015, 55 (11), 2338–2348.
-
-	}
-\begin{frame}[fragile]{Genetic Algorithm Parameters}
-	Geometry Optimization: DFT PBE + VdW, \emph{tier1} basis in FHI-aims$^1$.
-	Convergence at 0.005 eV / \AA
-
-\end{frame}
-}
 \end{document}
