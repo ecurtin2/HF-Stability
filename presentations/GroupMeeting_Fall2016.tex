@@ -45,41 +45,41 @@
 	\begin{center}
 		\begin{tabular}{ | c | c | c | c |}
 			\hline
-			 \textbf{Method} & \textbf{Spinorbital} & \textbf{DoF} & \textbf{Eigenfunction of}\\ 
-			\hline 
+			 \textbf{Method} & \textbf{Spinorbital} & \textbf{DoF} & \textbf{Eigenfunction of}\\
+			\hline
 
-			Restricted \rule{0pt}{7ex} & 
-			\begin{tabular}{c@{}c@{}}				
-				$\chi_j^\alpha(\vec{r},\sigma) = 
+			Restricted \rule{0pt}{7ex} &
+			\begin{tabular}{c@{}c@{}}
+				$\chi_j^\alpha(\vec{r},\sigma) =
 				\sum\limits_{i=1}^{N} c_{ij}\phi_i\left(\vec{r \,}\right)\alpha(\sigma)$
-				\\ \rule{0pt}{4ex} 
+				\\ \rule{0pt}{4ex}
 				$\chi_j^\beta(\vec{r},\sigma) =
 				\sum\limits_{i=1}^{N} c_{ij}\phi_i\left(\vec{r \,}\right)\beta(\sigma)$
 			\end{tabular}
-			& N/2 
+			& N/2
 			& $\hat{S}^2$, $\hat{S}_z$
 			\\ [5ex] \hline
-			
+
 			Unrestricted \rule{0pt}{7ex} &
-			\begin{tabular}{c@{}c@{}}  
-			$\chi_j^\alpha(\vec{r},\sigma) = \sum\limits_{i=1}^{N} 
+			\begin{tabular}{c@{}c@{}}
+			$\chi_j^\alpha(\vec{r},\sigma) = \sum\limits_{i=1}^{N}
 			c_{ij}^\alpha\phi_i(\vec{r \,}) \alpha(\sigma)$
 			\\ \rule{0pt}{4ex}
-			$\chi_j^\beta(\vec{r},\sigma) = \sum\limits_{i=1}^{N} 
+			$\chi_j^\beta(\vec{r},\sigma) = \sum\limits_{i=1}^{N}
 			c_{ij}^\beta\phi_i(\vec{r \,}) \beta(\sigma)$
 			\end{tabular}
 			& N & $\hat{S}_z$ \\ [5ex]
-			\hline 
-			
+			\hline
+
 			General \rule{0pt}{7ex}&
-			\begin{tabular}{r@{}r@{}}  
+			\begin{tabular}{r@{}r@{}}
 				$\chi_j(\vec{r},\sigma) = \sum\limits_{i=1}^{N} [
 				c_{ij}^\alpha\phi_i\left(\vec{r \,}\right) \alpha(\sigma) $
 				\\ \rule{0pt}{4ex}
 				$+c_{ij}^\beta \phi_i(\vec{r \,}) \beta(\sigma)]  $
-			\end{tabular} 
+			\end{tabular}
 			& 2N & Neither \\ [5ex]
-			\hline			
+			\hline
 		\end{tabular}
 	\end{center}
 \end{frame}
@@ -108,7 +108,7 @@
 				\item {Restricted minima may correspond to minima in another dimension}
 				\item {Restricted minima may correspond to maxima in another dimension}
 				\item {Restricted minima may be nonstationary}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.48\textwidth}
@@ -117,7 +117,7 @@
 				\onslide<2>\includegraphics[width=0.9\linewidth, trim={7cm, 1cm, 7cm, 1cm}, clip]{../images/const_opt_saddle.jpeg}
 				\onslide<3>\includegraphics[width=0.9\linewidth, trim={7cm, 2cm, 7cm, 3cm}, clip]{../images/const_opt_nonstationary.jpeg}
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -128,10 +128,10 @@
 	\setbeamertemplate{frame footer}{Thouless, D. J. The Quantum Mechanics of Many-Body Systems, 2nd ed.; Dover: 1972. (p. 114)}
 \begin{frame}{Hartree-Fock Stability}
 	\begin{itemize}[<+->]
-		\item Solving the HF equations guarantees only that the energy is \alert{stationary}. The first order variation is therefore 0. 
+		\item Solving the HF equations guarantees only that the energy is \alert{stationary}. The first order variation is therefore 0.
 		\item We need to know if this is indeed a minimum.
 		\item We can determine this if we inspect the \alert{second order variation} in the energy.
-		\item Thouless$^1$ showed a physically motivated derivation using Time-Dependent Hartree-Fock theory (TDHF). 
+		\item Thouless$^1$ showed a physically motivated derivation using Time-Dependent Hartree-Fock theory (TDHF).
 	\end{itemize}
 \end{frame}
 
@@ -170,9 +170,9 @@
 		\item[]{The TDHF EoM becomes,
 			\begin{eqnarray}
 				i\hbar \frac{dC_{ai} \left(t\right) }{dt} &=& \left(\epsilon_a - \epsilon_i \right) \nonumber
-					\\ &+& \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir} 
+					\\ &+& \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir}
 					  \left[\braket{aj||ib}C_{bj}   \left( t \right)
-						  +\braket{ab||ij}C_{bj}^* \left( t \right) \right]. 
+						  +\braket{ab||ij}C_{bj}^* \left( t \right) \right].
 			\end{eqnarray}
 		}
 		\item[]{The solutions are complex exponentials,
@@ -182,14 +182,14 @@
 		}
 		\item[]{whose amplitudes, $X_{ai}$ and $Y_{ai}$ satisfy,
 			\begin{align}
-				\left(\epsilon_a - \epsilon_i \right)X_{ai} + \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir} 
+				\left(\epsilon_a - \epsilon_i \right)X_{ai} + \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir}
 					\left[ \braket{aj||ib}X_{bj} + \braket{ab||ij}Y_{bj} \right] &= \hbar \omega X_{ai}
 				\nonumber \\
 				\left(\epsilon_a - \epsilon_i \right)Y_{ai} + \sum\limits_{i}^{occ}  \sum\limits_{b}^{vir}
 					\left[ \braket{aj||ib}X_{bj} + \braket{ab||ij}Y_{bj} \right] &= -\hbar \omega Y_{ai}.
 			\end{align}
 		}
-		\item[]{These are the equations of the Random Phase Approximation (RPA)}		
+		\item[]{These are the equations of the Random Phase Approximation (RPA)}
 	\end{itemize}
 \end{frame}
 
@@ -280,18 +280,18 @@
 		\item{Where the two electron integral is given by
 		\begin{align}
 			\braket{\vec{k}, \vec{k}'|\vec{k}'',\vec{k}'''}\stackrel{\text{2D, 3D}}{=}&
-				\begin{cases} 
-				\frac{\pi}{V}\frac{2^{D-1}}{|\vec{k}-\vec{k}''|^{D-1}} 
+				\begin{cases}
+				\frac{\pi}{V}\frac{2^{D-1}}{|\vec{k}-\vec{k}''|^{D-1}}
 				& \vec{k}''' = \vec{k}+\vec{k}'-\vec{k}'' \nonumber\\
-				0 
+				0
 				& \text{else}
 				\end{cases}
 			\nonumber \\
 			\braket{k, k'|k'',k'''}\stackrel{\text{1D}}{=}&
-				\begin{cases} 
+				\begin{cases}
 				e^{|k-k''|^2a^2}\text{Ei}(-|k-k''|^2a^2)\text{ ;}
 				& k''' = k+k'-k'' \\
-				0\text{ ;} 
+				0\text{ ;}
 				& \text{else}
 				\end{cases}
 		\end{align}
@@ -357,14 +357,14 @@
 				\kappa \geq \frac{Max(A_{ii})}{Min(A_{jj})}
 			\end{eqnarray}
 		}
-		\item{The Gram-Schmidt procedure has numerical issues, 
+		\item{The Gram-Schmidt procedure has numerical issues,
 			\begin{eqnarray}
-				||\mathbf{I} - \mathbf{Q^TQ}|| \leq \frac{\alpha\kappa^2}{1-\beta\kappa^2}.	
+				||\mathbf{I} - \mathbf{Q^TQ}|| \leq \frac{\alpha\kappa^2}{1-\beta\kappa^2}.
 			\end{eqnarray}
 		}
 		\item{Modified Gram-Schmidt is better, but not perfect,
 			\begin{eqnarray}
-				||\mathbf{I} - \mathbf{Q^TQ}|| \leq \frac{\gamma\kappa}{1-\eta\kappa}	
+				||\mathbf{I} - \mathbf{Q^TQ}|| \leq \frac{\gamma\kappa}{1-\eta\kappa}
 			\end{eqnarray}
 		}
 		\item{May need multiple orthogonalization steps}
@@ -398,7 +398,7 @@
 			\begin{itemize}
 				\item {Excite Ony in the X direction}
 				\item {-X virtuals matter due to $\vec{k}' = \vec{k} + \vec{G}$}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -406,7 +406,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/1stBZ.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -419,7 +419,7 @@
 			\begin{itemize}
 				\item {Nk = 57 reproduces the orbital energies reasonably well}
 				\item {Worst towards $\Gamma$, better for higher $|\vec{k}|$}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -427,7 +427,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/energycompare.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -440,7 +440,7 @@
 		\begin{column}{.4\textwidth}
 			\begin{itemize}
 				\item {Spectrum is Dense}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -448,7 +448,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/exchist.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -463,7 +463,7 @@
 			\begin{itemize}
 				\item {Scales as $2N_{exc}$}
 				\item {$N_{occ}$ and $N_{vir}$ both scale with $N_{kpoints}^D$}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -471,7 +471,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/matscale.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -481,7 +481,7 @@
 		\begin{column}{.4\textwidth}
 			\begin{itemize}
 				\item {Scales as $N_{exc} \times  N_{occ}$ due to momentum conservation}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -489,7 +489,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/mvscaling.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -503,7 +503,7 @@
 				\item {Davidson is Asymptotically quadratic.}
 				\item {Full diagonalization is almost cubic.}
 				\item {Matrix multiplication is order${}^1$ $log_2(7) \approx 2.807$}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -511,7 +511,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/dav_vs_exact_scaling.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -521,12 +521,12 @@
 			\begin{itemize}
 				\item {Roughly quadratic wrt matrix dimension.}
 				\item {Outliers correspond to high condition number}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
 		    \includegraphics[width=\linewidth]{../images/overallruntime.eps}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
@@ -537,7 +537,7 @@
 			\begin{itemize}
 				\item {Reproduces Exact result to machine precision in all test cases.}
 				\item {Odd spikes are due to approximating circle by squares}
-			\end{itemize}				
+			\end{itemize}
 		\end{column}
 		\hfill
 		\begin{column}{0.6\textwidth}
@@ -545,7 +545,7 @@
 			    \onslide<1>\includegraphics[width=\linewidth]{../images/dav_vs_exact.eps}
 
 			\end{overprint}
-		\end{column}	
+		\end{column}
 	\end{columns}
 \end{frame}
 
