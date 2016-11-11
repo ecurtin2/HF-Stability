@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1478890946 "MatrixProperties.tex" "/home/evan/git/HF-Stability/info/MatrixProperties.pdf" "MatrixProperties" 1478890946
+["pdflatex"] 1478891669 "MatrixProperties.tex" "/home/evan/git/HF-Stability/info/MatrixProperties.pdf" "MatrixProperties" 1478891669
   "/etc/texmf/web2c/texmf.cnf" 1470674592 1101 af7716885e081ab43982cab7b4672c1a ""
-  "/home/evan/git/HF-Stability/info/MatrixProperties.aux" 1478890946 8 a94a2480d3289e625eea47cd1b285758 ""
+  "/home/evan/git/HF-Stability/info/MatrixProperties.aux" 1478891669 8 a94a2480d3289e625eea47cd1b285758 ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1272929888 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm" 1246382020 916 f87d7c45f9c908e672703b83b72241a3 ""
@@ -36,12 +36,12 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1458942643 31351 b32c45dce4a01cb7b53ed90c546614ca ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1470674702 1863403 f3ff9a4253bcb5fb9a9baaf0c572cb01 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1470674760 3857171 1bba6f38d0f5a228d59b90de4b15baf9 ""
-  "MatrixProperties.aux" 1478890946 8 a94a2480d3289e625eea47cd1b285758 ""
-  "MatrixProperties.tex" 1478890946 1692 14c35b6bb7a2f0c1beaa1cab06b7bcaf ""
+  "MatrixProperties.aux" 1478891669 8 a94a2480d3289e625eea47cd1b285758 ""
+  "MatrixProperties.tex" 1478891669 1693 7afd3c0110c710fbd0b1e6b994fb8c87 ""
   "kbordermatrix.sty" 1478885161 5523 bfa1a1f639d04118419d64fe784088b4 ""
   (generated)
-  "/home/evan/git/HF-Stability/info/MatrixProperties.pdf"
-  "MatrixProperties.log"
   "MatrixProperties.aux"
   "/home/evan/git/HF-Stability/info/MatrixProperties.log"
+  "/home/evan/git/HF-Stability/info/MatrixProperties.pdf"
+  "MatrixProperties.log"
   "MatrixProperties.pdf"
