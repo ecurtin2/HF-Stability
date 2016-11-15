@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  11 NOV 2016 14:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  15 NOV 2016 16:52
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -91,44 +91,160 @@ Package: kbordermatrix 2011/09/21 Bordered matrix with brackets
 \kbrowsep=\skip47
 \br@kwd=\skip48
 \k@bordht=\skip49
-) (/home/evan/git/HF-Stability/info/MatrixProperties.aux)
+) (/usr/share/texlive/texmf-dist/tex/latex/braket/braket.sty) (/home/evan/git/HF-Stability/info/MatrixProperties.aux)
 \openout1 = `MatrixProperties.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Try loading font information for U+msa on input line 9.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 22.
+LaTeX Font Info:    ... okay on input line 22.
+LaTeX Font Info:    Try loading font information for U+msa on input line 24.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 9.
+LaTeX Font Info:    Try loading font information for U+msb on input line 24.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
+)
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & \BtoB \\ \AtoA & \e & 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Ato...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & 0 & 0 & \B \\ \AtoB & 0 & \e -\A 
+                                                  & 0 & \A & \Ba & 0 & 0 & \...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ...& \B \\ \AtoB & 0 & \e -\A & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Bto...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & 0 & \B \\ \BtoA & 0 & 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Bto...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ...\A & \Ba & 0 & 0 & \B \\ \BtoB & \A 
+                                                  ^* & 0 & 0 & \A & \Ba & 0 ...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & \B \\ \BtoB & \A ^* & 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Ato...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & \B \\ \AtoA & \Ba ^*& 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Ato...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & 0 & \B \\ \AtoB & 0 & 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Bto...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & 0 & \B \\ \BtoA & 0 & 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ \Bto...
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+/home/evan/git/HF-Stability/info/MatrixProperties.tex:55: Undefined control sequence.
+<argument> ... & \B \\ \BtoB & \Br ^*& 0 & 0 & \A 
+                                                  & \Ba & 0 & 0 & \B \\ 
+l.55 }
+       \\
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (31.3072pt too wide) in alignment at lines 45--56
+ [][][] []
+ []
+
+[1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (/home/evan/git/HF-Stability/info/MatrixProperties.aux) ) 
 Here is how much of TeX's memory you used:
- 1125 strings out of 493029
- 12946 string characters out of 6136235
- 71191 words of memory out of 5000000
- 4703 multiletter control sequences out of 15000+600000
+ 1160 strings out of 493029
+ 13317 string characters out of 6136235
+ 76191 words of memory out of 5000000
+ 4734 multiletter control sequences out of 15000+600000
  6266 words of font info for 25 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  27i,12n,26p,232b,111s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
-Output written on /home/evan/git/HF-Stability/info/MatrixProperties.pdf (1 page, 64689 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
+Output written on /home/evan/git/HF-Stability/info/MatrixProperties.pdf (1 page, 81677 bytes).
 PDF statistics:
- 40 PDF objects out of 1000 (max. 8388607)
- 28 compressed objects within 1 object stream
+ 48 PDF objects out of 1000 (max. 8388607)
+ 34 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

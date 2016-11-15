@@ -3,6 +3,21 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{kbordermatrix}
+\usepackage{braket}
+
+\newcommand{\Ap}{\braket{aj|ib}}
+\newcommand{\App}{\braket{aj|bi}}
+\newcommand{\Aa}{\braket{aj||ib}}
+\newcommand{\B}{\braket{ab|ij}}
+\newcommand{\Br}{\braket{ab|ji}}
+\newcommand{\Ba}{\braket{ab||ij}}
+
+\newcommand{\AtoB}{\mathbf{\alpha\rightarrow\beta}}
+\newcommand{\BtoA}{\mathbf{\beta\rightarrow\alpha}}
+\newcommand{\AtoA}{\mathbf{\alpha\rightarrow\alpha}}
+\newcommand{\BtoB}{\mathbf{\beta\rightarrow\beta}}
+\newcommand{\e}{\left(\epsilon_a-\epsilon_e\right)}
+
 
 \begin{document}
 
@@ -28,11 +43,15 @@
 \end{eqnarray*}
 
 \begin{eqnarray*}
-  \mathbf{H''}&=&\kbordermatrix{ & ~~~\mathbf{\alpha \rightarrow \beta} & \hspace{3mm}\mathbf{\beta \rightarrow \alpha} & \mathbf{\alpha \rightarrow \beta} &\mathbf{\beta \rightarrow \alpha}\\
-  \mathbf{\alpha \rightarrow \beta} &~~~\mathbf{X} & \hspace{3mm}\mathbf{0} & \mathbf{0}& \mathbf{X}\\
-  \mathbf{\beta \rightarrow \alpha} &~~~\mathbf{0} & \hspace{3mm}\mathbf{X} & \mathbf{X}& \mathbf{0}\\
-  \mathbf{\beta \rightarrow \alpha} &~~~\mathbf{0} & \hspace{3mm}\mathbf{X} & \mathbf{X}& \mathbf{0}\\
-  \mathbf{\alpha \rightarrow \beta} &~~~\mathbf{X} & \hspace{3mm}\mathbf{0} & \mathbf{0}& \mathbf{X}\\
+  \mathbf{H''}&=&\kbordermatrix{ & \AtoA & \AtoB & \BtoA & \BtoB & \AtoA & \AtoB & \BtoA & \BtoB\\
+  \AtoA & \e   & 0      & 0 & \A & \Ba & 0 & 0 & \B \\
+  \AtoB & 0    & \e -\A & 0 & \A & \Ba & 0 & 0 & \B \\
+  \BtoA & 0    & 0      & 0 & \A & \Ba & 0 & 0 & \B \\
+  \BtoB & \A^* & 0 & 0 & \A & \Ba & 0 & 0 & \B \\
+  \AtoA & \Ba^*& 0 & 0 & \A & \Ba & 0 & 0 & \B \\
+  \AtoB & 0    & 0 & 0 & \A & \Ba & 0 & 0 & \B \\
+  \BtoA & 0    & 0 & 0 & \A & \Ba & 0 & 0 & \B \\
+  \BtoB & \Br^*& 0 & 0 & \A & \Ba & 0 & 0 & \B \\
 } \\
 \end{eqnarray*}
 \end{document}
