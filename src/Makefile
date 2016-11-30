@@ -37,10 +37,10 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 Debug: CFLAGS += -g -o0 -Wall
 Debug: $(TARGET)
 
-Profile: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG
+Profile: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE
 Profile:  $(TARGET)
 
-Release: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -fno-strict-aliasing
+Release: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing
 Release: $(TARGET)
 
 .PHONY: depend clean

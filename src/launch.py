@@ -17,8 +17,9 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nk = 57
-rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
+Nk = 50
+#rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
+rsrange = [0.2]
 ndim = 2
 nguess = 1
 blocksize = 1

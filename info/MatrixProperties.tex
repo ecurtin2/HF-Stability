@@ -1,57 +1,190 @@
-\documentclass{article}
+\documentclass{revtex4}
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=15mm,
+ top=5mm,
+ }
 
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{kbordermatrix}
 \usepackage{braket}
+\usepackage{xcolor}
 
-\newcommand{\Ap}{\braket{aj|ib}}
-\newcommand{\App}{\braket{aj|bi}}
-\newcommand{\Aa}{\braket{aj||ib}}
-\newcommand{\B}{\braket{ab|ij}}
-\newcommand{\Br}{\braket{ab|ji}}
-\newcommand{\Ba}{\braket{ab||ij}}
+\definecolor{myred}{HTML}{CC5803}
+\definecolor{myblue}{HTML}{204B57}
+
+\newcommand{\Ap}{\textcolor{myred}{\braket{aj|ib}}}
+\newcommand{\App}{\textcolor{myred}{\braket{aj|bi}}}
+\newcommand{\Aa}{\textcolor{myred}{\braket{aj||ib}}}
+\newcommand{\B}{\textcolor{myblue}{\braket{ab|ij}}}
+\newcommand{\Br}{\textcolor{myblue}{\braket{ab|ji}}}
+\newcommand{\Ba}{\textcolor{myblue}{\braket{ab||ij}}}
 
 \newcommand{\AtoB}{\mathbf{\alpha\rightarrow\beta}}
 \newcommand{\BtoA}{\mathbf{\beta\rightarrow\alpha}}
 \newcommand{\AtoA}{\mathbf{\alpha\rightarrow\alpha}}
 \newcommand{\BtoB}{\mathbf{\beta\rightarrow\beta}}
-\newcommand{\e}{\left(\epsilon_a-\epsilon_e\right)}
+\newcommand{\e}{\textcolor{myred}{\left(\epsilon_a-\epsilon_e\right)}}
+\newcommand{\diag}{\textcolor{myred}{\delta_{ij}\delta_{ab}}}
 
 
 \begin{document}
 
+\title{Notes on Matrix Factorization for Hartree-Fock Stability of HEG}
+\author{Evan Curtin}
+\maketitle
+
+\section{Orbital Hessian Factorization}
+According to Seeger and Pople\cite{Seeger1977}, (and many other sources) the molecular orbital
+Hessian has the form,
 \begin{eqnarray*}
-  \mathbf{H''}&:&\kbordermatrix{ & 2  & \beta \rightarrow \alpha  \\
-  \mathbf{{}^{\alpha \rightarrow \beta}_{\beta \rightarrow \alpha}}  & \mathbf{A''} & \hspace{3mm}\mathbf{B''} \\
-  \mathbf{{}^{\alpha \rightarrow \beta}_{\beta \rightarrow \alpha}}  & \mathbf{(B'')^*} & \hspace{3mm}\mathbf{(A'')^*} \\
-} \\
+\mathbf{H} =
+  \begin{bmatrix}
+    \mathbf{A}   & \mathbf{B}   \\
+    \mathbf{B^*} & \mathbf{A^*} \\
+  \end{bmatrix}
+\end{eqnarray*}
+
+Where the matrices denoted by $\mathbf{A}$ and $\mathbf{B}$ are given by,
+
+\begin{eqnarray*}
+  A_{st} &=& \e\diag \Aa \\
+  B_{st} &=& \Ba         \\
+\end{eqnarray*}
+
+The color is to help keep track of which portions of the matrices come from
+$\mathbf{A}$ and $\mathbf{B}$.
+The integration is over spin and spatial coordinates. In the case of
+a stationary UHF solution, the matrices $\mathbf{A}$ and $\mathbf{B}$ have the
+following forms, after integrating over spin:
+
+\begin{eqnarray*}
+  \mathbf{A}&=&\kbordermatrix{
+        & \AtoA           & \AtoB           & \BtoA          & \BtoB          \\
+  \AtoA & \e\diag + \Aa   & 0               & 0              & \Ap            \\
+  \AtoB & 0               & \e\diag - \App  & 0              & 0              \\
+  \BtoA & 0               & 0               & \e\diag - \App & 0              \\
+  \BtoB & \Ap             & 0               & 0              & \e\diag + \Aa  \\
+}
 \end{eqnarray*}
 
 \begin{eqnarray*}
-  \mathbf{A''}&:&\kbordermatrix{ & \mathbf{\alpha \rightarrow \beta}  & \beta \rightarrow \alpha \\
-  \mathbf{\alpha \rightarrow \beta}  & \mathbf{X} & \hspace{3mm}\mathbf{0} \\
-  \mathbf{\beta \rightarrow \alpha}  & \mathbf{0} & \hspace{3mm}\mathbf{X}  \\
-} \\
+  \mathbf{B}&=&\kbordermatrix{
+        & \AtoA           & \AtoB           & \BtoA          & \BtoB          \\
+  \AtoA & \Ba             & 0               & 0              & \B             \\
+  \AtoB & 0               & 0               & -\Br           & 0              \\
+  \BtoA & 0               & -\Br            & 0              & 0              \\
+  \BtoB & \B              & 0               & 0              & \Ba            \\
+}
+\end{eqnarray*}
+\\
+These matrices factorize into ``spin conserved'' $(\mathbf{A', B'})$ and
+``spin-unconserved'' $(\mathbf{A'', B''})$ parts, to use the language of Seeger
+and Pople. The spin conserved matrices are given by
+
+\begin{eqnarray*}
+  \mathbf{A'}&=&\kbordermatrix{
+        & \AtoA           & \BtoB          \\
+  \AtoA & \e\diag + \Aa   & \Ap            \\
+  \BtoB & \Ap             & \e\diag + \Aa  \\
+}
+\end{eqnarray*}
+\begin{eqnarray*}
+  \mathbf{B'}&=&\kbordermatrix{
+        & \AtoA           & \BtoB          \\
+  \AtoA & \Ba             & \B             \\
+  \BtoB & \B              & \Ba            \\
+}
+\end{eqnarray*}
+\\
+while the spin-unconserved matrices are given by:
+\begin{eqnarray*}
+  \mathbf{A}&=&\kbordermatrix{
+        & \AtoB           & \BtoA          \\
+  \AtoB & \e\diag - \App  & 0              \\
+  \BtoA & 0               & \e\diag - \App \\
+}
 \end{eqnarray*}
 
 \begin{eqnarray*}
-  \mathbf{B''}&:&\kbordermatrix{ & \mathbf{\alpha \rightarrow \beta}  & \beta \rightarrow \alpha \\
-  \mathbf{\alpha \rightarrow \beta}  & \mathbf{0} & \hspace{3mm}\mathbf{X} \\
-  \mathbf{\beta \rightarrow \alpha}  & \mathbf{X} & \hspace{3mm}\mathbf{0} \\
-} \\
+  \mathbf{B}&=&\kbordermatrix{
+        & \AtoB           & \BtoA  \\
+  \AtoB & 0               & -\Br   \\
+  \BtoA & -\Br            & 0      \\
+}
+\end{eqnarray*}
+\\
+Thus the spin conserved molecular orbital hessian, $\mathbf{H'}$ is given by:
+\begin{eqnarray*}
+  \mathbf{H'}&=&\kbordermatrix{
+        & \AtoA             & \BtoB            & \AtoA             & \BtoB            \\
+  \AtoA & \e\diag + \Aa     & \Ap              & \Ba               & \B               \\
+  \BtoB & \Ap               & \e\diag + \Aa    & \B                & \Ba              \\
+  \AtoA & \Ba^*             & \B^*             & \e\diag + \Aa^*   & \Ap^*            \\
+  \BtoB & \B^*              & \Ba^*            & \Ap^*             & \e\diag + \Aa^*  \\
+}
+\end{eqnarray*}
+\\
+and the spin unconserved molecular orbital hessian, $\mathbf{H''}$ is given by:
+\begin{eqnarray*}
+  \mathbf{H''}&=&\kbordermatrix{
+        & \AtoB           & \BtoA              & \AtoB             & \BtoA            \\
+  \AtoB & \e\diag - \App  & 0                  & 0                 & -\Br             \\
+  \BtoA & 0               & \e\diag - \App     & -\Br              & 0                \\
+  \AtoB & 0                 & -\Br^*           & \e\diag - \App^*  & 0                \\
+  \BtoA & -\Br^*            & 0                & 0                 & \e\diag - \App^* \\
+}
+\end{eqnarray*}
+\\
+
+This matrix factorizes into to two equivalent matrices,
+\begin{eqnarray*}
+  \mathbf{H''}&=&\kbordermatrix{
+        & \AtoB           &\BtoA            \\
+  \AtoB & \e\diag - \App  & -\Br             \\
+  \BtoA & -\Br^*          & \e\diag - \App^* \\
+}
 \end{eqnarray*}
 
-\begin{eqnarray*}
-  \mathbf{H''}&=&\kbordermatrix{ & \AtoA & \AtoB & \BtoA & \BtoB & \AtoA & \AtoB & \BtoA & \BtoB\\
-  \AtoA & \e   & 0      & 0 & \A & \Ba & 0 & 0 & \B \\
-  \AtoB & 0    & \e -\A & 0 & \A & \Ba & 0 & 0 & \B \\
-  \BtoA & 0    & 0      & 0 & \A & \Ba & 0 & 0 & \B \\
-  \BtoB & \A^* & 0 & 0 & \A & \Ba & 0 & 0 & \B \\
-  \AtoA & \Ba^*& 0 & 0 & \A & \Ba & 0 & 0 & \B \\
-  \AtoB & 0    & 0 & 0 & \A & \Ba & 0 & 0 & \B \\
-  \BtoA & 0    & 0 & 0 & \A & \Ba & 0 & 0 & \B \\
-  \BtoB & \Br^*& 0 & 0 & \A & \Ba & 0 & 0 & \B \\
-} \\
-\end{eqnarray*}
+And in this form it is entirely equivalent to the RHF-UHF stability
+matrix, $\mathbf{{}^3H'}$ defined in equations 35 and 36 of
+Seeger/Pople\cite{Seeger1977}. This is where I suspect I've made a mistake.
+\\
+
+\section{Proof of Real-Valued A and B}
+In the case of the Homogeneous electron gas,
+the two electron integral is given by
+(eq. 12 of~\cite{Delyon2008} and p. 16 of~\cite{Guiliani2005}):
+
+\begin{subequations}
+\begin{align}
+\braket{\vec{k}, \vec{k}'|\vec{k}'',\vec{k} '''}\stackrel{\text{2D, 3D}}{=}&
+	\begin{cases}
+	\frac{\pi}{\Omega}\frac{2^{D-1}}{|\vec{k}-\vec{k}''|^{D-1}}
+	& \vec{k}''' = \vec{k}+\vec{k}'-\vec{k}'' \textbf{ and } |\vec{k}-\vec{k}''| \neq 0 \\
+	0
+	& \text{else}
+	\end{cases}
+\\ \nonumber \\
+\braket{k, k'|k'',k'''}\stackrel{\text{1D}}{=}&
+	\begin{cases}
+	e^{|k-k''|^2a^2}\text{Ei}(-|k-k''|^2a^2)\text{;}
+	& k''' = k + k'-k'' \textbf{ and } |k-k''| \neq 0 \\
+	0\text{;}
+	& \text{else}
+	\end{cases}
+\end{align}
+\end{subequations}
+
+The two electron integrals are always real-valued. Therefore
+$\mathbf{A} = \mathbf{A}^*$ and $\mathbf{B} = \mathbf{B}^*$
+
+So far I have not used this to simplify anything, but it is true.
+
+\section{References}
+\bibliography{heg_references}
 \end{document}

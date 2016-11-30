@@ -4,9 +4,8 @@ namespace HFS{
 
     arma::mat full_matrix;
     double full_diag_min;
-    double Mv_time;
+    double Mv_time, Mv_time2;
     double full_diag_time;
-    void time_mv();
 
     bool davidson_agrees_fulldiag() {
         arma::wall_clock timer;
@@ -38,10 +37,11 @@ namespace HFS{
 
     void time_mv() {
         arma::wall_clock timer;
-        timer.tic();
         arma::vec v(2*HFS::Nexc, arma::fill::randu);
+        timer.tic();
         arma::vec Mv = HFS::matvec_prod_3H(v);
         HFS::Mv_time = timer.toc();
+        std::cout << "mv1 time = " << HFS::Mv_time << std::endl;
     }
 
     void build_matrix() {
