@@ -57,9 +57,9 @@ namespace HFS {
                          ,unsigned max_sub_size
                          ,double      tolerance
                          ){
-        davidson_algorithm(N, min_its, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
+      /*  davidson_algorithm(N, min_its, max_its, max_sub_size, num_of_roots, block_size, guess_evecs, tolerance,
                            &HFS::calc_3H,
-                           &HFS::matvec_prod_3H);
+                           &HFS::matvec_prod_3H); */
     }
 
     void build_guess_evecs (int N, int which) {

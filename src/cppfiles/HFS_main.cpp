@@ -24,6 +24,7 @@ int main(int argc, char* argv[]){
         HFS::num_guess_evecs = std::stoi(argv[8]);
         HFS::Dav_blocksize   = std::stoi(argv[9]);
         HFS::Dav_Num_evals   = std::stoi(argv[10]);
+        HFS::mycase          = argv[11];
     #else
         HFS::rs              = 1.2;
         HFS::Nk              = 15;
@@ -35,24 +36,25 @@ int main(int argc, char* argv[]){
         HFS::num_guess_evecs = 1;
         HFS::Dav_blocksize   = 1;
         HFS::Dav_Num_evals   = 1;
+        HFS::mycase          = "cRHF2cUHF";
     #endif // Release
 
     HFS::calc_params();
-
+    HFS::set_case_opts(); // RHF-UHF etc instability, matrix dimension
     HFS::time_mv();
 
+    SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct);
     /*
-    SLEPc::EpS myeps(2*HFS::Nexc, HFS::void_matvec_prod_3H);
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
 
-    if (HFS::Nk < 31) {
+    if (HFS::Nmat < 1500) {
         HFS::davidson_agrees_fulldiag();
     }
 
     // Try this, weight by how close diags are
-    std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(2*HFS::Nexc, 0.0));
+    std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(HFS::Nmat, 0.0));
     for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
         arma::vec guessvec;
         arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
@@ -81,5 +83,12 @@ int main(int argc, char* argv[]){
     myeps.clean();
     fclose(stdout);
     */
+
+    #ifndef NDEBUG
+        if ( !HFS::everything_works() ) {
+            exit(EXIT_FAILURE);
+        }
+    #endif //NDEBUG
+
     return 0;
 }

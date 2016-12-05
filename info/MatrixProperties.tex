@@ -1,13 +1,11 @@
 \documentclass{revtex4}
-
-\usepackage{geometry}
- \geometry{
+\usepackage[margin=1in, paperheight=1in, paperwidth=1in]{geometry}  % doesn't compile w/o width, height
+\geometry{
  a4paper,
  total={170mm,257mm},
  left=15mm,
  top=5mm,
- }
-
+}
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{kbordermatrix}
@@ -28,12 +26,11 @@
 \newcommand{\BtoA}{\mathbf{\beta\rightarrow\alpha}}
 \newcommand{\AtoA}{\mathbf{\alpha\rightarrow\alpha}}
 \newcommand{\BtoB}{\mathbf{\beta\rightarrow\beta}}
-\newcommand{\e}{\textcolor{myred}{\left(\epsilon_a-\epsilon_e\right)}}
+\newcommand{\e}{\textcolor{myred}{\left(\epsilon_a-\epsilon_i\right)}}
 \newcommand{\diag}{\textcolor{myred}{\delta_{ij}\delta_{ab}}}
 
 
 \begin{document}
-
 \title{Notes on Matrix Factorization for Hartree-Fock Stability of HEG}
 \author{Evan Curtin}
 \maketitle
@@ -52,7 +49,7 @@ Hessian has the form,
 Where the matrices denoted by $\mathbf{A}$ and $\mathbf{B}$ are given by,
 
 \begin{eqnarray*}
-  A_{st} &=& \e\diag \Aa \\
+  A_{st} &=& \e\diag -  \Aa \\
   B_{st} &=& \Ba         \\
 \end{eqnarray*}
 
@@ -103,7 +100,7 @@ and Pople. The spin conserved matrices are given by
 \\
 while the spin-unconserved matrices are given by:
 \begin{eqnarray*}
-  \mathbf{A}&=&\kbordermatrix{
+  \mathbf{A''}&=&\kbordermatrix{
         & \AtoB           & \BtoA          \\
   \AtoB & \e\diag - \App  & 0              \\
   \BtoA & 0               & \e\diag - \App \\
@@ -111,7 +108,7 @@ while the spin-unconserved matrices are given by:
 \end{eqnarray*}
 
 \begin{eqnarray*}
-  \mathbf{B}&=&\kbordermatrix{
+  \mathbf{B''}&=&\kbordermatrix{
         & \AtoB           & \BtoA  \\
   \AtoB & 0               & -\Br   \\
   \BtoA & -\Br            & 0      \\
