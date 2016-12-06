@@ -20,7 +20,7 @@ namespace HFS {
     extern arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
     extern arma::umat occ_states, vir_states, excitations;
     extern arma::umat vir_N_to_1_mat, inv_exc_mat;
-    extern void (*MatVecProduct)(arma::vec& v, arma::vec& Mv);
+    extern void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     extern double (*Matrix_func)(arma::uword i, arma::uword j);
 }
 #endif // HFS_params_included

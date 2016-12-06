@@ -104,4 +104,31 @@ namespace HFS {
 
     }
 
+    int KronDelta(arma::uword i, arma::uword j) {
+        /* Returns 1 if i == j, else 0 */
+
+        bool val = 0;
+        if (i == j) {
+            val = 1;
+        }
+        return val;
+    }
+
+    std::vector<arma::vec> st_to_kikakjkb(arma::uword s, arma::uword t){
+        /* Given excitation indices s and t, return a vector
+           containing armadillo vectors of momentum. The order
+           of the returned vectors is ki, ka, kj, kb
+           where s: i -> a and t: j -> b */
+        arma::uword i = HFS::excitations(s, 0);
+        arma::uword a = HFS::excitations(s, 1);
+        arma::uword j = HFS::excitations(t, 0);
+        arma::uword b = HFS::excitations(t, 1);
+        arma::vec ki = HFS::occ_idx_to_k(i);
+        arma::vec kj = HFS::occ_idx_to_k(j);
+        arma::vec ka = HFS::vir_idx_to_k(a);
+        arma::vec kb = HFS::vir_idx_to_k(b);
+        std::vector<arma::vec> klist = {ki, ka, kj, kb};
+        return klist;
+    }
+
 }

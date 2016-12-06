@@ -2,31 +2,51 @@
 
 namespace HFS{
 
-    arma::mat full_matrix;
     double full_diag_min;
-    double Mv_time, Mv_time2;
+    double Mv_time;
     double full_diag_time;
 
     bool davidson_agrees_fulldiag() {
         arma::wall_clock timer;
         timer.tic();
 
-        HFS::build_matrix();
+        arma::mat matrix = HFS::build_matrix(HFS::Matrix_func, HFS::Nmat);
         arma::vec eigvals;
         arma::mat eigvecs;
-        arma::eig_sym(eigvals, eigvecs, HFS::full_matrix);
+        arma::eig_sym(eigvals, eigvecs, matrix);
         HFS::full_diag_min = eigvals.min();
         HFS::full_diag_time = timer.toc();
         return true;
     }
 
     bool mv_is_working() {
-        arma::vec v(HFS::Nmat, arma::fill::randu);
+        arma::vec v(HFS::Nmat, arma::fill::ones);
         arma::vec Mv(HFS::Nmat);
-        HFS::MatVecProduct(v, Mv);
-        HFS::build_matrix();
-        arma::vec v_arma = HFS::full_matrix * v;
+        HFS::MatVecProduct_func(v, Mv);
+        arma::mat matrix = HFS::build_matrix(HFS::Matrix_func, HFS::Nmat);
+        arma::vec v_arma = matrix * v;
         arma::vec diff = arma::abs(Mv - v_arma);
+
+        #ifndef NDEBUG
+            v_arma.print("full");
+            Mv.print("mv");
+            diff.print("diff");
+            arma::vec v2(2*HFS::Nexc, arma::fill::ones);
+            arma::mat Aprime = HFS::build_matrix(HFS::calc_Aprime, 2*HFS::Nexc);
+            arma::mat Bprime = HFS::build_matrix(HFS::calc_Bprime, 2*HFS::Nexc);
+            arma::vec mv2(2*HFS::Nexc);
+            arma::vec mvfull2(2*HFS::Nexc);
+            arma::vec diff2(2*HFS::Nexc);
+            mv2 = HFS::matvec_prod_Aprime(v2);
+            mvfull2 = Aprime * v2;
+            diff2 = arma::abs(mv2 - mvfull2);
+            diff2.print("diff for Aprime");
+            mv2 = HFS::matvec_prod_Bprime(v2);
+            mvfull2 = Bprime * v2;
+            diff2 = arma::abs(mv2 - mvfull2);
+            diff2.print("diff for Bprime");
+        #endif // NDEBUG
+
         bool is_working = arma::all(diff < SMALLNUMBER);
         return is_working;
     }
@@ -36,18 +56,20 @@ namespace HFS{
         arma::vec v(HFS::Nmat, arma::fill::randu);
         timer.tic();
         arma::vec Mv(HFS::Nmat);
-        HFS::MatVecProduct(v, Mv);
+        HFS::MatVecProduct_func(v, Mv);
         HFS::Mv_time = timer.toc();
         std::cout << "Mv time = " << HFS::Mv_time << std::endl;
     }
 
-    void build_matrix() {
-        HFS::full_matrix.set_size(HFS::Nmat, HFS::Nmat);
-        for (arma::uword i = 0; i < HFS::Nmat; ++i) {
-            for (arma::uword j = 0; j < HFS::Nmat; ++j) {
-                HFS::full_matrix(i,j) =  HFS::Matrix_func(i,j);
+    arma::mat build_matrix(double (*Matrix_func)(arma::uword, arma::uword), arma::uword N) {
+        /* Given pointer to matrix function, create and return the matrix */
+        arma::mat matrix(N, N);
+        for (arma::uword i = 0; i < N; ++i) {
+            for (arma::uword j = 0; j < N; ++j) {
+                matrix(i,j) = Matrix_func(i,j);
             }
         }
+        return matrix;
     }
 
     bool everything_works() {

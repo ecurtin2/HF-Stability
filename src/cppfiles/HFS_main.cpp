@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[11];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 15;
+        HFS::Nk              = 7;
         HFS::ndim            = 2;
         HFS::OutputFileName  = "profile";
         HFS::Dav_tol         = 1e-6;
@@ -43,8 +43,8 @@ int main(int argc, char* argv[]){
     HFS::set_case_opts(); // RHF-UHF etc instability, matrix dimension
     HFS::time_mv();
 
-    SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct);
     /*
+    SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct);
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);

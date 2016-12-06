@@ -9,14 +9,13 @@
 #include "HFS_davidson.hpp"
 
 namespace HFS{
-    extern arma::mat full_matrix;
     extern double full_diag_min;
     extern bool davidson_agrees_fulldiag();
     extern bool mv_is_working();
     extern double Mv_time, Mv_time2;
     extern double full_diag_time;
     extern bool everything_works();
-    extern void build_matrix();
+    extern arma::mat build_matrix(double (*Matrix_func)(arma::uword, arma::uword), arma::uword N);
     extern void time_mv();
     extern void time_mv2();
 }

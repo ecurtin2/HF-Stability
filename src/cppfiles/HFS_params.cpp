@@ -11,6 +11,6 @@ namespace HFS{
     arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
     arma::umat occ_states, vir_states, excitations;
     arma::umat vir_N_to_1_mat, inv_exc_mat;
-    void (*MatVecProduct)(arma::vec& v, arma::vec& Mv);
+    void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     double (*Matrix_func)(arma::uword i, arma::uword j);
 }

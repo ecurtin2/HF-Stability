@@ -34,7 +34,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 #INC = -I/home/newhall/include  -I../include
 
-Debug: CFLAGS += -g -o0 -Wall
+Debug: CFLAGS += -g -o0 -Wall -gdwarf-3
 Debug: $(TARGET)
 
 Profile: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE

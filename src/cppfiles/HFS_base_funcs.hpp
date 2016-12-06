@@ -13,6 +13,8 @@ namespace HFS{
     extern arma::umat k_to_index(arma::mat&);
     extern arma::vec occ_idx_to_k(arma::uword);
     extern arma::vec vir_idx_to_k(arma::uword);
+    extern int KronDelta(arma::uword, arma::uword);
+    extern std::vector<arma::vec> st_to_kikakjkb(arma::uword s, arma::uword t);
 }
 
 #endif // HFS_base_funcs_included
