@@ -297,12 +297,12 @@ namespace HFS {
 
         if ((s < N) && (t < N)) {         // top left
             Hprime = HFS::calc_Aprime(s, t);
-        } else if ((s < N) && (t > N)) { // top right
+        } else if ((s < N) && (t >= N)) { // top right
             Hprime = HFS::calc_Bprime(s, t - N);
-        } else if ((s > N) && (t < N)) { // bottom left
-            Hprime = HFS::calc_Aprime(s - N, t);
-        } else if ((s > N) && (t > N)) { // bottom right
-            Hprime = HFS::calc_Bprime(s - N, t - N);
+        } else if ((s >= N) && (t < N)) { // bottom left
+            Hprime = HFS::calc_Bprime(s - N, t);
+        } else if ((s >= N) && (t >= N)) { // bottom right
+            Hprime = HFS::calc_Aprime(s - N, t - N);
         }
         return Hprime;
     }
@@ -319,9 +319,14 @@ namespace HFS {
             ka = klist[1];
             kj = klist[2];
             kb = klist[3];
-            Aprime = HFS::KronDelta(s, t) * HFS::exc_energies(s) + HFS::two_electron_safe(ka, kj, ki, kb) - HFS::two_electron_safe(ka, kj, kb, ki);
 
-        } else if ((s < N) && (t > N)) { // top right
+            if (s == t) {
+                Aprime = HFS::KronDelta(s, t) * HFS::exc_energies(s);
+            } else {
+                Aprime = HFS::two_electron_safe(ka, kj, ki, kb) - HFS::two_electron_safe(ka, kj, kb, ki);
+            }
+
+        } else if ((s < N) && (t >= N)) { // top right
             klist = HFS::st_to_kikakjkb(s, t - N);
             ki = klist[0];
             ka = klist[1];
@@ -329,7 +334,7 @@ namespace HFS {
             kb = klist[3];
             Aprime = HFS::two_electron_safe(ka, kj, ki, kb);
 
-        } else if ((s > N) && (t < N)) { // bottom left
+        } else if ((s >= N) && (t < N)) { // bottom left
             klist = HFS::st_to_kikakjkb(s - N, t);
             ki = klist[0];
             ka = klist[1];
@@ -337,13 +342,17 @@ namespace HFS {
             kb = klist[3];
             Aprime = HFS::two_electron_safe(ka, kj, ki, kb);
 
-        } else if ((s > N) && (t > N)) { // bottom right
+        } else if ((s >= N) && (t >= N)) { // bottom right
             klist = HFS::st_to_kikakjkb(s - N, t - N);
             ki = klist[0];
             ka = klist[1];
             kj = klist[2];
             kb = klist[3];
-            Aprime = HFS::KronDelta(s, t) * HFS::exc_energies(s - N) + HFS::two_electron_safe(ka, kj, ki, kb) - HFS::two_electron_safe(ka, kj, kb, ki);
+            if (s == t) {
+                Aprime = HFS::KronDelta(s, t) * HFS::exc_energies(s - N);
+            } else {
+                Aprime = HFS::two_electron_safe(ka, kj, ki, kb) - HFS::two_electron_safe(ka, kj, kb, ki);
+            }
         }
         return Aprime;
     }
@@ -362,7 +371,7 @@ namespace HFS {
             kb = klist[3];
             Bprime = HFS::two_electron_safe(ka, kb, ki, kj) - HFS::two_electron_safe(ka, kb, kj, ki);
 
-        } else if ((s < N) && (t > N)) { // top right
+        } else if ((s < N) && (t >= N)) { // top right
             klist = HFS::st_to_kikakjkb(s, t - N);
             ki = klist[0];
             ka = klist[1];
@@ -370,7 +379,7 @@ namespace HFS {
             kb = klist[3];
             Bprime = HFS::two_electron_safe(ka, kb, ki, kj);
 
-        } else if ((s > N) && (t < N)) { // bottom left
+        } else if ((s >= N) && (t < N)) { // bottom left
             klist = HFS::st_to_kikakjkb(s - N, t);
             ki = klist[0];
             ka = klist[1];
@@ -378,7 +387,7 @@ namespace HFS {
             kb = klist[3];
             Bprime = HFS::two_electron_safe(ka, kb, ki, kj);
 
-        } else if ((s > N) && (t > N)) { // bottom right
+        } else if ((s >= N) && (t >= N)) { // bottom right
             klist = HFS::st_to_kikakjkb(s - N, t - N);
             ki = klist[0];
             ka = klist[1];

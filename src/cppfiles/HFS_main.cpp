@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[11];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 7;
+        HFS::Nk              = 12;
         HFS::ndim            = 2;
         HFS::OutputFileName  = "profile";
         HFS::Dav_tol         = 1e-6;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
         HFS::num_guess_evecs = 1;
         HFS::Dav_blocksize   = 1;
         HFS::Dav_Num_evals   = 1;
-        HFS::mycase          = "cRHF2cUHF";
+        HFS::mycase          = "cUHF2cUHF";
     #endif // Release
 
     HFS::calc_params();

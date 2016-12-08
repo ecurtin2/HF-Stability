@@ -20,7 +20,7 @@ namespace HFS{
     }
 
     bool mv_is_working() {
-        arma::vec v(HFS::Nmat, arma::fill::ones);
+        arma::vec v(HFS::Nmat, arma::fill::randu);
         arma::vec Mv(HFS::Nmat);
         HFS::MatVecProduct_func(v, Mv);
         arma::mat matrix = HFS::build_matrix(HFS::Matrix_func, HFS::Nmat);
@@ -28,10 +28,7 @@ namespace HFS{
         arma::vec diff = arma::abs(Mv - v_arma);
 
         #ifndef NDEBUG
-            v_arma.print("full");
-            Mv.print("mv");
-            diff.print("diff");
-            arma::vec v2(2*HFS::Nexc, arma::fill::ones);
+            arma::vec v2(2*HFS::Nexc, arma::fill::randu);
             arma::mat Aprime = HFS::build_matrix(HFS::calc_Aprime, 2*HFS::Nexc);
             arma::mat Bprime = HFS::build_matrix(HFS::calc_Bprime, 2*HFS::Nexc);
             arma::vec mv2(2*HFS::Nexc);
@@ -40,14 +37,25 @@ namespace HFS{
             mv2 = HFS::matvec_prod_Aprime(v2);
             mvfull2 = Aprime * v2;
             diff2 = arma::abs(mv2 - mvfull2);
-            diff2.print("diff for Aprime");
+            arma::uvec where = arma::find(diff2 > SMALLNUMBER);
+            std::cout << "Nexc = " << HFS::Nexc << std::endl;
+            // std::cout << HFS::exc_energies << std::endl;
+            // arma::diagvec(Aprime).print("Aprime diags");
+            std::cout << "Aprime works: " << arma::all(diff2 < SMALLNUMBER) << std::endl;
+
+
             mv2 = HFS::matvec_prod_Bprime(v2);
             mvfull2 = Bprime * v2;
             diff2 = arma::abs(mv2 - mvfull2);
-            diff2.print("diff for Bprime");
+
+            std::cout << "Bprime works: " << arma::all(diff2 < SMALLNUMBER) << std::endl;
         #endif // NDEBUG
 
         bool is_working = arma::all(diff < SMALLNUMBER);
+        if (!is_working) {
+            arma::uvec where = arma::find(diff > SMALLNUMBER);
+            where.print("where is not working");
+        }
         return is_working;
     }
 
