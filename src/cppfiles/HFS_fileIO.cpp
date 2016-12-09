@@ -51,6 +51,7 @@ namespace HFS {
         PRINTVAL(Nk)
         PRINTVAL(ndim)
         PRINTVAL(rs)
+        PRINTVAL(mycase)
         ENDSECTION("Input")
 
         SECTION("Output")

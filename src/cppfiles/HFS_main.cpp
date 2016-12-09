@@ -43,8 +43,8 @@ int main(int argc, char* argv[]){
     HFS::set_case_opts(); // RHF-UHF etc instability, matrix dimension
     HFS::time_mv();
 
-    /*
-    SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct);
+
+    SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
@@ -82,7 +82,6 @@ int main(int argc, char* argv[]){
 
     myeps.clean();
     fclose(stdout);
-    */
 
     #ifndef NDEBUG
         if ( !HFS::everything_works() ) {

@@ -18,11 +18,19 @@ MANSEC = EPS
 
 
 
-SLEPC_DIR=/home/evan/slepc-3.7.3
-PETSC_DIR=/home/evan/git/petsc
+# Work
+# SLEPC_DIR=/home/evan/slepc-3.7.3
+# PETSC_DIR=/home/evan/git/petsc
+# PETSC_ARCH=linux-gnu-c-debug
+# SLEPC_ARCH=linux-gnu-c-debug
 
-PETSC_ARCH=linux-gnu-c-debug
-SLEPC_ARCH=linux-gnu-c-debug
+# Home
+SLEPC_DIR=/home/evan/git/slepc-3.7.3
+PETSC_DIR=/home/evan/git/petsc
+PETSC_ARCH=arch-linux2-c-debug
+SLEPC_ARCH=arch-linux2-c-debug
+
+
 
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
 CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
