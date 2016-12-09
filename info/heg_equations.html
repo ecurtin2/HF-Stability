@@ -1,0 +1,692 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  
+  "http://www.w3.org/TR/html4/loose.dtd">  
+<html > 
+<head><title>Notes on Hartree-Fock Stability of HEG//</title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="generator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<meta name="originator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<!-- html --> 
+<meta name="src" content="heg_equations.tex"> 
+<meta name="date" content="2016-11-05 11:58:00"> 
+<link rel="stylesheet" type="text/css" href="heg_equations.css"> 
+</head><body 
+>
+  <div class="maketitle">
+  <h2 class="titleHead"><a 
+ id="x1-1doc"></a>
+Notes on Hartree-Fock Stability of HEG
+  </h2>
+<div class="author" ><span class="author" >Evan  Curtin</span>  </div>
+  <div class="RRAP">
+  </div>
+  <div class="frontpagefootnotes">
+  </div>
+  </div>
+  <h3 class="sectionHead"><span class="titlemark">I.   </span> <a 
+ id="x1-1000I"></a>Homogeneous Electron Gas</h3>
+<!--l. 25--><p class="noindent" >The Fermi level, <span 
+class="cmmi-10">k</span><sub><span 
+class="cmmi-7">f</span></sub>, is (p. 30 of [<span 
+class="cmbx-10">? </span>])
+  <table 
+class="equation"><tr><td><a 
+ id="x1-1001r1"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations0x.png" alt="     (              1
+     || (3&#x03C0;2n)13 = (9&#x03C0;)3 -1-- 3D
+     ||||           4    rsa0
+k  = {      1  -&#x221A;2-           .
+ f   || (2&#x03C0;n )2 = rsa0       2D
+     ||||
+     ( &#x03C0;2n = 4&#x03C0;rsa0           1D
+" class="math-display" ></center></td><td class="equation-label">(1)</td></tr></table>
+<!--l. 36--><p class="nopar" >
+<!--l. 38--><p class="indent" >  The two electron integral is given by (eq. 12 of [<span 
+class="cmbx-10">? </span>] and p. 16 of [<span 
+class="cmbx-10">? </span>])
+  <div class="subequations">
+<table 
+class="align">
+            <tr><td 
+class="align-odd"><span 
+class="cmsy-10">&#x27E8;</span><img 
+src="heg_equations1x.png" alt="&#x20D7;k"  class="vec" ><span 
+class="cmmi-10">,</span><img 
+src="heg_equations2x.png" alt=" &#x20D7;k"  class="vec" ><span 
+class="cmsy-10">&#x2032;|</span><img 
+src="heg_equations3x.png" alt="&#x20D7;k"  class="vec" ><span 
+class="cmsy-10">&#x2032;&#x2032;</span><span 
+class="cmmi-10">,</span><img 
+src="heg_equations4x.png" alt="&#x20D7;k"  class="vec" ><span 
+class="cmsy-10">&#x2032;&#x2032;&#x2032;</span><span 
+class="cmsy-10">&#x27E9;</span><img 
+src="heg_equations5x.png" alt="2D=, 3D" class="stackrel"></td>            <td 
+class="align-even"><img 
+src="heg_equations6x.png" alt="{ &#x03C0;--2D-1--- &#x20D7;&#x2032;&#x2032;&#x2032;  &#x20D7;   &#x20D7;&#x2032; &#x20D7; &#x2032;&#x2032;     &#x20D7;  &#x20D7;&#x2032;&#x2032;
+  &#x03A9; |&#x20D7;k-&#x20D7;k&#x2032;&#x2032;|D-1  k  = k + k - k and  |k -k | &#x2044;= 0
+  0          else"  class="left" align="middle"></td>                                      <td 
+class="align-label"><a 
+ id="x1-1003r1"></a>(2a)
+            </td></tr><tr><td 
+class="align-odd"></td>                             <td 
+class="align-even"></td>                                                                     <td 
+class="align-label">
+            </td></tr><tr><td 
+class="align-odd"><span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">k,k</span><span 
+class="cmsy-10">&#x2032;|</span><span 
+class="cmmi-10">k</span><span 
+class="cmsy-10">&#x2032;&#x2032;</span><span 
+class="cmmi-10">,k</span><span 
+class="cmsy-10">&#x2032;&#x2032;&#x2032;</span><span 
+class="cmsy-10">&#x27E9;</span><img 
+src="heg_equations7x.png" alt="1=D" class="stackrel"></td>               <td 
+class="align-even"><img 
+src="heg_equations8x.png" alt="{     &#x2032;&#x2032;2 2
+  e|k-k |a Ei(- |k - k&#x2032;&#x2032;|2a2) ; k&#x2032;&#x2032;&#x2032; = k+ k&#x2032; - k&#x2032;&#x2032; and |k- k&#x2032;&#x2032;| &#x2044;= 0
+  0 ;                      else"  class="left" align="middle"></td>                        <td 
+class="align-label"><a 
+ id="x1-1004r2"></a>(2b)            </td></tr></table>
+</div>
+<!--l. 59--><p class="indent" >  where &#x03A9; is the direct lattice volume and D is the dimensionality of the system. Ei(x) denotes the exponential integral
+function. The orbital energies are given by
+  <table 
+class="equation"><tr><td><a 
+ id="x1-1005r3"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations9x.png" alt="      (
+      || &#x210F;22&#x20D7;km2-- (L2&#x03C0;-)D   &#x222B;   &#x27E8;&#x20D7;k,&#x20D7;k&#x2032;|&#x20D7;k&#x2032;,&#x20D7;k&#x27E9;d&#x20D7;k&#x2032; continuous (eq. 23 of [? ])
+      |{            |&#x20D7;k&#x2032;|&#x003C;&#x20D7;kf
+&#x03F5;&#x20D7;k,&#x03C3; = |  2&#x20D7;2   |&#x20D7;k|&#x003C;&#x2211;kf
+      ||( &#x210F;2km---     n &#x20D7;k&#x03C3; &#x27E8;&#x20D7;k,&#x20D7;k&#x2032;|&#x20D7;k&#x2032;,&#x20D7;k&#x27E9;       discrete (p. 80 of [? ])
+               &#x20D7;k
+" class="math-display" ></center></td><td class="equation-label">(3)</td></tr></table>
+<!--l. 69--><p class="nopar" >
+Where <span 
+class="cmmi-10">n</span><sub><img 
+src="heg_equations10x.png" alt="&#x20D7;k"  class="vec" ><span 
+class="cmmi-7">&#x03C3;</span></sub> is the occupation number of the state with momentum <img 
+src="heg_equations11x.png" alt="&#x20D7;
+k"  class="vec" > and spin <span 
+class="cmmi-10">&#x03C3;</span>. Here we have used the relationship to relate
+the discrete and continuous quantities, (p. 15 of [<span 
+class="cmbx-10">? </span>]). Note the factor of <img 
+src="heg_equations12x.png" alt=" 1
+LD-"  class="frac" align="middle"> is not in the discrete equation; I have
+moved that to the definition of the two electron integral for consistency with other resources. Note also that
+<span 
+class="cmmi-10">L</span><sup><span 
+class="cmmi-7">D</span></sup> = &#x03A9;.
+  <table 
+class="equation"><tr><td><a 
+ id="x1-1006r4"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations13x.png" alt="&#x2211;      dk&#x226A; L ( L )D &#x222B;
+   (...)-----&#x2192;   ---    (...)d&#x20D7;k
+&#x20D7;k             2&#x03C0;
+" class="math-display" ></center></td><td class="equation-label">(4)</td></tr></table>
+<!--l. 74--><p class="nopar" >
+<!--l. 76--><p class="indent" >  The analytic form of the exchange energy is known in the continuous case. Let <span 
+class="cmmi-10">y </span>= <img 
+src="heg_equations14x.png" alt="kkF&#x03C3;"  class="frac" align="middle">. Equations <a 
+href="#x1-1007r5">5<!--tex4ht:ref: eq:hfexch --></a> through <a 
+href="#x1-1009r7">7<!--tex4ht:ref: eq:fnd --></a> are from p.
+81-82 of [<span 
+class="cmbx-10">? </span>]. In 2 or 3 dimensions the exchange energy is,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-1007r5"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations15x.png" alt="         2       (    )
+&#x03F5;(x) = - 2e-kF&#x03C3;fND  -k-- ,
+ k&#x03C3;       &#x03C0;        kF&#x03C3;
+" class="math-display" ></center></td><td class="equation-label">(5)</td></tr></table>
+<!--l. 80--><p class="nopar" >
+where in 3D, the function <span 
+class="cmmi-10">f</span><sub><span 
+class="cmr-7">3</span><span 
+class="cmmi-7">D</span></sub> is given by
+  <table 
+class="equation"><tr><td><a 
+ id="x1-1008r6"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations16x.png" alt="         1  1 - y2  ||1+ y||
+f3D(y) = -+ ------ln ||----||,
+         2    4y     1- y
+" class="math-display" ></center></td><td class="equation-label">(6)</td></tr></table>
+<!--l. 84--><p class="nopar" >
+and in 2D, it is
+  <table 
+class="equation"><tr><td><a 
+ id="x1-1009r7"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations17x.png" alt="         {E (y),                     y &#x2264; 1,
+f2D (y) =    [ ( 1)  (    1-)  (1) ]
+          y E   y -  1 - y2 K  y   , y &#x2265; 1.
+" class="math-display" ></center></td><td class="equation-label">(7)</td></tr></table>
+<!--l. 106--><p class="nopar" >
+The functions <span 
+class="cmbx-10">K</span>(<span 
+class="cmmi-10">y</span>) and <span 
+class="cmbx-10">E</span>(<span 
+class="cmmi-10">y</span>) are complete elliptic integrals of the first and second kind, respectively. These are implemented
+in SciPy as <span 
+class="cmti-10">scipy.special.ellipk </span>and <span 
+class="cmti-10">scipy.special.ellipe</span>. After a significant struggle, I have found that the author of the
+textbook[<span 
+class="cmbx-10">? </span>] and scipy/wolfram use a different definition of the complete elliptic integral. I was able to reproduce the graphs
+on pages 82 and 83 of [<span 
+class="cmbx-10">? </span>] properly with <span 
+class="cmbx-10">K</span>(<span 
+class="cmmi-10">x</span>) <span 
+class="cmsy-10">&#x2192; </span><span 
+class="cmbx-10">K</span>(<span 
+class="cmmi-10">x</span><sup><span 
+class="cmr-7">2</span></sup>) and <span 
+class="cmbx-10">E</span>(<span 
+class="cmmi-10">x</span>) <span 
+class="cmsy-10">&#x2192; </span><span 
+class="cmbx-10">E</span>(<span 
+class="cmmi-10">x</span><sup><span 
+class="cmr-7">2</span></sup>).
+<!--l. 109--><p class="noindent" >
+  <h3 class="sectionHead"><span class="titlemark">II.   </span> <a 
+ id="x1-2000II"></a>Hartree-Fock Stability</h3>
+<!--l. 110--><p class="noindent" >The HF stability conditions (to my knowledge) were presented by Thouless [<span 
+class="cmbx-10">? </span>] (1<sup><span 
+class="cmmi-7">st</span></sup> Ed. 1960). More general
+conditions were presented by Adams[<span 
+class="cmbx-10">? </span>]. The stability condition is that the eigenvalues (<span 
+class="cmmi-10">&#x03BB;</span>) given by (p. 41 of [<span 
+class="cmbx-10">?</span>
+])
+  <table 
+class="equation"><tr><td><a 
+ id="x1-2001r8"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations18x.png" alt="            occ vir
+(&#x03F5; - &#x03F5; )C  + &#x2211;  &#x2211; (&#x27E8;aj|ib&#x27E9;- &#x27E8;aj|bi&#x27E9;)C  + (&#x27E8;ab|ij&#x27E9;- &#x27E8;ab|ji&#x27E9;)C* = &#x03BB;C
+ a   i  ai   j  b                bj                  bj     ai
+" class="math-display" ></center></td><td class="equation-label">(8)</td></tr></table>
+<!--l. 117--><p class="nopar" >
+  <table 
+class="equation"><tr><td><a 
+ id="x1-2002r9"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations19x.png" alt="         *  &#x2211;occ&#x2211;vir                                    *      *
+(&#x03F5;a - &#x03F5;i)C ai +     (&#x27E8;ij|ab&#x27E9;- &#x27E8;ij|ba&#x27E9;)Cbj + (&#x27E8;ib|aj&#x27E9; - &#x27E8;ib|ja&#x27E9;)Cbj = &#x03BB;Cai,
+              j b
+" class="math-display" ></center></td><td class="equation-label">(9)</td></tr></table>
+<!--l. 124--><p class="nopar" >
+are nonnegative. This is equivalent to the RPA oscillation frequencies being all real (p. 115 of [<span 
+class="cmbx-10">? </span>]). The RPA is a
+linearized approximation to Time-Dependent Hartree-Fock theory. These can be written[<span 
+class="cmbx-10">? </span>][<span 
+class="cmbx-10">? </span>] in the following
+form:
+  <table 
+class="equation"><tr><td><a 
+ id="x1-2003r10"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations20x.png" alt="      [               ]
+1,3 &#x2032;   ( 1,3A&#x2032;)  ( 1,3B&#x2032;)
+  H =   1,3B &#x2032;*  1,3A &#x2032;*
+" class="math-display" ></center></td><td class="equation-label">(10)</td></tr></table>
+<!--l. 132--><p class="nopar" >
+Where the 1<span 
+class="cmmi-10">,</span>3 denote singlet and triplet states, respectively. <span 
+class="cmmi-10">A</span>, <span 
+class="cmmi-10">B </span>have dimension <span 
+class="cmmi-10">N</span><sub><span 
+class="cmmi-7">occ</span></sub> <span 
+class="cmsy-10">&#x00D7; </span><span 
+class="cmmi-10">N</span><sub><span 
+class="cmmi-7">vir</span></sub> and are defined as follows:
+<div class="subequations">
+
+<table 
+class="align">
+                             <tr><td 
+class="align-odd"><sup><span 
+class="cmr-7">1</span></sup><span 
+class="cmmi-10">A</span><span 
+class="cmsy-10">&#x2032;</span><sub>
+<span 
+class="cmmi-7">i</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">a,j</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">b</span></sub></td>                             <td 
+class="align-even"> = (<span 
+class="cmmi-10">&#x03F5;</span><sub><span 
+class="cmmi-7">a</span></sub> <span 
+class="cmsy-10">- </span><span 
+class="cmmi-10">&#x03F5;</span><sub><span 
+class="cmmi-7">i</span></sub>)<span 
+class="cmmi-10">&#x03B4;</span><sub><span 
+class="cmmi-7">ij</span></sub><span 
+class="cmmi-10">&#x03B4;</span><sub><span 
+class="cmmi-7">ab</span></sub> + 2<span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">aj</span><span 
+class="cmsy-10">|</span><span 
+class="cmmi-10">ib</span><span 
+class="cmsy-10">&#x27E9;</span><span 
+class="cmsy-10">-</span><span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">aj</span><span 
+class="cmsy-10">|</span><span 
+class="cmmi-10">bi</span><span 
+class="cmsy-10">&#x27E9;</span></td>                                                          <td 
+class="align-label"><a 
+ id="x1-2005r1"></a>(11a)
+                             </td></tr><tr><td 
+class="align-odd"><sup><span 
+class="cmr-7">3</span></sup><span 
+class="cmmi-10">A</span><span 
+class="cmsy-10">&#x2032;</span><sub>
+<span 
+class="cmmi-7">i</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">a,j</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">b</span></sub></td>                             <td 
+class="align-even"> = (<span 
+class="cmmi-10">&#x03F5;</span><sub><span 
+class="cmmi-7">a</span></sub> <span 
+class="cmsy-10">- </span><span 
+class="cmmi-10">&#x03F5;</span><sub><span 
+class="cmmi-7">i</span></sub>)<span 
+class="cmmi-10">&#x03B4;</span><sub><span 
+class="cmmi-7">ij</span></sub><span 
+class="cmmi-10">&#x03B4;</span><sub><span 
+class="cmmi-7">ab</span></sub> <span 
+class="cmsy-10">-</span><span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">aj</span><span 
+class="cmsy-10">|</span><span 
+class="cmmi-10">bi</span><span 
+class="cmsy-10">&#x27E9;</span></td>                                                                   <td 
+class="align-label"><a 
+ id="x1-2006r2"></a>(11b)
+                             </td></tr><tr><td 
+class="align-odd"><sup><span 
+class="cmr-7">1</span></sup><span 
+class="cmmi-10">B</span><span 
+class="cmsy-10">&#x2032;</span><sub>
+<span 
+class="cmmi-7">i</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">a,j</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">b</span></sub></td>                             <td 
+class="align-even"> = 2<span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">ab</span><span 
+class="cmsy-10">|</span><span 
+class="cmmi-10">ij</span><span 
+class="cmsy-10">&#x27E9;</span><span 
+class="cmsy-10">-</span><span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">ab</span><span 
+class="cmsy-10">|</span><span 
+class="cmmi-10">ji</span><span 
+class="cmsy-10">&#x27E9;</span></td>                                                                        <td 
+class="align-label"><a 
+ id="x1-2007r3"></a>(11c)
+                             </td></tr><tr><td 
+class="align-odd"><sup><span 
+class="cmr-7">3</span></sup><span 
+class="cmmi-10">B</span><span 
+class="cmsy-10">&#x2032;</span><sub>
+<span 
+class="cmmi-7">i</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">a,j</span><span 
+class="cmsy-7">&#x2192;</span><span 
+class="cmmi-7">b</span></sub></td>                             <td 
+class="align-even"> = <span 
+class="cmsy-10">-</span><span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmmi-10">ab</span><span 
+class="cmsy-10">|</span><span 
+class="cmmi-10">ji</span><span 
+class="cmsy-10">&#x27E9;</span></td>                                                                               <td 
+class="align-label"><a 
+ id="x1-2008r4"></a>(11d)                             </td></tr></table>
+</div>
+<!--l. 142--><p class="indent" >  The matrix given in Equation <a 
+href="#x1-2003r10">10<!--tex4ht:ref: eq:1,3H --></a> represents the case of complex RHF stability in the space of complex RHF space (<sup><span 
+class="cmr-7">1</span></sup><span 
+class="cmbx-10">H </span>-
+internal instability) and in the space of complex UHF space (<sup><span 
+class="cmr-7">3</span></sup><span 
+class="cmbx-10">H </span>- triplet instability). Seeger and Pople [<span 
+class="cmbx-10">? </span>] give both more
+general formulae, and simplifications in special cases. Figure <a 
+href="#x1-2009r1">1<!--tex4ht:ref: fig:stability_table --></a> is a reproduction of the stability conditions they developed, and
+more details can be found in the paper. <hr class="figure"><div class="figure" 
+>
+<a 
+ id="x1-2009r1"></a>
+
+<img 
+src="heg_equations21x.png" alt="PIC" class="graphics"><!--tex4ht:graphics  
+name="heg_equations21x.png" src="figures/seeger_stability.pdf"  
+-->
+<br /> <div class="caption" 
+><span class="id"><span 
+class="cmr-9">FIG.</span><span 
+class="cmr-9">&#x00A0;1: </span></span><span  
+class="content"><span 
+class="cmr-9">Hartree-Fock Stability conditions reproduced from Seeger &amp; Pople [</span><span 
+class="cmbx-9">? </span><span 
+class="cmr-9">]</span></span></div><!--tex4ht:label?: x1-2009r1 -->
+<!--l. 147--><p class="indent" >  </div><hr class="endfigure">
+  <h3 class="sectionHead"><span class="titlemark">III.   </span> <a 
+ id="x1-3000III"></a>Davidson&#8217;s Algorithm</h3>
+<!--l. 150--><p class="noindent" >
+  <h4 class="subsectionHead"><span class="titlemark">A.   </span> <a 
+ id="x1-4000A"></a>Theory</h4>
+<!--l. 151--><p class="noindent" >Oftentimes we&#8217;re interested only in the lowest or highest few eigenvalues of a large, symmetric matrix. Matrix eigenvalue
+problem operation counts scale as <a 
+href="~" class="url" ><span 
+class="cmtt-10">~</span></a><span 
+class="cmmi-10">O</span>(<span 
+class="cmmi-10">N</span><sup><span 
+class="cmr-7">3</span></sup>) for an <span 
+class="cmmi-10">N </span><span 
+class="cmsy-10">&#x00D7;</span><span 
+class="cmmi-10">N </span>matrix, while the memory requirement scales quadratically. Iterative
+subspace methods based off the Rayleigh-Ritz method are popular ways of dealing with this issue. The most famous are the
+Lanczos (hermitian) and Arnoldi (non-hermitian) algorithms, which build as their subspace a Krylov space.
+A more involved algorithm was proposed by Davidson[<span 
+class="cmbx-10">? </span>] and involves building a subspace with correction
+vectors to be described momentarily. But first, a few definitions are introduced to define the notation to be
+used.
+<!--l. 153--><p class="indent" >  We are interested in the lowest (or highest) <span 
+class="cmmi-10">k </span>(0 <span 
+class="cmmi-10">&#x003C; k </span><span 
+class="cmsy-10">&#x2264; </span><span 
+class="cmmi-10">N</span>) eigenvalue(s) of the <span 
+class="cmmi-10">N </span><span 
+class="cmsy-10">&#x00D7; </span><span 
+class="cmmi-10">N </span>hermitian matrix,
+A,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4001r12"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations22x.png" alt="Ax = &#x03BB;x
+" class="math-display" ></center></td><td class="equation-label">(12)</td></tr></table>
+<!--l. 156--><p class="nopar" >
+We begin by guessing <span 
+class="cmmi-10">M </span>(<span 
+class="cmmi-10">M </span><span 
+class="cmsy-10">&#x2265; </span><span 
+class="cmmi-10">k</span>) vectors, <span 
+class="cmmi-10">v </span>which approximately span the space of the actual eigenvectors. Let <span 
+class="cmmi-10">V </span>be the
+<span 
+class="cmmi-10">N </span><span 
+class="cmsy-10">&#x00D7; </span><span 
+class="cmmi-10">M </span>matrix whose columns are the approximate eigenvectors,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4002r13"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations23x.png" alt="V = [v1,v2,...,vM ]
+" class="math-display" ></center></td><td class="equation-label">(13)</td></tr></table>
+<!--l. 160--><p class="nopar" >
+where care must be taken to ensure columns of <span 
+class="cmmi-10">V </span>form an orthogonal set. We then transform our matrix into the subspace as
+follows,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4003r14"></a>
+
+  <center class="math-display" >
+<img 
+src="heg_equations24x.png" alt=" &#x02DC;    &#8224;
+A  = V AV
+" class="math-display" ></center></td><td class="equation-label">(14)</td></tr></table>
+<!--l. 164--><p class="nopar" >
+where the <a 
+href="~" class="url" ><span 
+class="cmtt-10">~</span></a> will be used to denote entities in the subspace. <span 
+class="cmmi-10">Ã</span> is an <span 
+class="cmmi-10">M </span><span 
+class="cmsy-10">&#x00D7;</span><span 
+class="cmmi-10">M </span>matrix where <span 
+class="cmmi-10">M </span><span 
+class="cmsy-10">&#x226A; </span><span 
+class="cmmi-10">N</span>, and therefore we can use
+standard diagonalization routines to calculate the eigenvalues and eigenvectors in the subspace,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4004r15"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations25x.png" alt="&#x02DC;A&#x02DC;x = &#x02DC;&#x03BB;&#x02DC;x
+" class="math-display" ></center></td><td class="equation-label">(15)</td></tr></table>
+<!--l. 168--><p class="nopar" >
+The subspace eigenpair (<img 
+src="heg_equations26x.png" alt="&#x02DC;&#x03BB;"  class="tilde" ><sub><span 
+class="cmmi-7">i</span></sub><span 
+class="cmmi-10">,</span><img 
+src="heg_equations27x.png" alt="&#x02DC;x"  class="tilde" ><sub><span 
+class="cmmi-7">i</span></sub>) is then used to create the <span 
+class="cmti-10">Ritz pair</span>, (<span 
+class="cmmi-10">&#x03BB;</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup><span 
+class="cmmi-10">,</span><span 
+class="cmbx-10">x</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup>). The ritz pair is the approximation to the exact
+eigenpair of the matrix, and is determined by <div class="subequations">
+<table 
+class="align">
+                                          <tr><td 
+class="align-odd"><span 
+class="cmbx-10">x</span><sub><span 
+class="cmbx-7">i</span></sub></td>                                          <td 
+class="align-even"> <span 
+class="cmsy-10">&#x2248; </span><span 
+class="cmbx-10">x</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup> = <span 
+class="cmbx-10">V</span><img 
+src="heg_equations28x.png" alt="&#x02DC;x"  class="tilde" ><sub>
+<span 
+class="cmmi-7">i</span></sub></td>                                                                                    <td 
+class="align-label"><a 
+ id="x1-4006r1"></a>(16a)
+                                          </td></tr><tr><td 
+class="align-odd"><span 
+class="cmmi-10">&#x03BB;</span><sub><span 
+class="cmmi-7">i</span></sub></td>                                          <td 
+class="align-even"> <span 
+class="cmsy-10">&#x2248; </span><span 
+class="cmmi-10">&#x03BB;</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup> = <img 
+src="heg_equations29x.png" alt="&#x02DC;&#x03BB;"  class="tilde" ><sub>
+<span 
+class="cmmi-7">i</span></sub></td>                                                                                      <td 
+class="align-label"><a 
+ id="x1-4007r2"></a>(16b)                                          </td></tr></table>
+</div>
+<!--l. 176--><p class="indent" >  At any time, the quality of the approximation can be determined by calculating the norm of the <span 
+class="cmti-10">residue</span>,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4008r17"></a>
+
+  <center class="math-display" >
+<img 
+src="heg_equations30x.png" alt="              R
+ri = (A - &#x03BB;iI)x i
+" class="math-display" ></center></td><td class="equation-label">(17)</td></tr></table>
+<!--l. 179--><p class="nopar" >
+when <span 
+class="cmsy-10">||</span><span 
+class="cmbx-10">r</span><sub><span 
+class="cmmi-7">i</span></sub><span 
+class="cmsy-10">|| </span>is smaller than a given tolerance for the desired k eigenpairs, the algorithm is finished and the current Ritz pairs
+are taken to be the eigenpairs. If this condition is not met, the subspace needs to be expanded. This is done by computing
+correction vectors, <span 
+class="cmmi-10">&#x03B4;</span><sub><span 
+class="cmmi-7">i</span></sub>,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4009r18"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations31x.png" alt="&#x03B4;i = ciri
+" class="math-display" ></center></td><td class="equation-label">(18)</td></tr></table>
+<!--l. 183--><p class="nopar" >
+for <span 
+class="cmmi-10">i </span>= 0<span 
+class="cmmi-10">...l </span>where <span 
+class="cmmi-10">l </span>is the number of desired ritz pairs with <span 
+class="cmsy-10">||</span><span 
+class="cmbx-10">r</span><sub><span 
+class="cmmi-7">i</span></sub><span 
+class="cmsy-10">|| </span>greater than the given tolerance. Corrections are only
+calculated for these Ritz pairs. The coefficient, <span 
+class="cmmi-10">c</span><sub><span 
+class="cmmi-7">i</span></sub> is a preconditioner. The original choice of <span 
+class="cmmi-10">c</span><sub><span 
+class="cmmi-7">i</span></sub> introduced by Davidson[<span 
+class="cmbx-10">? </span>] was
+diagonal preconditioning,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4010r19"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations32x.png" alt="ci =---1---
+    &#x03BB;iI- D
+" class="math-display" ></center></td><td class="equation-label">(19)</td></tr></table>
+<!--l. 187--><p class="nopar" >
+where <span 
+class="cmbx-10">D </span>is the <span 
+class="cmmi-10">N </span><span 
+class="cmsy-10">&#x00D7;</span><span 
+class="cmmi-10">N </span>diagonal matrix consisting of the diagonal elements of <span 
+class="cmbx-10">A</span>, and <span 
+class="cmbx-10">I </span>is the identity matrix of the same size.
+It may help convergence to use a modified version of this approach,
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4011r20"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations33x.png" alt="ci =---1---
+    &#x03C1;iI- D
+" class="math-display" ></center></td><td class="equation-label">(20)</td></tr></table>
+<!--l. 191--><p class="nopar" >
+where <span 
+class="cmmi-10">&#x03C1;</span><sub><span 
+class="cmmi-7">i</span></sub> is the <span 
+class="cmti-10">rayleigh quotient</span>, defined by
+  <table 
+class="equation"><tr><td><a 
+ id="x1-4012r21"></a>
+  <center class="math-display" >
+<img 
+src="heg_equations34x.png" alt="      R&#8224;   R
+&#x03C1;i = xi-ARx-i-
+      ||xi ||
+" class="math-display" ></center></td><td class="equation-label">(21)</td></tr></table>
+<!--l. 195--><p class="nopar" >
+The rayleigh quotient from a physicist&#8217;s perspective is <span 
+class="cmmi-10">&#x03C1;</span><sub><span 
+class="cmmi-7">i</span></sub> = <span 
+class="cmsy-10">&#x27E8;</span><span 
+class="cmbx-10">x</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup><span 
+class="cmsy-10">|</span><span 
+class="cmbx-10">A</span><span 
+class="cmsy-10">|</span><span 
+class="cmbx-10">x</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup><span 
+class="cmsy-10">&#x27E9;</span>, which looks like the expectation value of <span 
+class="cmbx-10">A </span>in the
+state <span 
+class="cmbx-10">x</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup>. As <span 
+class="cmbx-10">x</span><sub><span 
+class="cmmi-7">i</span></sub><sup><span 
+class="cmmi-7">R</span></sup> approaches the actual eigenstate of the system, the rayleigh quotient approaches the eigenvalue.
+<br 
+class="newline" /><br 
+class="newline" />The correction vector is then added to <span 
+class="cmbx-10">V </span>and the process is repeated. The correction vector must be normalized and
+orthogonalized to the columns of <span 
+class="cmbx-10">V</span>. The subspace size is therefore increased by <span 
+class="cmmi-10">l</span>. <div class="subequations">
+<table 
+class="align">
+                                   <tr><td 
+class="align-odd"><span 
+class="cmbx-10">V</span></td>                                   <td 
+class="align-even"> = [<span 
+class="cmbx-10">v</span><sub><span 
+class="cmbx-7">1</span></sub><span 
+class="cmmi-10">,</span><span 
+class="cmbx-10">v</span><sub><span 
+class="cmbx-7">2</span></sub><span 
+class="cmmi-10">,...,</span><span 
+class="cmbx-10">v</span><sub><span 
+class="cmbx-7">M</span></sub><span 
+class="cmmi-10">,&#x03B4;</span><sub><span 
+class="cmr-7">1</span></sub><span 
+class="cmmi-10">,&#x03B4;</span><sub><span 
+class="cmr-7">2</span></sub><span 
+class="cmmi-10">,...</span><span 
+class="cmmi-10">,&#x03B4;</span><sub><span 
+class="cmmi-7">l</span></sub>]</td>                                                                      <td 
+class="align-label"><a 
+ id="x1-4014r1"></a>(22a)
+                                   </td></tr><tr><td 
+class="align-odd"><span 
+class="cmbx-10">V</span></td>                                   <td 
+class="align-even"> = <span 
+class="cmmi-10">orthonormalized</span>(<span 
+class="cmbx-10">V</span>)</td>                                                                           <td 
+class="align-label"><a 
+ id="x1-4015r2"></a>(22b)
+                                   </td></tr><tr><td 
+class="align-odd"><span 
+class="cmmi-10">M</span></td>                                   <td 
+class="align-even"> = <span 
+class="cmmi-10">M </span>+ <span 
+class="cmmi-10">l</span></td>                                                                                        <td 
+class="align-label"><a 
+ id="x1-4016r3"></a>(22c)                                   </td></tr></table>
+</div>
+<!--l. 207--><p class="noindent" >
+  <h4 class="subsectionHead"><span class="titlemark">B.   </span> <a 
+ id="x1-5000B"></a>Implementation</h4>
+  <div class="algorithm">
+<!--l. 208--><p class="indent" >  <hr class="float"><div class="float" 
+>
+
+

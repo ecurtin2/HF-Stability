@@ -1,0 +1,8 @@
+\expandafter\ifx\csname doTocEntry\endcsname\relax \expandafter\endinput\fi 
+\doTocEntry\tocsection{I}{\csname a:TocLink\endcsname{1}{x1-1000I}{QQ2-1-1}{Homogeneous Electron Gas}}{1}\relax 
+\doTocEntry\tocsection{II}{\csname a:TocLink\endcsname{1}{x1-2000II}{QQ2-1-2}{Hartree-Fock Stability}}{4}\relax 
+\doTocEntry\toclof{1}{\csname a:TocLink\endcsname{1}{x1-2009r1}{}{\ignorespaces Hartree-Fock Stability conditions reproduced from Seeger \& Pople \cite  {Seeger1977}}}{figure}\relax 
+\doTocEntry\tocsection{III}{\csname a:TocLink\endcsname{1}{x1-3000III}{QQ2-1-4}{Davidson's Algorithm}}{8}\relax 
+\doTocEntry\tocsubsection{A}{\csname a:TocLink\endcsname{1}{x1-4000A}{QQ2-1-5}{Theory}}{8}\relax 
+\doTocEntry\tocsubsection{B}{\csname a:TocLink\endcsname{1}{x1-5000B}{QQ2-1-6}{Implementation}}{11}\relax 
+\par 

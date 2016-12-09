@@ -23,6 +23,7 @@
 Nk = 57
 ndim = 2
 rs = 0.899999976158142
+mycase = cRHF2cUHF
 
                              End of Section: Input                             
 
