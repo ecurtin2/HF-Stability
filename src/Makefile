@@ -19,16 +19,16 @@ MANSEC = EPS
 
 
 # Work
-# SLEPC_DIR=/home/evan/slepc-3.7.3
-# PETSC_DIR=/home/evan/git/petsc
-# PETSC_ARCH=linux-gnu-c-debug
-# SLEPC_ARCH=linux-gnu-c-debug
+ SLEPC_DIR=/home/evan/slepc-3.7.3
+ PETSC_DIR=/home/evan/git/petsc
+ PETSC_ARCH=linux-gnu-c-debug
+ SLEPC_ARCH=linux-gnu-c-debug
 
 # Home
-SLEPC_DIR=/home/evan/git/slepc-3.7.3
-PETSC_DIR=/home/evan/git/petsc
-PETSC_ARCH=arch-linux2-c-debug
-SLEPC_ARCH=arch-linux2-c-debug
+#SLEPC_DIR=/home/evan/git/slepc-3.7.3
+#PETSC_DIR=/home/evan/git/petsc
+#PETSC_ARCH=arch-linux2-c-debug
+#SLEPC_ARCH=arch-linux2-c-debug
 
 
 

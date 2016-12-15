@@ -4,15 +4,15 @@
                               Author: Evan Curtin                              
              Institution: University of Illinois @ Urbana-Champaign             
                           email: ecurtin2@illinois.edu                          
-                       Built on Dec  9 2016, at 12:41:13                       
+                       Built on Dec 15 2016, at 09:23:51                       
 
 ################################################################################
 
-                Computation Started : Fri Dec  9 12:46:36 2016
+                Computation Started : Thu Dec 15 09:28:47 2016
                 
-                Computation Finished: Fri Dec  9 12:46:41 2016
+                Computation Finished: Thu Dec 15 09:28:53 2016
                 
-                     Total Elapsed Time = 5.70766 seconds.                     
+                     Total Elapsed Time = 5.90874 seconds.                     
 
 --------------------------------------------------------------------------------
 
@@ -44,21 +44,21 @@ dav_its = 7
 num_guess_evecs = 1
 Dav_blocksize = 1
 Dav_Num_evals = 1
-Mv_time = 0.040640347000000
+Mv_time = 0.042409927000000
 cond_number = 16.861666902382513
 Dav_nconv = 1
 Davidson Tolerance = 1.00e-06
 Dav_maxits = 30
 Dav_maxsubsize = 1500
 Dav_final_val = -0.033079549981848
-Dav_time = 3.659644156000000
+Dav_time = 4.052575305000000
 Nexc = 152
 Aprime works: 1
 Bprime works: 1
 Mv is working
 Davidson is working
 full_diag_min = -0.033079549981848
-full_diag_time = 1.741199835000000
+full_diag_time = 1.753461193000000
 
                              End of Section: Output                             
 

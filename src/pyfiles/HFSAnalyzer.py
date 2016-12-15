@@ -3,6 +3,7 @@ import scipy.special as sp
 import seaborn as sns
 import pandas as pd
 import numpy as np
+import shutil
 import math
 import glob
 import os
@@ -32,6 +33,7 @@ def file_to_df(fname, idx):
            ,'Nk'
            ,'ndim'
            ,'rs'
+           ,'mycase'
            ,'deltaK'
            ,'kf'
            ,'kmax'
@@ -132,6 +134,36 @@ def directory_to_df(dirname='log', ext='.log'):
     files = glob.glob(dirname + '/*' + ext)
     return files_to_df(files)
 
+def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
+    """Load DataFrame from pickle, and read in files. 
+    
+    Optionally move files to moveto dir.
+    """
+    for dirpath, dirnames, files in os.walk(dirname):
+        if not files:
+            print "Directory is Empty, df is unchanged"
+            df = pd.read_pickle(pickle)
+        else:
+            dataframes = []
+            try:
+                df1 = pd.read_pickle(pickle)
+            except:
+                pass
+            else:
+                dataframes.append(df1)
+
+            df_fromdir = directory_to_df(dirname, ext)
+            dataframes.append(df_fromdir)
+            df = pd.concat(dataframes)
+            df.to_pickle(pickle)
+            files = glob.glob(dirname + '/*' + ext)
+            if moveto:
+                if os.path.isdir(moveto):
+                    for f in files:
+                        shutil.move(f, moveto)
+                else:
+                    print "Target Directory Doesn't Exist, did not move log files"
+    return df
 
 #################################################################################
 #                                                                               #
