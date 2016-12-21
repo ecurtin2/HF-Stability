@@ -1,6 +1,6 @@
 **.so
 **.o
-src/
+**.pyc
 src/build/*
 src/HFSDataFrame.pickle
 HFStability.cpp
