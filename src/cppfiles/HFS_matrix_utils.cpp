@@ -41,36 +41,8 @@ namespace HFS {
     }
 
     // End 1H functions
+
     // Start 3H functions
-
-    double calc_3B(arma::uword s, arma::uword t) {
-        std::vector<arma::vec> klist(4);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        klist = HFS::st_to_kikakjkb(s, t);
-        ki = klist[0];
-        ka = klist[1];
-        kj = klist[2];
-        kb = klist[3];
-        return -1.0 * HFS::two_electron_safe(ka, kb, kj, ki);
-    }
-
-    double calc_3A(arma::uword s, arma::uword t) {
-        std::vector<arma::vec> klist(4);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        klist = HFS::st_to_kikakjkb(s, t);
-        ki = klist[0];
-        ka = klist[1];
-        kj = klist[2];
-        kb = klist[3];
-
-        double val = 0.0;
-        if (s == t) {
-            val = HFS::exc_energies(s);
-        }
-        val += -1.0 * HFS::two_electron_safe(ka, kj, kb, ki);
-        return val;
-    }
-
     double calc_3H(arma::uword i, arma::uword j) {
         if (i < HFS::Nexc) {
             if (j < HFS::Nexc) {
@@ -91,8 +63,40 @@ namespace HFS {
         }
     }
 
-    arma::vec matvec_prod_3A(arma::vec& v) {
-        arma::vec Mv(HFS::Nexc, arma::fill::zeros);
+    double calc_3A(arma::uword s, arma::uword t) {
+        std::vector<arma::vec> klist(4);
+        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+        klist = HFS::st_to_kikakjkb(s, t);
+        ki = klist[0];
+        ka = klist[1];
+        kj = klist[2];
+        kb = klist[3];
+
+        double val = 0.0;
+        if (s == t) {
+            val = HFS::exc_energies(s);
+        }
+        val += -1.0 * HFS::two_electron_safe(ka, kj, kb, ki);
+        return val;
+    }
+
+    double calc_3B(arma::uword s, arma::uword t) {
+        std::vector<arma::vec> klist(4);
+        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+        klist = HFS::st_to_kikakjkb(s, t);
+        ki = klist[0];
+        ka = klist[1];
+        kj = klist[2];
+        kb = klist[3];
+        return -1.0 * HFS::two_electron_safe(ka, kb, kj, ki);
+    }
+
+    void Mv_3H(arma::vec& v, arma::vec& Mv) {
+        Mv.zeros();
+        Factorize2by2Mv(v, Mv, Mv_3A, Mv_3B, Mv_3B, Mv_3A);
+    }
+
+    void Mv_3A(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
             arma::vec ki(HFS::ndim), ka(HFS::ndim);
@@ -111,15 +115,12 @@ namespace HFS {
                     } else {
                         Mv(s) += -1.0 * HFS::two_electron(ka, kb) * v(t);
                     }
-
                 }
             }
         }
-        return Mv;
     }
 
-    arma::vec matvec_prod_3B(arma::vec& v) {
-        arma::vec Mv(HFS::Nexc, arma::fill::zeros);
+    void Mv_3B(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
             arma::vec ki(HFS::ndim), ka(HFS::ndim);
@@ -137,157 +138,11 @@ namespace HFS {
                 }
             }
         }
-        return Mv;
-    }
-
-    void matvec_prod_3H(arma::vec& v, arma::vec& Mv) {
-        /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
-                                             | B* A*| |v2|     | Mv2 |
-            Factors into 4 matrix vector multiplications (x, y are vectors; A, B are matrices)
-            Mv1 = A*v1 + B*v2
-            Mv2 = B*v1 + A*v2
-        */
-        arma::vec v1 = v.head(HFS::Nexc);
-        arma::vec v2 = v.tail(HFS::Nexc);
-
-        arma::vec Mv1 = HFS::matvec_prod_3A(v1) + HFS::matvec_prod_3B(v2);
-        arma::vec Mv2 = HFS::matvec_prod_3B(v1) + HFS::matvec_prod_3A(v2);
-        Mv = arma::join_cols(Mv1, Mv2);
     }
 
     // End 3H functions
 
     // Start Hprime functions
-
-    arma::vec matvec_prod_Aprime_diag(arma::vec& v){
-        arma::vec Mv(HFS::Nexc, arma::fill::zeros);
-        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
-            ki = HFS::occ_idx_to_k(i);
-            ka = HFS::vir_idx_to_k(a);
-            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
-                kj = HFS::occ_idx_to_k(j);
-                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
-                HFS::to_first_BZ(kb);
-                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
-                    // only if momentum conserving state is virtual
-                    arma::uword t = HFS::kb_j_to_t(kb, j);
-                    if (s == t) {
-                        Mv(s) += HFS::exc_energies(s) * v(t);
-                    } else {
-                        Mv(s) += (HFS::two_electron(ka, ki) - HFS::two_electron(ka, kb)) * v(t);
-                    }
-
-                }
-            }
-        }
-        return Mv;
-    }
-
-    arma::vec matvec_prod_Aprime_offdiag(arma::vec& v) {
-        arma::vec Mv(HFS::Nexc, arma::fill::zeros);
-        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
-            ki = HFS::occ_idx_to_k(i);
-            ka = HFS::vir_idx_to_k(a);
-            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
-                kj = HFS::occ_idx_to_k(j);
-                kb = ka + kj - ki; // Momentum conservation for <aj|ib>
-                HFS::to_first_BZ(kb);
-                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
-                    // only if momentum conserving state is virtual
-                    arma::uword t = HFS::kb_j_to_t(kb, j);
-                    Mv(s) += HFS::two_electron(ka, ki) * v(t);
-                }
-            }
-        }
-        return Mv;
-    }
-
-    arma::vec matvec_prod_Aprime(arma::vec& v) {
-        arma::vec v1 = v.head(HFS::Nexc);
-        arma::vec v2 = v.tail(HFS::Nexc);
-
-        arma::vec Mv1 = HFS::matvec_prod_Aprime_diag(v1) + HFS::matvec_prod_Aprime_offdiag(v2);
-        arma::vec Mv2 = HFS::matvec_prod_Aprime_offdiag(v1) + HFS::matvec_prod_Aprime_diag(v2);
-
-        arma::vec Mv = arma::join_cols(Mv1, Mv2);
-        return Mv;
-    }
-
-    arma::vec matvec_prod_Bprime_diag(arma::vec& v){
-        arma::vec Mv(HFS::Nexc, arma::fill::zeros);
-        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
-            ki = HFS::occ_idx_to_k(i);
-            ka = HFS::vir_idx_to_k(a);
-            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
-                kj = HFS::occ_idx_to_k(j);
-                kb = kj + ki - ka; // Momentum conservation for <ab|ij> or <ab|ji>
-                HFS::to_first_BZ(kb);
-                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
-                    // only if momentum conserving state is virtual
-                    arma::uword t = HFS::kb_j_to_t(kb, j);
-                    Mv(s) += (HFS::two_electron(ka, ki) - HFS::two_electron(ka, kj)) * v(t);
-                }
-            }
-        }
-        return Mv;
-    }
-
-    arma::vec matvec_prod_Bprime_offdiag(arma::vec& v) {
-        arma::vec Mv(HFS::Nexc, arma::fill::zeros);
-        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
-            ki = HFS::occ_idx_to_k(i);
-            ka = HFS::vir_idx_to_k(a);
-            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
-                kj = HFS::occ_idx_to_k(j);
-                kb = kj + ki - ka; // Momentum conservation for <ab|ji>
-                HFS::to_first_BZ(kb);
-                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
-                    // only if momentum conserving state is virtual
-                    arma::uword t = HFS::kb_j_to_t(kb, j);
-                    Mv(s) += HFS::two_electron(ka, ki) * v(t);
-                }
-            }
-        }
-        return Mv;
-    }
-
-    arma::vec matvec_prod_Bprime(arma::vec& v) {
-        arma::vec v1 = v.head(HFS::Nexc);
-        arma::vec v2 = v.tail(HFS::Nexc);
-
-        arma::vec Mv1 = HFS::matvec_prod_Bprime_diag(v1) + HFS::matvec_prod_Bprime_offdiag(v2);
-        arma::vec Mv2 = HFS::matvec_prod_Bprime_offdiag(v1) + HFS::matvec_prod_Bprime_diag(v2);
-
-        arma::vec Mv = arma::join_cols(Mv1, Mv2);
-        return Mv;
-    }
-
-    void matvec_prod_Hprime(arma::vec& v, arma::vec& Mv) {
-        /*  The matrix-vector multiplication | A  B | |v1|  =  | Mv1 |
-                                             | B* A*| |v2|     | Mv2 |
-            Factors into 4 matrix vector multiplications
-            Mv1 = A*v1 + B*v2
-            Mv2 = B*v1 + A*v2
-        */
-        arma::vec v1 = v.head(2*HFS::Nexc);
-        arma::vec v2 = v.tail(2*HFS::Nexc);
-
-        arma::vec Mv1 = HFS::matvec_prod_Aprime(v1) + HFS::matvec_prod_Bprime(v2);
-        arma::vec Mv2 = HFS::matvec_prod_Bprime(v1) + HFS::matvec_prod_Aprime(v2);
-        Mv = arma::join_cols(Mv1, Mv2);
-    }
 
     double calc_Hprime(arma::uword s, arma::uword t) {
         // Hprime is 4Nexc x 4Nexc
@@ -398,8 +253,137 @@ namespace HFS {
         return Bprime;
     }
 
+    void Mv_Hprime(arma::vec& v, arma::vec& Mv) {
+        Mv.zeros();
+        Factorize2by2Mv(v, Mv, Mv_Aprime, Mv_Bprime, Mv_Bprime, Mv_Aprime);
+    }
+
+    void Mv_Aprime(arma::vec& v, arma::vec& Mv) {
+        Factorize2by2Mv(v, Mv, HFS::Mv_AprimeDiag, Mv_AprimeOffDiag, Mv_AprimeOffDiag, Mv_AprimeDiag);
+    }
+
+    void Mv_Bprime(arma::vec&v, arma::vec& Mv) {
+        Factorize2by2Mv(v, Mv, HFS::Mv_BprimeDiag, Mv_BprimeOffDiag, Mv_BprimeOffDiag, Mv_BprimeDiag);
+    }
+
+    void Mv_AprimeDiag(arma::vec& v, arma::vec& Mv) {
+        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
+            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            ki = HFS::occ_idx_to_k(i);
+            ka = HFS::vir_idx_to_k(a);
+            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                kj = HFS::occ_idx_to_k(j);
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::to_first_BZ(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    arma::uword t = HFS::kb_j_to_t(kb, j);
+                    if (s == t) {
+                        Mv(s) += HFS::exc_energies(s) * v(t);
+                    } else {
+                        Mv(s) += (HFS::two_electron(ka, ki) - HFS::two_electron(ka, kb)) * v(t);
+                    }
+
+                }
+            }
+        }
+    }
+
+    void Mv_AprimeOffDiag(arma::vec& v, arma::vec& Mv) {
+        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
+            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            ki = HFS::occ_idx_to_k(i);
+            ka = HFS::vir_idx_to_k(a);
+            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                kj = HFS::occ_idx_to_k(j);
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib>
+                HFS::to_first_BZ(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    arma::uword t = HFS::kb_j_to_t(kb, j);
+                    Mv(s) += HFS::two_electron(ka, ki) * v(t);
+                }
+            }
+        }
+    }
+
+    void Mv_BprimeDiag(arma::vec& v, arma::vec& Mv) {
+        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
+            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            ki = HFS::occ_idx_to_k(i);
+            ka = HFS::vir_idx_to_k(a);
+            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                kj = HFS::occ_idx_to_k(j);
+                kb = kj + ki - ka; // Momentum conservation for <ab|ij> or <ab|ji>
+                HFS::to_first_BZ(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    arma::uword t = HFS::kb_j_to_t(kb, j);
+                    Mv(s) += (HFS::two_electron(ka, ki) - HFS::two_electron(ka, kj)) * v(t);
+                }
+            }
+        }
+    }
+
+    void Mv_BprimeOffDiag(arma::vec& v, arma::vec& Mv) {
+        for (arma::uword s = 0; s < HFS::Nexc; ++s) {
+            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            ki = HFS::occ_idx_to_k(i);
+            ka = HFS::vir_idx_to_k(a);
+            for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                kj = HFS::occ_idx_to_k(j);
+                kb = kj + ki - ka; // Momentum conservation for <ab|ji>
+                HFS::to_first_BZ(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    arma::uword t = HFS::kb_j_to_t(kb, j);
+                    Mv(s) += HFS::two_electron(ka, ki) * v(t);
+                }
+            }
+        }
+    }
+
 
     // End Hprime functions
+
+    void Factorize2by2Mv(arma::vec& v, arma::vec& Mv
+                         , void (*Av)(arma::vec&, arma::vec&)
+                         , void (*Bv)(arma::vec&, arma::vec&)
+                         , void (*Cv)(arma::vec&, arma::vec&)
+                         , void (*Dv)(arma::vec&, arma::vec&)
+                         ) {
+        /*
+            Given | A B | | v1 | = | Mv1 |
+                  | C D | | v2 | = | Mv2 |
+
+            Factorize into four matrix vector products,
+            Mv1 = Av1 + Bv2
+            Mv2 = Cv1 + Dv2
+
+            This is done without copy.
+            Mv is assumed to be initialized to zero for all elements.
+            The matrix vector products must not initialize, and must
+            add in-place.
+        */
+
+        arma::vec v1 = arma::vec(&v[0], v.n_elem/2, false, true);
+        arma::vec v2 = arma::vec(&v[v.n_elem/2], v.n_elem/2, false, true);
+        arma::vec Mv1 = arma::vec(&Mv[0], v.n_elem/2, false, true);
+        arma::vec Mv2 = arma::vec(&Mv[Mv.n_elem/2], v.n_elem/2, false, true);
+
+        Av(v1, Mv1);
+        Bv(v2, Mv1);
+        Cv(v1, Mv2);
+        Dv(v2, Mv2);
+    }
 
     arma::uword kb_j_to_t(arma::vec& kb, arma::uword j) {
         arma::uvec b_N_idx =  k_to_index(kb);
@@ -411,12 +395,11 @@ namespace HFS {
     void set_case_opts() {
 
         if (HFS::mycase == "cRHF2cUHF") {
-            HFS::MatVecProduct_func = HFS::matvec_prod_3H;
+            HFS::MatVecProduct_func = HFS::Mv_3H;
             HFS::Matrix_func = HFS::calc_3H;
             HFS::Nmat = 2 * HFS::Nexc;
-
         } else if (HFS::mycase == "cUHF2cUHF") {
-            HFS::MatVecProduct_func = HFS::matvec_prod_Hprime;
+            HFS::MatVecProduct_func = HFS::Mv_Hprime;
             HFS::Matrix_func = HFS::calc_Hprime;
             HFS::Nmat = 4 * HFS::Nexc;
 

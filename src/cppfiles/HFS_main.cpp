@@ -27,7 +27,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[11];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 12;
+        HFS::Nk              = 20;
         HFS::ndim            = 2;
         HFS::OutputFileName  = "test.log";
         HFS::Dav_tol         = 1e-6;
@@ -36,22 +36,17 @@ int main(int argc, char* argv[]){
         HFS::num_guess_evecs = 1;
         HFS::Dav_blocksize   = 1;
         HFS::Dav_Num_evals   = 1;
-        HFS::mycase          = "cUHF2cUHF";
+        HFS::mycase          = "cRHF2cUHF";
     #endif // Release
 
     HFS::calc_params();
     HFS::set_case_opts(); // RHF-UHF etc instability, matrix dimension
     HFS::time_mv();
 
-
     SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
-
-    if (HFS::Nmat < 1500) {
-        HFS::davidson_agrees_fulldiag();
-    }
 
     // Try this, weight by how close diags are
     std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(HFS::Nmat, 0.0));
@@ -84,6 +79,10 @@ int main(int argc, char* argv[]){
     fclose(stdout);
 
     #ifndef NDEBUG
+        if (HFS::Nmat < 1500) {
+            HFS::davidson_agrees_fulldiag();
+        }
+
         if ( !HFS::everything_works() ) {
             exit(EXIT_FAILURE);
         }

@@ -21,9 +21,7 @@ namespace HFS {
 
     double two_electron(arma::vec& k1, arma::vec& k2) {
         double norm = 0.0;
-        arma::vec k(HFS::ndim);
-        k = k1 - k2;
-
+        arma::vec k = k1 - k2;
         HFS::to_first_BZ(k);
         norm = arma::norm(k);
         if (norm < SMALLNUMBER) {
@@ -56,23 +54,6 @@ namespace HFS {
             return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
             //return HFS::two_e_const / norm;   //  < 1% speedup in davidson, keep general
         }
-    }
-
-    void to_first_BZ(arma::vec& k) {
-        // Translate to first brillioun zone, defined on the
-        // interval [-pi/a .. pi/a)
-
-        for (unsigned i = 0; i < HFS::ndim; ++i) {
-            if (k[i] < -HFS::kmax - SMALLNUMBER) {
-                k[i] += HFS::bzone_length;
-            }else if (k[i] > HFS::kmax - SMALLNUMBER) {
-                k[i] -= HFS::bzone_length;
-            }
-        }
-    }
-
-    bool is_occ(double k) {
-            return (k < (HFS::kf));
     }
 
     arma::uvec k_to_index(arma::vec& k) {

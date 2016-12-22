@@ -6073,7 +6073,7 @@ SWIGINTERN PyObject *_wrap_matvec_prod_3A(PyObject *SWIGUNUSEDPARM(self), PyObje
   }
   {
     try {
-      result = HFS::matvec_prod_3A(*arg1);
+      result = HFS::Mv_3A(*arg1);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail;
@@ -6118,7 +6118,7 @@ SWIGINTERN PyObject *_wrap_matvec_prod_3B(PyObject *SWIGUNUSEDPARM(self), PyObje
   }
   {
     try {
-      result = HFS::matvec_prod_3B(*arg1);
+      result = HFS::Mv_3B(*arg1);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail;
@@ -6163,7 +6163,7 @@ SWIGINTERN PyObject *_wrap_matvec_prod_3H(PyObject *SWIGUNUSEDPARM(self), PyObje
   }
   {
     try {
-      result = HFS::matvec_prod_3H(*arg1);
+      result = HFS::Mv_3H(*arg1);
     }
     catch( std::exception & e  ) {
       PyErr_SetString( PyExc_RuntimeError, e.what() ); SWIG_fail;

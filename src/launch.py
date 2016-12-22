@@ -17,9 +17,9 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nk = 57
-rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
-#rsrange = [0.2]
+Nk = 20
+#rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
+rsrange = [1.2]
 ndim = 2
 nguess = 1
 blocksize = 1
@@ -27,7 +27,7 @@ num_evals = 1
 maxits = 50
 maxsubsize = 1000
 tolerance = 1e-6
-mycase = "cUHF2cUHF"
+mycase = "cRHF2cUHF"
 
 
 paramlist = [['./HFS', rs, Nk, ndim, get_fname(rs, Nk, ndim), tolerance, maxits,

@@ -8,17 +8,21 @@
 namespace HFS{
 
     // 3H
-    extern arma::vec matvec_prod_3A(arma::vec&);
-    extern arma::vec matvec_prod_3B(arma::vec&);
-    extern void matvec_prod_3H(arma::vec&, arma::vec& Mv);
+    extern void Mv_3A(arma::vec&, arma::vec& Mv);
+    extern void Mv_3B(arma::vec&, arma::vec& Mv);
+    extern void Mv_3H(arma::vec&, arma::vec& Mv);
     extern double calc_3A(arma::uword, arma::uword);
     extern double calc_3B(arma::uword, arma::uword);
     extern double calc_3H(arma::uword, arma::uword);
 
     // Hprime
-    extern arma::vec matvec_prod_Aprime(arma::vec&);
-    extern arma::vec matvec_prod_Bprime(arma::vec&);
-    extern void matvec_prod_Hprime(arma::vec&, arma::vec& Mv);
+    extern void Mv_Hprime(arma::vec&v, arma::vec& Mv);
+    extern void Mv_Aprime(arma::vec&v, arma::vec& Mv);
+    extern void Mv_Bprime(arma::vec&v, arma::vec& Mv);
+    extern void Mv_AprimeDiag(arma::vec& v, arma::vec& Mv);
+    extern void Mv_AprimeOffDiag(arma::vec& v, arma::vec& Mv);
+    extern void Mv_BprimeDiag(arma::vec& v, arma::vec& Mv);
+    extern void Mv_BprimeOffDiag(arma::vec& v, arma::vec& Mv);
     extern double calc_Aprime(arma::uword s, arma::uword t);
     extern double calc_Bprime(arma::uword s, arma::uword t);
     extern double calc_Hprime(arma::uword s, arma::uword t);
@@ -30,6 +34,13 @@ namespace HFS{
     // Utilities
     extern arma::uword kb_j_to_t(arma::vec&, arma::uword);
     extern void set_case_opts();
+    extern void Factorize2by2Mv(arma::vec& v, arma::vec& Mv
+                         , void (*Av)(arma::vec&, arma::vec&)
+                         , void (*Bv)(arma::vec&, arma::vec&)
+                         , void (*Cv)(arma::vec&, arma::vec&)
+                         , void (*Dv)(arma::vec&, arma::vec&)
+                         );
+
 }
 
 #endif // HFS_matrix_utils_included

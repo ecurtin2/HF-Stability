@@ -26,7 +26,7 @@ namespace HFS{
         arma::mat matrix = HFS::build_matrix(HFS::Matrix_func, HFS::Nmat);
         arma::vec v_arma = matrix * v;
         arma::vec diff = arma::abs(Mv - v_arma);
-
+/*
         #ifndef NDEBUG
             arma::vec v2(2*HFS::Nexc, arma::fill::randu);
             arma::mat Aprime = HFS::build_matrix(HFS::calc_Aprime, 2*HFS::Nexc);
@@ -50,7 +50,7 @@ namespace HFS{
 
             std::cout << "Bprime works: " << arma::all(diff2 < SMALLNUMBER) << std::endl;
         #endif // NDEBUG
-
+*/
         bool is_working = arma::all(diff < SMALLNUMBER);
         if (!is_working) {
             arma::uvec where = arma::find(diff > SMALLNUMBER);
