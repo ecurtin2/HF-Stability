@@ -4963,9 +4963,9 @@ SWIGINTERN int Swig_var_ndim_set(PyObject *_val) {
     unsigned int val;
     int res = SWIG_AsVal_unsigned_SS_int(_val, &val);
     if (!SWIG_IsOK(res)) {
-      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""HFS::ndim""' of type '""unsigned int""'");
+      SWIG_exception_fail(SWIG_ArgError(res), "in variable '""NDIM""' of type '""unsigned int""'");
     }
-    HFS::ndim = static_cast< unsigned int >(val);
+    NDIM = static_cast< unsigned int >(val);
   }
   return 0;
 fail:
@@ -4976,7 +4976,7 @@ fail:
 SWIGINTERN PyObject *Swig_var_ndim_get(void) {
   PyObject *pyobj = 0;
 
-  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(HFS::ndim));
+  pyobj = SWIG_From_unsigned_SS_int(static_cast< unsigned int >(NDIM));
   return pyobj;
 }
 

@@ -16,7 +16,7 @@ int main(int argc, char* argv[]){
     #ifdef RELEASE
         HFS::rs              = std::stof(argv[1]);
         HFS::Nk              = std::stoi(argv[2]);
-        HFS::ndim            = std::stoi(argv[3]);
+        NDIM            = std::stoi(argv[3]);
         HFS::OutputFileName  = argv[4];
         HFS::Dav_tol         = std::stof(argv[5]);
         HFS::Dav_maxits      = std::stoi(argv[6]);
@@ -28,7 +28,6 @@ int main(int argc, char* argv[]){
     #else
         HFS::rs              = 1.2;
         HFS::Nk              = 20;
-        HFS::ndim            = 2;
         HFS::OutputFileName  = "test.log";
         HFS::Dav_tol         = 1e-6;
         HFS::Dav_maxits      = 30;

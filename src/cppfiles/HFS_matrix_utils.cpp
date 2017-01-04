@@ -10,8 +10,8 @@ namespace HFS {
         arma::uword a = HFS::excitations(s, 1);
         arma::uword j = HFS::excitations(t, 0);
         arma::uword b = HFS::excitations(t, 1);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        for (unsigned idx = 0; idx < HFS::ndim; ++idx) {
+        arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
+        for (unsigned idx = 0; idx < NDIM; ++idx) {
             ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
             kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
@@ -30,8 +30,8 @@ namespace HFS {
         arma::uword a =  HFS::excitations(s, 1);
         arma::uword j =  HFS::excitations(t, 0);
         arma::uword b =  HFS::excitations(t, 1);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
-        for (unsigned idx = 0; idx < HFS::ndim; ++idx) {
+        arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
+        for (unsigned idx = 0; idx < NDIM; ++idx) {
             ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
             kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
             ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
@@ -65,7 +65,7 @@ namespace HFS {
 
     double calc_3A(arma::uword s, arma::uword t) {
         std::vector<arma::vec> klist(4);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+        arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
         klist = HFS::st_to_kikakjkb(s, t);
         ki = klist[0];
         ka = klist[1];
@@ -82,7 +82,7 @@ namespace HFS {
 
     double calc_3B(arma::uword s, arma::uword t) {
         std::vector<arma::vec> klist(4);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+        arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
         klist = HFS::st_to_kikakjkb(s, t);
         ki = klist[0];
         ka = klist[1];
@@ -99,11 +99,11 @@ namespace HFS {
     void Mv_3A(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occ_idx_to_k(i);
             ka = HFS::vir_idx_to_k(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occ_idx_to_k(j);
                 kb = ka + kj - ki; // Momentum conservation for <aj|bi>
                 HFS::to_first_BZ(kb);
@@ -123,11 +123,11 @@ namespace HFS {
     void Mv_3B(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occ_idx_to_k(i);
             ka = HFS::vir_idx_to_k(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occ_idx_to_k(j);
                 kb = kj + ki - ka; // Momentum conservation for <ab|ji>
                 HFS::to_first_BZ(kb);
@@ -166,7 +166,7 @@ namespace HFS {
         double Aprime = 0.0;
         arma::uword N = HFS::Nexc;
         std::vector<arma::vec> klist(4);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+        arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
 
         if ((s < N) && (t < N)) { // top left
             klist = HFS::st_to_kikakjkb(s, t);
@@ -216,7 +216,7 @@ namespace HFS {
         double Bprime = 0.0;
         arma::uword N = HFS::Nexc;
         std::vector<arma::vec> klist(4);
-        arma::vec ki(HFS::ndim), kj(HFS::ndim), ka(HFS::ndim), kb(HFS::ndim);
+        arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
 
         if ((s < N) && (t < N)) { // top left
             klist = HFS::st_to_kikakjkb(s, t);
@@ -259,21 +259,21 @@ namespace HFS {
     }
 
     void Mv_Aprime(arma::vec& v, arma::vec& Mv) {
-        Factorize2by2Mv(v, Mv, HFS::Mv_AprimeDiag, Mv_AprimeOffDiag, Mv_AprimeOffDiag, Mv_AprimeDiag);
+        Factorize2by2Mv(v, Mv, Mv_AprimeDiag, Mv_AprimeOffDiag, Mv_AprimeOffDiag, Mv_AprimeDiag);
     }
 
     void Mv_Bprime(arma::vec&v, arma::vec& Mv) {
-        Factorize2by2Mv(v, Mv, HFS::Mv_BprimeDiag, Mv_BprimeOffDiag, Mv_BprimeOffDiag, Mv_BprimeDiag);
+        Factorize2by2Mv(v, Mv, Mv_BprimeDiag, Mv_BprimeOffDiag, Mv_BprimeOffDiag, Mv_BprimeDiag);
     }
 
     void Mv_AprimeDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occ_idx_to_k(i);
             ka = HFS::vir_idx_to_k(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occ_idx_to_k(j);
                 kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
                 HFS::to_first_BZ(kb);
@@ -294,11 +294,11 @@ namespace HFS {
     void Mv_AprimeOffDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occ_idx_to_k(i);
             ka = HFS::vir_idx_to_k(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occ_idx_to_k(j);
                 kb = ka + kj - ki; // Momentum conservation for <aj|ib>
                 HFS::to_first_BZ(kb);
@@ -314,11 +314,11 @@ namespace HFS {
     void Mv_BprimeDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occ_idx_to_k(i);
             ka = HFS::vir_idx_to_k(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occ_idx_to_k(j);
                 kb = kj + ki - ka; // Momentum conservation for <ab|ij> or <ab|ji>
                 HFS::to_first_BZ(kb);
@@ -334,11 +334,11 @@ namespace HFS {
     void Mv_BprimeOffDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
-            arma::vec ki(HFS::ndim), ka(HFS::ndim);
+            arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occ_idx_to_k(i);
             ka = HFS::vir_idx_to_k(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
-                arma::vec kj(HFS::ndim), kb(HFS::ndim);
+                arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occ_idx_to_k(j);
                 kb = kj + ki - ka; // Momentum conservation for <ab|ji>
                 HFS::to_first_BZ(kb);

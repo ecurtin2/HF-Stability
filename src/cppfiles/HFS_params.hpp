@@ -16,10 +16,15 @@ namespace HFS {
     extern std::string OutputFileName;
     extern std::string mycase;
     extern arma::uword Nocc, Nvir, Nexc, N_elec, Nmat;
-    extern unsigned ndim, Nk, ground_state_degeneracy;
+    extern unsigned Nk, ground_state_degeneracy;
     extern arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
     extern arma::umat occ_states, vir_states, excitations;
-    extern arma::umat vir_N_to_1_mat, inv_exc_mat;
+    #if NDIM == 2
+        extern arma::umat vir_N_to_1_mat;
+    #elif NDIM == 3
+        extern arma::ucube vir_N_to_1_mat;
+    #endif
+    extern arma::umat inv_exc_mat;
     extern void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     extern double (*Matrix_func)(arma::uword i, arma::uword j);
 }

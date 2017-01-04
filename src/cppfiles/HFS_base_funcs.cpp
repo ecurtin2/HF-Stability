@@ -5,12 +5,12 @@ namespace HFS {
     double exchange(arma::umat& inp_states, arma::uword i) {
 
         double exch = 0.0;
-        arma::vec ki(ndim), k2(ndim);
-        for (unsigned j = 0; j < HFS::ndim; ++j) {
+        arma::vec ki(NDIM), k2(NDIM);
+        for (unsigned j = 0; j < NDIM; ++j) {
             ki(j) = HFS::kgrid(inp_states(i, j));
         }
         for (arma::uword k = 0; k < HFS::Nocc; ++k) {
-            for (unsigned j = 0; j < HFS::ndim; ++j) {
+            for (unsigned j = 0; j < NDIM; ++j) {
                 k2(j) = HFS::kgrid(HFS::occ_states(k, j));
             }
             exch += HFS::two_electron(ki, k2);
@@ -20,21 +20,24 @@ namespace HFS {
     }
 
     double two_electron(arma::vec& k1, arma::vec& k2) {
-        double norm = 0.0;
         arma::vec k = k1 - k2;
         HFS::to_first_BZ(k);
-        norm = arma::norm(k);
+        double norm = arma::norm(k);
         if (norm < SMALLNUMBER) {
             return 0.0;
         }else{
-            return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
+            #if NDIM == 2
+                return HFS::two_e_const / norm;
+            #elif NDIM == 3
+                return HFS::two_e_const / (norm * norm);
+            #endif
         }
     }
 
     double two_electron_safe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
         // Same as two_electron, except checks for momentum conservation
         // In the other, conservation is assumed
-        arma::vec k(HFS::ndim);
+        arma::vec k(NDIM);
 
         k = k1 + k2 - k3 - k4;
         HFS::to_first_BZ(k);
@@ -51,8 +54,7 @@ namespace HFS {
         if (norm < SMALLNUMBER) {
             return 0.0;
         }else{
-            return HFS::two_e_const / std::pow(norm, HFS::ndim - 1);
-            //return HFS::two_e_const / norm;   //  < 1% speedup in davidson, keep general
+            return HFS::two_e_const / std::pow(norm, NDIM - 1);
         }
     }
 
@@ -69,16 +71,16 @@ namespace HFS {
     }
 
     arma::vec occ_idx_to_k(arma::uword idx) {
-        arma::vec k(HFS::ndim);
-        for (unsigned i = 0; i < HFS::ndim; ++i) {
+        arma::vec k(NDIM);
+        for (unsigned i = 0; i < NDIM; ++i) {
             k[i] = HFS::kgrid(HFS::occ_states(idx, i));
         }
         return k;
     }
 
     arma::vec vir_idx_to_k(arma::uword idx) {
-        arma::vec k(HFS::ndim);
-        for (unsigned i=0; i < HFS::ndim; ++i) {
+        arma::vec k(NDIM);
+        for (unsigned i=0; i < NDIM; ++i) {
             k[i] = HFS::kgrid(vir_states(idx, i));
         }
         return k;
@@ -88,7 +90,7 @@ namespace HFS {
     int KronDelta(arma::uword i, arma::uword j) {
         /* Returns 1 if i == j, else 0 */
 
-        bool val = 0;
+        int val = 0;
         if (i == j) {
             val = 1;
         }

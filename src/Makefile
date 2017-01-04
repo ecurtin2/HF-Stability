@@ -51,6 +51,8 @@ Profile:  $(TARGET)
 Release: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing
 Release: $(TARGET)
 
+CFLAGS += -D NDIM=2
+
 .PHONY: depend clean
 
 $(TARGET): $(OBJECTS)

@@ -7,7 +7,7 @@ namespace HFS{
     std::string OutputFileName;
     std::string mycase;
     arma::uword Nocc, Nvir, Nexc, N_elec, Nmat;
-    unsigned ndim, Nk, ground_state_degeneracy;
+    unsigned Nk, ground_state_degeneracy;
     arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
     arma::umat occ_states, vir_states, excitations;
     arma::umat vir_N_to_1_mat, inv_exc_mat;

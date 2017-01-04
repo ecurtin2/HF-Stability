@@ -9,7 +9,7 @@ namespace HFS{
     inline void to_first_BZ(arma::vec& k){
         // Translate to first brillioun zone, defined on the
         // interval [-pi/a .. pi/a)
-        for (unsigned i = 0; i < HFS::ndim; ++i) {
+        for (unsigned i = 0; i < NDIM; ++i) {
             if (k[i] < -HFS::kmax - SMALLNUMBER) {
                 k[i] += HFS::bzone_length;
             } else if (k[i] > HFS::kmax - SMALLNUMBER) {
