@@ -10,7 +10,7 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nk = 20
+Nk = 12
 #rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
 rsrange = [1.2]
 ndim = 2
@@ -27,4 +27,4 @@ paramlist = [['./HFS', rs, Nk, get_fname(rs, Nk, ndim), tolerance, maxits,
 
 for i in range(len(paramlist)):
      print 'Starting Job: ',  ' '.join([str(j) for j in paramlist[i]])
-     os.system(' '.join([str(j) for j in paramlist[i]]))
+     os.system('mpirun -np 2 ' + ' '.join([str(j) for j in paramlist[i]]))

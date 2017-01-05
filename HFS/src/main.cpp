@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[10];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 12;
+        HFS::Nk              = 35;
         HFS::OutputFileName  = "test.log";
         HFS::Dav_tol         = 1e-6;
         HFS::Dav_maxits      = 30;
@@ -69,7 +69,12 @@ int main(int argc, char* argv[]){
     HFS::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
 
+
+
     SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
+    int nprocs;
+    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    myeps.nprocs = nprocs;
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
@@ -83,6 +88,7 @@ int main(int argc, char* argv[]){
         guessvec /= arma::norm(guessvec);
         vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
     }
+
 
 
     myeps.SetInitialSpace(vecs);
@@ -103,6 +109,7 @@ int main(int argc, char* argv[]){
 
     myeps.clean();
     fclose(stdout);
+
 
     #ifndef NDEBUG
         if (HFS::Nmat < 1500) {

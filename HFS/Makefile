@@ -33,6 +33,7 @@ MANSEC = EPS
 
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
 CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
+LINKEROPTS = -fopenmp
 DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
 INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include
 
@@ -41,22 +42,32 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
 #INC = -I/home/newhall/include  -I../include
 
-debug: CFLAGS += -g -o0 -Wall -gdwarf-3
-debug: $(TARGET)
+debug2D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=2
+debug2D: $(TARGET)
 
-profile: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE
-profile:  $(TARGET)
+profile2D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=2
+profile2D:  $(TARGET)
 
-release: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing
-release: $(TARGET)
+release2D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing -D NDIM=2
+release2D: $(TARGET)
 
-CFLAGS += -D NDIM=2
+debug3D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=3
+debug3D: $(TARGET)
+
+profile3D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=3
+profile3D:  $(TARGET)
+
+release3D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing -D NDIM=3
+release3D: $(TARGET)
+
+
+CFLAGS += -fopenmp
 
 .PHONY: depend clean
 
 $(TARGET): $(OBJECTS)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB}"; $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB}
+	@echo " $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB}"; $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB} $(LINKEROPTS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)

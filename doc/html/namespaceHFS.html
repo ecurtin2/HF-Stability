@@ -72,45 +72,55 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae2bd240bb6f85ee89c38ce2daa525cbf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ae2bd240bb6f85ee89c38ce2daa525cbf">exchange</a> (arma::umat &amp;, arma::uword)</td></tr>
-<tr class="memdesc:ae2bd240bb6f85ee89c38ce2daa525cbf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the exchange energy for the given state.  <a href="#ae2bd240bb6f85ee89c38ce2daa525cbf">More...</a><br /></td></tr>
-<tr class="separator:ae2bd240bb6f85ee89c38ce2daa525cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e4cf8465bf94b82703428693af0d3a9"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a7e4cf8465bf94b82703428693af0d3a9">twoElectron</a> (arma::vec &amp;k1, arma::vec &amp;k2)</td></tr>
-<tr class="separator:a7e4cf8465bf94b82703428693af0d3a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ef0e49eb6fb8d4d83617ef86ea2b8fb"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a0ef0e49eb6fb8d4d83617ef86ea2b8fb">exchange</a> (arma::umat &amp;states, arma::uword i)</td></tr>
+<tr class="memdesc:a0ef0e49eb6fb8d4d83617ef86ea2b8fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the exchange energy for the given state.  <a href="#a0ef0e49eb6fb8d4d83617ef86ea2b8fb">More...</a><br /></td></tr>
+<tr class="separator:a0ef0e49eb6fb8d4d83617ef86ea2b8fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebf2d4bfc246a61f45550177dcb3e3bf"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aebf2d4bfc246a61f45550177dcb3e3bf">twoElectron</a> (arma::vec &amp;k1, arma::vec &amp;k3)</td></tr>
+<tr class="memdesc:aebf2d4bfc246a61f45550177dcb3e3bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the two electron integral, assuming momentum conservation.  <a href="#aebf2d4bfc246a61f45550177dcb3e3bf">More...</a><br /></td></tr>
+<tr class="separator:aebf2d4bfc246a61f45550177dcb3e3bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae39771f18471b751fb03a15ba0f4d964"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ae39771f18471b751fb03a15ba0f4d964">twoElectronSafe</a> (arma::vec &amp;k1, arma::vec &amp;k2, arma::vec &amp;k3, arma::vec &amp;k4)</td></tr>
+<tr class="memdesc:ae39771f18471b751fb03a15ba0f4d964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the two electron integral, &lt;k1 k2|1/r|k3 k4&gt;  <a href="#ae39771f18471b751fb03a15ba0f4d964">More...</a><br /></td></tr>
 <tr class="separator:ae39771f18471b751fb03a15ba0f4d964"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44f9ae53d29b22abe92f31d7e720cb1f"><td class="memItemLeft" align="right" valign="top">arma::uvec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a44f9ae53d29b22abe92f31d7e720cb1f">kToIndex</a> (arma::vec &amp;k)</td></tr>
+<tr class="memdesc:a44f9ae53d29b22abe92f31d7e720cb1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given k-vector, return corresponding vector of indices in each dimension.  <a href="#a44f9ae53d29b22abe92f31d7e720cb1f">More...</a><br /></td></tr>
 <tr class="separator:a44f9ae53d29b22abe92f31d7e720cb1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab92c0ece13e14b19519347acb64c57f8"><td class="memItemLeft" align="right" valign="top">arma::umat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ab92c0ece13e14b19519347acb64c57f8">kToIndex</a> (arma::mat &amp;k)</td></tr>
+<tr class="memdesc:ab92c0ece13e14b19519347acb64c57f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">kToIndex, overloaded for matrix  <a href="#ab92c0ece13e14b19519347acb64c57f8">More...</a><br /></td></tr>
 <tr class="separator:ab92c0ece13e14b19519347acb64c57f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5309512f1409b682558f39eb3814dd33"><td class="memItemLeft" align="right" valign="top">arma::vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a5309512f1409b682558f39eb3814dd33">occIndexToK</a> (arma::uword idx)</td></tr>
-<tr class="separator:a5309512f1409b682558f39eb3814dd33"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5875fc7d06f0135ee33a0a4457fff738"><td class="memItemLeft" align="right" valign="top">arma::vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a5875fc7d06f0135ee33a0a4457fff738">virIndexToK</a> (arma::uword idx)</td></tr>
-<tr class="separator:a5875fc7d06f0135ee33a0a4457fff738"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba6a1bc0264cb57d63459162509b4869"><td class="memItemLeft" align="right" valign="top">arma::vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aba6a1bc0264cb57d63459162509b4869">occIndexToK</a> (arma::uword i)</td></tr>
+<tr class="memdesc:aba6a1bc0264cb57d63459162509b4869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the momentum of the i'th occupied state.  <a href="#aba6a1bc0264cb57d63459162509b4869">More...</a><br /></td></tr>
+<tr class="separator:aba6a1bc0264cb57d63459162509b4869"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab58c841ce2b7acadecc412cb5c5cbd28"><td class="memItemLeft" align="right" valign="top">arma::vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ab58c841ce2b7acadecc412cb5c5cbd28">virIndexToK</a> (arma::uword i)</td></tr>
+<tr class="memdesc:ab58c841ce2b7acadecc412cb5c5cbd28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the momentum of the i'th virtual state.  <a href="#ab58c841ce2b7acadecc412cb5c5cbd28">More...</a><br /></td></tr>
+<tr class="separator:ab58c841ce2b7acadecc412cb5c5cbd28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a503d2522f8c6e21699d6d82239a49900"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a503d2522f8c6e21699d6d82239a49900">kroneckerDelta</a> (arma::uword i, arma::uword j)</td></tr>
+<tr class="memdesc:a503d2522f8c6e21699d6d82239a49900"><td class="mdescLeft">&#160;</td><td class="mdescRight">return 1 if i = j, else 0.  <a href="#a503d2522f8c6e21699d6d82239a49900">More...</a><br /></td></tr>
 <tr class="separator:a503d2522f8c6e21699d6d82239a49900"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f6abad39638c2049f3b4efacbff0544"><td class="memItemLeft" align="right" valign="top">std::vector&lt; arma::vec &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a2f6abad39638c2049f3b4efacbff0544">stToKiKaKjKb</a> (arma::uword s, arma::uword t)</td></tr>
+<tr class="memdesc:a2f6abad39638c2049f3b4efacbff0544"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given excitation indices s &amp; t, return corresponding ki, kj, ka, kb.  <a href="#a2f6abad39638c2049f3b4efacbff0544">More...</a><br /></td></tr>
 <tr class="separator:a2f6abad39638c2049f3b4efacbff0544"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a726bc0d67b1d7bad563af54054cac9de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a726bc0d67b1d7bad563af54054cac9de">toFirstBrillouinZone</a> (arma::vec &amp;k)</td></tr>
 <tr class="separator:a726bc0d67b1d7bad563af54054cac9de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adeeab45bb53af395c9615975611aa498"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#adeeab45bb53af395c9615975611aa498">isOccupied</a> (double k)</td></tr>
 <tr class="separator:adeeab45bb53af395c9615975611aa498"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb419810f9a8f78eb18bbd62442ced56"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#abb419810f9a8f78eb18bbd62442ced56">calcParameters</a> ()</td></tr>
+<tr class="memdesc:abb419810f9a8f78eb18bbd62442ced56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrapper for all parameter calculations.  <a href="#abb419810f9a8f78eb18bbd62442ced56">More...</a><br /></td></tr>
 <tr class="separator:abb419810f9a8f78eb18bbd62442ced56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72442fa049b38d25e2be8a3cde0e4cbc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a72442fa049b38d25e2be8a3cde0e4cbc">calcKf</a> ()</td></tr>
-<tr class="separator:a72442fa049b38d25e2be8a3cde0e4cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afab2a25b0b45e28492cb4501486cff08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#afab2a25b0b45e28492cb4501486cff08">calcVolAndTwoEConst</a> ()</td></tr>
-<tr class="separator:afab2a25b0b45e28492cb4501486cff08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab1185aa79a19348c1c229f2bb3dd9097"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ab1185aa79a19348c1c229f2bb3dd9097">calcOccupiedStates</a> ()</td></tr>
-<tr class="separator:ab1185aa79a19348c1c229f2bb3dd9097"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2717e290b079f974d0a3419c5481d456"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a2717e290b079f974d0a3419c5481d456">calcOccupiedEnergies</a> ()</td></tr>
-<tr class="separator:a2717e290b079f974d0a3419c5481d456"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26a442e0a39fd9d6139125086383d473"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a26a442e0a39fd9d6139125086383d473">calcVirtualEnergies</a> ()</td></tr>
-<tr class="separator:a26a442e0a39fd9d6139125086383d473"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5b75d698c01e9efa22af60917d3a9b4"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#af5b75d698c01e9efa22af60917d3a9b4">calcKf</a> (double <a class="el" href="namespaceHFS.html#a0112fffba8a4b64aa100604dbb5307f7">rs</a>, unsigned ndim)</td></tr>
+<tr class="memdesc:af5b75d698c01e9efa22af60917d3a9b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">calculate the fermi momentum, Kf.  <a href="#af5b75d698c01e9efa22af60917d3a9b4">More...</a><br /></td></tr>
+<tr class="separator:af5b75d698c01e9efa22af60917d3a9b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d81ab3a039e1611ccfb73bb95acfdf4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a1d81ab3a039e1611ccfb73bb95acfdf4">calcVolAndTwoEConst</a> (unsigned <a class="el" href="namespaceHFS.html#a6a7c74cd54192fe0ed71ab3b761441c6">N_elec</a>, double <a class="el" href="namespaceHFS.html#a0112fffba8a4b64aa100604dbb5307f7">rs</a>, double &amp;Vol, double &amp;TwoEConst)</td></tr>
+<tr class="memdesc:a1d81ab3a039e1611ccfb73bb95acfdf4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the volume and constant used in the two-electron integral.  <a href="#a1d81ab3a039e1611ccfb73bb95acfdf4">More...</a><br /></td></tr>
+<tr class="separator:a1d81ab3a039e1611ccfb73bb95acfdf4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d4b3217e8cdef9952c450977c9207c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a4d4b3217e8cdef9952c450977c9207c4">calcStates</a> (arma::vec &amp;<a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">kgrid</a>,unsigned <a class="el" href="namespaceHFS.html#ac59f2cad29a15b4cdae8c6dce68a7ac4">Nk</a>,unsigned ndim,arma::uword &amp;<a class="el" href="namespaceHFS.html#af2aad894a643614991187b63833924dc">Nocc</a>,arma::uword &amp;<a class="el" href="namespaceHFS.html#a64210d2084db946dd9b8a43e16e2a64a">Nvir</a>,arma::uword &amp;<a class="el" href="namespaceHFS.html#a6a7c74cd54192fe0ed71ab3b761441c6">N_elec</a>,arma::umat &amp;<a class="el" href="namespaceHFS.html#a3a60013223811e72fa7e96b21e4bcd08">occ_states</a>,arma::umat &amp;<a class="el" href="namespaceHFS.html#a35c086cdd8d9c5cf5f3853abfb782c9c">vir_states</a>)</td></tr>
+<tr class="memdesc:a4d4b3217e8cdef9952c450977c9207c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the occupied &amp; virtual states, their number and the number of electrons.  <a href="#a4d4b3217e8cdef9952c450977c9207c4">More...</a><br /></td></tr>
+<tr class="separator:a4d4b3217e8cdef9952c450977c9207c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a92fa041c823aa4d2ccdd79488cce740f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a92fa041c823aa4d2ccdd79488cce740f">calcEnergies</a> (arma::umat &amp;inp_states, arma::vec &amp;energy_vec)</td></tr>
+<tr class="memdesc:a92fa041c823aa4d2ccdd79488cce740f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the energies of states from the x, y and z indices.  <a href="#a92fa041c823aa4d2ccdd79488cce740f">More...</a><br /></td></tr>
 <tr class="separator:a92fa041c823aa4d2ccdd79488cce740f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a26d9e356c04c9aa855fe40a0e44483e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a26d9e356c04c9aa855fe40a0e44483e9">calcExcitations</a> ()</td></tr>
-<tr class="separator:a26d9e356c04c9aa855fe40a0e44483e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf7872aa40f7260b8f6cb99410032c1e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aaf7872aa40f7260b8f6cb99410032c1e">calcExcitations</a> (arma::vec &amp;<a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">kgrid</a>,unsigned <a class="el" href="namespaceHFS.html#ac59f2cad29a15b4cdae8c6dce68a7ac4">Nk</a>,double <a class="el" href="namespaceHFS.html#ad91bc5d04f6ace0b0229f87415451ab7">deltaK</a>,arma::uword <a class="el" href="namespaceHFS.html#af2aad894a643614991187b63833924dc">Nocc</a>,arma::uword <a class="el" href="namespaceHFS.html#a64210d2084db946dd9b8a43e16e2a64a">Nvir</a>,arma::umat &amp;<a class="el" href="namespaceHFS.html#a3a60013223811e72fa7e96b21e4bcd08">occ_states</a>,arma::umat &amp;<a class="el" href="namespaceHFS.html#a35c086cdd8d9c5cf5f3853abfb782c9c">vir_states</a>,arma::umat &amp;<a class="el" href="namespaceHFS.html#ad9b248452676a6f4ae721d849a6db40e">excitations</a>,arma::vec &amp;<a class="el" href="namespaceHFS.html#aa10a22645ca65c7acffac5074a8f507a">exc_energies</a>,arma::uword &amp;<a class="el" href="namespaceHFS.html#abfae999798e6bf16f2772a30a9a45981">Nexc</a>)</td></tr>
+<tr class="memdesc:aaf7872aa40f7260b8f6cb99410032c1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine excitations in the x direction.  <a href="#aaf7872aa40f7260b8f6cb99410032c1e">More...</a><br /></td></tr>
+<tr class="separator:aaf7872aa40f7260b8f6cb99410032c1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b0563cebf536d56f030f90d680bd673"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a8b0563cebf536d56f030f90d680bd673">calcExcitationEnergies</a> ()</td></tr>
 <tr class="separator:a8b0563cebf536d56f030f90d680bd673"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ff70eb616279cfd795602940d88400b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a1ff70eb616279cfd795602940d88400b">calcInverseExcitationMap</a> ()</td></tr>
@@ -283,8 +293,8 @@ Variables</h2></td></tr>
 <div class="textblock"><p>Global parameters. </p>
 <p>Used mostly for traceability of parameters. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ae2bd240bb6f85ee89c38ce2daa525cbf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2bd240bb6f85ee89c38ce2daa525cbf">&#9670;&nbsp;</a></span>exchange()</h2>
+<a id="a0ef0e49eb6fb8d4d83617ef86ea2b8fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ef0e49eb6fb8d4d83617ef86ea2b8fb">&#9670;&nbsp;</a></span>exchange()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -293,13 +303,13 @@ Variables</h2></td></tr>
           <td class="memname">double HFS::exchange </td>
           <td>(</td>
           <td class="paramtype">arma::umat &amp;&#160;</td>
-          <td class="paramname">, </td>
+          <td class="paramname"><em>states</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">arma::uword&#160;</td>
-          <td class="paramname">&#160;</td>
+          <td class="paramname"><em>i</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -310,11 +320,19 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Calculate the exchange energy for the given state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">states</td><td>Either occ_states or vir_states. Will determine the exchange energy for the i'th occupied or the i'th virtual state depending on input. </td></tr>
+    <tr><td class="paramname">i</td><td>The index of the state to be considered. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the exchange contribution to the energy </dd></dl>
 
 </div>
 </div>
-<a id="a7e4cf8465bf94b82703428693af0d3a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e4cf8465bf94b82703428693af0d3a9">&#9670;&nbsp;</a></span>twoElectron()</h2>
+<a id="aebf2d4bfc246a61f45550177dcb3e3bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aebf2d4bfc246a61f45550177dcb3e3bf">&#9670;&nbsp;</a></span>twoElectron()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,7 +347,7 @@ Variables</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">arma::vec &amp;&#160;</td>
-          <td class="paramname"><em>k2</em>&#160;</td>
+          <td class="paramname"><em>k3</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -338,6 +356,18 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Calculate the two electron integral, assuming momentum conservation. </p>
+<p>The two electron integral is defined as, </p><p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \left&lt; k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right&gt; \]" src="form_4.png"/>
+</p>
+<p>. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">k1,k3</td><td>The first state in the bra and ket. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value of the two electron integral. </dd></dl>
 
 </div>
 </div>
@@ -379,6 +409,18 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Calculate the two electron integral, &lt;k1 k2|1/r|k3 k4&gt; </p>
+<p>The two electron integral is defined as, </p><p class="formulaDsp">
+<img class="formulaDsp" alt="\[ \left&lt; k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right&gt; \]" src="form_4.png"/>
+</p>
+<p>. Any combination of 4 states is acceptable. The conservation of momentum is checked for each combination, and 0 is returned in the even that momentum is not conserved. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">k1,k2,k3,k4</td><td>Vectors containing the kx, ky, ... for the 4 input states. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The two electron integral </dd></dl>
+
 </div>
 </div>
 <a id="a44f9ae53d29b22abe92f31d7e720cb1f"></a>
@@ -396,6 +438,18 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Given k-vector, return corresponding vector of indices in each dimension. </p>
+<p>Each element in k is converted to the corresponding index. Evenly spaced gridpoints are assumed. The indices are related to momentum via <a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a>; <br />
+ k[i] = <a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a>[indices[i]].</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">k</td><td>vector in k-space </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>vector of indices </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a> </dd></dl>
 
 </div>
 </div>
@@ -415,10 +469,22 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>kToIndex, overloaded for matrix </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">k</td><td>matrix of k-points </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>matrix of indices </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#a44f9ae53d29b22abe92f31d7e720cb1f" title="Given k-vector, return corresponding vector of indices in each dimension. ">kToIndex()</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a> </dd></dl>
+
 </div>
 </div>
-<a id="a5309512f1409b682558f39eb3814dd33"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5309512f1409b682558f39eb3814dd33">&#9670;&nbsp;</a></span>occIndexToK()</h2>
+<a id="aba6a1bc0264cb57d63459162509b4869"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba6a1bc0264cb57d63459162509b4869">&#9670;&nbsp;</a></span>occIndexToK()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -427,16 +493,25 @@ Variables</h2></td></tr>
           <td class="memname">arma::vec HFS::occIndexToK </td>
           <td>(</td>
           <td class="paramtype">arma::uword&#160;</td>
-          <td class="paramname"><em>idx</em></td><td>)</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Return the momentum of the i'th occupied state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The index of the occupied state. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>vector of the kx, ky, ... momentum of the i'th occupied state. </dd></dl>
+
 </div>
 </div>
-<a id="a5875fc7d06f0135ee33a0a4457fff738"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5875fc7d06f0135ee33a0a4457fff738">&#9670;&nbsp;</a></span>virIndexToK()</h2>
+<a id="ab58c841ce2b7acadecc412cb5c5cbd28"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab58c841ce2b7acadecc412cb5c5cbd28">&#9670;&nbsp;</a></span>virIndexToK()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -445,11 +520,20 @@ Variables</h2></td></tr>
           <td class="memname">arma::vec HFS::virIndexToK </td>
           <td>(</td>
           <td class="paramtype">arma::uword&#160;</td>
-          <td class="paramname"><em>idx</em></td><td>)</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Return the momentum of the i'th virtual state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The index of the virtual state. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>vector of the kx, ky, ... momentum of the i'th virtual state. </dd></dl>
 
 </div>
 </div>
@@ -479,6 +563,15 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>return 1 if i = j, else 0. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i,j</td><td>indices </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>1 if i = j, else 0. </dd></dl>
+
 </div>
 </div>
 <a id="a2f6abad39638c2049f3b4efacbff0544"></a>
@@ -507,6 +600,15 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Given excitation indices s &amp; t, return corresponding ki, kj, ka, kb. </p>
+<p>S corresponds to occupied i to virtual a. T corresponds to occupied j to virtual b. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s,t</td><td>Excitation labels. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector of 4 vectors, {ki, kj, ka, kb}. In this order. </dd></dl>
+
 </div>
 </div>
 <a id="a726bc0d67b1d7bad563af54054cac9de"></a>
@@ -532,6 +634,14 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>Translate vector in-place to first Brillioun zone.</p>
+<p>Defined on the interval [-pi/a .. pi/a). The vector is assumed to be within the first or second BZ, therefore is only translated a maximum of <a class="el" href="namespaceHFS.html#acaeef99a359e39836c27822227f87145">HFS::bzone_length</a> in each dimension. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">k</td><td>The vector in k-space. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#acaeef99a359e39836c27822227f87145">HFS::bzone_length</a></dd></dl>
 
 </div>
 </div>
@@ -558,6 +668,7 @@ Variables</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<p>true if k &lt; kf, else false. </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#a7713f6d1402f116e67b835707998d0c3">HFS::kf</a></dd></dl>
 
 </div>
 </div>
@@ -576,27 +687,77 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Wrapper for all parameter calculations. </p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#af5b75d698c01e9efa22af60917d3a9b4" title="calculate the fermi momentum, Kf. ">HFS::calcKf()</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a81a7123519449b323213f54532823651">HFS::kmax</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#acaeef99a359e39836c27822227f87145">HFS::bzone_length</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#ac5aaeb2193dea2fd9d2cf09d657010a2">HFS::fermi_energy</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#ad91bc5d04f6ace0b0229f87415451ab7">HFS::deltaK</a> </dd>
+<dd>
+HFS::calcOccupiedStates(); </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a1d81ab3a039e1611ccfb73bb95acfdf4" title="Calculate the volume and constant used in the two-electron integral. ">HFS::calcVolAndTwoEConst()</a>; </dd>
+<dd>
+HFS::calcOccupiedEnergies(); </dd>
+<dd>
+HFS::calcVirtualEnergies(); </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#aaf7872aa40f7260b8f6cb99410032c1e" title="Determine excitations in the x direction. ">HFS::calcExcitations()</a>; </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a8b0563cebf536d56f030f90d680bd673">HFS::calcExcitationEnergies()</a>; </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#ad53d8bf8f7bd7478cfb4664c0aedfe0b">HFS::calcLowestEnergyExcitationDegeneracy()</a>; </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#abc0f596a3a95e01e9c789142c38bc068">HFS::calcVirNTo1Map()</a>; </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a1ff70eb616279cfd795602940d88400b">HFS::calcInverseExcitationMap()</a>; </dd></dl>
+
 </div>
 </div>
-<a id="a72442fa049b38d25e2be8a3cde0e4cbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a72442fa049b38d25e2be8a3cde0e4cbc">&#9670;&nbsp;</a></span>calcKf()</h2>
+<a id="af5b75d698c01e9efa22af60917d3a9b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5b75d698c01e9efa22af60917d3a9b4">&#9670;&nbsp;</a></span>calcKf()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void HFS::calcKf </td>
+          <td class="memname">double HFS::calcKf </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>rs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>ndim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>calculate the fermi momentum, Kf. </p>
+<p>Currently allows for ndim = 1, 2 or 3.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#a7713f6d1402f116e67b835707998d0c3">HFS::kf</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a0112fffba8a4b64aa100604dbb5307f7">HFS::rs</a> </dd>
+<dd>
+<a class="el" href="parameters_8hpp.html#a598a3330b3c21701223ee0ca14316eca">PI</a> </dd></dl>
+
 </div>
 </div>
-<a id="afab2a25b0b45e28492cb4501486cff08"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afab2a25b0b45e28492cb4501486cff08">&#9670;&nbsp;</a></span>calcVolAndTwoEConst()</h2>
+<a id="a1d81ab3a039e1611ccfb73bb95acfdf4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d81ab3a039e1611ccfb73bb95acfdf4">&#9670;&nbsp;</a></span>calcVolAndTwoEConst()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -604,62 +765,131 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void HFS::calcVolAndTwoEConst </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>N_elec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>rs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>Vol</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double &amp;&#160;</td>
+          <td class="paramname"><em>TwoEConst</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+<p>Calculate the volume and constant used in the two-electron integral. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">N_elec</td><td></td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rs</td><td></td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">Vol</td><td></td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">TwoEConst</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#a88874225b8d87c1f8589daee8b53a498">HFS::vol</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a6a7c74cd54192fe0ed71ab3b761441c6">HFS::N_elec</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a0112fffba8a4b64aa100604dbb5307f7">HFS::rs</a> </dd>
+<dd>
+<a class="el" href="namespaceHFS.html#a2b4a0ad110d03a7325f2094ff52fdb0a">HFS::two_e_const</a> </dd></dl>
+
 </div>
 </div>
-<a id="ab1185aa79a19348c1c229f2bb3dd9097"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab1185aa79a19348c1c229f2bb3dd9097">&#9670;&nbsp;</a></span>calcOccupiedStates()</h2>
+<a id="a4d4b3217e8cdef9952c450977c9207c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d4b3217e8cdef9952c450977c9207c4">&#9670;&nbsp;</a></span>calcStates()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void HFS::calcOccupiedStates </td>
+          <td class="memname">void HFS::calcStates </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td class="paramtype">arma::vec &amp;&#160;</td>
+          <td class="paramname"><em>kgrid</em>, </td>
         </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a2717e290b079f974d0a3419c5481d456"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2717e290b079f974d0a3419c5481d456">&#9670;&nbsp;</a></span>calcOccupiedEnergies()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
         <tr>
-          <td class="memname">void HFS::calcOccupiedEnergies </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>Nk</em>, </td>
         </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a26a442e0a39fd9d6139125086383d473"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26a442e0a39fd9d6139125086383d473">&#9670;&nbsp;</a></span>calcVirtualEnergies()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
         <tr>
-          <td class="memname">void HFS::calcVirtualEnergies </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>ndim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::uword &amp;&#160;</td>
+          <td class="paramname"><em>Nocc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::uword &amp;&#160;</td>
+          <td class="paramname"><em>Nvir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::uword &amp;&#160;</td>
+          <td class="paramname"><em>N_elec</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::umat &amp;&#160;</td>
+          <td class="paramname"><em>occ_states</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::umat &amp;&#160;</td>
+          <td class="paramname"><em>vir_states</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Calculate the occupied &amp; virtual states, their number and the number of electrons. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">kgrid</td><td>The gridpoints per dimension in k-space. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Nk</td><td>The number of kpoints per dimension. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ndim</td><td>The number of dimensions. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">Nocc</td><td>The number of occupied states. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">Nvir</td><td>The number of virtual states. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">N_elec</td><td>The number of electrons. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">occ_states</td><td>The occupied states indices. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">vir_states</td><td>The virtual state indices. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -689,10 +919,19 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Calculate the energies of states from the x, y and z indices. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">inp_states</td><td>A matrix where each row corresponds to the x, y and z indices of each state. Reminder that the momentum is <a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a>[index]. </td></tr>
+    <tr><td class="paramname">energy_vec</td><td>reference to a vector where the energies will be stored. </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
-<a id="a26d9e356c04c9aa855fe40a0e44483e9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26d9e356c04c9aa855fe40a0e44483e9">&#9670;&nbsp;</a></span>calcExcitations()</h2>
+<a id="aaf7872aa40f7260b8f6cb99410032c1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf7872aa40f7260b8f6cb99410032c1e">&#9670;&nbsp;</a></span>calcExcitations()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -700,11 +939,86 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">void HFS::calcExcitations </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">arma::vec &amp;&#160;</td>
+          <td class="paramname"><em>kgrid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">unsigned&#160;</td>
+          <td class="paramname"><em>Nk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>deltaK</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::uword&#160;</td>
+          <td class="paramname"><em>Nocc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::uword&#160;</td>
+          <td class="paramname"><em>Nvir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::umat &amp;&#160;</td>
+          <td class="paramname"><em>occ_states</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::umat &amp;&#160;</td>
+          <td class="paramname"><em>vir_states</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::umat &amp;&#160;</td>
+          <td class="paramname"><em>excitations</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::vec &amp;&#160;</td>
+          <td class="paramname"><em>exc_energies</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">arma::uword &amp;&#160;</td>
+          <td class="paramname"><em>Nexc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Determine excitations in the x direction. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">kgrid</td><td>grid of kpoints. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Nk</td><td>Number of k points per dimension </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Nocc</td><td>Number of occupied states </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Nvir</td><td>Number of virtual states </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">occ_states</td><td>occupied states </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">vir_states</td><td>virtual states </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">excitations</td><td>Matrix where each row contains [occupied_idx, virtual_idx] </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">exc_energies</td><td>Energy difference of occ and vir state in excitation </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">Nexc</td><td>Number of excitations </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

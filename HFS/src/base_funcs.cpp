@@ -1,13 +1,22 @@
+/** @file base_funcs.cpp
+@author Evan Curtin
+@version Revision 0.1
+@brief Implementation for low-level functions used throughout the codebase.
+
+@date Wednesday, 05 Jan, 2017
+*/
+
+
 #include "base_funcs.hpp"
 
 namespace HFS {
 
-    double exchange(arma::umat& inp_states, arma::uword i) {
+    double exchange(arma::umat& states, arma::uword i) {
 
         double exch = 0.0;
         arma::vec ki(NDIM), k2(NDIM);
         for (unsigned j = 0; j < NDIM; ++j) {
-            ki(j) = HFS::kgrid(inp_states(i, j));
+            ki(j) = HFS::kgrid(states(i, j));
         }
         for (arma::uword k = 0; k < HFS::Nocc; ++k) {
             for (unsigned j = 0; j < NDIM; ++j) {

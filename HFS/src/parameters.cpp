@@ -10,7 +10,12 @@ namespace HFS{
     unsigned Nk, ground_state_degeneracy;
     arma::vec  occ_energies, vir_energies, exc_energies, kgrid;
     arma::umat occ_states, vir_states, excitations;
-    arma::umat vir_N_to_1_mat, inv_exc_mat;
+    #if NDIM == 2
+        arma::umat vir_N_to_1_mat;
+    #elif NDIM == 3
+        arma::ucube vir_N_to_1_mat;
+    #endif // NDIM
+    arma::umat inv_exc_mat;
     void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     double (*Matrix_func)(arma::uword i, arma::uword j);
     unsigned dav_its;

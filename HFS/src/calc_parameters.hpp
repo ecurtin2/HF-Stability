@@ -14,13 +14,102 @@
 
 namespace HFS {
     extern void calcParameters();
-    extern void calcKf();
-    extern void calcVolAndTwoEConst();
-    extern void calcOccupiedStates();
-    extern void calcOccupiedEnergies();
-    extern void calcVirtualEnergies();
-    extern void calcEnergies(arma::umat&, arma::vec&);
-    extern void calcExcitations();
+    /**< \brief Wrapper for all parameter calculations.
+
+    @see HFS::calcKf()
+    @see HFS::kmax
+    @see HFS::bzone_length
+    @see HFS::fermi_energy
+    @see HFS::kgrid
+    @see HFS::deltaK
+    @see HFS::calcOccupiedStates();
+    @see HFS::calcVolAndTwoEConst();
+    @see HFS::calcOccupiedEnergies();
+    @see HFS::calcVirtualEnergies();
+    @see HFS::calcExcitations();
+    @see HFS::calcExcitationEnergies();
+    @see HFS::calcLowestEnergyExcitationDegeneracy();
+    @see HFS::calcVirNTo1Map();
+    @see HFS::calcInverseExcitationMap();
+    */
+
+    extern double calcKf(double rs, unsigned ndim);
+    /**< \brief calculate the fermi momentum, Kf.
+
+    Currently allows for ndim = 1, 2 or 3.
+
+    @see HFS::kf
+    @see HFS::rs
+    @see PI
+    */
+
+    extern void calcVolAndTwoEConst(unsigned N_elec, double rs, double& Vol, double& TwoEConst);
+    /**< \brief Calculate the volume and constant used in the two-electron integral.
+
+    @param [in] N_elec
+    @param [in] rs
+    @param [out] Vol
+    @param [out] TwoEConst
+    @see HFS::vol
+    @see HFS::N_elec
+    @see HFS::rs
+    @see HFS::two_e_const
+    */
+
+    extern void calcStates (arma::vec& kgrid
+                           ,unsigned Nk
+                           ,unsigned ndim
+                           ,arma::uword& Nocc
+                           ,arma::uword& Nvir
+                           ,arma::uword& N_elec
+                           ,arma::umat& occ_states
+                           ,arma::umat& vir_states
+                           );
+    /**< \brief Calculate the occupied & virtual states, their number and the number of electrons.
+
+    @param [in] kgrid The gridpoints per dimension in k-space.
+    @param [in] Nk The number of kpoints per dimension.
+    @param [in] ndim The number of dimensions.
+    @param [out] Nocc The number of occupied states.
+    @param [out] Nvir The number of virtual states.
+    @param [out] N_elec The number of electrons.
+    @param [out] occ_states The occupied states indices.
+    @param [out] vir_states The virtual state indices.
+    */
+
+    extern void calcEnergies(arma::umat& inp_states, arma::vec& energy_vec);
+    /**< \brief Calculate the energies of states from the x, y and z indices
+
+    @param inp_states A matrix where each row corresponds to the x, y and z indices
+    of each state. Reminder that the momentum is HFS::kgrid[index].
+    @param energy_vec reference to a vector where the energies will be stored.
+
+    */
+    extern void calcExcitations(arma::vec& kgrid
+                        ,unsigned Nk
+                        ,double deltaK
+                        ,arma::uword Nocc
+                        ,arma::uword Nvir
+                        ,arma::umat& occ_states
+                        ,arma::umat& vir_states
+                        ,arma::umat& excitations
+                        ,arma::vec&  exc_energies
+                        ,arma::uword& Nexc);
+    /**< \brief Determine excitations in the x direction.
+
+    @param [in] kgrid grid of kpoints.
+    @param [in] Nk Number of k points per dimension
+    @param [in] Nocc Number of occupied states
+    @param [in] Nvir Number of virtual states
+    @param [in] occ_states occupied states
+    @param [in] vir_states virtual states
+    @param [out] excitations Matrix where each row contains [occupied_idx, virtual_idx]
+    @param [out] exc_energies Energy difference of occ and vir state in excitation
+    @param [out] Nexc Number of excitations
+
+
+
+    */
     extern void calcExcitationEnergies();
     extern void calcLowestEnergyExcitationDegeneracy();
     extern void calcVirNTo1Map();

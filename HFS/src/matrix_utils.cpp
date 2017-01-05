@@ -1,5 +1,5 @@
 #include "matrix_utils.hpp"
-#include <map>
+#include <omp.h>
 
 namespace HFS {
 
@@ -97,11 +97,13 @@ namespace HFS {
     }
 
     void matrixVectorProduct3A(arma::vec& v, arma::vec& Mv) {
+
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
             arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occIndexToK(i);
             ka = HFS::virIndexToK(a);
+            #pragma omp parallel for
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occIndexToK(j);
@@ -121,11 +123,13 @@ namespace HFS {
     }
 
     void matrixVectorProduct3B(arma::vec& v, arma::vec& Mv) {
+
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
             arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
             arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occIndexToK(i);
             ka = HFS::virIndexToK(a);
+            #pragma omp parallel for
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occIndexToK(j);
@@ -387,7 +391,11 @@ namespace HFS {
 
     arma::uword calcTfromKbAndJ(arma::vec& kb, arma::uword j) {
         arma::uvec b_N_idx =  kToIndex(kb);
-        arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
+        #if NDIM == 2
+            arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
+        #elif NDIM == 3
+            arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1), b_N_idx(2));
+        #endif // NDIM
         arma::uword t = HFS::inv_exc_mat(j, b);
         return t;
     }

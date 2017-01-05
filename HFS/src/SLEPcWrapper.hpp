@@ -24,7 +24,7 @@ namespace SLEPc {
             PetscErrorCode                     ierr;
             EPS                                eps;
             EPSType                            eps_type;
-            PetscMPIInt                        size;
+            PetscMPIInt                        nprocs=1;
             Mat                                matrix;
             PetscInt                           N, nconv, niter, BlockSize=1, nguess=1, Nevals=1, maxits;
             double                             tol=1E-5;
@@ -44,7 +44,7 @@ namespace SLEPc {
                 N = Ninput;
                 SLEPc::matvec_product = matvec_product;
                 SlepcInitialize(&argc, &argv, (char*)0, help);
-                MPI_Comm_size(PETSC_COMM_WORLD, &size);
+                MPI_Comm_size(PETSC_COMM_WORLD, &nprocs);
                 MatCreateShell(PETSC_COMM_WORLD, N, N, PETSC_DETERMINE, PETSC_DETERMINE, &N, &matrix);
                 PETSCMatCreate(matrix);
                 EPSCreate(PETSC_COMM_WORLD, &eps);
@@ -72,11 +72,15 @@ namespace SLEPc {
                 }
 
                 for (int i = 0; i < Nvecs; ++i) {
-                    MatCreateVecs(matrix, &petsc_vecs[i], NULL);
-                    VecSet(petsc_vecs[i], 0.0);
-                    VecSetValues(petsc_vecs[i], Nvecs, &indices[0], &vecs[i][0], INSERT_VALUES);
-                    petsc_vecpointers[i] = &petsc_vecs[i];
+                    ierr = MatCreateVecs(matrix, &petsc_vecs[i], NULL);                                 CHKERRQ(ierr);
+                    ierr = VecSet(petsc_vecs[i], 0.0);                                                  CHKERRQ(ierr);
+                    ierr = VecSetValues(petsc_vecs[i], Nvecs, &indices[0], &vecs[i][0], INSERT_VALUES); CHKERRQ(ierr);
+                    petsc_vecpointers[i] = &petsc_vecs[i];                                              CHKERRQ(ierr);
+                    ierr = VecAssemblyBegin(petsc_vecs[i]);                                             CHKERRQ(ierr);
+                    ierr = VecAssemblyEnd(petsc_vecs[i]);                                               CHKERRQ(ierr);
                 }
+
+
 
                 nguess = Nvecs;
                 ierr = EPSSetInitialSpace(eps, Nvecs, *petsc_vecpointers.begin());
@@ -160,8 +164,8 @@ namespace SLEPc {
                     rVals[i] = rVal;
                     iVecs[i].resize(N, 0.0);
                     rVecs[i].resize(N, 0.0);
-                    ierr = VecGetValues(PetscrVec, N, &indices[0], &rVecs[i][0]);
-                    ierr = VecGetValues(PetsciVec, N, &indices[0], &iVecs[i][0]);
+                    //ierr = VecGetValues(PetscrVec, N, &indices[0], &rVecs[i][0]);
+                    //ierr = VecGetValues(PetsciVec, N, &indices[0], &iVecs[i][0]);
                 }
                 return ierr;
             }
@@ -207,12 +211,12 @@ namespace SLEPc {
         ierr = VecGetArrayRead(x, &px);             CHKERRQ(ierr);
         ierr = VecGetArray(y, &py);                 CHKERRQ(ierr);
 
+
         double* v = (double*) &px[0];        // cast to non-const pointer for armadillo initialization
         double* Mv = (double*) &py[0];
         arma::vec myvec(v, nx, false, true); // copy_aux_mem (first bool) must be false for this to work
         arma::vec myMv(Mv, nx, false, true); // since the memory pointed to by y is what PETSc sees.
         SLEPc::matvec_product(myvec, myMv);  // modifies myMv inplace
-
         ierr = VecRestoreArrayRead(x, &px);         CHKERRQ(ierr);
         ierr = VecRestoreArray(y, &py);             CHKERRQ(ierr);
         PetscFunctionReturn(0);
