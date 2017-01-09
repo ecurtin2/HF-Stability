@@ -15,35 +15,44 @@ LIB = -larmadillo
 LOCDIR = home/evan/git/HF-Stability/
 MANSEC = EPS
 
-
+COMP = Gellmann
 
 # Work
-SLEPC_DIR=/home/evan/slepc-3.7.3
-PETSC_DIR=/home/evan/git/petsc
-PETSC_ARCH=linux-gnu-c-debug
-SLEPC_ARCH=linux-gnu-c-debug
+ifeq ($(COMP),Work)
+	SLEPC_DIR=/home/evan/slepc-3.7.3
+	PETSC_DIR=/home/evan/git/petsc
+	PETSC_ARCH=linux-gnu-c-debug
+	SLEPC_ARCH=linux-gnu-c-debug
+endif 
 
 # Gellmann
-#CC = /share/ccs/gcc/gcc-5.4.0/bin/g++
-#SLEPC_DIR=/home/ecurtin2/local/lib/slepc-3.7.3
-#PETSC_DIR=/home/ecurtin2/local/lib/petsc
-#PETSC_ARCH=arch-linux2-c-debug
-#SLEPC_ARCH=arch-linux2-c-debug
-#LOCDIR=home/ecurtin2/git/HF-Stability/
+ifeq ($(COMP),Gellmann)
+	CC = /share/ccs/gcc/gcc-5.4.0/bin/g++
+	SLEPC_DIR=/home/ecurtin2/local/lib/slepc-3.7.3
+	PETSC_DIR=/home/ecurtin2/local/lib/petsc
+	PETSC_ARCH=arch-linux2-c-debug
+	SLEPC_ARCH=arch-linux2-c-debug
+	LOCDIR=home/ecurtin2/git/HF-Stability/
+endif
 
-# Home
-#SLEPC_DIR=/home/evan/git/slepc-3.7.3
-#PETSC_DIR=/home/evan/git/petsc
-#PETSC_ARCH=arch-linux2-c-debug
-#SLEPC_ARCH=arch-linux2-c-debug
+ifeq ($(COMP),Home)
+	SLEPC_DIR=/home/evan/git/slepc-3.7.3
+	PETSC_DIR=/home/evan/git/petsc
+	PETSC_ARCH=arch-linux2-c-debug
+	SLEPC_ARCH=arch-linux2-c-debug
+endif
 
 
 
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
 CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
+
 #GELLMANN
-#CFLAGS+=-L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/ -lopenblas -larmadillo
+ifeq ($(COMP),Gellmann)
+CFLAGS+=-L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/ -lopenblas -larmadillo
 LINKEROPTS = -L/home/ecurtin2/local/lib/ -larmadillo
+endif
+
 DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
 INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/
 
@@ -69,8 +78,6 @@ profile3D:  $(TARGET)
 release3D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing -D NDIM=3
 release3D: $(TARGET)
 
-
-#CFLAGS += -fopenmp
 
 .PHONY: depend clean
 
