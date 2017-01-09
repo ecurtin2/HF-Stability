@@ -2,6 +2,18 @@ import numpy as np
 import tempfile
 import sys
 import os
+from mpi4py import MPI
+
+
+comm = MPI.COMM_WORLD
+nprocs = comm.size
+rank = comm.Get_rank()
+
+print comm
+print nprocs
+print rank
+
+exit()
 
 def get_fname(rs, Nk, ndim):
     pre = '%010.3f_%05d_%1d_'%(rs, Nk, ndim)
@@ -12,8 +24,8 @@ def get_fname(rs, Nk, ndim):
 
 Nk = 12
 #rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
-rsrange = [1.2]
-ndim = 2
+rsrange = [1.2, 1.3]
+ndim = 3
 nguess = 1
 blocksize = 1
 num_evals = 1
@@ -25,6 +37,6 @@ mycase = "cRHF2cUHF"
 paramlist = [['./HFS', rs, Nk, get_fname(rs, Nk, ndim), tolerance, maxits,
               maxsubsize, nguess, blocksize, num_evals, mycase] for rs in rsrange]
 
-for i in range(len(paramlist)):
+for i in range(rank, len(paramlist), nprocs):
      print 'Starting Job: ',  ' '.join([str(j) for j in paramlist[i]])
-     os.system('mpirun -np 2 ' + ' '.join([str(j) for j in paramlist[i]]))
+     os.system(' '.join([str(j) for j in paramlist[i]]))
