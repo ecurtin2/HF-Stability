@@ -54,7 +54,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[10];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 35;
+        HFS::Nk              = 15;
         HFS::OutputFileName  = "test.log";
         HFS::Dav_tol         = 1e-6;
         HFS::Dav_maxits      = 30;
