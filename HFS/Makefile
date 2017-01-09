@@ -18,18 +18,18 @@ MANSEC = EPS
 
 
 # Work
-# SLEPC_DIR=/home/evan/slepc-3.7.3
-# PETSC_DIR=/home/evan/git/petsc
-# PETSC_ARCH=linux-gnu-c-debug
-# SLEPC_ARCH=linux-gnu-c-debug
+SLEPC_DIR=/home/evan/slepc-3.7.3
+PETSC_DIR=/home/evan/git/petsc
+PETSC_ARCH=linux-gnu-c-debug
+SLEPC_ARCH=linux-gnu-c-debug
 
 # Gellmann
-CC = /share/ccs/gcc/gcc-5.4.0/bin/g++
-SLEPC_DIR=/home/ecurtin2/local/lib/slepc-3.7.3
-PETSC_DIR=/home/ecurtin2/local/lib/petsc
-PETSC_ARCH=arch-linux2-c-debug
-SLEPC_ARCH=arch-linux2-c-debug
-LOCDIR=home/ecurtin2/git/HF-Stability/
+#CC = /share/ccs/gcc/gcc-5.4.0/bin/g++
+#SLEPC_DIR=/home/ecurtin2/local/lib/slepc-3.7.3
+#PETSC_DIR=/home/ecurtin2/local/lib/petsc
+#PETSC_ARCH=arch-linux2-c-debug
+#SLEPC_ARCH=arch-linux2-c-debug
+#LOCDIR=home/ecurtin2/git/HF-Stability/
 
 # Home
 #SLEPC_DIR=/home/evan/git/slepc-3.7.3
@@ -40,10 +40,10 @@ LOCDIR=home/ecurtin2/git/HF-Stability/
 
 
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
-CFLAGS = -Wstrict-prototypes -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
+CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
 #GELLMANN
-CFLAGS+=-L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/ -lopenblas -larmadillo
-LINKEROPTS = -L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/fopenmp -larmadillo
+#CFLAGS+=-L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/ -lopenblas -larmadillo
+LINKEROPTS = -L/home/ecurtin2/local/lib/ -larmadillo
 DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
 INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/
 

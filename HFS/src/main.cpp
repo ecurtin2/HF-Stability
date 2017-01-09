@@ -38,36 +38,30 @@ int main(int argc, char* argv[]){
 
 
     #ifdef RELEASE
-        if (argc != 11) {
+        if (argc != 4) {
             std::cout << "Error! Wrong number of arguments" << std::endl;
             exit(EXIT_FAILURE);
         }
         HFS::rs              = std::stof(argv[1]);
         HFS::Nk              = std::stoi(argv[2]);
-        HFS::OutputFileName  = argv[3];
-        HFS::Dav_tol         = std::stof(argv[4]);
-        HFS::Dav_maxits      = std::stoi(argv[5]);
-        HFS::Dav_maxsubsize  = std::stoi(argv[6]);
-        HFS::num_guess_evecs = std::stoi(argv[7]);
-        HFS::Dav_blocksize   = std::stoi(argv[8]);
-        HFS::Dav_Num_evals   = std::stoi(argv[9]);
-        HFS::mycase          = argv[10];
+        HFS::mycase          = argv[3];
     #else
         HFS::rs              = 1.2;
         HFS::Nk              = 15;
         HFS::OutputFileName  = "test.log";
-        HFS::Dav_tol         = 1e-6;
-        HFS::Dav_maxits      = 30;
-        HFS::Dav_maxsubsize  = 1500;
-        HFS::num_guess_evecs = 1;
-        HFS::Dav_blocksize   = 1;
-        HFS::Dav_Num_evals   = 1;
         HFS::mycase          = "cRHF2cUHF";
     #endif // Release
 
+    HFS::Dav_tol         = 1e-6;
+    HFS::Dav_maxits      = 30;
+    HFS::Dav_maxsubsize  = 1500;
+    HFS::num_guess_evecs = 1;
+    HFS::Dav_blocksize   = 1;
+    HFS::Dav_Num_evals   = 1;
+
     HFS::calcParameters();
     HFS::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
-    HFS::timeMatrixVectorProduct();
+//    HFS::timeMatrixVectorProduct();
 
 
 
@@ -103,13 +97,14 @@ int main(int argc, char* argv[]){
     HFS::Dav_nconv = myeps.nconv;
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
-    const char* fname = HFS::OutputFileName.c_str();
-    FILE* myfile = freopen(fname, "w", stdout);
+//    const char* fname = HFS::OutputFileName.c_str();
+//    std::cout << "Calculation finished, writing output to: "<< fname << std::endl;
+//    FILE* myfile = freopen(fname, "w", stdout);
     HFS::writeOutput(true);
 
     myeps.clean();
     fclose(stdout);
-
+    std::cout << "hi" << std::endl;
 
     #ifndef NDEBUG
         if (HFS::Nmat < 1500) {
@@ -120,6 +115,7 @@ int main(int argc, char* argv[]){
             exit(EXIT_FAILURE);
         }
     #endif //NDEBUG
+
 
     return 0;
 }

@@ -1,5 +1,5 @@
 #include "matrix_utils.hpp"
-#include <omp.h>
+//#include <omp.h>
 
 namespace HFS {
 
@@ -103,7 +103,7 @@ namespace HFS {
             arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occIndexToK(i);
             ka = HFS::virIndexToK(a);
-            #pragma omp parallel for
+            //#pragma omp parallel for
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occIndexToK(j);
@@ -129,7 +129,7 @@ namespace HFS {
             arma::vec ki(NDIM), ka(NDIM);
             ki = HFS::occIndexToK(i);
             ka = HFS::virIndexToK(a);
-            #pragma omp parallel for
+            //#pragma omp parallel for
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
                 kj = HFS::occIndexToK(j);

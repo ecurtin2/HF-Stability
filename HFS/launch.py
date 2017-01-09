@@ -9,12 +9,6 @@ comm = MPI.COMM_WORLD
 nprocs = comm.size
 rank = comm.Get_rank()
 
-print comm
-print nprocs
-print rank
-
-exit()
-
 def get_fname(rs, Nk, ndim):
     pre = '%010.3f_%05d_%1d_'%(rs, Nk, ndim)
     ext = '.log'
@@ -22,21 +16,17 @@ def get_fname(rs, Nk, ndim):
     fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
     return fname
 
-Nk = 12
+Nk = 20
 #rsrange = [0.2, 0.3, 0.4, 0.6, 0.7, 0.8, 0.9, 1.1, 1.3, 1.5]
-rsrange = [1.2, 1.3]
-ndim = 3
+rsrange = [1.2, 1.3, 1.4, 1.5]
+ndim = 2
 nguess = 1
-blocksize = 1
-num_evals = 1
-maxits = 50
-maxsubsize = 1000
-tolerance = 1e-6
 mycase = "cRHF2cUHF"
 
-paramlist = [['./HFS', rs, Nk, get_fname(rs, Nk, ndim), tolerance, maxits,
-              maxsubsize, nguess, blocksize, num_evals, mycase] for rs in rsrange]
+paramlist = [[rs, Nk, mycase] for rs in rsrange]
+fnames = [get_fname(paramlist[i][0], paramlist[i][1], ndim) for i in range(len(paramlist))]
 
 for i in range(rank, len(paramlist), nprocs):
-     print 'Starting Job: ',  ' '.join([str(j) for j in paramlist[i]])
-     os.system(' '.join([str(j) for j in paramlist[i]]))
+     cmd = './HFS ' + ' '.join([str(j) for j in paramlist[i]])
+     print 'Starting Job: ', cmd
+     os.system(cmd + ' > ' + fnames[i] + ' &')
