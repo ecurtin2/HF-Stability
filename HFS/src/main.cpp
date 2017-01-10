@@ -66,8 +66,8 @@ int main(int argc, char* argv[]){
 
 
     SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
-    int nprocs;
-    MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    int nprocs = 1;
+    //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     myeps.nprocs = nprocs;
     myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);

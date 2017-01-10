@@ -42,7 +42,6 @@ namespace HFS{
         arma::vec Mv(HFS::Nmat);
         HFS::MatVecProduct_func(v, Mv);
         HFS::Mv_time = timer.toc();
-        std::cout << "Mv time = " << HFS::Mv_time << std::endl;
     }
 
     arma::mat buildMatrixFromFunction(double (*Matrix_func)(arma::uword, arma::uword), arma::uword N) {

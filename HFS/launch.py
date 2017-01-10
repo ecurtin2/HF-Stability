@@ -1,33 +1,24 @@
-import numpy as np
-import multiprocessing
-import subprocess
 import tempfile
-import time
 import os
+from mpi4py import MPI
+from subprocess import call
+import sys
 
-Nkrange = range(12, 15)
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+
+
 rs = 1.2
+Nk = 12
+
 ndim = 3
 mycase = "cRHF2cUHF"
 
+pre = '%010.3f_%05d_%1d_'%(rs, Nk, ndim)
+ext = '.log'
+outdir = '.'
+fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
 
-def get_fname(rs, Nk, ndim):
-    pre = '%010.3f_%05d_%1d_'%(rs, Nk, ndim)
-    ext = '.log'
-    outdir = '.'
-    fname = tempfile.mktemp(suffix=ext, prefix=pre, dir=outdir)
-    return fname
-
-def run(params):
-    cmd = './HFS ' + ' '.join([str(j) for j in params])
-    cmd += ' > ' + get_fname(params[0], params[1], ndim) 
-    cmd+= ' &'
-    print 'Starting Job: ', cmd 
-    os.system(cmd)
-
-paramlist = [[rs, Nk, mycase] for Nk in Nkrange]
-
-for params in paramlist:
-    run(params)
-
-
+cmd = './HFS ' + str(rs) + ' ' + str(Nk) + ' ' + mycase + ' > ' + fname
+os.system(cmd)
+comm.Barrier()
