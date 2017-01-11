@@ -1,8 +1,0 @@
-\beamer@endinputifotherversion {3.36pt}
-\beamer@sectionintoc {1}{Homogeneous Electron Gas}{2}{0}{1}
-\beamer@sectionintoc {2}{Hartree-Fock Stability}{7}{0}{2}
-\beamer@sectionintoc {3}{Davidson's Algorithm}{11}{0}{3}
-\beamer@subsectionintoc {3}{1}{Theory}{13}{0}{3}
-\beamer@subsectionintoc {3}{2}{Implementation}{16}{0}{3}
-\beamer@sectionintoc {4}{Code Layout}{17}{0}{4}
-\beamer@sectionintoc {5}{References}{21}{0}{5}
