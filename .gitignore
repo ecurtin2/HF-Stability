@@ -1,8 +1,8 @@
 **.so
 **.o
 **.pyc
-src/build/*
-src/HFSDataFrame.pickle
+**/build/*
+**HFSDataFrame.pickle
 HFStability.cpp
 cyarma.cpp
 general_methods.pyc

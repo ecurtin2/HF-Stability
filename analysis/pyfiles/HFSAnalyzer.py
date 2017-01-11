@@ -73,7 +73,7 @@ def file_to_df(fname, idx):
     matrixdic = {}
     for lineno, line in enumerate(f):
         for key in keys:
-            if (key + " =" in line):
+            if ((key + " =").lower() in line.lower()):  # .lower is case-insensitive comparison
                 str_value = line.split("=", 1)[1].rstrip('\n')
                 dic[key] = str_to_float_or_int(str_value)
             if (key + " :" in line) or (key + ":" in line):
@@ -374,27 +374,118 @@ def axplot_eval_convergence(df, ax, df_idx):
         ax.plot(x, davvals[:, i], 'o-', c=cols[i])
     return ax
 
-def plot_dav_vs_full(df):
+def plot_dav_vs_full(df, ax):
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     Nks_full = df_with_fulldiags.Nk.as_matrix()
     Nks = df.Nk.as_matrix()
     davmins = df.Dav_final_val.as_matrix()
     xmin = np.amin(Nks)-1
     xmax = np.amax(Nks) + 1
-    plt.xlim=(xmin, xmax)
-    fullmins= df_with_fulldiags.full_diag_min.as_matrix()
+    ax.set_xlim(xmin, xmax)
+    fullmins = df_with_fulldiags.full_diag_min.as_matrix()
+    fullmins = fullmins[np.where(np.abs(fullmins) > 1e-5)]
+
     npts = 10
     zeros = np.zeros(npts)
     x = np.linspace(xmin, xmax, npts)
 
-    plt.title('Stability for rs = 1.2 in 2D')
-    plt.xlabel("Number of k-points per dimension")
-    plt.ylabel('Lowest Eigenvalue')
-    plt.plot(x, zeros   , 'k--', zorder=1)
-    plt.plot(Nks, davmins , '-o' , zorder=3, label='Davidson lowest Eigenvalue')
-    plt.plot(Nks_full, fullmins, 'o' , markersize=11, c=sns.color_palette()[2],
-             zorder=2, label='Exact Lowest Eigenvalue')
-    plt.legend(loc='best')
+    ax.set_xlabel("Number of k-points per dimension")
+    ax.set_ylabel('Lowest Eigenvalue')
+    ax.plot(x, zeros   , 'k--', zorder=1)
+    ax.scatter(Nks, davmins , zorder=3, label='Davidson lowest Eigenvalue', c=sns.color_palette()[0])
+    if len(fullmins) > 0:
+        ax.scatter(Nks_full, fullmins, c=sns.color_palette()[2],
+                   zorder=2, label='Exact Lowest Eigenvalue')
+    ax.legend(loc='best')
+
+
+def plot_matrix_scaling(df, ax, *args, **kwargs):
+    Nexcs = df.Nexc.as_matrix()
+    Nks = df.Nk.as_matrix()
+    ax.scatter(Nks, 2*Nexcs, *args, **kwargs)
+    ax.set_ylim(0, np.amax(2.1*Nexcs))
+    ax.set_xlabel('# k-points per dimension')
+    ax.set_label('Size of Matrix')
+    ax.set_title('Matrix Size Scaling')
+
+def plot_mvproduct_scaling(df, ax, scale=2):
+    Nexcs = df['Nexc']
+    Noccs = df['Nocc']
+    mvtimes = df['Mv_time']
+
+    ax.set_title('Matrix - Vector Product Scaling')
+
+    sns.regplot(Nexcs*Noccs, mvtimes, ci=0.999, scatter_kws={'color' : sns.color_palette()[2], 's' : 50, 'zorder' : 2}
+                                            , line_kws={'zorder' : 1, 'linewidth' : 1})
+    ax.set_xlabel('Nexc x Nocc')
+    ax.set_ylabel('Execution Time (s)')
+    scale = 2
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlim(0, np.amax(Nexcs * Noccs)*scale)
+    ax.set_ylim(1e-1, np.amax(mvtimes)*scale)
+
+def plot_stability(df, ax, *args, **kwargs):
+    ax.scatter(df['rs'], df['Dav_final_val'], *args, **kwargs)
+    ax.plot(np.linspace(-5, 100, 100), np.zeros(100), 'k--')
+    scale = 1.1
+    xmin = 0
+    xmax = np.amax(df['rs']) * scale
+    ymin = np.amin(df['Dav_final_val']) * scale
+    ymax = np.amax(df['Dav_final_val']) * scale
+    ax.set_xlim(xmin, xmax)
+    ax.set_ylim(ymin, ymax)
+    ax.set_ylabel('Lowest Eigenvalue')
+    ax.set_xlabel('$r_s$')
+
+def plot_runtime(df, ax, *args, **kwargs):
+    Walltime = [float(s.split()[0]) for s in df['Total Elapsed Time']]
+    Nexcs = df.Nexc.as_matrix()
+    ax.set_title('Algorithm Runtime')
+    ax.set_xlabel('Matrix Dimension')
+    ax.set_ylabel('Wall Time of Entire Algorithm')
+    ax.scatter(2*Nexcs, Walltime, *args, **kwargs)
+
+def plot_diag_scaling(df, ax):
+    Nmat = 2 * df.Nexc.as_matrix()
+    Davtimes =  df.Dav_time.as_matrix()
+
+    df_with_fulldiags = df[df['full_diag_min'].notnull()]
+    fulltimes = df_with_fulldiags.full_diag_time.as_matrix()
+    include_full = np.any(fulltimes > 1e-7)
+    Nmatfull = 2 * df_with_fulldiags.Nexc.as_matrix()
+
+    xmax = np.amax(Nmat) * 10
+    xmin = np.amin(Nmat) / 10.0
+    ymax = np.amax(Davtimes) * 10
+    ymin = np.amin(Davtimes) / 10.0
+    Nfit = np.linspace(xmin, xmax, 500)
+
+    # Full diagonalization
+    if include_full:
+        c = np.polyfit(np.log10(Nmatfull), np.log10(fulltimes), 1)
+        fit = 10**(c[1]) * Nfit ** (c[0])
+        ax.plot(Nmatfull, fulltimes, 'o', label='Full Diagonalization', c=sns.color_palette()[2])
+        fitlabel = "$" + str(10**c[1])[:4] + " N^{" + str(c[0])[:3] + "}$"
+        ax.plot(Nfit, fit, c=sns.color_palette()[2], label=fitlabel)
+
+    # Davidson
+    cdav = np.polyfit(np.log10(Nmat), np.log10(Davtimes), 1)
+    davfit = 10**(cdav[1]) * Nfit ** (cdav[0])
+
+    ax.plot(Nmat, Davtimes, 'o', label="Davidson's Algorithm", c=sns.color_palette()[0])
+    fitlabel = "$" + str(10**cdav[1])[:4] + " N^ {" + str(cdav[0])[:3] + "}$"
+    ax.plot(Nfit, davfit, c=sns.color_palette()[0], label=fitlabel)
+
+    ax.set_xlabel('Matrix Dimension (N)')
+    ax.set_ylabel('Total Wall Time')
+    ax.legend(loc='best')
+
+    ax.set_xlim([xmin, xmax])
+    ax.set_ylim([1e-2, 1e6])
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+
 
 if __name__ == "__main__":
     print 'Import this module and analyze some logfiles!'
