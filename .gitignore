@@ -6,6 +6,7 @@ HFS/qsub/generatedscripts
 HFS/log
 HFSDataFrame.pickle
 **/build/*
+archive/logfiles
 HFStability.cpp
 cyarma.cpp
 general_methods.pyc
