@@ -4,6 +4,8 @@ import os
 
 NDIM = 3
 CASE = "cRHF2cUHF"
+rslist = np.linspace(0.5, 10, 20)
+Nklist = [37]
 
 
 f = open("templateqsub.sh", "r")
@@ -38,8 +40,6 @@ def writeFile(rs, Nk, ndim, case, fname):
     return scriptname
 
 qsublist = []
-rslist = [1.2]
-Nklist = range(14, 40)
 for rs in rslist:
     for Nk in Nklist:
         fname = getFilename(rs, Nk, NDIM)

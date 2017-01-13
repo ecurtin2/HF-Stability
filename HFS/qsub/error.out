@@ -24,3 +24,397 @@ id: id: id: cannot find name for group ID 530
 cannot find name for group ID 530id: cannot find name for group ID 530
 cannot find name for group ID 530
 
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 3142041152 Memory used by process 5890138112
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 3101689604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-2.local by ecurtin2 Wed Jan 11 14:49:33 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetType() line 70 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 BVDuplicate_Private() line 1346 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #8 BVDuplicateResize() line 1428 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #9 dvd_calcpairs_qz() line 597 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdcalcpairs.c
+[0]PETSC ERROR: #10 dvd_schm_basic_conf() line 88 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdschm.c
+[0]PETSC ERROR: #11 EPSSetUp_XD() line 217 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #12 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #13 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #14 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #15 Solve() line 137 in src/SLEPcWrapper.hpp
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+/opt/gridengine/default/spool/compute-0-2/job_scripts/2012: line 24: 19908 Aborted                 (core dumped) ${exe} 1.2 51 cRHF2cUHF > ${outfile}
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+/opt/gridengine/default/spool/compute-0-2/job_scripts/2013: line 24: 19915 Aborted                 (core dumped) ${exe} 1.2 52 cRHF2cUHF > ${outfile}
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 6778379424 Memory used by process 9187721216
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 3368833604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-2.local by ecurtin2 Wed Jan 11 14:52:15 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetType() line 70 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 BVDuplicate_Private() line 1346 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #8 BVDuplicateResize() line 1428 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #9 dvd_calcpairs_qz() line 599 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdcalcpairs.c
+[0]PETSC ERROR: #10 dvd_schm_basic_conf() line 88 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdschm.c
+[0]PETSC ERROR: #11 EPSSetUp_XD() line 217 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #12 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #13 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #14 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #15 Solve() line 137 in src/SLEPcWrapper.hpp
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+/opt/gridengine/default/spool/compute-0-2/job_scripts/2014: line 24: 19910 Aborted                 (core dumped) ${exe} 1.2 53 cRHF2cUHF > ${outfile}
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+/opt/gridengine/default/spool/compute-0-2/job_scripts/2015: line 24: 19912 Aborted                 (core dumped) ${exe} 1.2 54 cRHF2cUHF > ${outfile}
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 5468624 Memory used by process 3628068864
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 3992449604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-2.local by ecurtin2 Wed Jan 11 14:57:10 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+/opt/gridengine/default/spool/compute-0-2/job_scripts/2016: line 24: 19913 Aborted                 (core dumped) ${exe} 1.2 55 cRHF2cUHF > ${outfile}
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 4457072192 Memory used by process 9134039040
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 4414969604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-2.local by ecurtin2 Wed Jan 11 14:59:49 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetType() line 70 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 BVDuplicate_Private() line 1346 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #8 BVDuplicateResize() line 1428 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #9 dvd_calcpairs_qz() line 597 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdcalcpairs.c
+[0]PETSC ERROR: #10 dvd_schm_basic_conf() line 88 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdschm.c
+[0]PETSC ERROR: #11 EPSSetUp_XD() line 217 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #12 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #13 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #14 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #15 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 4820123616 Memory used by process 9840021504
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 4777537604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-2.local by ecurtin2 Wed Jan 11 15:03:12 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetType() line 70 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 BVDuplicate_Private() line 1346 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #8 BVDuplicateResize() line 1428 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #9 dvd_calcpairs_qz() line 597 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdcalcpairs.c
+[0]PETSC ERROR: #10 dvd_schm_basic_conf() line 88 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdschm.c
+[0]PETSC ERROR: #11 EPSSetUp_XD() line 217 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #12 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #13 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #14 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #15 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 10314831488 Memory used by process 16231768064
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 5135881604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-2.local by ecurtin2 Wed Jan 11 15:06:31 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetType() line 70 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 BVDuplicate_Private() line 1346 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #8 BVDuplicateResize() line 1428 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #9 dvd_calcpairs_qz() line 599 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdcalcpairs.c
+[0]PETSC ERROR: #10 dvd_schm_basic_conf() line 88 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdschm.c
+[0]PETSC ERROR: #11 EPSSetUp_XD() line 217 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #12 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #13 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #14 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #15 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 12266960 Memory used by process 13789229056
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 9091201604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-1.local by ecurtin2 Wed Jan 11 15:52:13 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 19289706752 Memory used by process 33265623040
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 9620329604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-1.local by ecurtin2 Wed Jan 11 16:00:49 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetType() line 70 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 BVDuplicate_Private() line 1346 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #8 BVDuplicateResize() line 1428 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #9 dvd_calcpairs_qz() line 599 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdcalcpairs.c
+[0]PETSC ERROR: #10 dvd_schm_basic_conf() line 88 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/dvdschm.c
+[0]PETSC ERROR: #11 EPSSetUp_XD() line 217 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #12 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #13 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #14 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #15 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 15070704 Memory used by process 17409339392
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 11194009604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-1.local by ecurtin2 Wed Jan 11 16:25:09 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+id: cannot find name for group ID 530
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 2289968 Memory used by process 1052033024
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 1608457604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-6.local by ecurtin2 Wed Jan 11 16:41:50 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 2289968 Memory used by process 1052028928
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 1608457604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-6.local by ecurtin2 Wed Jan 11 16:41:50 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 2289968 Memory used by process 1051848704
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 1608457604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-6.local by ecurtin2 Wed Jan 11 16:41:51 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 2289968 Memory used by process 595275776
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 1608457604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-6.local by ecurtin2 Wed Jan 11 16:41:52 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+[0]PETSC ERROR: --------------------- Error Message --------------------------------------------------------------
+[0]PETSC ERROR: Out of memory. This could be due to allocating
+[0]PETSC ERROR: too large an object or bleeding by not properly
+[0]PETSC ERROR: destroying unneeded objects.
+[0]PETSC ERROR: Memory allocated 2289968 Memory used by process 508682240
+[0]PETSC ERROR: Try running with -malloc_dump or -malloc_log for info.
+[0]PETSC ERROR: Memory requested 1608457604
+[0]PETSC ERROR: See http://www.mcs.anl.gov/petsc/documentation/faq.html for trouble shooting.
+[0]PETSC ERROR: Petsc Release Version 3.7.5, unknown 
+[0]PETSC ERROR: eps_monitor on a arch-linux2-c-debug named compute-0-6.local by ecurtin2 Wed Jan 11 16:41:53 2017
+[0]PETSC ERROR: Configure options CC=/share/ccs/gcc/gcc-5.4.0/bin/gcc CXX=/share/ccs/gcc/gcc-5.4.0/bin/g++ FC=/share/ccs/gcc/gcc-5.4.0/bin/gfortran --download-fblaslapack --download-mpich
+[0]PETSC ERROR: #1 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #2 PetscTrMallocDefault() line 188 in /home/ecurtin2/local/lib/petsc/src/sys/memory/mtr.c
+[0]PETSC ERROR: #3 VecCreate_Seq() line 37 in /home/ecurtin2/local/lib/petsc/src/vec/vec/impls/seq/bvec3.c
+[0]PETSC ERROR: #4 VecSetSizes() line 1387 in /home/ecurtin2/local/lib/petsc/src/vec/vec/interface/vector.c
+[0]PETSC ERROR: #5 BVCreate_Svec() line 500 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/impls/svec/svec.c
+[0]PETSC ERROR: #6 BVSetSizesFromVec() line 202 in /home/ecurtin2/local/lib/slepc-3.7.3/src/sys/classes/bv/interface/bvbasic.c
+[0]PETSC ERROR: #7 EPSAllocateSolution() line 506 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #8 EPSSetUp_XD() line 206 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/davidson.c
+[0]PETSC ERROR: #9 EPSSetUp_JD() line 124 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/impls/davidson/jd/jd.c
+[0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
+[0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
+[0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp

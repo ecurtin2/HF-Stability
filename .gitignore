@@ -1,8 +1,10 @@
 **.so
 **.o
 **.pyc
-src/build/*
-src/HFSDataFrame.pickle
+HFS/build/*
+HFS/qsub/generatedscripts
+HFS/log
+HFSDataFrame.pickle
 HFStability.cpp
 cyarma.cpp
 general_methods.pyc
