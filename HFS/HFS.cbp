@@ -7,7 +7,7 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="debug">
+			<Target title="debug2D">
 				<Option output="HFS" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
@@ -24,7 +24,7 @@
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
-			<Target title="release">
+			<Target title="release2D">
 				<Option output="HFS" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
@@ -44,7 +44,7 @@
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
-			<Target title="profile">
+			<Target title="profile2D">
 				<Option output="HFS" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
@@ -63,30 +63,121 @@
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
+			</Target>
+			<Target title="debug3D">
+				<Option output="HFS" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+			</Target>
+			<Target title="profile3D">
+				<Option output="HFS" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+			</Target>
+			<Target title="release3D">
+				<Option output="HFS" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="Makefile" />
-		<Unit filename="launch.py" />
-		<Unit filename="src/NDmap.hpp" />
-		<Unit filename="src/SLEPcWrapper.hpp" />
-		<Unit filename="src/base_funcs.cpp" />
-		<Unit filename="src/base_funcs.hpp" />
-		<Unit filename="src/calc_parameters.cpp" />
-		<Unit filename="src/calc_parameters.hpp" />
-		<Unit filename="src/debug.cpp" />
-		<Unit filename="src/debug.hpp" />
-		<Unit filename="src/fileIO.cpp" />
-		<Unit filename="src/fileIO.hpp" />
-		<Unit filename="src/main.cpp" />
-		<Unit filename="src/main.hpp" />
-		<Unit filename="src/matrix_utils.cpp" />
-		<Unit filename="src/matrix_utils.hpp" />
-		<Unit filename="src/parameters.cpp" />
-		<Unit filename="src/parameters.hpp" />
+		<Unit filename="Makefile">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="launch.py">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/NDmap.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/SLEPcWrapper.cpp" />
+		<Unit filename="src/SLEPcWrapper.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/base_funcs.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/base_funcs.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/calc_parameters.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/calc_parameters.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/debug.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/debug.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/fileIO.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/fileIO.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/main.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/main.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/matrix_utils.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/matrix_utils.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/parameters.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
+		<Unit filename="src/parameters.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<debugger />

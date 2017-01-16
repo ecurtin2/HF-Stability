@@ -20,12 +20,11 @@
 #
 
 CPPFLAGS   = -std=c++11 -larmadillo -O3
-LOCDIR     = home/evan/test/
 MANSEC     = EPS
-DATAPATH = ${SLEPC_DIR}/share/slepc/datafiles/matrices
 
 include ${SLEPC_DIR}/lib/slepc/conf/slepc_common
 
 ex3: ex3.o 
 	-${CLINKER} -o ex3 ex3.o -O3 -larmadillo ${SLEPC_EPS_LIB}
 	${RM} ex3.o
+

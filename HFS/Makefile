@@ -15,7 +15,7 @@ LIB = -larmadillo
 LOCDIR = home/evan/git/HF-Stability/
 MANSEC = EPS
 
-COMP = Gellmann
+COMP = Work
 
 # Work
 ifeq ($(COMP),Work)
@@ -23,7 +23,7 @@ ifeq ($(COMP),Work)
 	PETSC_DIR=/home/evan/git/petsc
 	PETSC_ARCH=linux-gnu-c-debug
 	SLEPC_ARCH=linux-gnu-c-debug
-endif 
+endif
 
 # Gellmann
 ifeq ($(COMP),Gellmann)

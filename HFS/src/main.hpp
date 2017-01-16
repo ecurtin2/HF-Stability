@@ -16,6 +16,10 @@ taken as command line input.
 #include "matrix_utils.hpp"
 #include "debug.hpp"
 #include "fileIO.hpp"
+#include "SLEPcWrapper.hpp"
+#include <chrono>
+#include <ctime>
+#include <stdio.h>
 
 int main(int argc, char* argv[]);
 /**<

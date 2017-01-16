@@ -20,12 +20,7 @@ This program is incomplete in the following ways
 2. Does not have a functioning 3D version.
 */
 
-
 #include "main.hpp"
-#include <chrono>
-#include <ctime>
-#include <stdio.h>
-#include "SLEPcWrapper.hpp"
 
 int main(int argc, char* argv[]){
     // Start the timers
@@ -47,7 +42,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[3];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 15;
+        HFS::Nk              = 12;
         HFS::OutputFileName  = "test.log";
         HFS::mycase          = "cRHF2cUHF";
     #endif // Release
@@ -73,7 +68,7 @@ int main(int argc, char* argv[]){
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
 
-    // Try this, weight by how close diags are
+    // Weight by how close diags are
     std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(HFS::Nmat, 0.0));
     for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
         arma::vec guessvec;
@@ -97,14 +92,10 @@ int main(int argc, char* argv[]){
     HFS::Dav_nconv = myeps.nconv;
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
-//    const char* fname = HFS::OutputFileName.c_str();
-//    std::cout << "Calculation finished, writing output to: "<< fname << std::endl;
-//    FILE* myfile = freopen(fname, "w", stdout);
     HFS::writeOutput(true);
 
     myeps.clean();
     fclose(stdout);
-    std::cout << "hi" << std::endl;
 
     #ifndef NDEBUG
         if (HFS::Nmat < 1500) {
