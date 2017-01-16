@@ -1,6 +1,7 @@
 #!/bin/bash
 #$ -S /bin/bash            # use bash shell
-#$ -q all.q@compute-0-0,all.q@compute-0-1,all.q@compute-0-2,all.q@compute-0-4,all.q@compute-0-5,all.q@compute-0-6,all.q@compute-0-7   # Queue jobs on any node  
+# -q all.q@compute-0-0,all.q@compute-0-1,all.q@compute-0-2,all.q@compute-0-4,all.q@compute-0-5,all.q@compute-0-6,all.q@compute-0-7   # Queue jobs on any node  
+#$ -q all.q@compute-0-5    # Queue jobs on any node  
 #$ -pe orte 1              # parallel environment: use N cores
 #$ -cwd                    # execute from current working directory
 #$ -e error.out

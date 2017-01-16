@@ -4,8 +4,8 @@ import os
 
 NDIM = 3
 CASE = "cRHF2cUHF"
-rslist = np.linspace(0.5, 10, 20)
-Nklist = [37]
+rslist = [1.2]
+Nklist = [45]
 
 
 f = open("templateqsub.sh", "r")

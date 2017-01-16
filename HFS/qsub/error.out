@@ -418,3 +418,4 @@ id: cannot find name for group ID 530
 [0]PETSC ERROR: #10 EPSSetUp() line 118 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssetup.c
 [0]PETSC ERROR: #11 EPSSolve() line 89 in /home/ecurtin2/local/lib/slepc-3.7.3/src/eps/interface/epssolve.c
 [0]PETSC ERROR: #12 Solve() line 137 in src/SLEPcWrapper.hpp
+id: cannot find name for group ID 530
