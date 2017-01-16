@@ -2,7 +2,7 @@
 **.o
 **.pyc
 **/build/*
-**HFSDataFrame.pickle
+/analysis/HFSDataFrame.pickle
 HFStability.cpp
 cyarma.cpp
 general_methods.pyc

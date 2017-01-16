@@ -58,7 +58,6 @@ namespace HFS {
                    ) {
         arma::uword N = Nk - 1;  // Unique Brillioun Zone
         arma::uword Nrows = std::pow(N, NDIM);
-        //states.set_size(Nrows, NDIM);
         arma::mat states(Nrows, NDIM);
 
         if (NDIM == 1) {
@@ -167,17 +166,17 @@ namespace HFS {
                                  - HFS::occ_energies(HFS::excitations(i, 0));
         }
 
+        // Sort ascending, these are the diagonals of the orbital hessian
         arma::uvec indices = arma::sort_index(HFS::exc_energies);
         HFS::exc_energies = HFS::exc_energies(indices);
         HFS::excitations = HFS::excitations.rows(indices);
     }
 
-    /* NEED 3D VERSION THO*/
 
     #if NDIM == 2
         void calcVirNTo1Map() {
             HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1);
-            HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
+            HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // this causes indexing errors in the event of misuse to help debug
             for (arma::uword i=0; i < HFS::Nvir; ++i){
                 HFS::vir_N_to_1_mat(HFS::vir_states(i, 0), HFS::vir_states(i, 1)) = i;
             }
@@ -185,7 +184,7 @@ namespace HFS {
     #elif NDIM == 3
         void calcVirNTo1Map() {
         HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1, HFS::Nk-1);
-        HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
+        HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // this causes indexing errors in the event of misuse to help debug
         for (arma::uword i=0; i < HFS::Nvir; ++i){
             HFS::vir_N_to_1_mat(HFS::vir_states(i, 0), HFS::vir_states(i, 1), HFS::vir_states(i, 2)) = i;
             }
@@ -194,7 +193,7 @@ namespace HFS {
 
     void calcInverseExcitationMap() {
         HFS::inv_exc_mat.set_size(HFS::Nocc, HFS::Nvir);
-        HFS::inv_exc_mat.fill(HFS::Nexc+1); // will make errors if accessing wrong one
+        HFS::inv_exc_mat.fill(HFS::Nexc+1); // this causes indexing errors in the event of misuse to help debug
         for (arma::uword i = 0; i < HFS::Nexc; ++i) {
             HFS::inv_exc_mat(HFS::excitations(i,0), HFS::excitations(i,1)) = i;
         }
