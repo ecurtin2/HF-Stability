@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+\expandafter\ifx\csname bibnamefont\endcsname\relax
+  \def\bibnamefont#1{#1}\fi
+\expandafter\ifx\csname bibfnamefont\endcsname\relax
+  \def\bibfnamefont#1{#1}\fi
+\expandafter\ifx\csname citenamefont\endcsname\relax
+  \def\citenamefont#1{#1}\fi
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{\texttt{#1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\bibinfo}[2]{#2}
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{\citenamefont{Guiliani and Vignale}(2005)}]{Guiliani2005}
+\bibinfo{author}{\bibfnamefont{G.}~\bibnamefont{Guiliani}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{G.}~\bibnamefont{Vignale}},
+  \emph{\bibinfo{title}{{Quantum Theory of the Electron Liquid}}}
+  (\bibinfo{publisher}{Cambridge University Press},
+  \bibinfo{address}{Cambridge}, \bibinfo{year}{2005}), ISBN
+  \bibinfo{isbn}{978-0-521-82112-6}.
+
+\end{thebibliography}

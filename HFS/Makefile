@@ -30,8 +30,8 @@ ifeq ($(COMP),Gellmann)
 	CC = /share/ccs/gcc/gcc-5.4.0/bin/g++
 	SLEPC_DIR=/home/ecurtin2/local/lib/slepc-3.7.3
 	PETSC_DIR=/home/ecurtin2/local/lib/petsc
-	PETSC_ARCH=arch-linux2-c-debug
-	SLEPC_ARCH=arch-linux2-c-debug
+	PETSC_ARCH=arch-64-bit-indices
+	SLEPC_ARCH=arch-64-bit-indices
 	LOCDIR=home/ecurtin2/git/HF-Stability/
 endif
 
