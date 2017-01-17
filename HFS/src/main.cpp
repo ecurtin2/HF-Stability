@@ -57,6 +57,7 @@ int main(int argc, char* argv[]){
     HFS::calcParameters();
     HFS::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
+    std::cout << "error?" << HFS::matrixVectorProductWorks() << std::endl;
 
 
 
@@ -98,9 +99,9 @@ int main(int argc, char* argv[]){
     fclose(stdout);
 
     #ifndef NDEBUG
-        if (HFS::Nmat < 1500) {
-            HFS::davidsonAgreesWithFullDiag();
-        }
+        //if (HFS::Nmat < 1500) {
+        //    HFS::davidsonAgreesWithFullDiag();
+        //}
 
         if ( !HFS::everything_works() ) {
             exit(EXIT_FAILURE);

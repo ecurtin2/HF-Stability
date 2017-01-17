@@ -41,6 +41,7 @@ namespace HFS {
                 return HFS::two_e_const / (norm * norm);
             #endif
         }
+
     }
 
     double twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {

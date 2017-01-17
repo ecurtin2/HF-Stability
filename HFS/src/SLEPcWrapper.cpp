@@ -148,11 +148,47 @@ void SLEPc::EpS::PrintEvecs(const char* format) {
     }
 }
 
-PetscErrorCode SLEPc::EpS::print(){
+PetscErrorCode SLEPc::EpS::print() {
     ierr = PetscViewerPushFormat(PETSC_VIEWER_STDOUT_WORLD, PETSC_VIEWER_ASCII_INFO_DETAIL);    CHKERRQ(ierr);
     ierr = EPSReasonView(eps, PETSC_VIEWER_STDOUT_WORLD);                                       CHKERRQ(ierr);
     ierr = EPSErrorView(eps, EPS_ERROR_RELATIVE,PETSC_VIEWER_STDOUT_WORLD);                     CHKERRQ(ierr);
     ierr = PetscViewerPopFormat(PETSC_VIEWER_STDOUT_WORLD);                                     CHKERRQ(ierr);
+    return ierr;
+}
+
+PetscErrorCode SLEPc::EpS::MatSetRowValues(Mat& M, PetscInt& irow, PetscInt nperrow) {
+    std::vector<PetscInt> irows(1);
+    irows[0] = irow;
+    std::vector<PetscInt> icols(nperrow);
+    std::vector<PetscScalar> vals(nperrow); // array of values. vals[i] = Matrix[irows[i], icols[i]]
+
+    getRowVals(vals, icols, irow);
+    PetscInt nrows = 1;
+    ierr = MatSetValues(M, nrows, &irows[0], nperrow, &icols[0], &vals[0], INSERT_VALUES);
+    return ierr;
+}
+
+void getRowVals(std::vector<PetscScalar>& vals, std::vector<PetscInt>& idx, PetscInt irow) {
+    for (unsigned i = 0; i < vals.size(); ++i) {
+        vals[i] = 1;
+        idx[i] = 1;
+    }
+
+}
+
+PetscErrorCode SLEPc::EpS::MatBuild(Mat& M, PetscInt nrows, PetscInt ncols, PetscInt nperrow) {
+
+    ierr = MatCreateSeqAIJ(PETSC_COMM_WORLD, nrows, ncols, nperrow, NULL, &M);        CHKERRQ(ierr);
+    ierr = MatSetFromOptions(M);                                                      CHKERRQ(ierr);
+    //PetscInt start, end;
+    //ierr = MatGetOwnershipRange(M, &start, &end);                                     CHKERRQ(ierr);
+    //for (Petscint rowidx = start; rowidx < end; ++rowidx) {
+    for (PetscInt i = 0; i < nrows; ++i) {
+        ierr = MatSetRowValues(M, i, ncols);                                          CHKERRQ(ierr);
+    }
+    ierr = MatAssemblyBegin(M, MAT_FINAL_ASSEMBLY);                                   CHKERRQ(ierr);
+    ierr = MatAssemblyEnd(M, MAT_FINAL_ASSEMBLY);                                     CHKERRQ(ierr);
+    ierr = 0;
     return ierr;
 }
 

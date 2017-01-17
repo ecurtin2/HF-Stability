@@ -41,7 +41,7 @@ namespace SLEPc {
             PetscErrorCode clean();
             PetscErrorCode SetInitialSpace(std::vector<std::vector<double>> vecs);
             PetscErrorCode EPSContext ();
-            PetscErrorCode PETSCMatShellCreate(Mat &matrix);
+            PetscErrorCode PETSCMatShellCreate(Mat& matrix);
             PetscErrorCode SetFromOptions();
             PetscErrorCode SetDimensions(PetscInt num_evals, PetscInt max_subspace_size);
             PetscErrorCode SetBlockSize(PetscInt blocksize);
@@ -50,8 +50,11 @@ namespace SLEPc {
             void PrintEvals(const char* format="%10.5f\n");
             void PrintEvecs(const char* format="%10.5f");
             PetscErrorCode print();
+            PetscErrorCode MatSetRowValues(Mat& M, PetscInt& irow, PetscInt ncols);
+            PetscErrorCode MatBuild(Mat& M, PetscInt nrows, PetscInt ncols, PetscInt nperrow);
 
     }; // Class EpS
 }; // Namespace SLEPc
+extern void getRowVals(std::vector<PetscScalar>& vals, std::vector<PetscInt>& idx, PetscInt irow);
 
 #endif // SLEPC_WRAPPER_INCLUDED
