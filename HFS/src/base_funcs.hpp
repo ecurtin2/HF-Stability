@@ -70,7 +70,9 @@ namespace HFS{
      */
         return (k < (HFS::kf));
     }
-    extern arma::uvec kToIndex(arma::vec& k);
+
+    //extern arma::uvec kToIndex(arma::vec& k);
+    extern void kToIndex(arma::vec& k, arma::uvec& idx);
     /**< \brief Given k-vector, return corresponding vector of indices in each dimension.
 
     Each element in k is converted to the corresponding index. Evenly spaced
@@ -92,7 +94,7 @@ namespace HFS{
     @see HFS::kgrid
     */
 
-    extern arma::vec occIndexToK(arma::uword i);
+    extern void occIndexToK(arma::uword i, arma::vec& k);
     /**< \brief Return the momentum of the i'th occupied state.
 
     @param i The index of the occupied state.

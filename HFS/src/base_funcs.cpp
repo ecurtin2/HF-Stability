@@ -16,11 +16,11 @@ namespace HFS {
         double exch = 0.0;
         arma::vec ki(NDIM), k2(NDIM);
         for (unsigned j = 0; j < NDIM; ++j) {
-            ki(j) = HFS::kgrid(states(i, j));
+            ki(j) = HFS::kgrid(states(j, i));
         }
         for (arma::uword k = 0; k < HFS::Nocc; ++k) {
             for (unsigned j = 0; j < NDIM; ++j) {
-                k2(j) = HFS::kgrid(HFS::occ_states(k, j));
+                k2(j) = HFS::kgrid(HFS::occ_states(j, k));
             }
             exch += HFS::twoElectron(ki, k2);
         }
@@ -67,12 +67,20 @@ namespace HFS {
             return HFS::two_e_const / std::pow(norm, NDIM - 1);
         }
     }
-
+/*
     arma::uvec kToIndex(arma::vec& k) {
         arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
         arma::uvec indices = arma::conv_to<arma::uvec>::from(idx);
         return indices;
     }
+*/
+    void kToIndex(arma::vec& k, arma::uvec& idx) {
+        for (unsigned i = 0; i < NDIM; ++i) {
+            idx[i] = std::round((k[i] + HFS::kmax) / HFS::deltaK);
+        }
+    }
+
+
 
     arma::umat kToIndex(arma::mat& k) {
         arma::mat idx = arma::round((k + HFS::kmax) / HFS::deltaK);
@@ -80,18 +88,16 @@ namespace HFS {
         return indices;
     }
 
-    arma::vec occIndexToK(arma::uword idx) {
-        arma::vec k(NDIM);
+    void occIndexToK(arma::uword idx, arma::vec&k) {
         for (unsigned i = 0; i < NDIM; ++i) {
-            k[i] = HFS::kgrid(HFS::occ_states(idx, i));
+            k[i] = HFS::kgrid(HFS::occ_states(i, idx));
         }
-        return k;
     }
 
     arma::vec virIndexToK(arma::uword idx) {
         arma::vec k(NDIM);
         for (unsigned i=0; i < NDIM; ++i) {
-            k[i] = HFS::kgrid(vir_states(idx, i));
+            k[i] = HFS::kgrid(vir_states(i, idx));
         }
         return k;
 
@@ -112,12 +118,12 @@ namespace HFS {
            containing armadillo vectors of momentum. The order
            of the returned vectors is ki, ka, kj, kb
            where s: i -> a and t: j -> b */
-        arma::uword i = HFS::excitations(s, 0);
-        arma::uword a = HFS::excitations(s, 1);
-        arma::uword j = HFS::excitations(t, 0);
-        arma::uword b = HFS::excitations(t, 1);
-        arma::vec ki = HFS::occIndexToK(i);
-        arma::vec kj = HFS::occIndexToK(j);
+        arma::uword i = HFS::excitations(0, s);
+        arma::uword a = HFS::excitations(1, s);
+        arma::uword j = HFS::excitations(0, t);
+        arma::uword b = HFS::excitations(1, t);
+        arma::vec ki(NDIM); HFS::occIndexToK(i, ki);
+        arma::vec kj(NDIM); HFS::occIndexToK(j, kj);
         arma::vec ka = HFS::virIndexToK(a);
         arma::vec kb = HFS::virIndexToK(b);
         std::vector<arma::vec> klist = {ki, ka, kj, kb};

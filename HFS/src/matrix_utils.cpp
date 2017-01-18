@@ -6,16 +6,16 @@ namespace HFS {
     // Start 1H Functions
 
     double calcFromIndices1A(arma::uword s, arma::uword t) {
-        arma::uword i = HFS::excitations(s, 0);
-        arma::uword a = HFS::excitations(s, 1);
-        arma::uword j = HFS::excitations(t, 0);
-        arma::uword b = HFS::excitations(t, 1);
+        arma::uword i = HFS::excitations(0, s);
+        arma::uword a = HFS::excitations(1, s);
+        arma::uword j = HFS::excitations(0, t);
+        arma::uword b = HFS::excitations(1, t);
         arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
         for (unsigned idx = 0; idx < NDIM; ++idx) {
-            ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
-            kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
-            ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
-            kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
+            ki[idx] = HFS::kgrid(HFS::occ_states(idx, i));
+            kj[idx] = HFS::kgrid(HFS::occ_states(idx, j));
+            ka[idx] = HFS::kgrid(HFS::vir_states(idx, a));
+            kb[idx] = HFS::kgrid(HFS::vir_states(idx, b));
         }
         double val = 0.0;
         if ((i == j) && (a == b)) {
@@ -26,16 +26,16 @@ namespace HFS {
     }
 
     double calcFromIndices1B(arma::uword s, arma::uword t) {
-        arma::uword i =  HFS::excitations(s, 0);
-        arma::uword a =  HFS::excitations(s, 1);
-        arma::uword j =  HFS::excitations(t, 0);
-        arma::uword b =  HFS::excitations(t, 1);
+        arma::uword i =  HFS::excitations(0, s);
+        arma::uword a =  HFS::excitations(1, s);
+        arma::uword j =  HFS::excitations(0, t);
+        arma::uword b =  HFS::excitations(1, t);
         arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
         for (unsigned idx = 0; idx < NDIM; ++idx) {
-            ki[idx] = HFS::kgrid(HFS::occ_states(i, idx));
-            kj[idx] = HFS::kgrid(HFS::occ_states(j, idx));
-            ka[idx] = HFS::kgrid(HFS::vir_states(a, idx));
-            kb[idx] = HFS::kgrid(HFS::vir_states(b, idx));
+            ki[idx] = HFS::kgrid(HFS::occ_states(idx, i));
+            kj[idx] = HFS::kgrid(HFS::occ_states(idx, j));
+            ka[idx] = HFS::kgrid(HFS::vir_states(idx, a));
+            kb[idx] = HFS::kgrid(HFS::vir_states(idx, b));
         }
         return 2.0 * twoElectronSafe(ka, kb, ki, kj) - twoElectronSafe(ka, kb, kj, ki);
     }
@@ -99,14 +99,14 @@ namespace HFS {
     void matrixVectorProduct3A(arma::vec& v, arma::vec& Mv) {
 
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
             arma::vec ki(NDIM), ka(NDIM);
-            ki = HFS::occIndexToK(i);
+            HFS::occIndexToK(i, ki);
             ka = HFS::virIndexToK(a);
             //#pragma omp parallel for
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
-                kj = HFS::occIndexToK(j);
+                HFS::occIndexToK(j, kj);
                 kb = ka + kj - ki; // Momentum conservation for <aj|bi>
                 HFS::toFirstBrillouinZone(kb);
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
@@ -125,14 +125,14 @@ namespace HFS {
     void matrixVectorProduct3B(arma::vec& v, arma::vec& Mv) {
 
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
             arma::vec ki(NDIM), ka(NDIM);
-            ki = HFS::occIndexToK(i);
+            HFS::occIndexToK(i, ki);
             ka = HFS::virIndexToK(a);
             //#pragma omp parallel for
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
-                kj = HFS::occIndexToK(j);
+                HFS::occIndexToK(j, kj);
                 kb = kj + ki - ka; // Momentum conservation for <ab|ji>
                 HFS::toFirstBrillouinZone(kb);
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
@@ -272,13 +272,13 @@ namespace HFS {
 
     void matrixVectorProductAprimeDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
             arma::vec ki(NDIM), ka(NDIM);
-            ki = HFS::occIndexToK(i);
+            HFS::occIndexToK(i, ki);
             ka = HFS::virIndexToK(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
-                kj = HFS::occIndexToK(j);
+                HFS::occIndexToK(j, kj);
                 kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
                 HFS::toFirstBrillouinZone(kb);
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
@@ -297,13 +297,13 @@ namespace HFS {
 
     void matrixVectorProductAprimeOffDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
             arma::vec ki(NDIM), ka(NDIM);
-            ki = HFS::occIndexToK(i);
+            HFS::occIndexToK(i, ki);
             ka = HFS::virIndexToK(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
-                kj = HFS::occIndexToK(j);
+                HFS::occIndexToK(j, kj);
                 kb = ka + kj - ki; // Momentum conservation for <aj|ib>
                 HFS::toFirstBrillouinZone(kb);
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
@@ -317,13 +317,13 @@ namespace HFS {
 
     void matrixVectorProductBprimeDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
             arma::vec ki(NDIM), ka(NDIM);
-            ki = HFS::occIndexToK(i);
+            HFS::occIndexToK(i, ki);
             ka = HFS::virIndexToK(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
-                kj = HFS::occIndexToK(j);
+                HFS::occIndexToK(j, kj);
                 kb = kj + ki - ka; // Momentum conservation for <ab|ij> or <ab|ji>
                 HFS::toFirstBrillouinZone(kb);
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
@@ -337,13 +337,13 @@ namespace HFS {
 
     void matrixVectorProductBprimeOffDiag(arma::vec& v, arma::vec& Mv) {
         for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-            arma::uword i = HFS::excitations(s, 0), a = HFS::excitations(s, 1);
+            arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
             arma::vec ki(NDIM), ka(NDIM);
-            ki = HFS::occIndexToK(i);
+            HFS::occIndexToK(i, ki);
             ka = HFS::virIndexToK(a);
             for (arma::uword j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
-                kj = HFS::occIndexToK(j);
+                HFS::occIndexToK(j, kj);
                 kb = kj + ki - ka; // Momentum conservation for <ab|ji>
                 HFS::toFirstBrillouinZone(kb);
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
@@ -390,7 +390,8 @@ namespace HFS {
     }
 
     arma::uword calcTfromKbAndJ(arma::vec& kb, arma::uword j) {
-        arma::uvec b_N_idx =  kToIndex(kb);
+        //arma::uvec b_N_idx =  kToIndex(kb);
+        arma::uvec b_N_idx(NDIM); kToIndex(kb, b_N_idx);
         #if NDIM == 2
             arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
         #elif NDIM == 3

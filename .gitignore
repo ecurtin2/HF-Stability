@@ -4,8 +4,7 @@
 HFS/build/*
 HFS/qsub/generatedscripts
 HFS/log
-HFSDataFrame.pickle
-analysis/HFSDataFrame.pickle
+**.pickle
 archive/logfiles
 HFStability.cpp
 cyarma.cpp

@@ -57,7 +57,6 @@ int main(int argc, char* argv[]){
     HFS::calcParameters();
     HFS::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
-    std::cout << "error?" << HFS::matrixVectorProductWorks() << std::endl;
 
 
 

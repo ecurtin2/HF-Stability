@@ -415,7 +415,11 @@ def plot_mvproduct_scaling(df, ax, scale=2):
 
     ax.set_title('Matrix - Vector Product Scaling')
 
-    sns.regplot(Nexcs*Noccs, mvtimes, ci=0.999, scatter_kws={'color' : sns.color_palette()[2], 's' : 50, 'zorder' : 2}
+    Nexcs = np.array_split(Nexcs, 2)[1]
+    Noccs = np.array_split(Noccs, 2)[1]
+    mvtimes=np.array_split(mvtimes, 2)[1]
+    
+    sns.regplot(Nexcs*Noccs, mvtimes, ci=0.999, order=1, scatter_kws={'color' : sns.color_palette()[2], 's' : 50, 'zorder' : 2}
                                             , line_kws={'zorder' : 1, 'linewidth' : 1})
     ax.set_xlabel('Nexc x Nocc')
     ax.set_ylabel('Execution Time (s)')
@@ -444,6 +448,8 @@ def plot_runtime(df, ax, *args, **kwargs):
     ax.set_title('Algorithm Runtime')
     ax.set_xlabel('Matrix Dimension')
     ax.set_ylabel('Wall Time of Entire Algorithm')
+    ax.set_xscale("log")
+    ax.set_yscale("log")
     ax.scatter(2*Nexcs, Walltime, *args, **kwargs)
 
 def plot_diag_scaling(df, ax):
