@@ -81,15 +81,15 @@ Functions</h2></td></tr>
 <tr class="memitem:ae39771f18471b751fb03a15ba0f4d964"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ae39771f18471b751fb03a15ba0f4d964">twoElectronSafe</a> (arma::vec &amp;k1, arma::vec &amp;k2, arma::vec &amp;k3, arma::vec &amp;k4)</td></tr>
 <tr class="memdesc:ae39771f18471b751fb03a15ba0f4d964"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the two electron integral, &lt;k1 k2|1/r|k3 k4&gt;  <a href="#ae39771f18471b751fb03a15ba0f4d964">More...</a><br /></td></tr>
 <tr class="separator:ae39771f18471b751fb03a15ba0f4d964"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a44f9ae53d29b22abe92f31d7e720cb1f"><td class="memItemLeft" align="right" valign="top">arma::uvec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a44f9ae53d29b22abe92f31d7e720cb1f">kToIndex</a> (arma::vec &amp;k)</td></tr>
-<tr class="memdesc:a44f9ae53d29b22abe92f31d7e720cb1f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given k-vector, return corresponding vector of indices in each dimension.  <a href="#a44f9ae53d29b22abe92f31d7e720cb1f">More...</a><br /></td></tr>
-<tr class="separator:a44f9ae53d29b22abe92f31d7e720cb1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1915ca0c3faa2386d4f8aa2241348aa8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a1915ca0c3faa2386d4f8aa2241348aa8">kToIndex</a> (arma::vec &amp;k, arma::uvec &amp;idx)</td></tr>
+<tr class="memdesc:a1915ca0c3faa2386d4f8aa2241348aa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given k-vector, return corresponding vector of indices in each dimension.  <a href="#a1915ca0c3faa2386d4f8aa2241348aa8">More...</a><br /></td></tr>
+<tr class="separator:a1915ca0c3faa2386d4f8aa2241348aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab92c0ece13e14b19519347acb64c57f8"><td class="memItemLeft" align="right" valign="top">arma::umat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ab92c0ece13e14b19519347acb64c57f8">kToIndex</a> (arma::mat &amp;k)</td></tr>
 <tr class="memdesc:ab92c0ece13e14b19519347acb64c57f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">kToIndex, overloaded for matrix  <a href="#ab92c0ece13e14b19519347acb64c57f8">More...</a><br /></td></tr>
 <tr class="separator:ab92c0ece13e14b19519347acb64c57f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba6a1bc0264cb57d63459162509b4869"><td class="memItemLeft" align="right" valign="top">arma::vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aba6a1bc0264cb57d63459162509b4869">occIndexToK</a> (arma::uword i)</td></tr>
-<tr class="memdesc:aba6a1bc0264cb57d63459162509b4869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the momentum of the i'th occupied state.  <a href="#aba6a1bc0264cb57d63459162509b4869">More...</a><br /></td></tr>
-<tr class="separator:aba6a1bc0264cb57d63459162509b4869"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d2a21a1c3ec762459fe24b99cfb59de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#a0d2a21a1c3ec762459fe24b99cfb59de">occIndexToK</a> (arma::uword i, arma::vec &amp;k)</td></tr>
+<tr class="memdesc:a0d2a21a1c3ec762459fe24b99cfb59de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the momentum of the i'th occupied state.  <a href="#a0d2a21a1c3ec762459fe24b99cfb59de">More...</a><br /></td></tr>
+<tr class="separator:a0d2a21a1c3ec762459fe24b99cfb59de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab58c841ce2b7acadecc412cb5c5cbd28"><td class="memItemLeft" align="right" valign="top">arma::vec&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ab58c841ce2b7acadecc412cb5c5cbd28">virIndexToK</a> (arma::uword i)</td></tr>
 <tr class="memdesc:ab58c841ce2b7acadecc412cb5c5cbd28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the momentum of the i'th virtual state.  <a href="#ab58c841ce2b7acadecc412cb5c5cbd28">More...</a><br /></td></tr>
 <tr class="separator:ab58c841ce2b7acadecc412cb5c5cbd28"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -256,8 +256,6 @@ Variables</h2></td></tr>
 <tr class="separator:a35c086cdd8d9c5cf5f3853abfb782c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad9b248452676a6f4ae721d849a6db40e"><td class="memItemLeft" align="right" valign="top">arma::umat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#ad9b248452676a6f4ae721d849a6db40e">excitations</a></td></tr>
 <tr class="separator:ad9b248452676a6f4ae721d849a6db40e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa9ed0b0fe5edf14a97dd1a41e6f0c7ab"><td class="memItemLeft" align="right" valign="top">arma::umat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aa9ed0b0fe5edf14a97dd1a41e6f0c7ab">vir_N_to_1_mat</a></td></tr>
-<tr class="separator:aa9ed0b0fe5edf14a97dd1a41e6f0c7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaaa731f9d0bdae4bb88c1ce9542cc451"><td class="memItemLeft" align="right" valign="top">arma::umat&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aaaa731f9d0bdae4bb88c1ce9542cc451">inv_exc_mat</a></td></tr>
 <tr class="separator:aaaa731f9d0bdae4bb88c1ce9542cc451"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb892e3cb99f1f05467b63f923d3d9cb"><td class="memItemLeft" align="right" valign="top">void(*&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceHFS.html#aeb892e3cb99f1f05467b63f923d3d9cb">MatVecProduct_func</a> )(arma::vec &amp;v, arma::vec &amp;Mv)</td></tr>
@@ -423,18 +421,28 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a44f9ae53d29b22abe92f31d7e720cb1f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44f9ae53d29b22abe92f31d7e720cb1f">&#9670;&nbsp;</a></span>kToIndex() <span class="overload">[1/2]</span></h2>
+<a id="a1915ca0c3faa2386d4f8aa2241348aa8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1915ca0c3faa2386d4f8aa2241348aa8">&#9670;&nbsp;</a></span>kToIndex() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">arma::uvec HFS::kToIndex </td>
+          <td class="memname">void HFS::kToIndex </td>
           <td>(</td>
           <td class="paramtype">arma::vec &amp;&#160;</td>
-          <td class="paramname"><em>k</em></td><td>)</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">arma::uvec &amp;&#160;</td>
+          <td class="paramname"><em>idx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -477,24 +485,34 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>matrix of indices </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#a44f9ae53d29b22abe92f31d7e720cb1f" title="Given k-vector, return corresponding vector of indices in each dimension. ">kToIndex()</a> </dd>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespaceHFS.html#a1915ca0c3faa2386d4f8aa2241348aa8" title="Given k-vector, return corresponding vector of indices in each dimension. ">kToIndex()</a> </dd>
 <dd>
 <a class="el" href="namespaceHFS.html#ae71f0b00606f4ff65d3fe2f791366c9f">HFS::kgrid</a> </dd></dl>
 
 </div>
 </div>
-<a id="aba6a1bc0264cb57d63459162509b4869"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aba6a1bc0264cb57d63459162509b4869">&#9670;&nbsp;</a></span>occIndexToK()</h2>
+<a id="a0d2a21a1c3ec762459fe24b99cfb59de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0d2a21a1c3ec762459fe24b99cfb59de">&#9670;&nbsp;</a></span>occIndexToK()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">arma::vec HFS::occIndexToK </td>
+          <td class="memname">void HFS::occIndexToK </td>
           <td>(</td>
           <td class="paramtype">arma::uword&#160;</td>
-          <td class="paramname"><em>i</em></td><td>)</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">arma::vec &amp;&#160;</td>
+          <td class="paramname"><em>k</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -2288,20 +2306,6 @@ HFS::calcVirtualEnergies(); </dd>
       <table class="memname">
         <tr>
           <td class="memname">arma::umat HFS::excitations</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aa9ed0b0fe5edf14a97dd1a41e6f0c7ab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa9ed0b0fe5edf14a97dd1a41e6f0c7ab">&#9670;&nbsp;</a></span>vir_N_to_1_mat</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">arma::umat HFS::vir_N_to_1_mat</td>
         </tr>
       </table>
 </div><div class="memdoc">

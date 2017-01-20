@@ -3,7 +3,7 @@ var searchData=
   ['parameters_2ecpp',['parameters.cpp',['../parameters_8cpp.html',1,'']]],
   ['parameters_2ehpp',['parameters.hpp',['../parameters_8hpp.html',1,'']]],
   ['petsc_5fmatvecprod',['Petsc_MatVecProd',['../namespaceSLEPc.html#a6432301c8ecfaa2bdb1bbdb5ab6ff5cf',1,'SLEPc']]],
-  ['petscmatcreate',['PETSCMatCreate',['../classSLEPc_1_1EpS.html#a69cdc4e49343d6226785543b1b56f81e',1,'SLEPc::EpS']]],
+  ['petscmatshellcreate',['PETSCMatShellCreate',['../classSLEPc_1_1EpS.html#a83a18f165a05e576355d281b149d76c8',1,'SLEPc::EpS']]],
   ['pi',['PI',['../parameters_8hpp.html#a598a3330b3c21701223ee0ca14316eca',1,'parameters.hpp']]],
   ['print',['print',['../classndMap.html#ae6cbee96a5519b0cfc3ef1777a2d5bf9',1,'ndMap::print()'],['../classSLEPc_1_1EpS.html#ac57a23eae487e3cd00268fbf3b9c4bf9',1,'SLEPc::EpS::print()'],['../fileIO_8cpp.html#ad61844ab25ea35139950e67e9693bc9f',1,'PRINT():&#160;fileIO.cpp']]],
   ['printevals',['PrintEvals',['../classSLEPc_1_1EpS.html#a76d8479274e15f6062a48fdd7f139cbb',1,'SLEPc::EpS']]],

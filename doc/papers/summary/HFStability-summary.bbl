@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname bibnamefont\endcsname\relax
   \def\bibnamefont#1{#1}\fi
@@ -12,12 +12,89 @@
 \providecommand{\bibinfo}[2]{#2}
 \providecommand{\eprint}[2][]{\url{#2}}
 
-\bibitem[{\citenamefont{Guiliani and Vignale}(2005)}]{Guiliani2005}
-\bibinfo{author}{\bibfnamefont{G.}~\bibnamefont{Guiliani}} \bibnamefont{and}
-  \bibinfo{author}{\bibfnamefont{G.}~\bibnamefont{Vignale}},
-  \emph{\bibinfo{title}{{Quantum Theory of the Electron Liquid}}}
-  (\bibinfo{publisher}{Cambridge University Press},
-  \bibinfo{address}{Cambridge}, \bibinfo{year}{2005}), ISBN
-  \bibinfo{isbn}{978-0-521-82112-6}.
+\bibitem[{\citenamefont{Thouless}(1960)}]{Thouless1960}
+\bibinfo{author}{\bibfnamefont{D.}~\bibnamefont{Thouless}},
+  \bibinfo{journal}{Nuclear Physics} \textbf{\bibinfo{volume}{21}},
+  \bibinfo{pages}{225} (\bibinfo{year}{1960}), ISSN \bibinfo{issn}{00295582},
+  \urlprefix\url{http://linkinghub.elsevier.com/retrieve/pii/0029558260900481}.
+
+\bibitem[{\citenamefont{Čížek and Paldus}(1967)}]{Cizek1967}
+\bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{Čížek}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{J.}~\bibnamefont{Paldus}},
+  \bibinfo{journal}{The Journal of Chemical Physics}
+  \textbf{\bibinfo{volume}{47}}, \bibinfo{pages}{3976} (\bibinfo{year}{1967}),
+  ISSN \bibinfo{issn}{00219606},
+  \urlprefix\url{http://scitation.aip.org/content/aip/journal/jcp/47/10/10.1063/1.1701562}.
+
+\bibitem[{\citenamefont{Seeger and Pople}(1977)}]{Seeger1977}
+\bibinfo{author}{\bibfnamefont{R.}~\bibnamefont{Seeger}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{J.~A.} \bibnamefont{Pople}},
+  \bibinfo{journal}{The Journal of Chemical Physics}
+  \textbf{\bibinfo{volume}{66}}, \bibinfo{pages}{3045} (\bibinfo{year}{1977}),
+  ISSN \bibinfo{issn}{00219606},
+  \urlprefix\url{http://scitation.aip.org/content/aip/journal/jcp/66/7/10.1063/1.434318}.
+
+\bibitem[{\citenamefont{Pulay and T{\'{o}}tha}(2016)}]{Pulay2016}
+\bibinfo{author}{\bibfnamefont{P.}~\bibnamefont{Pulay}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{Z.}~\bibnamefont{T{\'{o}}tha}},
+  \bibinfo{journal}{Preprint} \textbf{\bibinfo{volume}{164102}},
+  \bibinfo{pages}{1} (\bibinfo{year}{2016}), ISSN \bibinfo{issn}{0021-9606},
+  \urlprefix\url{http://dx.doi.org/10.1063/1.4964903}.
+
+\bibitem[{\citenamefont{Goings et~al.}(2015)\citenamefont{Goings, Ding, Frisch,
+  and Li}}]{Goings2015}
+\bibinfo{author}{\bibfnamefont{J.~J.} \bibnamefont{Goings}},
+  \bibinfo{author}{\bibfnamefont{F.}~\bibnamefont{Ding}},
+  \bibinfo{author}{\bibfnamefont{M.~J.} \bibnamefont{Frisch}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{X.}~\bibnamefont{Li}},
+  \bibinfo{journal}{The Journal of Chemical Physics}
+  \textbf{\bibinfo{volume}{142}}, \bibinfo{pages}{154109}
+  (\bibinfo{year}{2015}), ISSN \bibinfo{issn}{0021-9606},
+  \urlprefix\url{http://dx.doi.org/10.1063/1.4918561
+  http://scitation.aip.org/content/aip/journal/jcp/142/15/10.1063/1.4918561}.
+
+\bibitem[{\citenamefont{Overhauser}(1962)}]{Overhauser1962}
+\bibinfo{author}{\bibfnamefont{A.~W.} \bibnamefont{Overhauser}},
+  \bibinfo{journal}{Physical Review} \textbf{\bibinfo{volume}{128}},
+  \bibinfo{pages}{1437} (\bibinfo{year}{1962}), ISSN \bibinfo{issn}{0031-899X},
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRev.128.1437}.
+
+\bibitem[{\citenamefont{Ceperley and Alder}(1980)}]{Ceperley1980}
+\bibinfo{author}{\bibfnamefont{D.~M.} \bibnamefont{Ceperley}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{B.~J.} \bibnamefont{Alder}},
+  \bibinfo{journal}{Physical Review Letters} \textbf{\bibinfo{volume}{45}},
+  \bibinfo{pages}{566} (\bibinfo{year}{1980}), ISSN \bibinfo{issn}{0031-9007},
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevLett.45.566}.
+
+\bibitem[{\citenamefont{Delyon et~al.}(2008)\citenamefont{Delyon, Duneau,
+  Bernu, and Holzmann}}]{Delyon2008}
+\bibinfo{author}{\bibfnamefont{F.}~\bibnamefont{Delyon}},
+  \bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Duneau}},
+  \bibinfo{author}{\bibfnamefont{B.}~\bibnamefont{Bernu}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Holzmann}}, pp.
+  \bibinfo{pages}{1--12} (\bibinfo{year}{2008}), \eprint{0807.0770},
+  \urlprefix\url{http://arxiv.org/abs/0807.0770}.
+
+\bibitem[{\citenamefont{Bernu et~al.}(2011)\citenamefont{Bernu, Delyon,
+  Holzmann, and Baguet}}]{Bernu2011}
+\bibinfo{author}{\bibfnamefont{B.}~\bibnamefont{Bernu}},
+  \bibinfo{author}{\bibfnamefont{F.}~\bibnamefont{Delyon}},
+  \bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Holzmann}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{L.}~\bibnamefont{Baguet}},
+  \bibinfo{journal}{Physical Review B} \textbf{\bibinfo{volume}{84}},
+  \bibinfo{pages}{115115} (\bibinfo{year}{2011}), ISSN
+  \bibinfo{issn}{1098-0121},
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevB.84.115115}.
+
+\bibitem[{\citenamefont{Baguet et~al.}(2013)\citenamefont{Baguet, Delyon,
+  Bernu, and Holzmann}}]{Baguet2013}
+\bibinfo{author}{\bibfnamefont{L.}~\bibnamefont{Baguet}},
+  \bibinfo{author}{\bibfnamefont{F.}~\bibnamefont{Delyon}},
+  \bibinfo{author}{\bibfnamefont{B.}~\bibnamefont{Bernu}}, \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{M.}~\bibnamefont{Holzmann}},
+  \bibinfo{journal}{Physical Review Letters} \textbf{\bibinfo{volume}{111}},
+  \bibinfo{pages}{166402} (\bibinfo{year}{2013}), ISSN
+  \bibinfo{issn}{0031-9007},
+  \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevLett.111.166402}.
 
 \end{thebibliography}

@@ -6,44 +6,44 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: ../heg_references.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 1 entry,
+You've used 10 entries,
             3411 wiz_defined-function locations,
-            1160 strings with 10198 characters,
-and the built_in function-call counts, 640 in all, are:
-= -- 31
-> -- 17
-< -- 3
-+ -- 12
-- -- 4
-* -- 90
-:= -- 71
-add.period$ -- 1
-call.type$ -- 1
-change.case$ -- 4
-chr.to.int$ -- 1
-cite$ -- 1
-duplicate$ -- 57
-empty$ -- 57
-format.name$ -- 13
-if$ -- 112
+            1248 strings with 12318 characters,
+and the built_in function-call counts, 7054 in all, are:
+= -- 425
+> -- 214
+< -- 33
++ -- 168
+- -- 52
+* -- 994
+:= -- 771
+add.period$ -- 10
+call.type$ -- 10
+change.case$ -- 40
+chr.to.int$ -- 10
+cite$ -- 10
+duplicate$ -- 627
+empty$ -- 591
+format.name$ -- 138
+if$ -- 1336
 int.to.chr$ -- 1
-int.to.str$ -- 2
-missing$ -- 10
-newline$ -- 18
-num.names$ -- 3
-pop$ -- 17
+int.to.str$ -- 11
+missing$ -- 94
+newline$ -- 45
+num.names$ -- 30
+pop$ -- 130
 preamble$ -- 1
-purify$ -- 4
+purify$ -- 40
 quote$ -- 0
-skip$ -- 19
+skip$ -- 253
 stack$ -- 0
-substring$ -- 11
-swap$ -- 47
-text.length$ -- 2
+substring$ -- 249
+swap$ -- 519
+text.length$ -- 27
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 4
+type$ -- 60
 warning$ -- 0
-while$ -- 2
+while$ -- 32
 width$ -- 0
-write$ -- 24
+write$ -- 133
