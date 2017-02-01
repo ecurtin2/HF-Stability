@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[3];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 12;
+        HFS::Nk              = 15;
         HFS::OutputFileName  = "test.log";
         HFS::mycase          = "cRHF2cUHF";
     #endif // Release
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]){
         vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
     }
 
-
+    HFS::davidsonAgreesWithFullDiag();
 
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;
@@ -92,10 +92,11 @@ int main(int argc, char* argv[]){
     HFS::Dav_nconv = myeps.nconv;
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
-    HFS::writeOutput(true);
+    HFS::writeOutput(false);
 
     myeps.clean();
     fclose(stdout);
+
 
     #ifndef NDEBUG
         //if (HFS::Nmat < 1500) {

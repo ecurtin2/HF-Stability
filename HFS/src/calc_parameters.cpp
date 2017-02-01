@@ -139,7 +139,8 @@ namespace HFS {
         Nexc = 0;
         for (arma::uword i = 0; i < occ_states.n_cols; ++i) {
             // Excite only in +x direction
-            for (arma::uword j = 1; j < Nk-1; ++j) {
+            //for (arma::uword j = 1; j < Nk-1; ++j) {
+            for (arma::uword j = 1; j < 3; ++j) {
                 kexc = kgrid(occ_states.col(i));
                 kexc(0) += deltaK * j;
                 HFS::toFirstBrillouinZone(kexc);
@@ -157,8 +158,8 @@ namespace HFS {
 
             }
         }
-        excitations  = excitations.head_cols(Nexc);
-        exc_energies = exc_energies.head(Nexc);
+        excitations  = excitations.head_cols(Nexc); // excitations is now full
+        exc_energies = exc_energies.head(Nexc);  // set the size of exc_energies
     }
 
     void calcExcitationEnergies() {
