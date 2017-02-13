@@ -1,5 +1,4 @@
 #include "matrix_utils.hpp"
-//#include <omp.h>
 
 namespace HFS {
 
@@ -93,7 +92,9 @@ namespace HFS {
 
     void matrixVectorProduct3H(arma::vec& v, arma::vec& Mv) {
         Mv.zeros();
-        factorize2by2MatrixVectorProduct(v, Mv, matrixVectorProduct3A, matrixVectorProduct3B, matrixVectorProduct3B, matrixVectorProduct3A);
+        //factorize2by2MatrixVectorProduct(v, Mv, matrixVectorProduct3A, matrixVectorProduct3B, matrixVectorProduct3B, matrixVectorProduct3A);
+        matrixVectorProduct3A(v, Mv);
+        matrixVectorProduct3B(v, Mv);
     }
 
     void matrixVectorProduct3A(arma::vec& v, arma::vec& Mv) {
@@ -138,7 +139,7 @@ namespace HFS {
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                     // only if momentum conserving state is virtual
                     arma::uword t = HFS::calcTfromKbAndJ(kb, j);
-                    Mv(s) += -1.0 * HFS::twoElectron(ka, kj) * v(t);
+                    Mv(s) += 1.0 * HFS::twoElectron(ka, kj) * v(t);
                 }
             }
         }
@@ -406,7 +407,7 @@ namespace HFS {
         if (HFS::mycase == "cRHF2cUHF") {
             HFS::MatVecProduct_func = HFS::matrixVectorProduct3H;
             HFS::Matrix_func = HFS::calcFromIndices3H;
-            HFS::Nmat = 2 * HFS::Nexc;
+            HFS::Nmat = HFS::Nexc;
         } else if (HFS::mycase == "cUHF2cUHF") {
             HFS::MatVecProduct_func = HFS::matrixVectorProductHprime;
             HFS::Matrix_func = HFS::calcFromIndicesHprime;

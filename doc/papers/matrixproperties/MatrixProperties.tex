@@ -15,12 +15,12 @@
 \definecolor{myred}{HTML}{990000}
 \definecolor{myblue}{HTML}{002299}
 
-\newcommand{\Ap}{\textcolor{myred}{\braket{aj|ib}}}
-\newcommand{\App}{\textcolor{myred}{\braket{aj|bi}}}
-\newcommand{\Aa}{\textcolor{myred}{\braket{aj||ib}}}
-\newcommand{\B}{\textcolor{myblue}{\braket{ab|ij}}}
-\newcommand{\Br}{\textcolor{myblue}{\braket{ab|ji}}}
-\newcommand{\Ba}{\textcolor{myblue}{\braket{ab||ij}}}
+\newcommand{\Ap}{\textcolor{myred}{\left(aj|ib\right)}}
+\newcommand{\App}{\textcolor{myred}{\left(aj|bi\right)}}
+\newcommand{\Aa}{\textcolor{myred}{\left(aj||ib\right)}}
+\newcommand{\B}{\textcolor{myblue}{\left(ab|ij\right)}}
+\newcommand{\Br}{\textcolor{myblue}{\left(ab|ji\right)}}
+\newcommand{\Ba}{\textcolor{myblue}{\left(ab||ij\right)}}
 
 \newcommand{\AtoB}{\mathbf{\alpha\rightarrow\beta}}
 \newcommand{\BtoA}{\mathbf{\beta\rightarrow\alpha}}
@@ -45,37 +45,39 @@ Hessian has the form,
     \mathbf{B^*} & \mathbf{A^*} \\
   \end{bmatrix}
 \end{eqnarray*}
-
 Where the matrices denoted by $\mathbf{A}$ and $\mathbf{B}$ are given by,
-
 \begin{eqnarray*}
-  A_{st} &=& \e\diag -  \Aa \\
-  B_{st} &=& \Ba         \\
+  A_{st} &=& \e\diag +  \textcolor{myred}{\braket{aj||ib}} \\
+  B_{st} &=& \textcolor{myblue}{\braket{ab||ij}}         
 \end{eqnarray*}
-
 The color is to help keep track of which portions of the matrices come from
 $\mathbf{A}$ and $\mathbf{B}$.
 The integration is over spin and spatial coordinates. In the case of
 a stationary UHF solution, the matrices $\mathbf{A}$ and $\mathbf{B}$ have the
 following forms, after integrating over spin:
-
+\begin{eqnarray*}
+  A_{st} &=& \e\diag \textcolor{myred}{+ \delta_{\sigma_i\sigma_a}\delta_{\sigma_j\sigma_b}\Ap
+                     - \delta_{\sigma_a\sigma_b}\delta_{\sigma_i\sigma_j}\App} \\
+  B_{st} &=& \textcolor{myblue}{\delta_{\sigma_a\sigma_i}\delta_{\sigma_b\sigma_j}\B 
+             - \delta_{\sigma_a\sigma_b}\delta_{\sigma_i\sigma_j}\Br} 
+\end{eqnarray*}
+In matrix form, 
 \begin{eqnarray*}
   \mathbf{A}&=&\kbordermatrix{
         & \AtoA           & \AtoB           & \BtoA          & \BtoB          \\
   \AtoA & \e\diag + \Aa   & 0               & 0              & \Ap            \\
   \AtoB & 0               & \e\diag - \App  & 0              & 0              \\
   \BtoA & 0               & 0               & \e\diag - \App & 0              \\
-  \BtoB & \Ap             & 0               & 0              & \e\diag + \Aa  \\
+  \BtoB & \Ap             & 0               & 0              & \e\diag + \Aa  
 }
 \end{eqnarray*}
-
 \begin{eqnarray*}
   \mathbf{B}&=&\kbordermatrix{
         & \AtoA           & \AtoB           & \BtoA          & \BtoB          \\
   \AtoA & \Ba             & 0               & 0              & \B             \\
   \AtoB & 0               & 0               & -\Br           & 0              \\
   \BtoA & 0               & -\Br            & 0              & 0              \\
-  \BtoB & \B              & 0               & 0              & \Ba            \\
+  \BtoB & \B              & 0               & 0              & \Ba            
 }
 \end{eqnarray*}
 \\
