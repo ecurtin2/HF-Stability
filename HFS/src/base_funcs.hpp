@@ -14,7 +14,6 @@
 namespace HFS{
     extern double exchange(arma::umat& states, arma::uword i);
     /**< \brief Calculate the exchange energy for the given state.
-
     @param states Either occ_states or vir_states. Will determine the exchange
     energy for the i'th occupied or the i'th virtual state depending on input.
     @param i The index of the state to be considered.

@@ -175,8 +175,6 @@ namespace HFS {
         HFS::excitations = HFS::excitations.cols(indices);
     }
 
-    /* NEED 3D VERSION THO*/
-
     #if NDIM == 2
         void calcVirNTo1Map() {
             HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1);

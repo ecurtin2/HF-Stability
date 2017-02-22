@@ -1,5 +1,0 @@
-\form#0:$<k1 k2| 1/r | k3 k4>$
-\form#1:$\left< k_1 k_2| \frac{1}{r}| k_3 k_4\right>$
-\form#2:$\left< k_1 k_2| \frac{1}{r_{12}}| k_3 k_4\right>$
-\form#3:\[ \left< k_1 k_2| \frac{1}{r_{12}}| k_3 k_4\right> \]
-\form#4:\[ \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right> \]
