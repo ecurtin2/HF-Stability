@@ -1,9 +1,31 @@
+/** @file NDmap.hpp
+@author Evan Curtin
+@version Revision 0.1
+@brief Header-only implementation of N-dimensional template array.
+@details
+@date Wednesday, 22 Feb, 2017
+*/
+
+#ifndef NDMAP_INCLUDED
+#define NDMAP_INCLUDED
+
 #include <iostream>
 #include <vector>
 #include <stdarg.h>
 
 template <class a_type>
 class ndMap {
+/** \brief Template-typed N-dimensional array container.
+ *  Meant for use only to store and retrieve data. Used to store
+ *  N indices mapping to 1 index. Data stored in row-major ordering.
+ *  Elements are accessed with the () operator. Needs to be compiled
+ *  with -std=c++11 or newer.
+ *
+ *  ### Output
+ *  \include NDmap_example.log
+ *  ### Source
+ *  \example NDmap_example.cpp
+ */
 
     private:
         std::vector<a_type> data;
@@ -72,3 +94,4 @@ class ndMap {
         recursivePrint(ndim, indices);
     }
 };
+#endif // NDMAP_INCLUDED

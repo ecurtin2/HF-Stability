@@ -83,8 +83,8 @@ namespace HFS {
     @param inp_states A matrix where each row corresponds to the x, y and z indices
     of each state. Reminder that the momentum is HFS::kgrid[index].
     @param energy_vec reference to a vector where the energies will be stored.
-
     */
+
     extern void calcExcitations(arma::vec& kgrid
                         ,unsigned Nk
                         ,double deltaK
@@ -106,13 +106,43 @@ namespace HFS {
     @param [out] excitations Matrix where each row contains [occupied_idx, virtual_idx]
     @param [out] exc_energies Energy difference of occ and vir state in excitation
     @param [out] Nexc Number of excitations
-
-
-
     */
+
     extern void calcExcitationEnergies();
+    /**< \brief Calculates and sorts the "excitation energies." Sorts excitations
+
+    The "excitation energy" in this program is the difference in energy
+    between an occupied and virtual state. The energies are sorted in ascending
+    order. HFS::excitations is sorted accordingly. Sets the following variables:
+    @see exc_energies
+    @see excitations
+    */
+
     extern void calcLowestEnergyExcitationDegeneracy();
+    /**< \brief Calculate the number of states with the lowest energy.
+
+    Calculates how many excitation are within SMALLNUMBER of the lowest
+    energy excitation.
+    @see SMALLNUMBER
+    @see exc_energies
+    */
+
     extern void calcVirNTo1Map();
+    /**< \brief Create the Map to convert between 3/2-index and 1-index representation of virtual state.
+
+    The NDIM compiler directory determines if this is an arma::ucube (3d) or arma::umat
+    (2d).
+    @see NDIM
+    @see vir_N_to_1_mat
+    @see vir_states
+    */
+
     extern void calcInverseExcitationMap();
+    /**< \brief Create a map that converts from i, a --> s
+
+    The one index denoting the excitation, s corresponds to the excitation from
+    occupied state i to virtual state a.
+    @see HFS::inv_exc_mat
+    */
 }
 #endif // HFS_params_calc_included

@@ -17,10 +17,10 @@ Fock stability of the Homogeneous Electron Gas.
 /*
 This program is incomplete in the following ways
 1. Does not play well with MPI.
-2. Does not have a functioning 3D version.
 */
 
 #include "main.hpp"
+#include "NDmap.hpp"
 
 int main(int argc, char* argv[]){
     // Start the timers
@@ -42,9 +42,9 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[3];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 15;
+        HFS::Nk              = 12;
         HFS::OutputFileName  = "test.log";
-        HFS::mycase          = "cRHF2cUHF";
+        HFS::mycase          = "cRHF2cGHF";
     #endif // Release
 
     HFS::Dav_tol         = 1e-6;
@@ -78,7 +78,7 @@ int main(int argc, char* argv[]){
         vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
     }
 
-    HFS::davidsonAgreesWithFullDiag();
+    //HFS::davidsonAgreesWithFullDiag();
 
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;
@@ -99,15 +99,14 @@ int main(int argc, char* argv[]){
 
 
     #ifndef NDEBUG
-        //if (HFS::Nmat < 1500) {
-        //    HFS::davidsonAgreesWithFullDiag();
-        //}
+        if (HFS::Nmat < 1500) {
+            HFS::davidsonAgreesWithFullDiag();
+        }
 
         if ( !HFS::everything_works() ) {
             exit(EXIT_FAILURE);
         }
     #endif //NDEBUG
-
 
     return 0;
 }
