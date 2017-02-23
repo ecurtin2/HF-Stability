@@ -4,6 +4,7 @@
 HFS/build/*
 HFS/qsub/generatedscripts
 HFS/log
+HFS/doxygen*
 **.pickle
 archive/logfiles
 HFStability.cpp
