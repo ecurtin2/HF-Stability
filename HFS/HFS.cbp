@@ -92,7 +92,6 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
-		<Unit filename="doxygen/examples/NDmap_example.cpp" />
 		<Unit filename="launch.py">
 			<Option target="debug2D" />
 			<Option target="release2D" />

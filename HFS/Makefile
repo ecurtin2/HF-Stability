@@ -66,7 +66,7 @@ debug2D: $(TARGET)
 profile2D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=2
 profile2D:  $(TARGET)
 
-release2D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing -D NDIM=2
+release2D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=2
 release2D: $(TARGET)
 
 debug3D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=3
@@ -75,7 +75,7 @@ debug3D: $(TARGET)
 profile3D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=3
 profile3D:  $(TARGET)
 
-release3D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -fno-strict-aliasing -D NDIM=3
+release3D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=3
 release3D: $(TARGET)
 
 

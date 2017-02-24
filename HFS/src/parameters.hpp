@@ -49,11 +49,11 @@ namespace HFS{
     extern arma::umat occ_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th occupied state. */
     extern arma::umat vir_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th virtual state. */
     extern arma::umat excitations;            /**< Matrix where the i'th row contains the indices for the corresponding [occupied, virtual] states. */
-    extern #if NDIM == 2
-    extern   arma::umat vir_N_to_1_mat;       /**< Matrix/Cube where the value is the virtual state index */
-    extern #elif NDIM == 3
-    extern   arma::ucube vir_N_to_1_mat;
-    extern #endif // NDIM;
+    #if NDIM == 2
+      extern   arma::umat vir_N_to_1_mat;       /**< Matrix/Cube where the value is the virtual state index */
+    #elif NDIM == 3
+      extern   arma::ucube vir_N_to_1_mat;
+    #endif // NDIM;
     extern arma::umat inv_exc_mat;            /**< The [i,a]'th element is s, where s labels the excitation i -> a.  */
     extern void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv); /**< Function pointer for the matrix-vector product. Is set by HFS::setMatrixPropertiesFromCase */
     extern double (*Matrix_func)(arma::uword i, arma::uword j);     /**< Function pointer for the matrix elements. Is set by HFS::setMatrixPropertiesFromCase */

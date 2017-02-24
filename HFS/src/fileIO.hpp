@@ -22,7 +22,7 @@ namespace HFS{
      *
      */
 
-    std::string centerString(std::string s, int width);
+    extern std::string centerString(std::string s, int width);
     /** \brief Return the string, padded by spaces to center it.
      *
      * \param s The string to be centered.
