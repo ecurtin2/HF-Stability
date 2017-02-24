@@ -13,7 +13,7 @@
 #include <vector>
 #include <stdarg.h>
 
-template <class a_type>
+template <class index>
 class ndMap {
 /** \brief Template-typed N-dimensional array container.
  *  Meant for use only to store and retrieve data. Used to store
@@ -21,21 +21,43 @@ class ndMap {
  *  Elements are accessed with the () operator. Needs to be compiled
  *  with -std=c++11 or newer.
  *
- *  ### Output
- *  \include NDmap_example.log
- *  ### Source
+ *  ### Example
+ *
  *  \example NDmap_example.cpp
+ *
  */
 
     private:
-        std::vector<a_type> data;
-        std::vector<a_type> steps;
-    public:
-        a_type n_elem;
-        unsigned ndim;
-        std::vector<a_type> shape;
+        std::vector<index> data;
+        std::vector<index> steps;
 
-    ndMap(std::vector<a_type>& lengths) {
+        void recursivePrint(unsigned depth, std::vector<index>& indices) {
+            if (depth > 0) {
+                for (index i = 0; i < shape[depth-1]; ++i) {
+                    indices[ndim - depth] = i;
+                    recursivePrint(depth - 1, indices);
+                }
+            }else{
+                std::cout << "[";
+                unsigned i = 0;
+                while (i < indices.size() - 1) {
+                   std::cout << indices[i] << ", ";
+                   ++i;
+                }
+                index idx = indices[0] * steps[0];
+                for (unsigned i = 1; i < ndim; ++i) {
+                    idx += indices[i] * steps[i];
+                }
+                std::cout << indices[i] << "] = "<< data[idx] << std::endl;
+            }
+        }
+
+    public:
+        index n_elem;
+        unsigned ndim;
+        std::vector<index> shape;
+
+    ndMap(std::vector<index>& lengths) {
         shape = lengths;
         ndim = lengths.size();
         n_elem = 1;
@@ -52,45 +74,24 @@ class ndMap {
         }
 
         // default to range(N)
-        for (a_type i = 0; i < data.size(); ++i) {
+        for (index i = 0; i < data.size(); ++i) {
             data[i] = i;
         }
     }
 
-    a_type& operator()(a_type i1, ...){
-        a_type idx = i1 * steps[0];
+    index& operator()(index i1, ...){
+        index idx = i1 * steps[0];
         va_list indices;
         va_start(indices, i1);
         for (unsigned i = 1; i < ndim; ++i) {
-            idx += va_arg(indices, a_type) * steps[i];
+            idx += va_arg(indices, index) * steps[i];
         }
         va_end(indices);
         return data[idx];
     }
 
-    void recursivePrint(unsigned depth, std::vector<a_type>& indices) {
-        if (depth > 0) {
-            for (a_type i = 0; i < shape[depth-1]; ++i) {
-                indices[ndim - depth] = i;
-                recursivePrint(depth - 1, indices);
-            }
-        }else{
-            std::cout << "[";
-            unsigned i = 0;
-            while (i < indices.size() - 1) {
-               std::cout << indices[i] << ", ";
-               ++i;
-            }
-            a_type idx = indices[0] * steps[0];
-            for (unsigned i = 1; i < ndim; ++i) {
-                idx += indices[i] * steps[i];
-            }
-            std::cout << indices[i] << "] = "<< data[idx] << std::endl;
-        }
-    }
-
     void print() {
-        std::vector<a_type> indices(ndim);
+        std::vector<index> indices(ndim);
         recursivePrint(ndim, indices);
     }
 };
