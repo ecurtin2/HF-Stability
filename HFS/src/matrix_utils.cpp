@@ -396,7 +396,7 @@ namespace HFS {
             A = HFS::calcFromIndicesA_M3(s - N, t - N);
         } else if ((s >= 2*N) && (s < 3*N) && (t >= 2*N) && (t < 3*N)) { // M3 center-bottom-right
             A = HFS::calcFromIndicesA_M3(s - 2*N, t - 2*N);
-        } else if ((s < N) && (t >= 3*N)) { // M2 bottom left
+        } else if ((s >= 3*N) && (t < N)) { // M2 bottom left
             A = HFS::calcFromIndicesA_M2(s - 3*N, t);
         } else if ((s >= 3*N) && (t >= 3*N)) { // M1 bottom right
             A = HFS::calcFromIndicesA_M1(s - 3*N, t - 3*N);
@@ -418,7 +418,7 @@ namespace HFS {
             B = HFS::calcFromIndicesB_M3(s - N, t - 2*N);
         } else if ((s >= 2*N) && (s < 3*N) && (t >= N) && (t < 2*N)) { // M3 center-bottom-left
             B = HFS::calcFromIndicesB_M3(s - 2*N, t - N);
-        } else if ((s < N) && (t >= 3*N)) { // M2 bottom left
+        } else if ((s >= 3*N) && (t < N)) { // M2 bottom left
             B = HFS::calcFromIndicesB_M2(s - 3*N, t);
         } else if ((s >= 3*N) && (t >= 3*N)) { // M1 bottom right
             B = HFS::calcFromIndicesB_M1(s - 3*N, t - 3*N);
@@ -564,12 +564,8 @@ namespace HFS {
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                     // only if momentum conserving state is virtual
                     arma::uword t = HFS::calcTfromKbAndJ(kb, j);
-                    if (s == t) {
-                        Mv(s) += HFS::exc_energies(s) * v(t);
-                    } else {
-                        Mv(s) += (HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kb)) * v(t);
-                    }
-
+                    Mv(s) += (HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
+                            + HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kb)) * v(t);
                 }
             }
         }
@@ -699,10 +695,10 @@ namespace HFS {
         arma::vec v4 = arma::vec(&v[3*N], 4 * N, false, true);
 
         // Split Mv into 4 subvectors (no copy)
-        arma::vec Mv1 = arma::vec(&v[0]  ,     N, false, true);
-        arma::vec Mv2 = arma::vec(&v[N]  , 2 * N, false, true);
-        arma::vec Mv3 = arma::vec(&v[2*N], 3 * N, false, true);
-        arma::vec Mv4 = arma::vec(&v[3*N], 4 * N, false, true);
+        arma::vec Mv1 = arma::vec(&Mv[0]  ,     N, false, true);
+        arma::vec Mv2 = arma::vec(&Mv[N]  , 2 * N, false, true);
+        arma::vec Mv3 = arma::vec(&Mv[2*N], 3 * N, false, true);
+        arma::vec Mv4 = arma::vec(&Mv[3*N], 4 * N, false, true);
 
         M1v(v1, Mv1);
         M2v(v4, Mv1);
@@ -735,10 +731,10 @@ namespace HFS {
         arma::vec v4 = arma::vec(&v[3*N], 4 * N, false, true);
 
         // Split Mv into 4 subvectors (no copy)
-        arma::vec Mv1 = arma::vec(&v[0]  ,     N, false, true);
-        arma::vec Mv2 = arma::vec(&v[N]  , 2 * N, false, true);
-        arma::vec Mv3 = arma::vec(&v[2*N], 3 * N, false, true);
-        arma::vec Mv4 = arma::vec(&v[3*N], 4 * N, false, true);
+        arma::vec Mv1 = arma::vec(&Mv[0]  ,     N, false, true);
+        arma::vec Mv2 = arma::vec(&Mv[N]  , 2 * N, false, true);
+        arma::vec Mv3 = arma::vec(&Mv[2*N], 3 * N, false, true);
+        arma::vec Mv4 = arma::vec(&Mv[3*N], 4 * N, false, true);
 
         M1v(v1, Mv1);
         M2v(v4, Mv1);

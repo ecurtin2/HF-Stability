@@ -31,7 +31,9 @@ namespace HFS{
     @see buildMatrixFromFunction()
     @see SMALLNUMBER
     */
-    extern bool matrixVectorProductWorks();
+    extern bool matrixVectorProductWorks(void (*Mv_func)(arma::vec&v, arma::vec& Mv)
+                                         , double (*M_ij)(arma::uword, arma::uword)
+                                         , arma::uword  N);
     /**< \brief Checks that matrix vector product function gets the same result as armadillo's matrix multiply.
     The full matrix is built and multiplied by a random vector. T
     and is said to be equal if they are the same within SMALLNUMBER

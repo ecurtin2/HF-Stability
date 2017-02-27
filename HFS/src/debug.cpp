@@ -19,11 +19,16 @@ namespace HFS{
         return true;
     }
 
-    bool matrixVectorProductWorks() {
-        arma::vec v(HFS::Nmat, arma::fill::randu);
-        arma::vec Mv(HFS::Nmat);
-        HFS::MatVecProduct_func(v, Mv);
-        arma::mat matrix = HFS::buildMatrixFromFunction(HFS::Matrix_func, HFS::Nmat);
+    bool matrixVectorProductWorks(void (*Mv_func)(arma::vec& v, arma::vec& Mv)
+                                 , double (*M_ij)(arma::uword, arma::uword)
+                                 , arma::uword N)
+                                 {
+        //arma::vec v(N, arma::fill::randu);
+        arma::vec v(N, arma::fill::zeros);
+        v(0) = 1.0;
+        arma::vec Mv(N, arma::fill::zeros);
+        Mv_func(v, Mv);
+        arma::mat matrix = HFS::buildMatrixFromFunction(M_ij, N);
         arma::vec v_arma = matrix * v;
         arma::vec diff = arma::abs(Mv - v_arma);
 
@@ -31,6 +36,8 @@ namespace HFS{
         if (!is_working) {
             arma::uvec where = arma::find(diff > SMALLNUMBER);
             where.print("where is not working");
+            //std::cout << "Nexc = " << HFS::Nexc << std::endl;
+            //std::cout << "Nmat = " << HFS::Nmat << std::endl;
         }
         return is_working;
     }
@@ -56,7 +63,9 @@ namespace HFS{
     }
 
     bool everything_works() {
-        assert(matrixVectorProductWorks() && "There is a problem in the matrix-vector product.");
+        assert(matrixVectorProductWorks(HFS::MatVecProduct_func
+                                        ,HFS::Matrix_func, HFS::Nmat)
+                                        && "There is a problem in the matrix-vector product.");
         std::cout << "Mv is working" << std::endl;
         assert(davidsonAgreesWithFullDiag() && "Davidson's Algorithm Didn't get the lowest eigenvalue.");
         std::cout << "Davidson is working" << std::endl;
