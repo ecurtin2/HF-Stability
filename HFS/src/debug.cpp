@@ -23,9 +23,7 @@ namespace HFS{
                                  , double (*M_ij)(arma::uword, arma::uword)
                                  , arma::uword N)
                                  {
-        //arma::vec v(N, arma::fill::randu);
-        arma::vec v(N, arma::fill::zeros);
-        v(0) = 1.0;
+        arma::vec v(N, arma::fill::randu);
         arma::vec Mv(N, arma::fill::zeros);
         Mv_func(v, Mv);
         arma::mat matrix = HFS::buildMatrixFromFunction(M_ij, N);
@@ -33,12 +31,6 @@ namespace HFS{
         arma::vec diff = arma::abs(Mv - v_arma);
 
         bool is_working = arma::all(diff < SMALLNUMBER);
-        if (!is_working) {
-            arma::uvec where = arma::find(diff > SMALLNUMBER);
-            where.print("where is not working");
-            //std::cout << "Nexc = " << HFS::Nexc << std::endl;
-            //std::cout << "Nmat = " << HFS::Nmat << std::endl;
-        }
         return is_working;
     }
 

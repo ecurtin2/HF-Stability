@@ -58,17 +58,6 @@ int main(int argc, char* argv[]){
     HFS::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
 
-    std::cout << "A works:   " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductA, HFS::calcFromIndicesA, 4*HFS::Nexc) << std::endl;
-    std::cout << "B works:   " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductB, HFS::calcFromIndicesB, 4*HFS::Nexc) << std::endl;
-    /*std::cout << "AM1 works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductA_M1, HFS::calcFromIndicesA_M1, HFS::Nexc) << std::endl;
-    std::cout << "AM2 works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductA_M2, HFS::calcFromIndicesA_M2, HFS::Nexc) << std::endl;
-    std::cout << "AM3 works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductA_M3, HFS::calcFromIndicesA_M3, HFS::Nexc) << std::endl;
-    std::cout << "BM1 works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductB_M1, HFS::calcFromIndicesB_M1, HFS::Nexc) << std::endl;
-    std::cout << "BM2 works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductB_M2, HFS::calcFromIndicesB_M2, HFS::Nexc) << std::endl;
-    std::cout << "BM3 works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProductB_M3, HFS::calcFromIndicesB_M3, HFS::Nexc) << std::endl;
-
-    std::cout << "3A works: " << HFS::matrixVectorProductWorks(HFS::matrixVectorProduct3A, HFS::calcFromIndices3A, HFS::Nexc) << std::endl;*/
-
     SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
     int nprocs = 1;
     //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
