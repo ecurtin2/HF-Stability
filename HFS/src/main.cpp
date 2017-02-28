@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
         HFS::mycase          = argv[3];
     #else
         HFS::rs              = 1.2;
-        HFS::Nk              = 10;
+        HFS::Nk              = 12;
         HFS::OutputFileName  = "test.log";
         HFS::mycase          = "cRHF2cGHF";
     #endif // Release

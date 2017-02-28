@@ -141,7 +141,7 @@ def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
     """
     for dirpath, dirnames, files in os.walk(dirname):
         if not files:
-            print "Directory is Empty, df is unchanged"
+            print("Directory is Empty, df is unchanged")
             df = pd.read_pickle(pickle)
         else:
             dataframes = []
@@ -162,7 +162,7 @@ def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
                     for f in files:
                         shutil.move(f, moveto)
                 else:
-                    print "Target Directory Doesn't Exist, did not move log files"
+                    print("Target Directory Doesn't Exist, did not move log files")
     return df
 
 #################################################################################
@@ -494,4 +494,4 @@ def plot_diag_scaling(df, ax):
 
 
 if __name__ == "__main__":
-    print 'Import this module and analyze some logfiles!'
+    print('Import this module and analyze some logfiles!')
