@@ -13,7 +13,7 @@ taken as command line input.
 #include "parameters.hpp"
 #include "base_funcs.hpp"
 #include "calc_parameters.hpp"
-#include "matrix_utils.hpp"
+#include "matrix_vectorproducts.hpp"
 #include "debug.hpp"
 #include "fileIO.hpp"
 #include "SLEPcWrapper.hpp"

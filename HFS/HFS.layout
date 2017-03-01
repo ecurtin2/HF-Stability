@@ -2,10 +2,13 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="debug2D" />
-	<File name="src/parameters.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/matrix_gen.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="476" topLine="0" />
+			<Cursor1 position="289" topLine="0" />
 		</Cursor>
+		<Folding>
+			<Collapse line="18" />
+		</Folding>
 	</File>
 	<File name="src/calc_parameters.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
@@ -15,31 +18,114 @@
 			<Collapse line="4" />
 		</Folding>
 	</File>
-	<File name="src/SLEPcWrapper.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/matrix_vectorproducts.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8423" topLine="57" />
+			<Cursor1 position="2657" topLine="0" />
 		</Cursor>
 		<Folding>
-			<Collapse line="4" />
-			<Collapse line="20" />
-			<Collapse line="27" />
-			<Collapse line="52" />
+			<Collapse line="6" />
+			<Collapse line="18" />
+			<Collapse line="29" />
+			<Collapse line="39" />
+			<Collapse line="50" />
 			<Collapse line="61" />
-			<Collapse line="69" />
-			<Collapse line="75" />
-			<Collapse line="83" />
-			<Collapse line="89" />
-			<Collapse line="135" />
-			<Collapse line="141" />
-			<Collapse line="150" />
-			<Collapse line="158" />
-			<Collapse line="170" />
-			<Collapse line="178" />
+			<Collapse line="73" />
+			<Collapse line="86" />
+			<Collapse line="107" />
+			<Collapse line="127" />
+			<Collapse line="151" />
+			<Collapse line="171" />
+			<Collapse line="191" />
+			<Collapse line="216" />
+			<Collapse line="247" />
+			<Collapse line="258" />
 		</Folding>
 	</File>
-	<File name="src/main.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/fileIO.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2584" topLine="31" />
+			<Cursor1 position="619" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="src/debug.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1370" topLine="19" />
+		</Cursor>
+	</File>
+	<File name="Makefile" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2550" topLine="21" />
+		</Cursor>
+	</File>
+	<File name="src/base_funcs.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="351" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/fileIO.hpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="308" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="src/parameters.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1002" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="src/SLEPcWrapper.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="278" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="0" />
+			<Collapse line="17" />
+			<Collapse line="20" />
+		</Folding>
+	</File>
+	<File name="src/base_funcs.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3414" topLine="76" />
+		</Cursor>
+		<Folding>
+			<Collapse line="0" />
+		</Folding>
+	</File>
+	<File name="src/matrix_vectorproducts.hpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1467" topLine="1" />
+		</Cursor>
+		<Folding>
+			<Collapse line="0" />
+		</Folding>
+	</File>
+	<File name="src/debug.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="319" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="18" />
+		</Folding>
+	</File>
+	<File name="src/matrix_gen.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="26" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="2" />
+			<Collapse line="51" />
+			<Collapse line="89" />
+			<Collapse line="108" />
+			<Collapse line="122" />
+			<Collapse line="135" />
+			<Collapse line="149" />
+			<Collapse line="162" />
+			<Collapse line="175" />
+			<Collapse line="190" />
+			<Collapse line="223" />
+		</Folding>
+	</File>
+	<File name="src/main.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1328" topLine="0" />
 		</Cursor>
 		<Folding>
 			<Collapse line="0" />
@@ -47,55 +133,44 @@
 			<Collapse line="16" />
 		</Folding>
 	</File>
-	<File name="src/parameters.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3419" topLine="27" />
-		</Cursor>
-		<Folding>
-			<Collapse line="0" />
-		</Folding>
-	</File>
-	<File name="src/fileIO.hpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="389" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="src/matrix_utils.hpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-		<Folding>
-			<Collapse line="0" />
-			<Collapse line="15" />
-		</Folding>
-	</File>
-	<File name="src/debug.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1337" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="src/fileIO.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="619" topLine="84" />
-		</Cursor>
-	</File>
 	<File name="src/NDmap.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="604" topLine="0" />
 		</Cursor>
 		<Folding>
+			<Collapse line="16" />
+		</Folding>
+	</File>
+	<File name="src/parameters.hpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="352" topLine="0" />
+		</Cursor>
+		<Folding>
+			<Collapse line="0" />
+			<Collapse line="24" />
+		</Folding>
+	</File>
+	<File name="src/SLEPcWrapper.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8423" topLine="6" />
+		</Cursor>
+		<Folding>
+			<Collapse line="96" />
+			<Collapse line="196" />
+		</Folding>
+	</File>
+	<File name="src/calc_parameters.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="233" topLine="0" />
+		</Cursor>
+		<Folding>
 			<Collapse line="0" />
 		</Folding>
 	</File>
-	<File name="src/matrix_utils.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="src/main.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="19692" topLine="497" />
+			<Cursor1 position="407" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="Makefile" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2550" topLine="21" />
-		</Cursor>
-	</File>
-	<EditorTabsLayout layout="0605307058af39ac00c41a1d00000002=0;HFS:src/fileIO.hpp,1;HFS:src/matrix_utils.cpp,*2;HFS:src/fileIO.cpp,3;HFS:src/debug.cpp,4;HFS:src/main.cpp,5;HFS:src/SLEPcWrapper.cpp,6;HFS:Makefile@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=824;besth=304;minw=824;minh=304;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=0605307058af39ac00c41a1d00000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
+	<EditorTabsLayout layout="066c319058b74fe8055c017100000002=0;HFS:src/fileIO.hpp,1;HFS:src/debug.hpp,*2;HFS:src/matrix_vectorproducts.cpp,3;HFS:src/matrix_vectorproducts.hpp@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=819;besth=340;minw=819;minh=340;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=066c319058b74fe8055c017100000002;caption=;state=2098172;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=200;besth=200;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,0)=202|" />
 </CodeBlocks_layout_file>

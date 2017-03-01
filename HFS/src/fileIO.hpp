@@ -5,13 +5,13 @@
 @date Wednesday, 04 Jan, 2017
 */
 
-#ifndef HFS_fileIO_included
-#define HFS_fileIO_included
+#ifndef HFS_FILEIO_INCLUDED
+#define HFS_FILEIO_INCLUDED
 
 #include "parameters.hpp"
 #include "base_funcs.hpp"
 #include "calc_parameters.hpp"
-#include "matrix_utils.hpp"
+#include "matrix_vectorproducts.hpp"
 #include "debug.hpp"
 
 namespace HFS{
@@ -32,4 +32,4 @@ namespace HFS{
 
 }
 
-#endif // HFS_fileIO_included
+#endif // HFS_FILEIO_INCLUDED

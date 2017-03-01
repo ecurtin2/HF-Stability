@@ -6,8 +6,8 @@
 @date Wednesday, 04 Jan, 2017
 */
 
-#ifndef HFS_base_funcs_included
-#define HFS_base_funcs_included
+#ifndef HFS_BASE_FUNCS_INCLUDED
+#define HFS_BASE_FUNCS_INCLUDED
 
 #include "parameters.hpp"
 

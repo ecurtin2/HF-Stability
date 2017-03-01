@@ -6,17 +6,15 @@
 @date Wednesday, 04 Jan, 2017
 */
 
-#ifndef HFS_debug_included
-#define HFS_debug_included
+#ifndef HFS_DEBUG_INCLUDED
+#define HFS_DEBUG_INCLUDED
 
 #include <assert.h>
 #include "parameters.hpp"
 #include "base_funcs.hpp"
 #include "calc_parameters.hpp"
-#include "matrix_utils.hpp"
-//#include "davidson.hpp"
-
-
+#include "matrix_vectorproducts.hpp"
+#include "matrix_gen.hpp"
 
 namespace HFS{
     extern double full_diag_min; /**< The minimum eigenvalue determined by full diagonalization of the stability matrix. Used to debug the Davidson algorithm.*/
@@ -31,9 +29,7 @@ namespace HFS{
     @see buildMatrixFromFunction()
     @see SMALLNUMBER
     */
-    extern bool matrixVectorProductWorks(void (*Mv_func)(arma::vec&v, arma::vec& Mv)
-                                         , double (*M_ij)(arma::uword, arma::uword)
-                                         , arma::uword  N);
+    extern bool matrixVectorProductWorks();
     /**< \brief Checks that matrix vector product function gets the same result as armadillo's matrix multiply.
     The full matrix is built and multiplied by a random vector. T
     and is said to be equal if they are the same within SMALLNUMBER
@@ -48,13 +44,7 @@ namespace HFS{
     @see davidsonAgreesWithFullDiag()
     @see matrixVectorProductWorks()
     */
-    extern arma::mat buildMatrixFromFunction(double (*Matrix_func)(arma::uword, arma::uword), arma::uword N);
-    /**< \brief Builds a matrix from a function that returns matrix elements.
-    @param Matrix_func Function pointer that takes indices i, j and returns the matrix element M[i,j].
-    @param N Size of the matrix.
-    @return The matrix.
-    @see Matrix_func
-    */
+
     extern void timeMatrixVectorProduct();
     /**< \brief Times the matrix vector product execution.
     Sets the value of mv_time.

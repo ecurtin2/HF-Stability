@@ -39,12 +39,12 @@ int main(int argc, char* argv[]){
         }
         HFS::rs              = std::stof(argv[1]);
         HFS::Nk              = std::stoi(argv[2]);
-        HFS::mycase          = argv[3];
+        HFS::mycase          = argv[3];5555555
     #else
         HFS::rs              = 1.2;
         HFS::Nk              = 12;
         HFS::OutputFileName  = "test.log";
-        HFS::mycase          = "cRHF2cGHF";
+        HFS::mycase          = "cUHF2cUHF";
     #endif // Release
 
     HFS::Dav_tol         = 1e-6;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]){
     HFS::Dav_Num_evals   = 1;
 
     HFS::calcParameters();
-    HFS::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
+    HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
 
     SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
@@ -90,9 +90,10 @@ int main(int argc, char* argv[]){
     HFS::Dav_nconv = myeps.nconv;
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
+
     HFS::writeOutput(false);
 
-    myeps.clean();
+ //   myeps.clean();
     fclose(stdout);
 
 
@@ -100,7 +101,6 @@ int main(int argc, char* argv[]){
         if (HFS::Nmat < 1500) {
             HFS::davidsonAgreesWithFullDiag();
         }
-
         if ( !HFS::everything_works() ) {
             exit(EXIT_FAILURE);
         }

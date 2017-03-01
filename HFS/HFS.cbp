@@ -158,16 +158,10 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
-		<Unit filename="src/matrix_utils.cpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
-		<Unit filename="src/matrix_utils.hpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
+		<Unit filename="src/matrix_gen.cpp" />
+		<Unit filename="src/matrix_gen.hpp" />
+		<Unit filename="src/matrix_vectorproducts.cpp" />
+		<Unit filename="src/matrix_vectorproducts.hpp" />
 		<Unit filename="src/parameters.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />

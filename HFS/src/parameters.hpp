@@ -6,8 +6,8 @@
 @date Wednesday, 04 Jan, 2017
 */
 
-#ifndef HFS_params_included
-#define HFS_params_included
+#ifndef HFS_PARAMS_INCLUDED
+#define HFS_PARAMS_INCLUDED
 
 #ifndef PI
     #define PI 3.14159265358979323846264338327
@@ -15,6 +15,7 @@
 #ifndef SMALLNUMBER
     #define SMALLNUMBER 1E-12
 #endif
+
 #include "armadillo"
 
 /** \namespace HFS
@@ -56,7 +57,7 @@ namespace HFS{
     #endif // NDIM;
     extern arma::umat inv_exc_mat;            /**< The [i,a]'th element is s, where s labels the excitation i -> a.  */
     extern void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv); /**< Function pointer for the matrix-vector product. Is set by HFS::setMatrixPropertiesFromCase */
-    extern double (*Matrix_func)(arma::uword i, arma::uword j);     /**< Function pointer for the matrix elements. Is set by HFS::setMatrixPropertiesFromCase */
+    extern arma::mat (*Matrix_generator)();   /**< Function pointer for the matrix elements. Is set by HFS::setMatrixPropertiesFromCase */
     extern unsigned dav_its;                  /**< Number of iterations to converge in Davidson's Algorithm  */
     extern arma::vec dav_vals;                /**< All eigenvalues returned by the last iteration of Davidson's Algorithm. */
     extern unsigned num_guess_evecs;          /**< Number of eigenvectors used as initial guess for Davidson's Algorithm. */
@@ -70,4 +71,4 @@ namespace HFS{
     extern unsigned Dav_maxsubsize;           /**< Maximum size of the subspace before restart for Davidson's Algorithm. */
     extern double Dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
 }
-#endif // HFS_params_included
+#endif // HFS_PARAMS_INCLUDED
