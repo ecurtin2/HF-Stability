@@ -2,6 +2,8 @@
 #include "NDmap.hpp"
 
 namespace HFS {
+
+
     void calcParameters() {
         HFS::kf = HFS::calcKf(HFS::rs, NDIM);
         HFS::kmax = 2.000001 * HFS::kf; // The offset from 2 helps remove coincidence

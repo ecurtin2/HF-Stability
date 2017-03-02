@@ -38,7 +38,7 @@ namespace SLEPc {
 
 
             EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&));
-            PetscErrorCode clean();
+            ~EpS();
             PetscErrorCode SetInitialSpace(std::vector<std::vector<double>> vecs);
             PetscErrorCode EPSContext ();
             PetscErrorCode PETSCMatShellCreate(Mat& matrix);
@@ -50,11 +50,8 @@ namespace SLEPc {
             void PrintEvals(const char* format="%10.5f\n");
             void PrintEvecs(const char* format="%10.5f");
             PetscErrorCode print();
-            PetscErrorCode MatSetRowValues(Mat& M, PetscInt& irow, PetscInt ncols);
-            PetscErrorCode MatBuild(Mat& M, PetscInt nrows, PetscInt ncols, PetscInt nperrow);
 
     }; // Class EpS
 }; // Namespace SLEPc
-extern void getRowVals(std::vector<PetscScalar>& vals, std::vector<PetscInt>& idx, PetscInt irow);
 
 #endif // SLEPC_WRAPPER_INCLUDED

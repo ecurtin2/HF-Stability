@@ -39,7 +39,7 @@ int main(int argc, char* argv[]){
         }
         HFS::rs              = std::stof(argv[1]);
         HFS::Nk              = std::stoi(argv[2]);
-        HFS::mycase          = argv[3];5555555
+        HFS::mycase          = argv[3];
     #else
         HFS::rs              = 1.2;
         HFS::Nk              = 12;
@@ -76,8 +76,6 @@ int main(int argc, char* argv[]){
         vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
     }
 
-    //HFS::davidsonAgreesWithFullDiag();
-
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;
     davtimer.tic();
@@ -92,8 +90,6 @@ int main(int argc, char* argv[]){
     HFS::Dav_final_val = HFS::dav_vals.min();
 
     HFS::writeOutput(false);
-
- //   myeps.clean();
     fclose(stdout);
 
 
