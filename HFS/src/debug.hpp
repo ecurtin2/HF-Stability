@@ -17,9 +17,9 @@
 #include "matrix_gen.hpp"
 
 namespace HFS{
-    extern double full_diag_min; /**< The minimum eigenvalue determined by full diagonalization of the stability matrix. Used to debug the Davidson algorithm.*/
-    extern double Mv_time; /**< The time taken to execute one call of the matrix-vector product function. */
-    extern double full_diag_time; /**< The time taken to diagonalize the matrix using armadillo's eig_sym. */
+    extern scalar full_diag_min; /**< The minimum eigenvalue determined by full diagonalization of the stability matrix. Used to debug the Davidson algorithm.*/
+    extern scalar Mv_time; /**< The time taken to execute one call of the matrix-vector product function. */
+    extern scalar full_diag_time; /**< The time taken to diagonalize the matrix using armadillo's eig_sym. */
     extern bool davidsonAgreesWithFullDiag();
     /**< \brief Checks that Davidson's Algorithm is getting the lowest eigenvalue.
     The full matrix is built and diagonalized, which is slow for Nk > 20 or so. The

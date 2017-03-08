@@ -14,6 +14,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="src" />
 				</Compiler>
 				<MakeCommands>
 					<Build command="$make -f $makefile $target" />
@@ -31,6 +32,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -51,6 +53,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -69,18 +72,27 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<Compiler>
+					<Add directory="src" />
+				</Compiler>
 			</Target>
 			<Target title="profile3D">
 				<Option output="HFS" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<Compiler>
+					<Add directory="src" />
+				</Compiler>
 			</Target>
 			<Target title="release3D">
 				<Option output="HFS" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<Compiler>
+					<Add directory="src" />
+				</Compiler>
 			</Target>
 		</Build>
 		<Compiler>

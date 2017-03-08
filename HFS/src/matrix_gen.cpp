@@ -1,8 +1,8 @@
 # include "matrix_gen.hpp"
 
 arma::mat HFS::Matrix::Gen::H() {
-    std::vector<std::pair<unsigned, unsigned>> locs(6);
-    std::vector<double (*)(arma::uword, arma::uword)> funcs(6);
+    std::vector<std::pair<uint, uint>> locs(6);
+    std::vector<scalar (*)(uint, uint)> funcs(6);
 
     // Make A
      locs[0] = std::make_pair(0, 0);
@@ -50,8 +50,8 @@ arma::mat HFS::Matrix::Gen::H() {
 }
 
 arma::mat HFS::Matrix::Gen::Hprime() {
-    std::vector<std::pair<unsigned, unsigned>> locs(4);
-    std::vector<double (*)(arma::uword, arma::uword)> funcs(4);
+    std::vector<std::pair<uint, uint>> locs(4);
+    std::vector<scalar (*)(uint, uint)> funcs(4);
 
     // Make A
      locs[0] = std::make_pair(0, 0);
@@ -88,9 +88,9 @@ arma::mat HFS::Matrix::Gen::Hprime() {
 }
 
 arma::mat HFS::Matrix::Gen::TripletH() {
-    unsigned Ndivisions = 2;
-    std::vector<std::pair<unsigned, unsigned>> locs(4);
-    std::vector<double (*)(arma::uword, arma::uword)> funcs(4);
+    uint Ndivisions = 2;
+    std::vector<std::pair<uint, uint>> locs(4);
+    std::vector<scalar (*)(uint, uint)> funcs(4);
 
     locs[0] = std::make_pair(0, 0);
     funcs[0] = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi;
@@ -106,7 +106,7 @@ arma::mat HFS::Matrix::Gen::TripletH() {
     return buildMatrixFromFunctionList(HFS::Nmat, Ndivisions, locs, funcs);
 }
 
-double HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_aj_ib_antisym(arma::uword s, arma::uword t) {
+scalar HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_aj_ib_antisym(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
     arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
@@ -115,12 +115,12 @@ double HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_aj_ib_antisym(arma::uword s,
     kj = klist[2];
     kb = klist[3];
 
-    double A1 = HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
+    scalar A1 = HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
         + HFS::twoElectronSafe(ka, kj, ki, kb) - HFS::twoElectronSafe(ka, kj, kb, ki);
     return A1;
 }
 
-double HFS::Matrix::Gen::A_aj_ib(arma::uword s, arma::uword t) {
+scalar HFS::Matrix::Gen::A_aj_ib(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
     arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
@@ -129,11 +129,11 @@ double HFS::Matrix::Gen::A_aj_ib(arma::uword s, arma::uword t) {
     kj = klist[2];
     kb = klist[3];
 
-    double A2 = HFS::twoElectronSafe(ka, kj, ki, kb);
+    scalar A2 = HFS::twoElectronSafe(ka, kj, ki, kb);
     return A2;
 }
 
-double HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(arma::uword s, arma::uword t) {
+scalar HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
     arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
@@ -142,12 +142,12 @@ double HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(arma::uword s, arma::
     kj = klist[2];
     kb = klist[3];
 
-    double A3;
+    scalar A3;
     A3 = HFS::kroneckerDelta(s, t) * HFS::exc_energies(s) - HFS::twoElectronSafe(ka, kj, kb, ki);
     return A3;
 }
 
-double HFS::Matrix::Gen::B_ab_ij_antisym(arma::uword s, arma::uword t) {
+scalar HFS::Matrix::Gen::B_ab_ij_antisym(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
     arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
@@ -156,11 +156,11 @@ double HFS::Matrix::Gen::B_ab_ij_antisym(arma::uword s, arma::uword t) {
     kj = klist[2];
     kb = klist[3];
 
-    double B1 = HFS::twoElectronSafe(ka, kb, ki, kj) - HFS::twoElectronSafe(ka, kb, kj, ki);
+    scalar B1 = HFS::twoElectronSafe(ka, kb, ki, kj) - HFS::twoElectronSafe(ka, kb, kj, ki);
     return B1;
 }
 
-double HFS::Matrix::Gen::B_ab_ij(arma::uword s, arma::uword t) {
+scalar HFS::Matrix::Gen::B_ab_ij(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
     arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
@@ -169,11 +169,11 @@ double HFS::Matrix::Gen::B_ab_ij(arma::uword s, arma::uword t) {
     kj = klist[2];
     kb = klist[3];
 
-    double B2 = HFS::twoElectronSafe(ka, kb, ki, kj);
+    scalar B2 = HFS::twoElectronSafe(ka, kb, ki, kj);
     return B2;
 }
 
-double HFS::Matrix::Gen::B_minus_ab_ji(arma::uword s, arma::uword t) {
+scalar HFS::Matrix::Gen::B_minus_ab_ji(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
     arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
@@ -182,13 +182,13 @@ double HFS::Matrix::Gen::B_minus_ab_ji(arma::uword s, arma::uword t) {
     kj = klist[2];
     kb = klist[3];
 
-    double B2 = - HFS::twoElectronSafe(ka, kb, kj, ki);
+    scalar B2 = - HFS::twoElectronSafe(ka, kb, kj, ki);
     return B2;
 }
 
-arma::mat HFS::Matrix::Gen::buildMatrixFromFunctionList(unsigned N, unsigned Ndivisions,
-                 std::vector<std::pair<unsigned, unsigned>> locs,
-                 std::vector<double (*)(arma::uword, arma::uword)> Mfuncs) {
+arma::mat HFS::Matrix::Gen::buildMatrixFromFunctionList(uint N, uint Ndivisions,
+                 std::vector<std::pair<uint, uint>> locs,
+                 std::vector<scalar (*)(uint, uint)> Mfuncs) {
      /** \brief Apply in-place Matrix-Vector product functions to sub-matrices.
       *
       * Assumes each function DOES NOT INITIALIZE and ADDS the contribution to Mv IN-PLACE.
@@ -207,13 +207,13 @@ arma::mat HFS::Matrix::Gen::buildMatrixFromFunctionList(unsigned N, unsigned Ndi
     assert((Mfuncs.size() == locs.size()) && "Unequal # of functions and locations.");
 
     arma::mat Matrix(N, N, arma::fill::zeros);
-    arma::uword Nsub = N / Ndivisions; // Size of each subsection
+    uint Nsub = N / Ndivisions; // Size of each subsection
 
-    for (unsigned i = 0; i < locs.size(); ++i) {
-        unsigned irow = std::get<0>(locs[i]);
-        unsigned icol = std::get<1>(locs[i]);
-        for (arma::uword s = 0; s < Nsub; ++s) {
-            for (arma::uword t = 0; t < Nsub; ++t) {
+    for (uint i = 0; i < locs.size(); ++i) {
+        uint irow = std::get<0>(locs[i]);
+        uint icol = std::get<1>(locs[i]);
+        for (uint s = 0; s < Nsub; ++s) {
+            for (uint t = 0; t < Nsub; ++t) {
                 Matrix(s + irow*Nsub, t + icol*Nsub) = Mfuncs[i](s, t);
             }
         }

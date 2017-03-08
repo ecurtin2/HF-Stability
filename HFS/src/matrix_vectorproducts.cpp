@@ -6,7 +6,7 @@ namespace MatrixVectorProduct {
 
 void TripletH(arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, E_delta_st_minus_aj_bi);
     MvList[1] = std::make_tuple(0, 1, minus_ab_ji);
@@ -18,7 +18,7 @@ void TripletH(arma::vec& v, arma::vec& Mv) {
 
 void Hprime(arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, Aprime);
     MvList[1] = std::make_tuple(0, 1, Bprime);
@@ -28,7 +28,7 @@ void Hprime(arma::vec& v, arma::vec& Mv) {
 }
 
 void Aprime(arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, E_delta_st_plus_aj_ib_antisym);
     MvList[1] = std::make_tuple(0, 1, aj_ib);
@@ -38,7 +38,7 @@ void Aprime(arma::vec& v, arma::vec& Mv) {
 }
 
 void Bprime(arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, ab_ij_antisym);
     MvList[1] = std::make_tuple(0, 1, ab_ij);
@@ -50,7 +50,7 @@ void Bprime(arma::vec& v, arma::vec& Mv) {
 
 void H(arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, A);
     MvList[1] = std::make_tuple(0, 1, B);
@@ -60,7 +60,7 @@ void H(arma::vec& v, arma::vec& Mv) {
 }
 
 void A(arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (6);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (6);
 
     MvList[0] = std::make_tuple(0, 0, E_delta_st_plus_aj_ib_antisym);
     MvList[1] = std::make_tuple(0, 3, aj_ib);
@@ -72,7 +72,7 @@ void A(arma::vec& v, arma::vec& Mv) {
 }
 
 void B(arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList (6);
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (6);
 
     MvList[0] = std::make_tuple(0, 0, ab_ij_antisym);
     MvList[1] = std::make_tuple(0, 3, ab_ij);
@@ -85,19 +85,19 @@ void B(arma::vec& v, arma::vec& Mv) {
 
 
 void E_delta_st_plus_aj_ib_antisym(arma::vec& v, arma::vec& Mv) {
-    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-        arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
         arma::vec ki(NDIM), ka(NDIM);
         HFS::occIndexToK(i, ki);
         ka = HFS::virIndexToK(a);
-        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+        for (uint j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(NDIM), kb(NDIM);
             HFS::occIndexToK(j, kj);
             kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
             HFS::toFirstBrillouinZone(kb);
             if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 Mv(s) += (HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
                         + HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kb)) * v(t);
             }
@@ -106,19 +106,19 @@ void E_delta_st_plus_aj_ib_antisym(arma::vec& v, arma::vec& Mv) {
 }
 
 void aj_ib(arma::vec& v, arma::vec& Mv) {
-    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-        arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
         arma::vec ki(NDIM), ka(NDIM);
         HFS::occIndexToK(i, ki);
         ka = HFS::virIndexToK(a);
-        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+        for (uint j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(NDIM), kb(NDIM);
             HFS::occIndexToK(j, kj);
             kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
             HFS::toFirstBrillouinZone(kb);
             if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 Mv(s) += (HFS::twoElectron(ka, ki)) * v(t);
             }
         }
@@ -126,19 +126,19 @@ void aj_ib(arma::vec& v, arma::vec& Mv) {
 }
 
 void E_delta_st_minus_aj_bi(arma::vec& v, arma::vec& Mv) {
-    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-        arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
         arma::vec ki(NDIM), ka(NDIM);
         HFS::occIndexToK(i, ki);
         ka = HFS::virIndexToK(a);
-        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+        for (uint j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(NDIM), kb(NDIM);
             HFS::occIndexToK(j, kj);
             kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
             HFS::toFirstBrillouinZone(kb);
             if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 if (s == t) {
                     Mv(s) += HFS::exc_energies(s) * v(t);
                 } else {
@@ -150,19 +150,19 @@ void E_delta_st_minus_aj_bi(arma::vec& v, arma::vec& Mv) {
 }
 
 void ab_ij_antisym(arma::vec& v, arma::vec& Mv) {
-    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-        arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
         arma::vec ki(NDIM), ka(NDIM);
         HFS::occIndexToK(i, ki);
         ka = HFS::virIndexToK(a);
-        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+        for (uint j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(NDIM), kb(NDIM);
             HFS::occIndexToK(j, kj);
             kb = kj + ki - ka; // Momentum conservation for <ab|ij> or <ab|ji>
             HFS::toFirstBrillouinZone(kb);
             if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 Mv(s) += (HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kj)) * v(t);
             }
         }
@@ -170,19 +170,19 @@ void ab_ij_antisym(arma::vec& v, arma::vec& Mv) {
 }
 
 void ab_ij(arma::vec& v, arma::vec& Mv) {
-    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-        arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
         arma::vec ki(NDIM), ka(NDIM);
         HFS::occIndexToK(i, ki);
         ka = HFS::virIndexToK(a);
-        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+        for (uint j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(NDIM), kb(NDIM);
             HFS::occIndexToK(j, kj);
             kb = kj + ki - ka; // Momentum conservation for <ab|ji>
             HFS::toFirstBrillouinZone(kb);
             if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 Mv(s) += HFS::twoElectron(ka, ki) * v(t);
             }
         }
@@ -190,19 +190,19 @@ void ab_ij(arma::vec& v, arma::vec& Mv) {
 }
 
 void minus_ab_ji(arma::vec& v, arma::vec& Mv) {
-    for (arma::uword s = 0; s < HFS::Nexc; ++s) {
-        arma::uword i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
         arma::vec ki(NDIM), ka(NDIM);
         HFS::occIndexToK(i, ki);
         ka = HFS::virIndexToK(a);
-        for (arma::uword j = 0; j < HFS::Nocc; ++j) {
+        for (uint j = 0; j < HFS::Nocc; ++j) {
             arma::vec kj(NDIM), kb(NDIM);
             HFS::occIndexToK(j, kj);
             kb = kj + ki - ka; // Momentum conservation for <ab|ji>
             HFS::toFirstBrillouinZone(kb);
             if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                 // only if momentum conserving state is virtual
-                arma::uword t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 Mv(s) += -HFS::twoElectron(ka, kj) * v(t);
             }
         }
@@ -212,8 +212,8 @@ void minus_ab_ji(arma::vec& v, arma::vec& Mv) {
 void ApplyMvFxnsToSubMatrices(
                arma::vec& v,
                arma::vec& Mv,
-               unsigned Ndivisions,
-               std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList
+               uint Ndivisions,
+               std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList
               ) {
      /** \brief Apply in-place Matrix-Vector product functions to sub-matrices.
       *
@@ -229,11 +229,11 @@ void ApplyMvFxnsToSubMatrices(
 
     assert((MvList.size() <= Ndivisions*Ndivisions) && "Mvlist Too big for # of divisions.");
 
-    arma::uword N = v.n_elem / Ndivisions; // Size of each subview
+    uint N = v.n_elem / Ndivisions; // Size of each subview
 
     for (auto& MvL : MvList) {
-        unsigned irow = std::get<0>(MvL);
-        unsigned icol = std::get<1>(MvL);
+        uint irow = std::get<0>(MvL);
+        uint icol = std::get<1>(MvL);
         void (*MvFunc)(arma::vec&, arma::vec&) = std::get<2>(MvL);
 
         arma::vec Mv_subview = arma::vec(&Mv[irow*N], N, false, true);
@@ -245,14 +245,14 @@ void ApplyMvFxnsToSubMatrices(
 } // namespace MatrixVectorProduct
 
 
-arma::uword calcTfromKbAndJ(arma::vec& kb, arma::uword j) {
-    arma::uvec b_N_idx(NDIM); kToIndex(kb, b_N_idx);
+uint calcTfromKbAndJ(arma::vec& kb, uint j) {
+    arma::uvec b_N_uint(NDIM); kToIndex(kb, b_N_uint);
     #if NDIM == 2
-        arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1));
+        uint b = HFS::vir_N_to_1_mat(b_N_uint(0), b_N_uint(1));
     #elif NDIM == 3
-        arma::uword b = HFS::vir_N_to_1_mat(b_N_idx(0), b_N_idx(1), b_N_idx(2));
+        uint b = HFS::vir_N_to_1_mat(b_N_uint(0), b_N_uint(1), b_N_uint(2));
     #endif // NDIM
-    arma::uword t = HFS::inv_exc_mat(j, b);
+    uint t = HFS::inv_exc_mat(j, b);
     return t;
 }
 

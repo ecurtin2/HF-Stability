@@ -1,26 +1,27 @@
 #include "parameters.hpp"
 
+
 namespace HFS{
-    double bzone_length;
-    double vol;
-    double rs;
-    double kf;
-    double kmax;
-    double fermi_energy;
-    double cond_number;
-    double two_e_const;
-    double deltaK;
-    double Total_Calculation_Time;
+    scalar bzone_length;
+    scalar vol;
+    scalar rs;
+    scalar kf;
+    scalar kmax;
+    scalar fermi_energy;
+    scalar cond_number;
+    scalar two_e_const;
+    scalar deltaK;
+    scalar Total_Calculation_Time;
     std::string Computation_Starttime;
     std::string OutputFileName;
     std::string mycase;
-    arma::uword Nocc;
-    arma::uword Nvir;
-    arma::uword Nexc;
-    arma::uword N_elec;
-    arma::uword Nmat;
-    unsigned Nk;
-    unsigned ground_state_degeneracy;
+    uint Nocc;
+    uint Nvir;
+    uint Nexc;
+    uint N_elec;
+    uint Nmat;
+    uint Nk;
+    uint ground_state_degeneracy;
     arma::vec occ_energies;
     arma::vec vir_energies;
     arma::vec exc_energies;
@@ -36,16 +37,16 @@ namespace HFS{
     arma::umat inv_exc_mat;
     void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     arma::mat (*Matrix_generator)();
-    unsigned dav_its;
+    uint dav_its;
     arma::vec dav_vals;
-    unsigned num_guess_evecs;
-    unsigned Dav_blocksize;
-    unsigned Dav_Num_evals;
-    unsigned Dav_nconv;
-    double Dav_tol;
-    double Dav_final_val;
-    unsigned Dav_maxits;
-    unsigned Dav_minits;
-    unsigned Dav_maxsubsize;
-    double Dav_time;
+    uint num_guess_evecs;
+    uint Dav_blocksize;
+    uint Dav_Num_evals;
+    uint Dav_nconv;
+    scalar Dav_tol;
+    scalar Dav_final_val;
+    uint Dav_maxits;
+    uint Dav_minits;
+    uint Dav_maxsubsize;
+    scalar Dav_time;
 }

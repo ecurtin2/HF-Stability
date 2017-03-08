@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import scipy.special as sp
 import seaborn as sns
 import pandas as pd
 import numpy as np
 import shutil
+import copy
 import math
 import glob
 import os
@@ -71,26 +73,34 @@ def file_to_df(fname, idx):
     vectordic = {}
     vectorrange = {}
     matrixdic = {}
+
+    keys_unfound = copy.deepcopy(keys)
+    vectorkeys_unfound = copy.deepcopy(vectorkeys)
+    matrixkeys_unfound = copy.deepcopy(matrixkeys)
     for lineno, line in enumerate(f):
-        for key in keys:
+        for key in keys_unfound:
             if ((key + " =").lower() in line.lower()):  # .lower is case-insensitive comparison
                 str_value = line.split("=", 1)[1].rstrip('\n')
                 dic[key] = str_to_float_or_int(str_value)
+                keys_unfound.pop(key)
             if (key + " :" in line) or (key + ":" in line):
                 str_value = line.split(": ", 1)[1].rstrip('\n')
                 dic[key] = str_to_float_or_int(str_value)
+                keys_unfound.pop(key)
 
-        for key in vectorkeys:
+        for key in vectorkeys_unfound:
             if (key in line):
                 begin = lineno
                 length = str_to_float_or_int(line.split(":")[1])
                 vectorrange[key] = [begin, length]
-        for key in matrixkeys:
+                vectorkeys_unfound.pop(key)
+        for key in matrixkeys_unfound:
             if (key in line):
                 begin = lineno
                 nrows, ncols = line.split(":")[1].split("x")
                 nrows, ncols = str_to_float_or_int(nrows), str_to_float_or_int(ncols)
                 matrixdic[key] = [begin, nrows, ncols]
+                matrixkeys_unfound.pop(key)
     f.close()
 
 
@@ -165,6 +175,18 @@ def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
                     print("Target Directory Doesn't Exist, did not move log files")
     return df
 
+
+def only_max(df, unique, maximize):
+    """Return masked dataframe with unique values maximizing a column"""
+    uniquevals = df[unique].unique()
+    idx = []
+    for val in uniquevals:
+        df_vals = df[np.isclose(df[unique], val)]
+        index = df_vals[maximize].idxmax()
+        idx.append(index)
+
+    return df.loc[idx]
+
 #################################################################################
 #                                                                               #
 #                         Analytic Energy Functions                             #
@@ -207,12 +229,12 @@ def get_square_tuple(N):
     """get close to square"""
     if N >  1:
         subplt_cols = int(math.floor(np.sqrt(N)))
-        subplt_rows = N / subplt_cols
+        subplt_rows = int(N / subplt_cols)
         if N % subplt_cols != 0:
             subplt_rows += 1
     return subplt_rows, subplt_cols
 
-def subplt_shaper(N, shape):
+def subplt_shaper(N, shape=None):
     if shape is None:
         if N == 1:
             rows = 1
@@ -222,6 +244,19 @@ def subplt_shaper(N, shape):
     else:
         rows, cols = shape
     return rows, cols
+
+
+def subplotByDfList(dflist, fig, axplot, shape=None):
+    n = len(dflist)
+    nrows, ncols = subplt_shaper(n, shape) 
+    gs = gridspec.GridSpec(nrows, ncols)
+    for i, dfi in enumerate(dflist):
+        irow = math.floor(i / ncols)
+        icol = i - irow * ncols
+        ax = plt.subplot(gs[irow, icol])
+        axplot(dfi, ax)
+    plt.tight_layout()
+    return gs
 
 def df_ApplyAxplotToRows(df, shape, axplot_func, *args, **kwargs):
     N = len(df)
@@ -392,7 +427,7 @@ def plot_dav_vs_full(df, ax):
     ax.set_xlabel("Number of k-points per dimension")
     ax.set_ylabel('Lowest Eigenvalue')
     ax.plot(x, zeros   , 'k--', zorder=1)
-    ax.scatter(Nks, davmins , zorder=3, label='Davidson lowest Eigenvalue', c=sns.color_palette()[0])
+    ax.scatter(Nks, davmins , zorder=3, c=sns.color_palette()[0])
     if len(fullmins) > 0:
         ax.scatter(Nks_full, fullmins, c=sns.color_palette()[2],
                    zorder=2, label='Exact Lowest Eigenvalue')
@@ -412,21 +447,26 @@ def plot_mvproduct_scaling(df, ax, scale=2):
     Nexcs = df['Nexc']
     Noccs = df['Nocc']
     mvtimes = df['Mv_time']
+    x = Nexcs * Noccs
 
     ax.set_title('Matrix - Vector Product Scaling')
+    if len(df > 2):
+    	x_split = np.array_split(x, 2)[1]
+    	mvtimes_split = np.array_split(mvtimes, 2)[1]
 
-    Nexcs = np.array_split(Nexcs, 2)[1]
-    Noccs = np.array_split(Noccs, 2)[1]
-    mvtimes=np.array_split(mvtimes, 2)[1]
-    
-    sns.regplot(Nexcs*Noccs, mvtimes, ci=0.999, order=1, scatter_kws={'color' : sns.color_palette()[2], 's' : 50, 'zorder' : 2}
-                                            , line_kws={'zorder' : 1, 'linewidth' : 1})
+    	c = np.polyfit(np.log10(x_split), np.log10(mvtimes_split),  1)
+    	fit = 10**(c[1]) * x**(c[0])
+    	fitlabel = "$" + str(10**c[1])[:4] + " x^ {" + str(c[0])[:3] + "}$"
+    	
+    	ax.plot(Nexcs*Noccs, fit, label=fitlabel)
+    ax.legend()
+    ax.scatter(Nexcs*Noccs, mvtimes)
     ax.set_xlabel('Nexc x Nocc')
     ax.set_ylabel('Execution Time (s)')
     scale = 2
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlim(0, np.amax(Nexcs * Noccs)*scale)
+    ax.set_xlim(1e5, np.amax(Nexcs * Noccs)*scale)
     ax.set_ylim(1e-1, np.amax(mvtimes)*scale)
 
 def plot_stability(df, ax, *args, **kwargs):
@@ -479,7 +519,7 @@ def plot_diag_scaling(df, ax):
     cdav = np.polyfit(np.log10(Nmat), np.log10(Davtimes), 1)
     davfit = 10**(cdav[1]) * Nfit ** (cdav[0])
 
-    ax.plot(Nmat, Davtimes, 'o', label="Davidson's Algorithm", c=sns.color_palette()[0])
+    ax.plot(Nmat, Davtimes, 'o', label="Davidson", c=sns.color_palette()[0])
     fitlabel = "$" + str(10**cdav[1])[:4] + " N^ {" + str(cdav[0])[:3] + "}$"
     ax.plot(Nfit, davfit, c=sns.color_palette()[0], label=fitlabel)
 

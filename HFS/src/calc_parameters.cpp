@@ -26,7 +26,7 @@ namespace HFS {
         HFS::calcInverseExcitationMap();
     }
 
-    double calcKf (double rs, unsigned ndim) {
+    scalar calcKf (scalar rs, uint ndim) {
         if (NDIM == 1) {
             kf = PI / (4.0 * rs);
         } else if (NDIM == 2) {
@@ -37,7 +37,7 @@ namespace HFS {
         return kf;
     }
 
-    void calcVolAndTwoEConst (unsigned N_elec, double rs, double& Vol, double& TwoEConst) {
+    void calcVolAndTwoEConst (uint N_elec, scalar rs, scalar& Vol, scalar& TwoEConst) {
         if (NDIM == 1) {
             HFS::vol = HFS::N_elec * 2.0 * HFS::rs;
         } else if (NDIM == 2) {
@@ -50,34 +50,34 @@ namespace HFS {
     }
 
     void calcStates(arma::vec& kgrid
-                   ,unsigned Nk
-                   ,unsigned ndim
-                   ,arma::uword& Nocc
-                   ,arma::uword& Nvir
-                   ,arma::uword& N_elec
+                   ,uint Nk
+                   ,uint ndim
+                   ,uint& Nocc
+                   ,uint& Nvir
+                   ,uint& N_elec
                    ,arma::umat& occStates
                    ,arma::umat& virStates
                    ) {
-        arma::uword N = Nk - 1;  // Unique Brillioun Zone
-        arma::uword Nrows = std::pow(N, NDIM);
+        uint N = Nk - 1;  // Unique Brillioun Zone
+        uint Nrows = std::pow(N, NDIM);
         //states.set_size(Nrows, NDIM);
         arma::mat states(Nrows, NDIM);
 
         if (NDIM == 1) {
-            for (arma::uword i = 0; i < N; ++i) {
+            for (uint i = 0; i < N; ++i) {
                 states(i) = kgrid(i);
             }
         } else if (NDIM == 2) {
-            for (arma::uword i = 0; i < N; ++i) {
-                for (arma::uword j = 0; j < N; ++j) {
+            for (uint i = 0; i < N; ++i) {
+                for (uint j = 0; j < N; ++j) {
                     states(N*i + j, 0) = kgrid(i);
                     states(N*i + j, 1) = kgrid(j);
                 }
             }
         } else if (NDIM == 3) {
-            for (arma::uword i = 0; i < N; ++i) {
-                for (arma::uword j = 0; j < N; ++j) {
-                    for (arma::uword k = 0; k < N; ++k) {
+            for (uint i = 0; i < N; ++i) {
+                for (uint j = 0; j < N; ++j) {
+                    for (uint k = 0; k < N; ++k) {
                         states(N*N*i + N*j + k, 0) = kgrid(i);
                         states(N*N*i + N*j + k, 1) = kgrid(j);
                         states(N*N*i + N*j + k, 2) = kgrid(k);
@@ -85,12 +85,12 @@ namespace HFS {
                 }
             }
         }
-        double row_norm;
+        scalar row_norm;
 
         arma::uvec occ_indices(Nrows), vir_indices(Nrows);  // Allocate extra space to avoid append
         Nocc = 0;
         Nvir = 0;
-        for (arma::uword i = 0; i < Nrows; ++i) {
+        for (uint i = 0; i < Nrows; ++i) {
             row_norm = arma::norm(states.row(i));
             if (HFS::isOccupied(row_norm)) {
                 occ_indices(Nocc) = i;
@@ -111,11 +111,11 @@ namespace HFS {
     }
 
     void calcEnergies(arma::umat& inp_states, arma::vec& energy_vec) {
-        arma::uword num_inp_states = inp_states.n_cols;
+        uint num_inp_states = inp_states.n_cols;
         energy_vec.set_size(num_inp_states);
         energy_vec.fill(0.0);
-        for (arma::uword i = 0; i < num_inp_states; ++i) {
-            for (unsigned j = 0; j < NDIM; ++j) {
+        for (uint i = 0; i < num_inp_states; ++i) {
+            for (uint j = 0; j < NDIM; ++j) {
                 energy_vec(i) += HFS::kgrid(inp_states(j, i)) * HFS::kgrid(inp_states(j, i));
             }
             energy_vec[i] /= 2.0; //Is now filled with kinetic energy
@@ -124,35 +124,35 @@ namespace HFS {
     }
 
     void calcExcitations(arma::vec& kgrid
-                        ,unsigned Nk
-                        ,double deltaK
-                        ,arma::uword Nocc
-                        ,arma::uword Nvir
+                        ,uint Nk
+                        ,scalar deltaK
+                        ,uint Nocc
+                        ,uint Nvir
                         ,arma::umat& occ_states
                         ,arma::umat& vir_states
                         ,arma::umat& excitations
                         ,arma::vec&  exc_energies
-                        ,arma::uword& Nexc) {
+                        ,uint& Nexc) {
         arma::vec kexc(NDIM);
-        arma::uvec vir_idx(NDIM);
-        arma::uvec exc_idx(NDIM);
+        arma::uvec vir_uint(NDIM);
+        arma::uvec exc_uint(NDIM);
         excitations.set_size(2, Nocc * Nvir);
         exc_energies.set_size(Nocc * Nvir);
         Nexc = 0;
 
 
-        for (arma::uword i = 0; i < occ_states.n_cols; ++i) {
+        for (uint i = 0; i < occ_states.n_cols; ++i) {
             // Excite only in +x direction
-            for (arma::uword j = 1; j < Nk-1; ++j) {
+            for (uint j = 1; j < Nk-1; ++j) {
                 kexc = kgrid(occ_states.col(i));
                 kexc(0) += deltaK * j;
                 HFS::toFirstBrillouinZone(kexc);
-                //exc_idx = HFS::kToIndex(kexc);
-                HFS::kToIndex(kexc, exc_idx);
+                //exc_uint = HFS::kToIndex(kexc);
+                HFS::kToIndex(kexc, exc_uint);
                 // Find the vir state
-                for (arma::uword k = 0; k < vir_states.n_cols; ++k) {
-                    vir_idx = vir_states.col(k);
-                    if (arma::all(exc_idx == vir_idx)) {
+                for (uint k = 0; k < vir_states.n_cols; ++k) {
+                    vir_uint = vir_states.col(k);
+                    if (arma::all(exc_uint == vir_uint)) {
                         excitations(0, Nexc) = i;
                         excitations(1, Nexc) = k;
                         ++Nexc;
@@ -167,7 +167,7 @@ namespace HFS {
 
     void calcExcitationEnergies() {
         HFS::exc_energies.zeros(HFS::Nexc);
-        for (arma::uword i = 0; i < HFS::Nexc; ++i) {
+        for (uint i = 0; i < HFS::Nexc; ++i) {
             HFS::exc_energies(i) = HFS::vir_energies(HFS::excitations(1, i))
                                  - HFS::occ_energies(HFS::excitations(0, i));
         }
@@ -181,7 +181,7 @@ namespace HFS {
         void calcVirNTo1Map() {
             HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1);
             HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
-            for (arma::uword i=0; i < HFS::Nvir; ++i){
+            for (uint i=0; i < HFS::Nvir; ++i){
                 HFS::vir_N_to_1_mat(HFS::vir_states(0, i), HFS::vir_states(1, i)) = i;
             }
         }
@@ -189,7 +189,7 @@ namespace HFS {
         void calcVirNTo1Map() {
         HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1, HFS::Nk-1);
         HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
-        for (arma::uword i=0; i < HFS::Nvir; ++i){
+        for (uint i=0; i < HFS::Nvir; ++i){
             HFS::vir_N_to_1_mat(HFS::vir_states(0, i), HFS::vir_states(1, i), HFS::vir_states(2, i)) = i;
             }
         }
@@ -198,15 +198,15 @@ namespace HFS {
     void calcInverseExcitationMap() {
         HFS::inv_exc_mat.set_size(HFS::Nocc, HFS::Nvir);
         HFS::inv_exc_mat.fill(HFS::Nexc+1); // will make errors if accessing wrong one
-        for (arma::uword i = 0; i < HFS::Nexc; ++i) {
+        for (uint i = 0; i < HFS::Nexc; ++i) {
             HFS::inv_exc_mat(HFS::excitations(0, i), HFS::excitations(1, i)) = i;
         }
     }
 
     void calcLowestEnergyExcitationDegeneracy() {
-        double lowest_energy = HFS::exc_energies(0);
+        scalar lowest_energy = HFS::exc_energies(0);
         HFS::ground_state_degeneracy = 1;
-        for (arma::uword i = 1; i < HFS::Nexc; ++i) {
+        for (uint i = 1; i < HFS::Nexc; ++i) {
             if (HFS::exc_energies(i) < (lowest_energy + SMALLNUMBER) ) {
                 HFS::ground_state_degeneracy += 1;
             } else {

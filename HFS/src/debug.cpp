@@ -2,9 +2,9 @@
 
 namespace HFS{
 
-double full_diag_min;
-double Mv_time;
-double full_diag_time;
+scalar full_diag_min;
+scalar Mv_time;
+scalar full_diag_time;
 
 bool davidsonAgreesWithFullDiag() {
     arma::wall_clock timer;

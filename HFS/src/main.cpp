@@ -67,13 +67,13 @@ int main(int argc, char* argv[]){
     myeps.SetBlockSize(HFS::Dav_blocksize);
 
     // Weight by how close diags are
-    std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(HFS::Nmat, 0.0));
-    for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
+    std::vector< std::vector<scalar> > vecs(HFS::num_guess_evecs, std::vector<scalar>(HFS::Nmat, 0.0));
+    for (uint i = 0; i < HFS::num_guess_evecs; ++i) {
         arma::vec guessvec;
         arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
         guessvec = (1.0 / temp);
         guessvec /= arma::norm(guessvec);
-        vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
+        vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
     }
 
     myeps.SetInitialSpace(vecs);
