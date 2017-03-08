@@ -250,13 +250,14 @@ def subplotByDfList(dflist, fig, axplot, shape=None):
     n = len(dflist)
     nrows, ncols = subplt_shaper(n, shape) 
     gs = gridspec.GridSpec(nrows, ncols)
+    axes = [[None for col in range(ncols)] for row in range(nrows)]
     for i, dfi in enumerate(dflist):
         irow = math.floor(i / ncols)
         icol = i - irow * ncols
-        ax = plt.subplot(gs[irow, icol])
-        axplot(dfi, ax)
+        axes[irow][icol] = plt.subplot(gs[irow, icol])
+        axplot(dfi, axes[irow][icol])
     plt.tight_layout()
-    return gs
+    return axes, gs
 
 def df_ApplyAxplotToRows(df, shape, axplot_func, *args, **kwargs):
     N = len(df)

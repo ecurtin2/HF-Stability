@@ -14,6 +14,7 @@
 \usepackage[justification=centering]{caption}
 \usepackage{braket}
 \usepackage{amsmath}
+\usepackage{verbatim}
 
 \usepackage[version=3]{mhchem}
 \definecolor{darkgreen}{RGB}{30, 133, 12}
@@ -135,6 +136,8 @@
 	\end{itemize}
 \end{frame}
 
+
+\begin{comment}
 {%
 	\setbeamertemplate{frame footer}{Thouless, D. J. The Quantum Mechanics of Many-Body Systems, 2nd ed.; Dover: 1972. (p. 114)}
 \begin{frame}{Hartree-Fock Stability Conditions}
@@ -193,6 +196,8 @@
 	\end{itemize}
 \end{frame}
 
+\end{comment}
+
 {%
 	\setbeamertemplate{frame footer}{Seeger, R.; Pople, J. A. J. Chem. Phys. 1977, 66 (7), 3045.}
 
@@ -231,9 +236,9 @@
 				  \cmidrule{2-7}
 				  & Real RHF & Complex RHF & Real UHF & Complex UHF & Real GHF & Complex GHF \\
 				  \midrule
-				  Real RHF    & ${}^1\mathbf{A}' + {}^1\mathbf{B}'$ & ${}^1\mathbf{A}' - {}^1\mathbf{B}'$ & ${}^3\mathbf{A}' + {}^3\mathbf{B}'$ & & & \\
-				  Complex RHF & - & ${}^1\mathbf{H}'$ & - & \alert{${}^3\mathbf{H}'$} & - & \\
-				  Real UHF    & - & - & $\mathbf{A}' + \mathbf{B}'$ & $\mathbf{A}' - \mathbf{B}'$ & $\mathbf{A}'' + \mathbf{B}''$ &  \\
+				  Real RHF    & ${}^1\mathbf{A}' + {}^1\mathbf{B}'$ & ${}^1\mathbf{A}' - {}^1\mathbf{B}'$ & ${}^3\mathbf{A}' + {}^3\mathbf{B}'$ & - & - & -  \\
+				  Complex RHF & - & ${}^1\mathbf{H}'$ & - & \alert{${}^3\mathbf{H}'$} & - & - \\
+				  Real UHF    & - & - & $\mathbf{A}' + \mathbf{B}'$ & $\mathbf{A}' - \mathbf{B}'$ & $\mathbf{A}'' + \mathbf{B}''$ & - \\
 				  Complex UHF & - & - & - &  $\mathbf{H}'$ & - & $\mathbf{H}'$ \\
 				  Real GHF    & - & - & - & - & $\mathbf{A} - \mathbf{B}$ &  $\mathbf{A} - \mathbf{B}$  \\
 				  Complex GHF & - & - & - & - & - & $\mathbf{H}$ \\
@@ -299,6 +304,8 @@
 	\end{itemize}
 \end{frame}
 
+
+\begin{comment}
 \section{Notes on Iterative Subspace Eigenvalue Methods}
 {%
 \setbeamertemplate{frame footer}{1. Saad, Y. Numerical Methods for Large Eigenvalue Problems; SIAM, 2011.
@@ -371,6 +378,7 @@
 	\end{itemize}
 
 \end{frame}
+\end{comment}
 
 
 {%
@@ -389,6 +397,7 @@
 
 \section{Results}
 
+\begin{comment}
 {%
 \setbeamertemplate{frame footer}{}
 
@@ -409,6 +418,7 @@
 		\end{column}
 	\end{columns}
 \end{frame}
+\end{comment}
 
 {%
 \setbeamertemplate{frame footer}{}
@@ -463,6 +473,8 @@
 			\begin{itemize}
 				\item {Scales as $2N_{exc}$}
 				\item {$N_{occ}$ and $N_{vir}$ both scale with $N_{kpoints}^D$}
+				\item {Use an iterative subspace method }
+				\item {Jacobi-Davidson(-Liu)}
 			\end{itemize}
 		\end{column}
 		\hfill
@@ -515,6 +527,7 @@
 	\end{columns}
 \end{frame}
 
+\begin{comment}
 \begin{frame}{Algorithm Wall time}
 	\begin{columns}[c] % align columns
 		\begin{column}{.4\textwidth}
@@ -529,6 +542,7 @@
 		\end{column}
 	\end{columns}
 \end{frame}
+\end{comment}
 
 
 \begin{frame}{Efficacy of Davidson's Algorithm}
@@ -557,9 +571,21 @@
 	\includegraphics[width=.95\linewidth]{../images/MeVsBernu.pdf}
 \end{frame}
 
+{%
+\setbeamertemplate{frame footer}{}
+\begin{frame}{Dependence on r${}_s$}
+	3D data is currently inconclusive. 
+	\includegraphics[width=.95\linewidth]{../images/2d3dstability.eps}
+\end{frame}
 
+{%
+\setbeamertemplate{frame footer}{}
+\begin{frame}[standout]
+  Questions?
+\end{frame}
+
+\begin{comment}
 \section{Concluding Remarks}
-
 {%
 \setbeamertemplate{frame footer}{}
 \begin{frame}{Next Steps}
@@ -572,12 +598,9 @@
 	\end{tabular}}
 \end{frame}
 }
+\end{comment}
 
-{%
-\setbeamertemplate{frame footer}{}
-\begin{frame}[standout]
-  Questions?
-\end{frame}
+
 
 \appendix
 
