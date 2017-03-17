@@ -75,32 +75,28 @@ def file_to_df(fname, idx):
     matrixdic = {}
 
     keys_unfound = copy.deepcopy(keys)
-    vectorkeys_unfound = copy.deepcopy(vectorkeys)
-    matrixkeys_unfound = copy.deepcopy(matrixkeys)
+    vectorkeys = copy.deepcopy(vectorkeys)
+    matrixkeys = copy.deepcopy(matrixkeys)
     for lineno, line in enumerate(f):
-        for key in keys_unfound:
+        for key in keys:
             if ((key + " =").lower() in line.lower()):  # .lower is case-insensitive comparison
                 str_value = line.split("=", 1)[1].rstrip('\n')
                 dic[key] = str_to_float_or_int(str_value)
-                keys_unfound.pop(key)
             if (key + " :" in line) or (key + ":" in line):
                 str_value = line.split(": ", 1)[1].rstrip('\n')
                 dic[key] = str_to_float_or_int(str_value)
-                keys_unfound.pop(key)
 
-        for key in vectorkeys_unfound:
+        for key in vectorkeys:
             if (key in line):
                 begin = lineno
                 length = str_to_float_or_int(line.split(":")[1])
                 vectorrange[key] = [begin, length]
-                vectorkeys_unfound.pop(key)
-        for key in matrixkeys_unfound:
+        for key in matrixkeys:
             if (key in line):
                 begin = lineno
                 nrows, ncols = line.split(":")[1].split("x")
                 nrows, ncols = str_to_float_or_int(nrows), str_to_float_or_int(ncols)
                 matrixdic[key] = [begin, nrows, ncols]
-                matrixkeys_unfound.pop(key)
     f.close()
 
 
@@ -255,9 +251,25 @@ def subplotByDfList(dflist, fig, axplot, shape=None):
         irow = math.floor(i / ncols)
         icol = i - irow * ncols
         axes[irow][icol] = plt.subplot(gs[irow, icol])
-        axplot(dfi, axes[irow][icol])
+        try:
+            axplot(dfi, axes[irow][icol])
+        except ValueError:
+            pass
     plt.tight_layout()
     return axes, gs
+
+def subplotByDfDict(dfdict, fig, axplot, shape=None):
+    n = len(dfdict)
+    nrows, ncols = subplt_shaper(n, shape) 
+    gs = gridspec.GridSpec(nrows, ncols)
+    axes = [[None for col in range(ncols)] for row in range(nrows)]
+    for i, (key, df) in enumerate(dfdict.items()):
+        irow = math.floor(i / ncols)
+        icol = i - irow * ncols
+        axes[irow][icol] = plt.subplot(gs[irow, icol])
+        axes[irow][icol].set_title(key)
+        axplot(df, axes[irow][icol])
+    plt.tight_layout()
 
 def df_ApplyAxplotToRows(df, shape, axplot_func, *args, **kwargs):
     N = len(df)
@@ -405,7 +417,7 @@ def axplot_eval_convergence(df, ax, df_idx):
         cols = reds
 
     title = 'r_s = ' + str(rs) + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
-    ax.set_title(title)
+#ax.set_title(title)
     for i in range(num_evals):
         ax.plot(x, davvals[:, i], 'o-', c=cols[i])
     return ax
@@ -429,10 +441,10 @@ def plot_dav_vs_full(df, ax):
     ax.set_ylabel('Lowest Eigenvalue')
     ax.plot(x, zeros   , 'k--', zorder=1)
     ax.scatter(Nks, davmins , zorder=3, c=sns.color_palette()[0])
-    if len(fullmins) > 0:
-        ax.scatter(Nks_full, fullmins, c=sns.color_palette()[2],
-                   zorder=2, label='Exact Lowest Eigenvalue')
-    ax.legend(loc='best')
+#    if len(fullmins) > 0:
+#        ax.scatter(Nks_full, fullmins, c=sns.color_palette()[2],
+#                   zorder=2, label='Exact Lowest Eigenvalue')
+#    ax.legend(loc='best')
 
 
 def plot_matrix_scaling(df, ax, *args, **kwargs):
@@ -442,7 +454,7 @@ def plot_matrix_scaling(df, ax, *args, **kwargs):
     ax.set_ylim(0, np.amax(2.1*Nexcs))
     ax.set_xlabel('# k-points per dimension')
     ax.set_label('Size of Matrix')
-    ax.set_title('Matrix Size Scaling')
+#ax.set_title('Matrix Size Scaling')
 
 def plot_mvproduct_scaling(df, ax, scale=2):
     Nexcs = df['Nexc']
@@ -450,7 +462,7 @@ def plot_mvproduct_scaling(df, ax, scale=2):
     mvtimes = df['Mv_time']
     x = Nexcs * Noccs
 
-    ax.set_title('Matrix - Vector Product Scaling')
+#ax.set_title('Matrix - Vector Product Scaling')
     if len(df > 2):
     	x_split = np.array_split(x, 2)[1]
     	mvtimes_split = np.array_split(mvtimes, 2)[1]
@@ -486,7 +498,7 @@ def plot_stability(df, ax, *args, **kwargs):
 def plot_runtime(df, ax, *args, **kwargs):
     Walltime = [float(s.split()[0]) for s in df['Total Elapsed Time']]
     Nexcs = df.Nexc.as_matrix()
-    ax.set_title('Algorithm Runtime')
+#ax.set_title('Algorithm Runtime')
     ax.set_xlabel('Matrix Dimension')
     ax.set_ylabel('Wall Time of Entire Algorithm')
     ax.set_xscale("log")
@@ -494,12 +506,14 @@ def plot_runtime(df, ax, *args, **kwargs):
     ax.scatter(2*Nexcs, Walltime, *args, **kwargs)
 
 def plot_diag_scaling(df, ax):
+    if len(df) == 0:
+        return ax
     Nmat = 2 * df.Nexc.as_matrix()
     Davtimes =  df.Dav_time.as_matrix()
 
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     fulltimes = df_with_fulldiags.full_diag_time.as_matrix()
-    include_full = np.any(fulltimes > 1e-7)
+    include_full = np.any(fulltimes > 1e-7) 
     Nmatfull = 2 * df_with_fulldiags.Nexc.as_matrix()
 
     xmax = np.amax(Nmat) * 10
@@ -510,7 +524,7 @@ def plot_diag_scaling(df, ax):
 
     # Full diagonalization
     if include_full:
-        c = np.polyfit(np.log10(Nmatfull), np.log10(fulltimes), 1)
+        c = np.polyfit(np.log10(Nmatfull)[-10:], np.log10(fulltimes)[-10:], 1)
         fit = 10**(c[1]) * Nfit ** (c[0])
         ax.plot(Nmatfull, fulltimes, 'o', label='Full Diagonalization', c=sns.color_palette()[2])
         fitlabel = "$" + str(10**c[1])[:4] + " N^{" + str(c[0])[:3] + "}$"

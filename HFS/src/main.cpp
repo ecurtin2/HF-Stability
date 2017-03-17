@@ -89,7 +89,8 @@ int main(int argc, char* argv[]){
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
 
-    HFS::writeOutput(false);
+    //HFS::writeOutput(false);
+    HFS::writeJSON(false);
     fclose(stdout);
 
 

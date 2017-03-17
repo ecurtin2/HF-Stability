@@ -22,6 +22,15 @@ namespace HFS{
      *
      */
 
+    extern void writeJSON(bool detail);
+
+    template <class T>
+    void vecToJSON(std::ofstream& output, const arma::Col<T>& v, const std::string& varname);
+    template <class T>
+    void writeArmaVec(std::ofstream& output, const arma::Col<T>& v);
+    template <class T>
+    void writeArmaMat(std::ofstream& output, const arma::Mat<T>& M, const std::string& varname);
+
     extern std::string centerString(std::string s, int width);
     /** \brief Return the string, padded by spaces to center it.
      *

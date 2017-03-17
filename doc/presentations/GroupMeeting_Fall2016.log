@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  8 MAR 2017 11:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  9 MAR 2017 16:28
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -1352,7 +1352,7 @@ nverted-to.pdf ../images/imark_bold.eps>
 (epstopdf)             \includegraphics on input line 33.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/imark_bold-eps-converted-to.pdf, id=33, 27.10126pt x 35.13126pt>
+<../images/imark_bold-eps-converted-to.pdf, id=29, 27.10126pt x 35.13126pt>
 File: ../images/imark_bold-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/imark_bold-eps-converted-to.pdf>
@@ -1418,7 +1418,7 @@ LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
 (Font)              using `OMS/cmsy/m/n' instead
 (Font)              for symbol `textbullet' on input line 3.
 
-<../images/1d_extrema.pdf, id=83, 578.16pt x 397.485pt>
+<../images/1d_extrema.pdf, id=77, 578.16pt x 397.485pt>
 File: ../images/1d_extrema.pdf Graphic file (type pdf)
 
 <use ../images/1d_extrema.pdf>
@@ -1435,7 +1435,7 @@ Package pdftex.def Info: ../images/1d_extrema.pdf used on input line 10.
 ) [6
 
 ]
-<../images/const_opt_globalmin.jpeg, id=102, 1204.5pt x 981.6675pt>
+<../images/const_opt_globalmin.jpeg, id=96, 1204.5pt x 981.6675pt>
 File: ../images/const_opt_globalmin.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_globalmin.jpeg>
@@ -1443,7 +1443,7 @@ Package pdftex.def Info: ../images/const_opt_globalmin.jpeg used on input line
 123.
 (pdftex.def)             Requested size: 132.74713pt x 138.21385pt.
 
-<../images/const_opt_saddle.jpeg, id=104, 1204.5pt x 826.08624pt>
+<../images/const_opt_saddle.jpeg, id=98, 1204.5pt x 826.08624pt>
 File: ../images/const_opt_saddle.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_saddle.jpeg>
@@ -1451,7 +1451,7 @@ Package pdftex.def Info: ../images/const_opt_saddle.jpeg used on input line 123
 .
 (pdftex.def)             Requested size: 132.74713pt x 126.65114pt.
 
-<../images/const_opt_nonstationary.jpeg, id=106, 1204.5pt x 981.6675pt>
+<../images/const_opt_nonstationary.jpeg, id=100, 1204.5pt x 981.6675pt>
 File: ../images/const_opt_nonstationary.jpeg Graphic file (type jpg)
 
 <use ../images/const_opt_nonstationary.jpeg>
@@ -1572,7 +1572,7 @@ df>
 (epstopdf)             \includegraphics on input line 442.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/energycompare-eps-converted-to.pdf, id=236, 216.81pt x 216.81pt>
+<../images/energycompare-eps-converted-to.pdf, id=230, 216.81pt x 216.81pt>
 File: ../images/energycompare-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/energycompare-eps-converted-to.pdf>
@@ -1593,7 +1593,7 @@ rted-to.pdf ../images/exchist.eps>
 (epstopdf)             \includegraphics on input line 463.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/exchist-eps-converted-to.pdf, id=263, 216.81pt x 216.81pt>
+<../images/exchist-eps-converted-to.pdf, id=257, 216.81pt x 216.81pt>
 File: ../images/exchist-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/exchist-eps-converted-to.pdf>
@@ -1614,7 +1614,7 @@ erted-to.pdf ../images/matscale.eps>
 (epstopdf)             \includegraphics on input line 488.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/matscale-eps-converted-to.pdf, id=304, 433.62pt x 289.08pt>
+<../images/matscale-eps-converted-to.pdf, id=298, 433.62pt x 289.08pt>
 File: ../images/matscale-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/matscale-eps-converted-to.pdf>
@@ -1635,7 +1635,7 @@ verted-to.pdf ../images/mvscaling.eps>
 (epstopdf)             \includegraphics on input line 506.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/mvscaling-eps-converted-to.pdf, id=350, 433.62pt x 289.08pt>
+<../images/mvscaling-eps-converted-to.pdf, id=344, 433.62pt x 289.08pt>
 File: ../images/mvscaling-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/mvscaling-eps-converted-to.pdf>
@@ -1657,7 +1657,7 @@ ing-eps-converted-to.pdf ../images/dav_vs_exact_scaling.eps>
 (epstopdf)             \includegraphics on input line 528.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/dav_vs_exact_scaling-eps-converted-to.pdf, id=391, 433.62pt x 289.08
+<../images/dav_vs_exact_scaling-eps-converted-to.pdf, id=385, 433.62pt x 289.08
 pt>
 File: ../images/dav_vs_exact_scaling-eps-converted-to.pdf Graphic file (type pd
 f)
@@ -1680,7 +1680,7 @@ converted-to.pdf ../images/dav_vs_exact.eps>
 (epstopdf)             \includegraphics on input line 564.
 Package epstopdf Info: Output file is already uptodate.
 
-<../images/dav_vs_exact-eps-converted-to.pdf, id=449, 433.62pt x 289.08pt>
+<../images/dav_vs_exact-eps-converted-to.pdf, id=443, 433.62pt x 289.08pt>
 File: ../images/dav_vs_exact-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/dav_vs_exact-eps-converted-to.pdf>
@@ -1690,7 +1690,7 @@ put line 564.
  [34
 
  <../images/dav_vs_exact-eps-converted-to.pdf>]
-<../images/MeVsBernu.pdf, id=503, 941.17834pt x 463.43573pt>
+<../images/MeVsBernu.pdf, id=497, 941.17834pt x 463.43573pt>
 File: ../images/MeVsBernu.pdf Graphic file (type pdf)
 
 <use ../images/MeVsBernu.pdf>
@@ -1700,8 +1700,8 @@ Package pdftex.def Info: ../images/MeVsBernu.pdf used on input line 572.
 
  <../images/MeVsBernu.pdf>]
 Package epstopdf Info: Source file: <../images/2d3dstability.eps>
-(epstopdf)                    date: 2017-03-08 11:36:49
-(epstopdf)                    size: 25946 bytes
+(epstopdf)                    date: 2017-03-08 16:53:25
+(epstopdf)                    size: 25964 bytes
 (epstopdf)             Output file: <../images/2d3dstability-eps-converted-to.p
 df>
 (epstopdf)                    date: 2017-03-08 11:36:58
@@ -1709,9 +1709,15 @@ df>
 (epstopdf)             Command: <epstopdf --outfile=../images/2d3dstability-eps
 -converted-to.pdf ../images/2d3dstability.eps>
 (epstopdf)             \includegraphics on input line 579.
-Package epstopdf Info: Output file is already uptodate.
+runsystem(epstopdf --outfile=../images/2d3dstability-eps-converted-to.pdf ../im
+ages/2d3dstability.eps)...executed.
 
-<../images/2d3dstability-eps-converted-to.pdf, id=593, 578.16pt x 289.08pt>
+Package epstopdf Info: Result file: <../images/2d3dstability-eps-converted-to.p
+df>
+(epstopdf)                    date: 2017-03-09 16:28:28
+(epstopdf)                    size: 23046 bytes.
+
+<../images/2d3dstability-eps-converted-to.pdf, id=587, 578.16pt x 289.08pt>
 File: ../images/2d3dstability-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ../images/2d3dstability-eps-converted-to.pdf>
@@ -1741,15 +1747,9 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 613.
 (./GroupMeeting_Fall2016.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 613.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 613.
+Package rerunfilecheck Info: File `GroupMeeting_Fall2016.out' has not changed.
+(rerunfilecheck)             Checksum: 91889DE61C89D6BA93B31B39534D7F1F;215.
 
-
-Package rerunfilecheck Warning: File `GroupMeeting_Fall2016.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `GroupMeeting_Fall2016.out':
-(rerunfilecheck)             Before: 5079B9B3A08506D1BBBC653419EAE9DB;268
-(rerunfilecheck)             After:  91889DE61C89D6BA93B31B39534D7F1F;215.
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
@@ -1778,36 +1778,31 @@ Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 613.
 ### simple group (level 1) entered at line 42 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 30610 strings out of 493029
- 618244 string characters out of 6136235
- 672563 words of memory out of 5000000
- 33485 multiletter control sequences out of 15000+600000
+ 30602 strings out of 493029
+ 618170 string characters out of 6136235
+ 671563 words of memory out of 5000000
+ 33479 multiletter control sequences out of 15000+600000
  15952 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  71i,18n,96p,10404b,2496s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{Navigation38} has been referenced b
-ut does not exist, replaced by a fixed one
-
-pdfTeX warning (dest): name{Outline0.5} has been referenced but does not exist,
- replaced by a fixed one
-
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/
-fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmss9.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
-onts/cm/cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
-m/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy
-5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on GroupMeeting_Fall2016.pdf (37 pages, 702960 bytes).
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbo
+ls/msbm10.pfb>
+Output written on GroupMeeting_Fall2016.pdf (37 pages, 702990 bytes).
 PDF statistics:
- 706 PDF objects out of 1000 (max. 8388607)
- 366 compressed objects within 4 object streams
- 82 named destinations out of 1000 (max. 500000)
- 214 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 700 PDF objects out of 1000 (max. 8388607)
+ 360 compressed objects within 4 object streams
+ 80 named destinations out of 1000 (max. 500000)
+ 206 words of extra memory for PDF output out of 10000 (max. 10000000)
 
