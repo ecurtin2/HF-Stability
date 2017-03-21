@@ -11,6 +11,7 @@ taken as command line input.
 #include <cmath>
 #include <assert.h>
 #include "parameters.hpp"
+#include "cmd_parser.hpp"
 #include "base_funcs.hpp"
 #include "calc_parameters.hpp"
 #include "matrix_vectorproducts.hpp"
@@ -21,7 +22,7 @@ taken as command line input.
 #include <ctime>
 #include <stdio.h>
 
-int main(int argc, char* argv[]);
+extern int main(int argc, char* argv[]);
 /**<
 The main function, called with input parameters from the command line in the release build.
 The parameters must be given in the correct order. In the debug and profile builds, the

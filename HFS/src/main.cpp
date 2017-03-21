@@ -31,21 +31,11 @@ int main(int argc, char* argv[]){
     arma::wall_clock timer;
     timer.tic();
 
-
-    #ifdef RELEASE
-        if (argc != 4) {
-            std::cout << "Error! Wrong number of arguments" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        HFS::rs              = std::stof(argv[1]);
-        HFS::Nk              = std::stoi(argv[2]);
-        HFS::mycase          = argv[3];
-    #else
-        HFS::rs              = 1.2;
-        HFS::Nk              = 12;
-        HFS::OutputFileName  = "test.log";
-        HFS::mycase          = "cUHF2cUHF";
-    #endif // Release
+    // Defaults
+    HFS::rs              = 1.2;
+    HFS::Nk              = 12;
+    HFS::mycase          = "cRHF2cUHF";
+    HFS::OutputFileName  = "test.log";
 
     HFS::Dav_tol         = 1e-6;
     HFS::Dav_maxits      = 30;
@@ -54,6 +44,22 @@ int main(int argc, char* argv[]){
     HFS::Dav_blocksize   = 1;
     HFS::Dav_Num_evals   = 1;
 
+    /* Set options from command line. False means error won't be thrown if
+       value is not found, and default will be used. */
+    ConfigParser parser(argc, argv);
+    parser.set_val(HFS::rs, "-rs", false);
+    parser.set_val(HFS::Nk, "-Nk", false);
+    parser.set_val(HFS::mycase, "-mycase", false);
+    parser.set_val(HFS::OutputFileName, "-fname", false);
+    parser.set_val(HFS::Dav_tol, "-Dav_tol", false);
+    parser.set_val(HFS::Dav_maxits, "-Dav_maxits", false);
+    parser.set_val(HFS::Dav_maxsubsize, "-Dav_maxsubsize", false);
+    parser.set_val(HFS::num_guess_evecs, "-num_guess_evecs", false);
+    parser.set_val(HFS::Dav_blocksize, "-Dav_blocksize", false);
+    parser.set_val(HFS::Dav_Num_evals, "-Dav_num_evals", false);
+
+
+    /* Calculation starts here */
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
@@ -66,7 +72,7 @@ int main(int argc, char* argv[]){
     myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
     myeps.SetBlockSize(HFS::Dav_blocksize);
 
-    // Weight by how close diags are
+    // Choose guess eigenvectors for davidson. Weight by how close diags are.
     std::vector< std::vector<scalar> > vecs(HFS::num_guess_evecs, std::vector<scalar>(HFS::Nmat, 0.0));
     for (uint i = 0; i < HFS::num_guess_evecs; ++i) {
         arma::vec guessvec;
@@ -76,6 +82,7 @@ int main(int argc, char* argv[]){
         vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
     }
 
+    // Davidson Algorithm
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;
     davtimer.tic();
@@ -89,10 +96,8 @@ int main(int argc, char* argv[]){
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
 
-    //HFS::writeOutput(false);
-    HFS::writeJSON(false);
-    fclose(stdout);
-
+    // Finish up, write and test for problems.
+    HFS::writeJSON(HFS::OutputFileName, true);
 
     #ifndef NDEBUG
         if (HFS::Nmat < 1500) {
