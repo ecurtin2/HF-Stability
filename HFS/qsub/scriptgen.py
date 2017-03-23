@@ -3,17 +3,19 @@ import itertools
 import tempfile
 import os
 
-NDIM = 3
+NDIM = 2
 #caselist = ['cUHF2cUHF', 'cRHF2cGHF']
 caselist = ['cRHF2cUHF']
-rslists = {
-	   'cUHF2cUHF' : [0.4]
-	  ,'cRHF2cUHF' : np.linspace(0.4, 1.4, 6)
-          }
-Nklists = {
-	   'cUHF2cUHF' : [33]
-	  ,'cRHF2cUHF' : range(13, 57, 4)
-          }
+rslists = {'cRHF2cUHF' : [1.2]}
+Nklists = {'cRHF2cUHF' : [15]}
+#rslists = {
+#	   'cUHF2cUHF' : [0.4]
+#	  ,'cRHF2cUHF' : np.linspace(0.4, 1.4, 6)
+#          }
+#Nklists = {
+#	   'cUHF2cUHF' : [33]
+#	  ,'cRHF2cUHF' : range(13, 57, 4)
+#          }
 Nodes = itertools.cycle([4, 5, 6, 7]) # iterator that loops through these variables
 					    # goes back to start after reaching end. 
 
@@ -22,7 +24,7 @@ content = f.readlines()
 f.close()
 
 def getCmd(rs, Nk, ndim, case):
-    cmd = '${exe} ' + str(rs) + ' ' + str(Nk) + ' ' + case + ' > ${outfile}\n'
+    cmd = '${exe} --rs ' + str(rs) + ' --Nk ' + str(Nk) + ' --mycase ' + case + ' --fname ${outfile}\n'
     return cmd
 
 def getFilename(rs, Nk, ndim, case):
@@ -43,7 +45,7 @@ def writeFile(rs, Nk, ndim, case, fname):
         elif "CALL_EXECUTABLE" in line:
             newcontent += getCmd(rs, Nk, ndim, case)
         elif "DEFINE_EXECUTABLE" in line:
-            newcontent += 'exe=/home/ecurtin2/git/HF-Stability/HFS/HFSrelease'+ str(NDIM) + 'D.exe'
+            newcontent += 'exe=/home/ecurtin2/git/HF-Stability/HFS/bin/HFSrelease'+ str(NDIM) + 'D'
         else:
             newcontent += line
     scriptname = fname.replace("./", "qsub-") + ".sh"

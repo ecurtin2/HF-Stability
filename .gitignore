@@ -4,7 +4,8 @@
 **.exe
 **.json
 **.log
-HFS/build/*
+HFS/build
+HFS/bin
 HFS/qsub/generatedscripts
 HFS/log
 HFS/doxygen/html
