@@ -7,7 +7,7 @@ NODE
 #$ -o output.out
 
 scr=/scratch/ecurtin2
-outdir=/home/ecurtin2/git/HF-Stability/HFS/log
+outdir=/home/ecurtin2/git/HF-Stability/analysis/log
 DEFINE_EXECUTABLE
 
 #This line changed by scriptgen.py
