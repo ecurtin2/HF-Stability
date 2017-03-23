@@ -50,9 +50,9 @@ int main(int argc, char* argv[]){
     HFS::Dav_tol         = 1e-6;
     HFS::Dav_maxits      = 30;
     HFS::Dav_maxsubsize  = 1500;
-    HFS::num_guess_evecs = 1;
-    HFS::Dav_blocksize   = 1;
-    HFS::Dav_Num_evals   = 1;
+    HFS::num_guess_evecs = 3;
+    HFS::Dav_blocksize   = 3;
+    HFS::Dav_Num_evals   = 3;
 
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
@@ -89,7 +89,7 @@ int main(int argc, char* argv[]){
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
     HFS::Dav_final_val = HFS::dav_vals.min();
 
-    HFS::writeOutput(false);
+    HFS::writeOutput(true);
     fclose(stdout);
 
 

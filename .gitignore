@@ -1,6 +1,7 @@
 **.so
 **.o
 **.pyc
+**.exe
 HFS/build/*
 HFS/qsub/generatedscripts
 HFS/log

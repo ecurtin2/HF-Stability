@@ -9,13 +9,13 @@
 CC = g++
 SRCDIR = src
 SRCEXT = cpp
-BUILDDIR = build
 TARGET = HFS
+BUILDDIR = build
 LIB = -larmadillo
 LOCDIR = home/evan/git/HF-Stability/
 MANSEC = EPS
 
-COMP = Work
+COMP = Gellmann
 
 # Work
 ifeq ($(COMP),Work)
@@ -53,37 +53,42 @@ CFLAGS+=-L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/ -lopenblas -
 LINKEROPTS = -L/home/ecurtin2/local/lib/ -larmadillo
 endif
 
-DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
-INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/
-
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 
-
 debug2D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=2
+debug2D: EXE = HFSdebug2D.exe
 debug2D: $(TARGET)
 
 profile2D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=2
+profile2D: EXE = HFSprofile2D.exe
 profile2D:  $(TARGET)
 
 release2D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=2
+release2D: EXE = HFSrelease2D.exe
 release2D: $(TARGET)
 
 debug3D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=3
+debug3D: EXE = HFSdebug3D.exe
 debug3D: $(TARGET)
 
 profile3D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=3
+profile3D: EXE = HFSprofile3D.exe
 profile3D:  $(TARGET)
 
 release3D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=3
+release3D: EXE = HFSrelease3D.exe
 release3D: $(TARGET)
+
+DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
+INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/
 
 
 .PHONY: depend clean
 
 $(TARGET): $(OBJECTS)
 	@echo " Linking..."
-	@echo " $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB}"; $(CC) $^ -o $(TARGET) $(LIB) ${SLEPC_EPS_LIB} $(LINKEROPTS)
+	@echo " $(CC) $^ -o $(EXE) $(LIB) ${SLEPC_EPS_LIB}"; $(CC) $^ -o $(EXE) $(LIB) ${SLEPC_EPS_LIB} $(LINKEROPTS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
