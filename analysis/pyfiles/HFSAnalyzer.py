@@ -13,233 +13,12 @@ import re
 import os
 
 
-#################################################################################
-#                                                                               #
-#                      Parsing -> DataFrame Functions                           #
-#                                                                               #
-#################################################################################
-
-def str_to_float_or_int(s):
-    try:
-        return int(s)
-    except ValueError:
-        try:
-            return float(s)
-        except ValueError:
-            return s
-
-def file_to_df(fname, idx):
-    f = open(fname, 'r')
-
-    keys = [
-            'Computation Started'
-           ,'Computation Finished'
-           ,'Nk'
-           ,'ndim'
-           ,'rs'
-           ,'mycase'
-           ,'deltaK'
-           ,'kf'
-           ,'kmax'
-           ,'Nocc'
-           ,'Nvir'
-           ,'Nexc'
-           ,'ground_state_degeneracy'
-           ,'dav_its'
-           ,'num_guess_evecs'
-           ,'Dav_blocksize'
-           ,'Dav_Num_evals'
-           ,'Dav_time'
-           ,'Mv_time'
-           ,'Davidson_Stopping_Criteria'
-           ,'Dav_final_val'
-           ,'full_diag_min'
-           ,'full_diag_time'
-           ,'Total Elapsed Time'
-           ,'Davidson Tolerance'
-           ,'Dav_minits'
-           ,'Dav_maxits'
-           ,'Dav_maxsubsize'
-           ,'cond_number'
-           ]
-
-    vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies'
-                 ,'Kgrid'
-                 ,'DavVals'
-                 ]
-
-    matrixkeys = ['Occupied States', 'Virtual States', 'Excitations']
-    allkeys = keys + vectorkeys + matrixkeys
-
-    dic = {}
-    vectordic = {}
-    vectorrange = {}
-    matrixdic = {}
-
-    keys_unfound = copy.deepcopy(keys)
-    vectorkeys = copy.deepcopy(vectorkeys)
-    matrixkeys = copy.deepcopy(matrixkeys)
-    for lineno, line in enumerate(f):
-        for key in keys:
-            if ((key + " =").lower() in line.lower()):  # .lower is case-insensitive comparison
-                str_value = line.split("=", 1)[1].rstrip('\n')
-                dic[key] = str_to_float_or_int(str_value)
-            if (key + " :" in line) or (key + ":" in line):
-                str_value = line.split(": ", 1)[1].rstrip('\n')
-                dic[key] = str_to_float_or_int(str_value)
-
-        for key in vectorkeys:
-            if (key in line):
-                begin = lineno
-                length = str_to_float_or_int(line.split(":")[1])
-                vectorrange[key] = [begin, length]
-        for key in matrixkeys:
-            if (key in line):
-                begin = lineno
-                nrows, ncols = line.split(":")[1].split("x")
-                nrows, ncols = str_to_float_or_int(nrows), str_to_float_or_int(ncols)
-                matrixdic[key] = [begin, nrows, ncols]
-    f.close()
-
-
-
-    for key in vectorrange:
-        vec = pd.read_table(fname, skiprows=vectorrange[key][0], nrows=vectorrange[key][1], squeeze=True)
-        dic[key] =  vec.as_matrix() # conv from pd.series to np array
-
-    for key in matrixdic:
-        mat = pd.read_table(fname, skiprows=matrixdic[key][0],
-                                  nrows=matrixdic[key][1], delim_whitespace=False)
-        cleanmat = mat.dropna(axis=1, how='any')
-        cleanmat = cleanmat.as_matrix()
-        cleanmat = np.asarray([[int(j) for j in i[0].split()] for i in cleanmat])
-        dic[key] = cleanmat
-
-
-
-    cols = []
-    data = []
-
-    for key in allkeys:
-        try:
-            data.append(dic[key])
-        except:
-            data.append(np.nan)  # pandas likes NaN for missing data
-        cols.append(key)
-
-    df = pd.DataFrame([data], columns=cols, index=[idx])
-    return df[cols]
-
-def files_to_df(files):
-    dataframes = []
-    for index, f in enumerate(files):
-        fname = os.path.splitext(os.path.basename(f))[0]
-        dataframes.append(file_to_df(f, fname))
-
-    return pd.concat(dataframes)
-
-def directory_to_df(dirname='log', ext='.log'):
-    files = glob.glob(dirname + '/*' + ext)
-    return files_to_df(files)
-
-def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
-    """Load DataFrame from pickle, and read in files. 
-    
-    Optionally move files to moveto dir.
-    """
-    for dirpath, dirnames, files in os.walk(dirname):
-        if not files:
-            print("Directory is Empty, df is unchanged")
-            df = pd.read_pickle(pickle)
-        else:
-            dataframes = []
-            try:
-                df1 = pd.read_pickle(pickle)
-            except:
-                pass
-            else:
-                dataframes.append(df1)
-
-            df_fromdir = directory_to_df(dirname, ext)
-            dataframes.append(df_fromdir)
-            df = pd.concat(dataframes)
-            df.to_pickle(pickle)
-            files = glob.glob(dirname + '/*' + ext)
-            if moveto:
-                if os.path.isdir(moveto):
-                    for f in files:
-                        shutil.move(f, moveto)
-                else:
-                    print("Target Directory Doesn't Exist, did not move log files")
-    return df
-
-
-def only_max(df, maximize, unique):
-    """Return masked dataframe with unique values maximizing another column"""
-    uniquevals = df[unique].unique()
-    idx = []
-    for val in uniquevals:
-        df_vals = df[np.isclose(df[unique], val)]
-        index = df_vals[maximize].idxmax()
-        idx.append(index)
-
-    return df.loc[idx]
-
-def df_log_to_jsonfiles(df):
-    old2new = {
-         'index' : 'File'
-        ,'Computation Started' : 'computation_started'
-        ,'Computation Finished' : 'computation_finished'
-        ,'Nk' : 'Nk'
-        ,'ndim' : 'NDIM'
-        ,'rs' : 'rs'
-        ,'mycase' : 'mycase'
-        ,'deltaK' : 'deltaK'
-        ,'kf' : 'kf'
-        ,'kmax' : 'kmax'
-        ,'Nocc' : 'Nocc'
-        ,'Nvir' : 'Nvir'
-        ,'Nexc' : 'Nexc'
-        ,'ground_state_degeneracy' : 'ground_state_degeneracy'
-        ,'dav_its' : 'dav_its'
-        ,'num_guess_evecs' : 'num_guess_evecs'
-        ,'Dav_blocksize' : 'dav_blocksize'
-        ,'Dav_Num_evals' : 'dav_num_evals'
-        ,'Dav_time' : 'dav_time'
-        ,'Mv_time' : 'mv_time'
-        ,'Dav_final_val' : 'dav_min_eval'
-        ,'full_diag_min' : 'full_diag_min'
-        ,'full_diag_time' : 'full_diag_time'
-        ,'Total Elapsed Time' : 'total_calculation_time'
-        ,'Davidson Tolerance' : 'dav_tol'
-        ,'Dav_minits' : 'dav_min_its'
-        ,'Dav_maxits' : 'dav_maxits'
-        ,'Dav_maxsubsize' : 'dav_max_subsize'
-        ,'cond_number' : 'cond_number'
-        ,'Occ Energies' : 'occ_energies'
-        ,'Vir Energies' : 'vir_energies'
-        ,'Excitation Energies' : 'exc_energies'
-        ,'Kgrid' : 'kgrid'
-        ,'Occupied States' : 'occ_states'
-        ,'Virtual States' : 'vir_states'
-        ,'Excitations' : 'excitations'
-    }
-    df = df.reset_index()
-    df = df.rename(columns=old2new)
-    df['File'] = df['File'].str.cat(['.json']*len(df))
-    rep = {'", ' : '",\n', ', "': ',\n"'} 
-    j = HFSA.df_to_jsonlist(df)
-    for i in range(len(j)):
-        with open(df['File'][i], 'w') as file:
-            file.write(HFSA.replace_text_by_dict(rep, j[i]))
-
 
 #################################################################################
 #                                                                               #
-#                         POST-JSON implementations                             #
+#                         POST-JSON implementations of parsers                  #
 #                                                                               #
 #################################################################################
-
 
 def ndarray_to_list(val):
     try:
@@ -284,6 +63,16 @@ def json_dir_to_df(dirname):
         dataframes.append(json_to_df(f))
     return pd.concat(dataframes, ignore_index=True)
 
+def only_max(df, maximize, unique):
+    """Return masked dataframe with unique values maximizing another column"""
+    uniquevals = df[unique].unique()
+    idx = []
+    for val in uniquevals:
+        df_vals = df[np.isclose(df[unique], val)]
+        index = df_vals[maximize].idxmax()
+        idx.append(index)
+
+    return df.loc[idx]
 
 #################################################################################
 #                                                                               #
@@ -657,3 +446,217 @@ def plot_diag_scaling(df, ax):
 
 if __name__ == "__main__":
     print('Import this module and analyze some logfiles!')
+
+
+
+#################################################################################
+#                                                                               #
+#                      DEPRECATED PARSING FUNCTIONS FROM .log DAYS              #
+#                             HERE ONLY IN THE CASE WHERE                       #
+#                             OLD STUFF IS FOUND AND NEEDS USING                #
+#                                                                               #
+#################################################################################
+'''
+def str_to_float_or_int(s):
+    try:
+        return int(s)
+    except ValueError:
+        try:
+            return float(s)
+        except ValueError:
+            return s
+
+def file_to_df(fname, idx):
+    f = open(fname, 'r')
+
+    keys = [
+            'Computation Started'
+           ,'Computation Finished'
+           ,'Nk'
+           ,'ndim'
+           ,'rs'
+           ,'mycase'
+           ,'deltaK'
+           ,'kf'
+           ,'kmax'
+           ,'Nocc'
+           ,'Nvir'
+           ,'Nexc'
+           ,'ground_state_degeneracy'
+           ,'dav_its'
+           ,'num_guess_evecs'
+           ,'Dav_blocksize'
+           ,'Dav_Num_evals'
+           ,'Dav_time'
+           ,'Mv_time'
+           ,'Davidson_Stopping_Criteria'
+           ,'Dav_final_val'
+           ,'full_diag_min'
+           ,'full_diag_time'
+           ,'Total Elapsed Time'
+           ,'Davidson Tolerance'
+           ,'Dav_minits'
+           ,'Dav_maxits'
+           ,'Dav_maxsubsize'
+           ,'cond_number'
+           ]
+
+    vectorkeys = ['Occ Energies', 'Vir Energies', 'Excitation Energies'
+                 ,'Kgrid'
+                 ,'DavVals'
+                 ]
+
+    matrixkeys = ['Occupied States', 'Virtual States', 'Excitations']
+    allkeys = keys + vectorkeys + matrixkeys
+
+    dic = {}
+    vectordic = {}
+    vectorrange = {}
+    matrixdic = {}
+
+    keys_unfound = copy.deepcopy(keys)
+    vectorkeys = copy.deepcopy(vectorkeys)
+    matrixkeys = copy.deepcopy(matrixkeys)
+    for lineno, line in enumerate(f):
+        for key in keys:
+            if ((key + " =").lower() in line.lower()):  # .lower is case-insensitive comparison
+                str_value = line.split("=", 1)[1].rstrip('\n')
+                dic[key] = str_to_float_or_int(str_value)
+            if (key + " :" in line) or (key + ":" in line):
+                str_value = line.split(": ", 1)[1].rstrip('\n')
+                dic[key] = str_to_float_or_int(str_value)
+
+        for key in vectorkeys:
+            if (key in line):
+                begin = lineno
+                length = str_to_float_or_int(line.split(":")[1])
+                vectorrange[key] = [begin, length]
+        for key in matrixkeys:
+            if (key in line):
+                begin = lineno
+                nrows, ncols = line.split(":")[1].split("x")
+                nrows, ncols = str_to_float_or_int(nrows), str_to_float_or_int(ncols)
+                matrixdic[key] = [begin, nrows, ncols]
+    f.close()
+
+
+
+    for key in vectorrange:
+        vec = pd.read_table(fname, skiprows=vectorrange[key][0], nrows=vectorrange[key][1], squeeze=True)
+        dic[key] =  vec.as_matrix() # conv from pd.series to np array
+
+    for key in matrixdic:
+        mat = pd.read_table(fname, skiprows=matrixdic[key][0],
+                                  nrows=matrixdic[key][1], delim_whitespace=False)
+        cleanmat = mat.dropna(axis=1, how='any')
+        cleanmat = cleanmat.as_matrix()
+        cleanmat = np.asarray([[int(j) for j in i[0].split()] for i in cleanmat])
+        dic[key] = cleanmat
+
+
+
+    cols = []
+    data = []
+
+    for key in allkeys:
+        try:
+            data.append(dic[key])
+        except:
+            data.append(np.nan)  # pandas likes NaN for missing data
+        cols.append(key)
+
+    df = pd.DataFrame([data], columns=cols, index=[idx])
+    return df[cols]
+
+def files_to_df(files):
+    dataframes = []
+    for index, f in enumerate(files):
+        fname = os.path.splitext(os.path.basename(f))[0]
+        dataframes.append(file_to_df(f, fname))
+
+    return pd.concat(dataframes)
+
+def directory_to_df(dirname='log', ext='.log'):
+    files = glob.glob(dirname + '/*' + ext)
+    return files_to_df(files)
+
+def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
+    """Load DataFrame from pickle, and read in files. 
+    
+    Optionally move files to moveto dir.
+    """
+    for dirpath, dirnames, files in os.walk(dirname):
+        if not files:
+            print("Directory is Empty, df is unchanged")
+            df = pd.read_pickle(pickle)
+        else:
+            dataframes = []
+            try:
+                df1 = pd.read_pickle(pickle)
+            except:
+                pass
+            else:
+                dataframes.append(df1)
+
+            df_fromdir = directory_to_df(dirname, ext)
+            dataframes.append(df_fromdir)
+            df = pd.concat(dataframes)
+            df.to_pickle(pickle)
+            files = glob.glob(dirname + '/*' + ext)
+            if moveto:
+                if os.path.isdir(moveto):
+                    for f in files:
+                        shutil.move(f, moveto)
+                else:
+                    print("Target Directory Doesn't Exist, did not move log files")
+    return df
+
+
+def df_log_to_jsonfiles(df):
+    old2new = {
+         'index' : 'File'
+        ,'Computation Started' : 'computation_started'
+        ,'Computation Finished' : 'computation_finished'
+        ,'Nk' : 'Nk'
+        ,'ndim' : 'NDIM'
+        ,'rs' : 'rs'
+        ,'mycase' : 'mycase'
+        ,'deltaK' : 'deltaK'
+        ,'kf' : 'kf'
+        ,'kmax' : 'kmax'
+        ,'Nocc' : 'Nocc'
+        ,'Nvir' : 'Nvir'
+        ,'Nexc' : 'Nexc'
+        ,'ground_state_degeneracy' : 'ground_state_degeneracy'
+        ,'dav_its' : 'dav_its'
+        ,'num_guess_evecs' : 'num_guess_evecs'
+        ,'Dav_blocksize' : 'dav_blocksize'
+        ,'Dav_Num_evals' : 'dav_num_evals'
+        ,'Dav_time' : 'dav_time'
+        ,'Mv_time' : 'mv_time'
+        ,'Dav_final_val' : 'dav_min_eval'
+        ,'full_diag_min' : 'full_diag_min'
+        ,'full_diag_time' : 'full_diag_time'
+        ,'Total Elapsed Time' : 'total_calculation_time'
+        ,'Davidson Tolerance' : 'dav_tol'
+        ,'Dav_minits' : 'dav_min_its'
+        ,'Dav_maxits' : 'dav_maxits'
+        ,'Dav_maxsubsize' : 'dav_max_subsize'
+        ,'cond_number' : 'cond_number'
+        ,'Occ Energies' : 'occ_energies'
+        ,'Vir Energies' : 'vir_energies'
+        ,'Excitation Energies' : 'exc_energies'
+        ,'Kgrid' : 'kgrid'
+        ,'Occupied States' : 'occ_states'
+        ,'Virtual States' : 'vir_states'
+        ,'Excitations' : 'excitations'
+    }
+    df = df.reset_index()
+    df = df.rename(columns=old2new)
+    df['File'] = df['File'].str.cat(['.json']*len(df))
+    rep = {'", ' : '",\n', ', "': ',\n"'} 
+    j = HFSA.df_to_jsonlist(df)
+    for i in range(len(j)):
+        with open(df['File'][i], 'w') as file:
+            file.write(HFSA.replace_text_by_dict(rep, j[i]))
+'''

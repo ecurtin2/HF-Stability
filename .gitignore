@@ -2,6 +2,8 @@
 **.o
 **.pyc
 **.exe
+**.json
+**.log
 HFS/build/*
 HFS/qsub/generatedscripts
 HFS/log
