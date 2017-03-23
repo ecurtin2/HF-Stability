@@ -38,7 +38,7 @@ namespace HFS{
     extern scalar two_e_const;                /**< A pre-calculated number used in the two electron integrals */
     extern scalar deltaK;                     /**< Spacing of the k-points in the reciprocal lattice */
     extern scalar Total_Calculation_Time;     /**< Time from main() start to finish */
-    extern std::string Computation_Starttime; /**< Time of starting main() (date, time, year) */
+    extern std::string computation_started; /**< Time of starting main() (date, time, year) */
     extern std::string OutputFileName;        /**< Name of the file to be written to */
     extern std::string mycase;                /**< String describing which instability is being found, "cRHF2cUHF", etc */
     extern uint Nocc;                  /**< Number of occupied orbitals */
@@ -66,14 +66,14 @@ namespace HFS{
     extern uint dav_its;                  /**< Number of iterations to converge in Davidson's Algorithm  */
     extern arma::vec dav_vals;                /**< All eigenvalues returned by the last iteration of Davidson's Algorithm. */
     extern uint num_guess_evecs;          /**< Number of eigenvectors used as initial guess for Davidson's Algorithm. */
-    extern uint Dav_blocksize;            /**< Block size Davidson's Algorithm. */
-    extern uint Dav_Num_evals;            /**< Number of eigenvalues requested for Davidson's Algorithm. */
-    extern uint Dav_nconv;                /**< Number of converged eigenpairs returned by Davidson's Algorithm. */
-    extern scalar Dav_tol;                    /**< Tolerance for the residual norm for Davidson's Algorithm. */
-    extern scalar Dav_final_val;              /**< Lowest eigenvalue returned by the last iteration of Davidson's Algorithm. */
-    extern uint Dav_maxits;               /**< Maximum number of iterations for Davidson's Algorithm. */
+    extern uint dav_blocksize;            /**< Block size Davidson's Algorithm. */
+    extern uint dav_num_evals;            /**< Number of eigenvalues requested for Davidson's Algorithm. */
+    extern uint dav_nconv;                /**< Number of converged eigenpairs returned by Davidson's Algorithm. */
+    extern scalar dav_tol;                    /**< Tolerance for the residual norm for Davidson's Algorithm. */
+    extern scalar dav_min_eval;              /**< Lowest eigenvalue returned by the last iteration of Davidson's Algorithm. */
+    extern uint dav_maxits;               /**< Maximum number of iterations for Davidson's Algorithm. */
     extern uint Dav_minits;               /**< Minimum number of iterations for Davidson's Algorithm. */
-    extern uint Dav_maxsubsize;           /**< Maximum size of the subspace before restart for Davidson's Algorithm. */
-    extern scalar Dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
+    extern uint dav_max_subsize;           /**< Maximum size of the subspace before restart for Davidson's Algorithm. */
+    extern scalar dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
 }
 #endif // HFS_PARAMS_INCLUDED

@@ -68,12 +68,13 @@ namespace HFS {
             std::ostringstream timeostringstream;
             timeostringstream << Total_Calculation_Time;
             std::string total_calculation_time = timeostringstream.str();
-            Computation_Starttime.pop_back();
+            computation_started.pop_back();
             computation_finished.pop_back();
 
             // Begin output
             output << "{\"File\" : \"" << fname << "\"";
             JSONSTR(total_calculation_time);
+            JSONSTR(computation_started);
             JSONSTR(computation_finished);
             JSONSTR(build_date);
             JSONSTR(total_calculation_time);
@@ -92,22 +93,22 @@ namespace HFS {
             JSONVAL(ground_state_degeneracy);
             JSONVAL(dav_its);
             JSONVAL(num_guess_evecs);
-            JSONVAL(Dav_blocksize);
-            JSONVAL(Dav_Num_evals);
-            JSONVAL(Mv_time);
+            JSONVAL(dav_blocksize);
+            JSONVAL(dav_num_evals);
+            JSONVAL(mv_time);
             JSONVAL(cond_number);
-            JSONVAL(Dav_nconv);
+            JSONVAL(dav_nconv);
 
             if (fabs(full_diag_min) > 1e-6) {
                 JSONVAL(full_diag_min);
                 JSONVAL(full_diag_time);
             }
 
-            JSONVAL(Dav_tol);
-            JSONVAL(Dav_maxits);
-            JSONVAL(Dav_maxsubsize);
-            JSONVAL(Dav_final_val);
-            JSONVAL(Dav_time);
+            JSONVAL(dav_tol);
+            JSONVAL(dav_maxits);
+            JSONVAL(dav_max_subsize);
+            JSONVAL(dav_min_eval);
+            JSONVAL(dav_time);
 
             if (detail) {
                 writeArmaVecToJSON(output, occ_energies, "occ_energies");

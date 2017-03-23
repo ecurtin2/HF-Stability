@@ -9,16 +9,20 @@
 #ifndef SLEPC_WRAPPER_INCLUDED
 #define SLEPC_WRAPPER_INCLUDED
 
-#include <slepceps.h>
 #include <cstdio>
-#include <petscblaslapack.h>
 #include <armadillo>
 #include <vector>
+#include <slepceps.h>
+#include <petscblaslapack.h>
+
+
+
 
 /** \namespace SLEPc
     \brief Classes/Functions using the SLEPc library.
 */
 namespace SLEPc {
+
     extern PetscErrorCode Petsc_MatVecProd(Mat matrix, Vec x, Vec y);
     extern void (*matvec_product)(arma::vec&, arma::vec&);
     class EpS {

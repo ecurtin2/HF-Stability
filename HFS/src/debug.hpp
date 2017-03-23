@@ -18,7 +18,7 @@
 
 namespace HFS{
     extern scalar full_diag_min; /**< The minimum eigenvalue determined by full diagonalization of the stability matrix. Used to debug the Davidson algorithm.*/
-    extern scalar Mv_time; /**< The time taken to execute one call of the matrix-vector product function. */
+    extern scalar mv_time; /**< The time taken to execute one call of the matrix-vector product function. */
     extern scalar full_diag_time; /**< The time taken to diagonalize the matrix using armadillo's eig_sym. */
     extern bool davidsonAgreesWithFullDiag();
     /**< \brief Checks that Davidson's Algorithm is getting the lowest eigenvalue.

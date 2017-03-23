@@ -12,7 +12,7 @@ namespace HFS{
     scalar two_e_const;
     scalar deltaK;
     scalar Total_Calculation_Time;
-    std::string Computation_Starttime;
+    std::string computation_started;
     std::string OutputFileName;
     std::string mycase;
     uint Nocc;
@@ -40,13 +40,13 @@ namespace HFS{
     uint dav_its;
     arma::vec dav_vals;
     uint num_guess_evecs;
-    uint Dav_blocksize;
-    uint Dav_Num_evals;
-    uint Dav_nconv;
-    scalar Dav_tol;
-    scalar Dav_final_val;
-    uint Dav_maxits;
+    uint dav_blocksize;
+    uint dav_num_evals;
+    uint dav_nconv;
+    scalar dav_tol;
+    scalar dav_min_eval;
+    uint dav_maxits;
     uint Dav_minits;
-    uint Dav_maxsubsize;
-    scalar Dav_time;
+    uint dav_max_subsize;
+    scalar dav_time;
 }

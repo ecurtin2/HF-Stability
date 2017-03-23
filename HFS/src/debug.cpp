@@ -3,7 +3,7 @@
 namespace HFS{
 
 scalar full_diag_min;
-scalar Mv_time;
+scalar mv_time;
 scalar full_diag_time;
 
 bool davidsonAgreesWithFullDiag() {
@@ -41,7 +41,7 @@ void timeMatrixVectorProduct() {
     timer.tic();
     arma::vec Mv(HFS::Nmat);
     HFS::MatVecProduct_func(v, Mv);
-    HFS::Mv_time = timer.toc();
+    HFS::mv_time = timer.toc();
 }
 
 

@@ -12,7 +12,7 @@ SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&))
     SLEPc::matvec_product = matvec_product;
     SlepcInitialize(&argc, &argv, (char*)0, help);
     MPI_Comm_size(PETSC_COMM_WORLD, &nprocs);
-    MatCreateShell(PETSC_COMM_WORLD, N, N, PETSC_DETERMINE, PETSC_DETERMINE, &N, &matrix);
+    MatCreateShell(PETSC_COMM_WORLD, N / nprocs, N / nprocs, N, N, &N, &matrix);
     PETSCMatShellCreate(matrix);
     EPSCreate(PETSC_COMM_WORLD, &eps);
     EPSContext();
@@ -63,6 +63,7 @@ PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix) {
     ierr = MatSetFromOptions(matrix);                                                        CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
+//    ierr = MatShellSetOperation(matrix, MATOP_GET_DIAGONAL  , (void(*)())Petsc_MatDiags);    CHKERRQ(ierr);
     return ierr;
 }
 

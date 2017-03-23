@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
 import scipy.special as sp
 import seaborn as sns
 import pandas as pd
@@ -8,6 +8,8 @@ import shutil
 import copy
 import math
 import glob
+import json
+import re
 import os
 
 
@@ -172,8 +174,8 @@ def add_Dir_to_pickle_df(pickle, dirname='log', ext='.log', moveto=None):
     return df
 
 
-def only_max(df, unique, maximize):
-    """Return masked dataframe with unique values maximizing a column"""
+def only_max(df, maximize, unique):
+    """Return masked dataframe with unique values maximizing another column"""
     uniquevals = df[unique].unique()
     idx = []
     for val in uniquevals:
@@ -182,6 +184,106 @@ def only_max(df, unique, maximize):
         idx.append(index)
 
     return df.loc[idx]
+
+def df_log_to_jsonfiles(df):
+    old2new = {
+         'index' : 'File'
+        ,'Computation Started' : 'computation_started'
+        ,'Computation Finished' : 'computation_finished'
+        ,'Nk' : 'Nk'
+        ,'ndim' : 'NDIM'
+        ,'rs' : 'rs'
+        ,'mycase' : 'mycase'
+        ,'deltaK' : 'deltaK'
+        ,'kf' : 'kf'
+        ,'kmax' : 'kmax'
+        ,'Nocc' : 'Nocc'
+        ,'Nvir' : 'Nvir'
+        ,'Nexc' : 'Nexc'
+        ,'ground_state_degeneracy' : 'ground_state_degeneracy'
+        ,'dav_its' : 'dav_its'
+        ,'num_guess_evecs' : 'num_guess_evecs'
+        ,'Dav_blocksize' : 'dav_blocksize'
+        ,'Dav_Num_evals' : 'dav_num_evals'
+        ,'Dav_time' : 'dav_time'
+        ,'Mv_time' : 'mv_time'
+        ,'Dav_final_val' : 'dav_min_eval'
+        ,'full_diag_min' : 'full_diag_min'
+        ,'full_diag_time' : 'full_diag_time'
+        ,'Total Elapsed Time' : 'total_calculation_time'
+        ,'Davidson Tolerance' : 'dav_tol'
+        ,'Dav_minits' : 'dav_min_its'
+        ,'Dav_maxits' : 'dav_maxits'
+        ,'Dav_maxsubsize' : 'dav_max_subsize'
+        ,'cond_number' : 'cond_number'
+        ,'Occ Energies' : 'occ_energies'
+        ,'Vir Energies' : 'vir_energies'
+        ,'Excitation Energies' : 'exc_energies'
+        ,'Kgrid' : 'kgrid'
+        ,'Occupied States' : 'occ_states'
+        ,'Virtual States' : 'vir_states'
+        ,'Excitations' : 'excitations'
+    }
+    df = df.reset_index()
+    df = df.rename(columns=old2new)
+    df['File'] = df['File'].str.cat(['.json']*len(df))
+    rep = {'", ' : '",\n', ', "': ',\n"'} 
+    j = HFSA.df_to_jsonlist(df)
+    for i in range(len(j)):
+        with open(df['File'][i], 'w') as file:
+            file.write(HFSA.replace_text_by_dict(rep, j[i]))
+
+
+#################################################################################
+#                                                                               #
+#                         POST-JSON implementations                             #
+#                                                                               #
+#################################################################################
+
+
+def ndarray_to_list(val):
+    try:
+        return val.tolist()
+    except:
+        return val
+
+def df_to_jsonlist(df):
+    jsonlist = []
+    for i in range(len(df)):
+        dic = df.iloc[i].to_dict()
+        dic = {key : ndarray_to_list(val) for (key, val) in dic.items()}
+        jsonlist.append(json.dumps(dic))
+    return jsonlist
+
+def replace_text_by_dict(dic, text):
+    dic = dict((re.escape(k), v) for k, v in dic.items())
+    pattern = re.compile("|".join(dic.keys()))
+    text = pattern.sub(lambda m: dic[re.escape(m.group(0))], text)
+    return text
+
+def np_array_if_possible(val):
+    try:
+        len(val)
+        return np.asarray(val)
+    except:
+        return val
+
+def json_to_df(json_str):
+    with open(json_str) as json_data:
+        mydict = json.load(json_data)
+    mydict = {key : np_array_if_possible(val) for (key, val) in mydict.items()}
+    k = list(mydict.keys())
+    v = [list(mydict.values())]
+    df = pd.DataFrame(data=v, columns=k)
+    return df
+
+def json_dir_to_df(dirname):
+    files = glob.glob(dirname + '/*' + '.json')
+    dataframes = []
+    for f in files:
+        dataframes.append(json_to_df(f))
+    return pd.concat(dataframes, ignore_index=True)
+
 
 #################################################################################
 #                                                                               #
@@ -223,11 +325,16 @@ def analytic_energy(k, kf, ndim):
 
 def get_square_tuple(N):
     """get close to square"""
-    if N >  1:
+
+    if N == 1:
+        return 1, 1
+    if N > 1:
         subplt_cols = int(math.floor(np.sqrt(N)))
         subplt_rows = int(N / subplt_cols)
         if N % subplt_cols != 0:
             subplt_rows += 1
+    else:
+        raise ValueError('N must be a (nonzero) positive integer')
     return subplt_rows, subplt_cols
 
 def subplt_shaper(N, shape=None):
@@ -291,9 +398,9 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     # Draw Shapes
     kmax = df.iloc[df_idx]['kmax']
     kf   = df.iloc[df_idx]['kf']
-    kgrid= df.iloc[df_idx]['Kgrid']
-    vir_states = df.iloc[df_idx]['Virtual States']
-    occ_states = df.iloc[df_idx]['Occupied States']
+    kgrid= df.iloc[df_idx]['kgrid']
+    vir_states = df.iloc[df_idx]['vir_states']
+    occ_states = df.iloc[df_idx]['occ_states']
 
     circle = plt.Circle((0, 0), radius=kf, fc='none', linewidth=1, zorder=4)
     sqrpoints = [[kmax, kmax]
@@ -326,7 +433,7 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     ax.set_ylim(-scale*kmax, scale*kmax)
     rs = df.iloc[df_idx]['rs']
     Nk = df.iloc[df_idx]['Nk']
-    ndim = df.iloc[df_idx]['ndim']
+    ndim = df.iloc[df_idx]['NDIM']
     title = 'rs = ' + str(rs)[:3] + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
     if labels:
 #ax.set_title(title)
@@ -338,12 +445,12 @@ def axplot_1stBZ(df, ax, df_idx, spec_alpha, scale, labels):
     return ax
 
 def axplot_exc_hist(df, ax, df_idx, bindivisor=4):
-        exc_energies = df.iloc[df_idx]['Excitation Energies']
+        exc_energies = df.iloc[df_idx]['exc_energies']
         Nexc = df.iloc[df_idx]['Nexc']
         ax.hist(exc_energies, bins=Nexc/bindivisor)
         rs = df.iloc[df_idx]['rs']
         Nk = df.iloc[df_idx]['Nk']
-        ndim = df.iloc[df_idx]['ndim']
+        ndim = df.iloc[df_idx]['NDIM']
         title = 'r_s = ' + str(rs)[:3] + ' Nk = ' + str(Nk) + ' ndim = ' + str(ndim)
 #       ax.set_title(title)
         ax.set_xlabel('$\epsilon_{vir} - \epsilon_{occ}$ (Hartree)')
@@ -353,7 +460,7 @@ def axplot_exc_hist(df, ax, df_idx, bindivisor=4):
 def axplot_energy_compare(df, ax, df_idx, discretized=True, analytic=True):
     df_row = df.iloc[df_idx]
     kmax = df_row['kmax']
-    ndim = df_row['ndim']
+    ndim = df_row['NDIM']
     kf = df_row.kf
     Ef = kf**2 / 2.0
 
@@ -370,11 +477,11 @@ def axplot_energy_compare(df, ax, df_idx, discretized=True, analytic=True):
         ax.plot(k, exch   , 'k--', label='Exchange', zorder=1)
     
     # Discrete plots
-    occ_energies = df_row['Occ Energies'] / Ef
-    vir_energies = df_row['Vir Energies'] / Ef
+    occ_energies = df_row['occ_energies'] / Ef
+    vir_energies = df_row['vir_energies'] / Ef
     kgrid = df_row['Kgrid']
-    occ_states = df_row['Occupied States']
-    vir_states = df_row['Virtual States']
+    occ_states = df_row['occ_states']
+    vir_states = df_row['vir_states']
     kocc = kgrid[occ_states]
     kocc = [np.linalg.norm(ki) for ki in kocc] / kf
     kvir = kgrid[vir_states]
@@ -397,10 +504,9 @@ def axplot_eval_convergence(df, ax, df_idx):
     rs = df_row['rs']
     Nk = df_row['Nk']
     eigval = df_row['full_diag_min']
-    ndim = df_row['ndim']
-    davvals = df_row['DavVals']
+    ndim = df_row['NDIM']
     its = df_row['dav_its']
-    num_evals = df_row['Dav_Num_evals']
+    num_evals = df_row['dav_num_evals']
     davvals = davvals.reshape(its, num_evals)
     its = len(davvals)
     x = range(1, its + 1)
@@ -426,7 +532,7 @@ def plot_dav_vs_full(df, ax):
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     Nks_full = df_with_fulldiags.Nk.as_matrix()
     Nks = df.Nk.as_matrix()
-    davmins = df.Dav_final_val.as_matrix()
+    davmins = df.dav_min_eval.as_matrix()
     xmin = np.amin(Nks)-1
     xmax = np.amax(Nks) + 1
     ax.set_xlim(xmin, xmax)
@@ -459,7 +565,7 @@ def plot_matrix_scaling(df, ax, *args, **kwargs):
 def plot_mvproduct_scaling(df, ax, scale=2):
     Nexcs = df['Nexc']
     Noccs = df['Nocc']
-    mvtimes = df['Mv_time']
+    mvtimes = df['mv_time']
     x = Nexcs * Noccs
 
 #ax.set_title('Matrix - Vector Product Scaling')
@@ -483,20 +589,21 @@ def plot_mvproduct_scaling(df, ax, scale=2):
     ax.set_ylim(1e-1, np.amax(mvtimes)*scale)
 
 def plot_stability(df, ax, *args, **kwargs):
-    ax.scatter(df['rs'], df['Dav_final_val'], *args, **kwargs)
+    ax.scatter(df['rs'], df['dav_min_eval'], *args, **kwargs)
     ax.plot(np.linspace(-5, 100, 100), np.zeros(100), 'k--')
     scale = 1.1
     xmin = 0
     xmax = np.amax(df['rs']) * scale
-    ymin = np.amin(df['Dav_final_val']) * scale
-    ymax = np.amax(df['Dav_final_val']) * scale
+    ymin = np.amin(df['dav_min_eval']) * scale
+    ymax = np.amax(df['dav_min_eval']) * scale
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
     ax.set_ylabel('Lowest Eigenvalue')
     ax.set_xlabel('$r_s$')
 
 def plot_runtime(df, ax, *args, **kwargs):
-    Walltime = [float(s.split()[0]) for s in df['Total Elapsed Time']]
+    Walltime = df['total_calculation_time'].astype(str).apply(lambda x: x.split(' s')[0])
+    Walltime = Walltime.as_matrix().astype(np.float)
     Nexcs = df.Nexc.as_matrix()
 #ax.set_title('Algorithm Runtime')
     ax.set_xlabel('Matrix Dimension')
@@ -509,7 +616,7 @@ def plot_diag_scaling(df, ax):
     if len(df) == 0:
         return ax
     Nmat = 2 * df.Nexc.as_matrix()
-    Davtimes =  df.Dav_time.as_matrix()
+    Davtimes =  df.dav_time.as_matrix()
 
     df_with_fulldiags = df[df['full_diag_min'].notnull()]
     fulltimes = df_with_fulldiags.full_diag_time.as_matrix()

@@ -39,7 +39,7 @@ class ConfigParser {
             }
 
             for (auto it : args) {
-                if (it.find('-') != std::string::npos) {
+                if (it.find("--") != std::string::npos) {
                     arg_names.push_back(it);
                 } else {
                     arg_vals.push_back(it);
