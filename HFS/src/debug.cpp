@@ -2,9 +2,9 @@
 
 namespace HFS{
 
-double full_diag_min;
-double Mv_time;
-double full_diag_time;
+scalar full_diag_min;
+scalar mv_time;
+scalar full_diag_time;
 
 bool davidsonAgreesWithFullDiag() {
     arma::wall_clock timer;
@@ -41,7 +41,7 @@ void timeMatrixVectorProduct() {
     timer.tic();
     arma::vec Mv(HFS::Nmat);
     HFS::MatVecProduct_func(v, Mv);
-    HFS::Mv_time = timer.toc();
+    HFS::mv_time = timer.toc();
 }
 
 

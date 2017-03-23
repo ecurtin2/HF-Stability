@@ -15,21 +15,19 @@
 #include "debug.hpp"
 
 namespace HFS{
-    extern void writeOutput(bool detail=false);
-    /** \brief Writes the output to a file, with or without vectors
+
+    extern void writeJSON(std::string fname, bool detail);
+    /** \brief Writes the output to a file in JSON format, with or without vectors
      *
+     * \param fname  Name of output file (function does not add .json to string).
      * \param detail True to print vectors (much larger file).
      *
      */
 
-    extern std::string centerString(std::string s, int width);
-    /** \brief Return the string, padded by spaces to center it.
-     *
-     * \param s The string to be centered.
-     * \param width The width of the centering window (# of characters)
-     * \return The centered string.
-     */
-
+    template <class T>
+    extern void writeArmaVecToJSON(std::ofstream& output, const arma::Col<T>& v, const std::string& varname);
+    template <class T>
+    extern void writeArmaMatToJSON(std::ofstream& output, const arma::Mat<T>& M, const std::string& varname);
 }
 
 #endif // HFS_FILEIO_INCLUDED

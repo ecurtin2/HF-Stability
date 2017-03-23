@@ -12,7 +12,7 @@ SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&))
     SLEPc::matvec_product = matvec_product;
     SlepcInitialize(&argc, &argv, (char*)0, help);
     MPI_Comm_size(PETSC_COMM_WORLD, &nprocs);
-    MatCreateShell(PETSC_COMM_WORLD, N, N, PETSC_DETERMINE, PETSC_DETERMINE, &N, &matrix);
+    MatCreateShell(PETSC_COMM_WORLD, N / nprocs, N / nprocs, N, N, &N, &matrix);
     PETSCMatShellCreate(matrix);
     EPSCreate(PETSC_COMM_WORLD, &eps);
     EPSContext();
@@ -24,7 +24,7 @@ SLEPc::EpS::~EpS() {
     ierr = SlepcFinalize();
 }
 
-PetscErrorCode SLEPc::EpS::SetInitialSpace(std::vector<std::vector<double>> vecs) {
+PetscErrorCode SLEPc::EpS::SetInitialSpace(std::vector<std::vector<PetscScalar>> vecs) {
 
     int Nvecs = vecs.size();
 
@@ -63,6 +63,7 @@ PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix) {
     ierr = MatSetFromOptions(matrix);                                                        CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
+//    ierr = MatShellSetOperation(matrix, MATOP_GET_DIAGONAL  , (void(*)())Petsc_MatDiags);    CHKERRQ(ierr);
     return ierr;
 }
 
@@ -86,7 +87,7 @@ PetscErrorCode SLEPc::EpS::SetBlockSize(PetscInt blocksize) {
     return ierr;
 }
 
-PetscErrorCode SLEPc::EpS::SetTol(double tolerance, int max_it){
+PetscErrorCode SLEPc::EpS::SetTol(PetscScalar tolerance, int max_it){
     tol = tolerance;
     maxits = max_it;
     ierr = EPSSetTolerances(eps, tol, max_it); CHKERRQ(ierr);
@@ -173,8 +174,8 @@ PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
     ierr = VecGetArray(y, &py);                 CHKERRQ(ierr);
 
 
-    double* v = (double*) &px[0];        // cast to non-const pointer for armadillo initialization
-    double* Mv = (double*) &py[0];
+    PetscScalar* v = (PetscScalar*) &px[0];        // cast to non-const pointer for armadillo initialization
+    PetscScalar* Mv = (PetscScalar*) &py[0];
     arma::vec myvec(v, nx, false, true); // copy_aux_mem (first bool) must be false for this to work
     arma::vec myMv(Mv, nx, false, true); // since the memory pointed to by y is what PETSc sees.
     SLEPc::matvec_product(myvec, myMv);  // modifies myMv inplace

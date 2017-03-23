@@ -18,11 +18,11 @@ namespace HFS{
 namespace Matrix {
 
 extern void setMatrixPropertiesFromCase();
-extern arma::uword calcTfromKbAndJ(arma::vec&, arma::uword);
+extern uint calcTfromKbAndJ(arma::vec&, uint);
 
 namespace MatrixVectorProduct {
-    extern void ApplyMvFxnsToSubMatrices(arma::vec& v, arma::vec& Mv, unsigned Ndivisions,
-                 std::vector<std::tuple<unsigned, unsigned, void (*)(arma::vec&, arma::vec&)>> MvList
+    extern void ApplyMvFxnsToSubMatrices(arma::vec& v, arma::vec& Mv, uint Ndivisions,
+                 std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList
                  );
 
     extern void E_delta_st_plus_aj_ib_antisym(arma::vec& v, arma::vec& Mv);

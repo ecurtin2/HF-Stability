@@ -27,33 +27,39 @@ int main(int argc, char* argv[]){
     std::chrono::time_point<std::chrono::system_clock> thetime;
     thetime = std::chrono::system_clock::now();
     std::time_t end_time = std::chrono::system_clock::to_time_t(thetime);
-    HFS::Computation_Starttime = std::string(std::ctime(&end_time));
+    HFS::computation_started = std::string(std::ctime(&end_time));
     arma::wall_clock timer;
     timer.tic();
 
+    // Defaults
+    HFS::rs              = 1.2;
+    HFS::Nk              = 12;
+    HFS::mycase          = "cRHF2cUHF";
+    HFS::OutputFileName  = "HFS.json";
 
-    #ifdef RELEASE
-        if (argc != 4) {
-            std::cout << "Error! Wrong number of arguments" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        HFS::rs              = std::stof(argv[1]);
-        HFS::Nk              = std::stoi(argv[2]);
-        HFS::mycase          = argv[3];
-    #else
-        HFS::rs              = 1.2;
-        HFS::Nk              = 12;
-        HFS::OutputFileName  = "test.log";
-        HFS::mycase          = "cUHF2cUHF";
-    #endif // Release
+    HFS::dav_tol         = 1e-6;
+    HFS::dav_maxits      = 30;
+    HFS::dav_max_subsize  = 1500;
+    HFS::num_guess_evecs = 1;
+    HFS::dav_blocksize   = 1;
+    HFS::dav_num_evals   = 1;
 
-    HFS::Dav_tol         = 1e-6;
-    HFS::Dav_maxits      = 30;
-    HFS::Dav_maxsubsize  = 1500;
-    HFS::num_guess_evecs = 3;
-    HFS::Dav_blocksize   = 3;
-    HFS::Dav_Num_evals   = 3;
+    /* Set options from command line. False means error won't be thrown if
+       value is not found, and default will be used. */
+    ConfigParser parser(argc, argv);
+    parser.set_val(HFS::rs, "--rs", false);
+    parser.set_val(HFS::Nk, "--Nk", false);
+    parser.set_val(HFS::mycase, "--mycase", false);
+    parser.set_val(HFS::OutputFileName, "--fname", false);
+    parser.set_val(HFS::dav_tol, "--Dav_tol", false);
+    parser.set_val(HFS::dav_maxits, "--Dav_maxits", false);
+    parser.set_val(HFS::dav_max_subsize, "--Dav_maxsubsize", false);
+    parser.set_val(HFS::num_guess_evecs, "--num_guess_evecs", false);
+    parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
+    parser.set_val(HFS::dav_num_evals, "--Dav_num_evals", false);
 
+
+    /* Calculation starts here */
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     HFS::timeMatrixVectorProduct();
@@ -62,36 +68,36 @@ int main(int argc, char* argv[]){
     int nprocs = 1;
     //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
     myeps.nprocs = nprocs;
-    myeps.SetDimensions(HFS::Dav_Num_evals, HFS::Dav_maxsubsize);
-    myeps.SetTol(HFS::Dav_tol, HFS::Dav_maxits);
-    myeps.SetBlockSize(HFS::Dav_blocksize);
+    myeps.SetDimensions(HFS::dav_num_evals, HFS::dav_max_subsize);
+    myeps.SetTol(HFS::dav_tol, HFS::dav_maxits);
+    myeps.SetBlockSize(HFS::dav_blocksize);
 
-    // Weight by how close diags are
-    std::vector< std::vector<double> > vecs(HFS::num_guess_evecs, std::vector<double>(HFS::Nmat, 0.0));
-    for (unsigned i = 0; i < HFS::num_guess_evecs; ++i) {
+    // Choose guess eigenvectors for davidson. Weight by how close diags are.
+    std::vector< std::vector<scalar> > vecs(HFS::num_guess_evecs, std::vector<scalar>(HFS::Nmat, 0.0));
+    for (uint i = 0; i < HFS::num_guess_evecs; ++i) {
         arma::vec guessvec;
         arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
         guessvec = (1.0 / temp);
         guessvec /= arma::norm(guessvec);
-        vecs[i] = arma::conv_to< std::vector<double> >::from(guessvec);
+        vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
     }
 
+    // Davidson Algorithm
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;
     davtimer.tic();
     myeps.Solve();
-    HFS::Dav_time = davtimer.toc();
+    HFS::dav_time = davtimer.toc();
     HFS::Total_Calculation_Time = timer.toc();
     arma::vec temp(myeps.rVals);
     HFS::dav_vals = temp;
     HFS::dav_its = myeps.niter;
-    HFS::Dav_nconv = myeps.nconv;
+    HFS::dav_nconv = myeps.nconv;
     HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
-    HFS::Dav_final_val = HFS::dav_vals.min();
+    HFS::dav_min_eval = HFS::dav_vals.min();
 
-    HFS::writeOutput(true);
-    fclose(stdout);
-
+    // Finish up, write and test for problems.
+    HFS::writeJSON(HFS::OutputFileName, true);
 
     #ifndef NDEBUG
         if (HFS::Nmat < 1500) {

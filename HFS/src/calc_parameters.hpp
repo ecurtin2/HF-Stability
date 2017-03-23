@@ -33,7 +33,7 @@ namespace HFS {
     @see HFS::calcInverseExcitationMap();
     */
 
-    extern double calcKf(double rs, unsigned ndim);
+    extern scalar calcKf(scalar rs, uint ndim);
     /**< \brief calculate the fermi momentum, Kf.
 
     Currently allows for ndim = 1, 2 or 3.
@@ -43,7 +43,7 @@ namespace HFS {
     @see PI
     */
 
-    extern void calcVolAndTwoEConst(unsigned N_elec, double rs, double& Vol, double& TwoEConst);
+    extern void calcVolAndTwoEConst(uint N_elec, scalar rs, scalar& Vol, scalar& TwoEConst);
     /**< \brief Calculate the volume and constant used in the two-electron integral.
 
     @param [in] N_elec
@@ -57,11 +57,11 @@ namespace HFS {
     */
 
     extern void calcStates (arma::vec& kgrid
-                           ,unsigned Nk
-                           ,unsigned ndim
-                           ,arma::uword& Nocc
-                           ,arma::uword& Nvir
-                           ,arma::uword& N_elec
+                           ,uint Nk
+                           ,uint ndim
+                           ,uint& Nocc
+                           ,uint& Nvir
+                           ,uint& N_elec
                            ,arma::umat& occ_states
                            ,arma::umat& vir_states
                            );
@@ -86,15 +86,15 @@ namespace HFS {
     */
 
     extern void calcExcitations(arma::vec& kgrid
-                        ,unsigned Nk
-                        ,double deltaK
-                        ,arma::uword Nocc
-                        ,arma::uword Nvir
+                        ,uint Nk
+                        ,scalar deltaK
+                        ,uint Nocc
+                        ,uint Nvir
                         ,arma::umat& occ_states
                         ,arma::umat& vir_states
                         ,arma::umat& excitations
                         ,arma::vec&  exc_energies
-                        ,arma::uword& Nexc);
+                        ,uint& Nexc);
     /**< \brief Determine excitations in the x direction.
 
     @param [in] kgrid grid of kpoints.
@@ -103,7 +103,7 @@ namespace HFS {
     @param [in] Nvir Number of virtual states
     @param [in] occ_states occupied states
     @param [in] vir_states virtual states
-    @param [out] excitations Matrix where each row contains [occupied_idx, virtual_idx]
+    @param [out] excitations Matrix where each row contains [occupied_uint, virtual_uint]
     @param [out] exc_energies Energy difference of occ and vir state in excitation
     @param [out] Nexc Number of excitations
     */

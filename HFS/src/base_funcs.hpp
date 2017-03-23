@@ -12,7 +12,7 @@
 #include "parameters.hpp"
 
 namespace HFS{
-    extern double exchange(arma::umat& states, arma::uword i);
+    extern scalar exchange(arma::umat& states, uint i);
     /**< \brief Calculate the exchange energy for the given state.
     @param states Either occ_states or vir_states. Will determine the exchange
     energy for the i'th occupied or the i'th virtual state depending on input.
@@ -20,7 +20,7 @@ namespace HFS{
     @return the exchange contribution to the energy
     */
 
-    extern double twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4);
+    extern scalar twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4);
     /**< \brief Calculate the two electron integral, <k1 k2|1/r|k3 k4>
 
     The two electron integral is defined as,
@@ -43,7 +43,7 @@ namespace HFS{
     @see HFS::bzone_length
 
     */
-        for (unsigned i = 0; i < NDIM; ++i) {
+        for (uint i = 0; i < NDIM; ++i) {
             if (k[i] < -HFS::kmax - SMALLNUMBER) {
                 k[i] += HFS::bzone_length;
             } else if (k[i] > HFS::kmax - SMALLNUMBER) {
@@ -52,7 +52,7 @@ namespace HFS{
         }
     }
 
-    extern double twoElectron(arma::vec& k1, arma::vec& k3);
+    extern scalar twoElectron(arma::vec& k1, arma::vec& k3);
     /**< \brief Calculate the two electron integral, assuming momentum conservation.
 
     The two electron integral is defined as,
@@ -63,7 +63,7 @@ namespace HFS{
     @return The value of the two electron integral.
     */
 
-    inline bool isOccupied(double k){
+    inline bool isOccupied(scalar k){
     /** \brief true if k < kf, else false.
         @see HFS::kf
      */
@@ -71,7 +71,7 @@ namespace HFS{
     }
 
     //extern arma::uvec kToIndex(arma::vec& k);
-    extern void kToIndex(arma::vec& k, arma::uvec& idx);
+    extern void kToIndex(arma::vec& k, arma::uvec& uint);
     /**< \brief Given k-vector, return corresponding vector of indices in each dimension.
 
     Each element in k is converted to the corresponding index. Evenly spaced
@@ -93,28 +93,28 @@ namespace HFS{
     @see HFS::kgrid
     */
 
-    extern void occIndexToK(arma::uword i, arma::vec& k);
+    extern void occIndexToK(uint i, arma::vec& k);
     /**< \brief Return the momentum of the i'th occupied state.
 
     @param i The index of the occupied state.
     @return vector of the kx, ky, ... momentum of the i'th occupied state.
     */
 
-    extern arma::vec virIndexToK(arma::uword i);
+    extern arma::vec virIndexToK(uint i);
     /**< \brief Return the momentum of the i'th virtual state.
 
     @param i The index of the virtual state.
     @return vector of the kx, ky, ... momentum of the i'th virtual state.
     */
 
-    extern int kroneckerDelta(arma::uword i, arma::uword j);
+    extern int kroneckerDelta(uint i, uint j);
     /**< \brief return 1 if i = j, else 0.
 
     @param i, j indices
     @return 1 if i = j, else 0.
     */
 
-    extern std::vector<arma::vec> stToKiKaKjKb(arma::uword s, arma::uword t);
+    extern std::vector<arma::vec> stToKiKaKjKb(uint s, uint t);
     /**< \brief Given excitation indices s & t, return corresponding ki, kj, ka, kb.
 
     S corresponds to occupied i to virtual a.

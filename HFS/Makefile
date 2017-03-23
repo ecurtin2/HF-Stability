@@ -19,7 +19,7 @@ COMP = Gellmann
 
 # Work
 ifeq ($(COMP),Work)
-	SLEPC_DIR=/home/evan/slepc-3.7.3
+	SLEPC_DIR=/home/evan/local/slepc-3.7.3
 	PETSC_DIR=/home/evan/git/petsc
 	PETSC_ARCH=linux-gnu-c-debug
 	SLEPC_ARCH=linux-gnu-c-debug

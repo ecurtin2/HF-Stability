@@ -11,15 +11,15 @@
 
 namespace HFS {
 
-    double exchange(arma::umat& states, arma::uword i) {
+    scalar exchange(arma::umat& states, uint i) {
 
-        double exch = 0.0;
+        scalar exch = 0.0;
         arma::vec ki(NDIM), k2(NDIM);
-        for (unsigned j = 0; j < NDIM; ++j) {
+        for (uint j = 0; j < NDIM; ++j) {
             ki(j) = HFS::kgrid(states(j, i));
         }
-        for (arma::uword k = 0; k < HFS::Nocc; ++k) {
-            for (unsigned j = 0; j < NDIM; ++j) {
+        for (uint k = 0; k < HFS::Nocc; ++k) {
+            for (uint j = 0; j < NDIM; ++j) {
                 k2(j) = HFS::kgrid(HFS::occ_states(j, k));
             }
             exch += HFS::twoElectron(ki, k2);
@@ -28,10 +28,10 @@ namespace HFS {
         return exch;
     }
 
-    double twoElectron(arma::vec& k1, arma::vec& k2) {
+    scalar twoElectron(arma::vec& k1, arma::vec& k2) {
         arma::vec k = k1 - k2;
         HFS::toFirstBrillouinZone(k);
-        double norm = arma::norm(k);
+        scalar norm = arma::norm(k);
         if (norm < SMALLNUMBER) {
             return 0.0;
         }else{
@@ -44,7 +44,7 @@ namespace HFS {
 
     }
 
-    double twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
+    scalar twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
         // Same as two_electron, except checks for momentum conservation
         // In the other, conservation is assumed
         arma::vec k(NDIM);
@@ -59,7 +59,7 @@ namespace HFS {
 
         k =  k1 - k3;
         HFS::toFirstBrillouinZone(k);
-        double norm = arma::norm(k);
+        scalar norm = arma::norm(k);
 
         if (norm < SMALLNUMBER) {
             return 0.0;
@@ -69,13 +69,13 @@ namespace HFS {
     }
 /*
     arma::uvec kToIndex(arma::vec& k) {
-        arma::vec idx = arma::round((k + HFS::kmax) / HFS::deltaK);
-        arma::uvec indices = arma::conv_to<arma::uvec>::from(idx);
+        arma::vec uint = arma::round((k + HFS::kmax) / HFS::deltaK);
+        arma::uvec indices = arma::conv_to<arma::uvec>::from(uint);
         return indices;
     }
 */
     void kToIndex(arma::vec& k, arma::uvec& idx) {
-        for (unsigned i = 0; i < NDIM; ++i) {
+        for (uint i = 0; i < NDIM; ++i) {
             idx[i] = std::round((k[i] + HFS::kmax) / HFS::deltaK);
         }
     }
@@ -88,22 +88,22 @@ namespace HFS {
         return indices;
     }
 
-    void occIndexToK(arma::uword idx, arma::vec&k) {
-        for (unsigned i = 0; i < NDIM; ++i) {
+    void occIndexToK(uint idx, arma::vec&k) {
+        for (uint i = 0; i < NDIM; ++i) {
             k[i] = HFS::kgrid(HFS::occ_states(i, idx));
         }
     }
 
-    arma::vec virIndexToK(arma::uword idx) {
+    arma::vec virIndexToK(uint idx) {
         arma::vec k(NDIM);
-        for (unsigned i=0; i < NDIM; ++i) {
+        for (uint i=0; i < NDIM; ++i) {
             k[i] = HFS::kgrid(vir_states(i, idx));
         }
         return k;
 
     }
 
-    int kroneckerDelta(arma::uword i, arma::uword j) {
+    int kroneckerDelta(uint i, uint j) {
         /* Returns 1 if i == j, else 0 */
 
         int val = 0;
@@ -113,15 +113,15 @@ namespace HFS {
         return val;
     }
 
-    std::vector<arma::vec> stToKiKaKjKb(arma::uword s, arma::uword t){
+    std::vector<arma::vec> stToKiKaKjKb(uint s, uint t){
         /* Given excitation indices s and t, return a vector
            containing armadillo vectors of momentum. The order
            of the returned vectors is ki, ka, kj, kb
            where s: i -> a and t: j -> b */
-        arma::uword i = HFS::excitations(0, s);
-        arma::uword a = HFS::excitations(1, s);
-        arma::uword j = HFS::excitations(0, t);
-        arma::uword b = HFS::excitations(1, t);
+        uint i = HFS::excitations(0, s);
+        uint a = HFS::excitations(1, s);
+        uint j = HFS::excitations(0, t);
+        uint b = HFS::excitations(1, t);
         arma::vec ki(NDIM); HFS::occIndexToK(i, ki);
         arma::vec kj(NDIM); HFS::occIndexToK(j, kj);
         arma::vec ka = HFS::virIndexToK(a);
