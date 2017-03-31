@@ -3,9 +3,6 @@
 #include <chrono>
 #include <ctime>
 
-#define JSONVAL(x) output << ",\n\"" << #x << "\" : " << x
-#define JSONSTR(x) output << ",\n\"" << #x << "\" : \"" << x << "\""
-
 namespace HFS {
 
     template <class T>
@@ -48,7 +45,6 @@ namespace HFS {
 
         output.open(fname.c_str());
 
-
         using namespace HFS;
         if (output.is_open() && output.good()) {
 
@@ -72,6 +68,8 @@ namespace HFS {
             computation_finished.pop_back();
 
             // Begin output
+            #define JSONVAL(x) output << ",\n\"" << #x << "\" : " << x
+            #define JSONSTR(x) output << ",\n\"" << #x << "\" : \"" << x << "\""
             output << "{\"File\" : \"" << fname << "\"";
             JSONSTR(total_calculation_time);
             JSONSTR(computation_started);
@@ -109,6 +107,8 @@ namespace HFS {
             JSONVAL(dav_max_subsize);
             JSONVAL(dav_min_eval);
             JSONVAL(dav_time);
+            #undef JSONVAL
+            #undef JSONSTR
 
             if (detail) {
                 writeArmaVecToJSON(output, occ_energies, "occ_energies");

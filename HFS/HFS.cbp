@@ -140,6 +140,7 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
+		<Unit filename="src/cmd_parser.hpp" />
 		<Unit filename="src/debug.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />

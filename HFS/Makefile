@@ -15,7 +15,7 @@ LIB = -larmadillo
 LOCDIR = home/evan/git/HF-Stability/
 MANSEC = EPS
 
-COMP = Gellmann
+COMP = Work
 
 # Work
 ifeq ($(COMP),Work)
@@ -42,10 +42,8 @@ ifeq ($(COMP),Home)
 	SLEPC_ARCH=arch-linux2-c-debug
 endif
 
-
-
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
-CFLAGS = -Wall -std=c++11 -fPIC ${SLEPC_EPS_LIB}
+CFLAGS = -Wall -std=c++11 -fPIC
 
 #GELLMANN
 ifeq ($(COMP),Gellmann)
@@ -87,6 +85,7 @@ INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DI
 .PHONY: depend clean
 
 $(TARGET): $(OBJECTS)
+	@echo " SLEPC_EPS_LIB = ${SLEPC_EPS_LIB}"
 	@echo " Linking..."
 	@echo " $(CC) $^ -o $(EXE) $(LIB) ${SLEPC_EPS_LIB}"; $(CC) $^ -o $(EXE) $(LIB) ${SLEPC_EPS_LIB} $(LINKEROPTS)
 
