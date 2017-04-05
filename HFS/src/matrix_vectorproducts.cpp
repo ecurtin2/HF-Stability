@@ -15,6 +15,16 @@ void TripletH(arma::vec& v, arma::vec& Mv) {
     ApplyMvFxnsToSubMatrices(v, Mv, 2, MvList);
 }
 
+void SingletH(arma::vec& v, arma::vec& Mv) {
+    Mv.zeros();
+    std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);
+
+    MvList[0] = std::make_tuple(0, 0, E_delta_st_plus_2aj_ib_minus_ajbi);
+    MvList[1] = std::make_tuple(0, 1, minus_abji_plus_2ab_ij);
+    MvList[2] = std::make_tuple(1, 0, minus_abji_plus_2ab_ij);
+    MvList[3] = std::make_tuple(1, 1, E_delta_st_plus_2aj_ib_minus_ajbi);
+    ApplyMvFxnsToSubMatrices(v, Mv, 2, MvList);
+}
 
 void Hprime(arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
@@ -105,6 +115,27 @@ void E_delta_st_plus_aj_ib_antisym(arma::vec& v, arma::vec& Mv) {
     }
 }
 
+void E_delta_st_plus_2aj_ib_minus_ajbi(arma::vec& v, arma::vec& Mv) {
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+        arma::vec ki(NDIM), ka(NDIM);
+        HFS::occIndexToK(i, ki);
+        ka = HFS::virIndexToK(a);
+        for (uint j = 0; j < HFS::Nocc; ++j) {
+            arma::vec kj(NDIM), kb(NDIM);
+            HFS::occIndexToK(j, kj);
+            kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+            HFS::toFirstBrillouinZone(kb);
+            if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                // only if momentum conserving state is virtual
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                Mv(s) += (HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
+                        + 2 * HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kb)) * v(t);
+            }
+        }
+    }
+}
+
 void aj_ib(arma::vec& v, arma::vec& Mv) {
     for (uint s = 0; s < HFS::Nexc; ++s) {
         uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
@@ -164,6 +195,26 @@ void ab_ij_antisym(arma::vec& v, arma::vec& Mv) {
                 // only if momentum conserving state is virtual
                 uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
                 Mv(s) += (HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kj)) * v(t);
+            }
+        }
+    }
+}
+
+void minus_abji_plus_2ab_ij(arma::vec& v, arma::vec& Mv) {
+    for (uint s = 0; s < HFS::Nexc; ++s) {
+        uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+        arma::vec ki(NDIM), ka(NDIM);
+        HFS::occIndexToK(i, ki);
+        ka = HFS::virIndexToK(a);
+        for (uint j = 0; j < HFS::Nocc; ++j) {
+            arma::vec kj(NDIM), kb(NDIM);
+            HFS::occIndexToK(j, kj);
+            kb = kj + ki - ka; // Momentum conservation for <ab|ij> or <ab|ji>
+            HFS::toFirstBrillouinZone(kb);
+            if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                // only if momentum conserving state is virtual
+                uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                Mv(s) += (2 * HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kj)) * v(t);
             }
         }
     }
@@ -258,7 +309,11 @@ uint calcTfromKbAndJ(arma::vec& kb, uint j) {
 
 void setMatrixPropertiesFromCase() {
 
-    if (HFS::mycase == "cRHF2cUHF") {
+    if (HFS::mycase == "cRHF2cRHF") {
+        HFS::MatVecProduct_func = MatrixVectorProduct::SingletH;
+        HFS::Matrix_generator = HFS::Matrix::Gen::SingletH;
+        HFS::Nmat = 2 * HFS::Nexc;
+    } else if (HFS::mycase == "cRHF2cUHF") {
         HFS::MatVecProduct_func = MatrixVectorProduct::TripletH;
         HFS::Matrix_generator = HFS::Matrix::Gen::TripletH;
         HFS::Nmat = 2 * HFS::Nexc;

@@ -27,8 +27,10 @@ namespace MatrixVectorProduct {
 
     extern void E_delta_st_plus_aj_ib_antisym(arma::vec& v, arma::vec& Mv);
     extern void E_delta_st_minus_aj_bi(arma::vec& v, arma::vec& Mv);
+    extern void E_delta_st_plus_2aj_ib_minus_ajbi(arma::vec& v, arma::vec& Mv);
     extern void aj_ib(arma::vec& v, arma::vec& Mv);
     extern void ab_ij_antisym(arma::vec& v, arma::vec& Mv);
+    extern void minus_abji_plus_2ab_ij(arma::vec& v, arma::vec& Mv);
     extern void ab_ij(arma::vec& v, arma::vec& Mv);
     extern void minus_ab_ji(arma::vec& v, arma::vec& Mv);
 

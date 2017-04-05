@@ -25,14 +25,17 @@ namespace Gen {
                                                  std::vector<std::pair<uint, uint>> locs,
                                                  std::vector<scalar (*)(uint, uint)> Mfuncs);
     extern arma::mat TripletH();
+    extern arma::mat SingletH();
     extern arma::mat Hprime();
     extern arma::mat H();
     extern arma::mat buildHFromAandB(arma::mat& A, arma::mat& B);
 
     extern scalar A_E_delta_ij_delta_ab_plus_aj_ib_antisym(uint s, uint t);
+    extern scalar A_E_delta_ij_delta_ab_plus_2aj_ib_minus_ajbi(uint s, uint t);
     extern scalar A_aj_ib(uint s, uint t);
     extern scalar A_E_delta_ij_delta_ab_minus_aj_bi(uint s, uint t);
     extern scalar B_ab_ij_antisym(uint s, uint t);
+    extern scalar B_minus_abji_plus_2abij(uint s, uint t);
     extern scalar B_ab_ij(uint s, uint t);
     extern scalar B_minus_ab_ji(uint s, uint t);
 

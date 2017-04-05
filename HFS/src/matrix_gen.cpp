@@ -106,6 +106,25 @@ arma::mat HFS::Matrix::Gen::TripletH() {
     return buildMatrixFromFunctionList(HFS::Nmat, Ndivisions, locs, funcs);
 }
 
+arma::mat HFS::Matrix::Gen::SingletH() {
+    uint Ndivisions = 2;
+    std::vector<std::pair<uint, uint>> locs(4);
+    std::vector<scalar (*)(uint, uint)> funcs(4);
+
+    locs[0] = std::make_pair(0, 0);
+    funcs[0] = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_2aj_ib_minus_ajbi;
+
+    locs[1] = std::make_pair(0, 1);
+    funcs[1] = HFS::Matrix::Gen::B_minus_abji_plus_2abij;
+
+    locs[2] = std::make_pair(1, 0);
+    funcs[2] = HFS::Matrix::Gen::B_minus_abji_plus_2abij;
+
+    locs[3] = std::make_pair(1, 1);
+    funcs[3] = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_2aj_ib_minus_ajbi;
+    return buildMatrixFromFunctionList(HFS::Nmat, Ndivisions, locs, funcs);
+}
+
 scalar HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_aj_ib_antisym(uint s, uint t) {
     std::vector<arma::vec> klist(4);
     klist = HFS::stToKiKaKjKb(s, t);
@@ -118,6 +137,33 @@ scalar HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_aj_ib_antisym(uint s, uint t
     scalar A1 = HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
         + HFS::twoElectronSafe(ka, kj, ki, kb) - HFS::twoElectronSafe(ka, kj, kb, ki);
     return A1;
+}
+
+scalar HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_2aj_ib_minus_ajbi(uint s, uint t) {
+    std::vector<arma::vec> klist(4);
+    klist = HFS::stToKiKaKjKb(s, t);
+    arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
+    ki = klist[0];
+    ka = klist[1];
+    kj = klist[2];
+    kb = klist[3];
+
+    scalar Ast = HFS::kroneckerDelta(s, t) * HFS::exc_energies(s)
+        + 2 * HFS::twoElectronSafe(ka, kj, ki, kb) - HFS::twoElectronSafe(ka, kj, kb, ki);
+    return Ast;
+}
+
+scalar HFS::Matrix::Gen::B_minus_abji_plus_2abij(uint s, uint t) {
+    std::vector<arma::vec> klist(4);
+    klist = HFS::stToKiKaKjKb(s, t);
+    arma::vec ki(NDIM), kj(NDIM), ka(NDIM), kb(NDIM);
+    ki = klist[0];
+    ka = klist[1];
+    kj = klist[2];
+    kb = klist[3];
+
+    scalar Bst = 2 * HFS::twoElectronSafe(ka, kb, ki, kj) - HFS::twoElectronSafe(ka, kb, kj, ki);
+    return Bst;
 }
 
 scalar HFS::Matrix::Gen::A_aj_ib(uint s, uint t) {

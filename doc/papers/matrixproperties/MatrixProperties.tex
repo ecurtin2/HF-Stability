@@ -12,6 +12,7 @@
 \usepackage{braket}
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{verbatim}
 
 %\definecolor{myred}{HTML}{990000}
 %\definecolor{myblue}{HTML}{002299}
@@ -35,10 +36,10 @@
 
 \begin{document}
 \title{Notes on Matrix Factorization for Hartree-Fock Stability of HEG}
-\author{Evan Curtin}
+%\author{Evan Curtin}
 \maketitle
 
-\section{Orbital Hessian Factorization}
+\section{Definitions}
 According to Seeger and Pople\cite{Seeger1977}, (and many other sources) the molecular orbital
 Hessian has the form,
 \begin{eqnarray}\label{basic}
@@ -55,12 +56,12 @@ Where the matrices denoted by $\mathbf{A}$ and $\mathbf{B}$ are given by,
 \end{eqnarray}
 and the two electron integral used here is defined as, 
 \begin{eqnarray}
-  \braket{pq|rs} &=& \int\int \chi^*_p(1) \chi^*_q(2) \frac{1}{r_{12}} \chi^*_r(1) 
-  \chi^*_s(2)
+  \braket{pq|rs} &=& \int\int \chi^*_p(1) \chi^*_q(2) \frac{1}{r_{12}} \chi_r(1) 
+  \chi_s(2)
   d\tau d\sigma \\
   \braket{pq||rs} &=& \braket{pq|rs} - \braket{pq|sr} \\
-  (pq|rs) &=& \int\int \chi^*_p(1) \chi^*_q(2) \frac{1}{r_{12}} \chi^*_r(1) 
-  \chi^*_s(2)
+  (pq|rs) &=& \int\int \chi^*_p(1) \chi^*_q(2) \frac{1}{r_{12}} \chi_r(1) 
+  \chi_s(2)
   d\tau \\
   (pq||rs) &=& (pq|rs) - (pq|sr)
 \end{eqnarray}
@@ -68,12 +69,15 @@ Where $\sigma$ is the spin coordinate and $d\tau$ is the volume element in all s
 Additionally, the convention of $a, b$ being virtual states, $i, j$ being occupied states and 
 $p, q, r, s$ being any state is followed.  
 
-The solution is said to be unstable when the lowest eigenvalue is strictly negative. The
+The solution is said to be unstable when the lowest eigenvalue of $\mathbf{H}$
+is strictly negative. The
 corresponding eigenvector points downhill in energy in the case of instability. Defining
 the eigenvector as $\mathbf{D}$, the eigenvalue problem can be written as
 \begin{eqnarray}
   \mathbf{HD = \lambda D}
 \end{eqnarray}
+
+\section{Transforming H Dictates the form of D}
 In many cases, the matrix $\mathbf{H}$ factorizes into various components. The following
 form of a similarity transformed eigenvalue problem is useful to keep in mind:
 \begin{eqnarray}
@@ -84,7 +88,10 @@ form of a similarity transformed eigenvalue problem is useful to keep in mind:
 Thus if the matrix $\mathbf{H}$ can be transformed via a similarity transformation defined
 by $\mathbf{S}$ into $\mathbf{\tilde H}$, then the corresponding eigenvector which satisfies the 
 eigenvalue problem
-has the form $\mathbf{\tilde D} = \mathbf{S^{-1}D}$.  
+has the form $\mathbf{\tilde D} = \mathbf{S^{-1}D}$.
+
+This approach is commonly used in the paper to transform into the basis that separates
+the real and complex contributions of the eigenvectors when $\mathbf{A}$ and $\mathbf{B}$ are real.
 Writing the eigenvalue problem in the form of Seeger \& Pople (eq. 18 in \cite{Seeger1977}), 
 we get
 \begin{eqnarray}
@@ -124,7 +131,7 @@ after which the transformed eigenvalue problem has the form
   &=& 2E_2
   \begin{bmatrix}
     \mathbf{d + d^*} \\
-    \mathbf{d - d^*} 
+    \mathbf{-d + d^*} 
   \end{bmatrix} \\
   &=& 2E_2
   \begin{bmatrix}
@@ -151,21 +158,25 @@ above simplifies to
 \end{eqnarray}
 Clearly, the matrix factorizes into $\mathbf{A+B}$ and $\mathbf{A-B}$. The eigenvectors factorize
 into the real and imaginary displacements of the orbitals, respectively. This is equivalent to the 
-condition derived in and around eq. 20 for internal and external instabilities of real
+condition derived in and around eq. 20 in Seeger/Pople for internal and external instabilities of 
+real
 GHF solutions \cite{Seeger1977}, however this approach applies to any matrix with the same
 form as equation \ref{basic}.
 
-\section{Forms of equations with UHF wavefunction}
-In the case of a stationary UHF solution, the matrices $\mathbf{A}$ and $\mathbf{B}$ have the
-following forms, after integrating over spin:
+\section{Forms of equations with UHF Solution}
+In the case of a stationary UHF solution, the elements of matrices $\mathbf{A}$ and $\mathbf{B}$ 
+have the following forms, after integrating over spin:
 \begin{eqnarray}
-  A_{st} &=& \e\diag \textcolor{myred}{+ \delta_{\sigma_i\sigma_a}\delta_{\sigma_j\sigma_b}\Ap
+  A_{i \rightarrow a, j \rightarrow b} &=& \e\diag \textcolor{myred}{+ 
+  \delta_{\sigma_i\sigma_a}\delta_{\sigma_j\sigma_b}\Ap
                      - \delta_{\sigma_a\sigma_b}\delta_{\sigma_i\sigma_j}\App} \\
-  B_{st} &=& \textcolor{myblue}{\delta_{\sigma_a\sigma_i}\delta_{\sigma_b\sigma_j}\B 
+  B_{i \rightarrow a,j \rightarrow b} &=& 
+  \textcolor{myblue}{\delta_{\sigma_a\sigma_i}\delta_{\sigma_b\sigma_j}\B 
              - \delta_{\sigma_a\sigma_j}\delta_{\sigma_b\sigma_i}\Br} 
 \end{eqnarray}
-In matrix form, 
-\begin{eqnarray}
+Writing down the matrices, where the row index corresponds to $i \rightarrow a$ excitations  and 
+the column index corresponds to $j \rightarrow b$ excitations:
+\begin{eqnarray*}
   \mathbf{A}&=&\kbordermatrix{
         & \AtoA           & \AtoB           & \BtoA          & \BtoB          \\
   \AtoA & \e\diag + \Aa   & 0               & 0              & \Ap            \\
@@ -173,8 +184,8 @@ In matrix form,
   \BtoA & 0               & 0               & \e\diag - \App & 0              \\
   \BtoB & \Ap             & 0               & 0              & \e\diag + \Aa  
 }
-\end{eqnarray}
-\begin{eqnarray}
+\end{eqnarray*}
+\begin{eqnarray*}
   \mathbf{B}&=&\kbordermatrix{
         & \AtoA           & \AtoB           & \BtoA          & \BtoB          \\
   \AtoA & \Ba             & 0               & 0              & \B             \\
@@ -182,11 +193,27 @@ In matrix form,
   \BtoA & 0               & -\Br            & 0              & 0              \\
   \BtoB & \B              & 0               & 0              & \Ba            
 }
-\end{eqnarray}
+\end{eqnarray*}
 \\
 These matrices factorize into ``spin conserved'' $(\mathbf{A', B'})$ and
 ``spin-unconserved'' $(\mathbf{A'', B''})$ parts, to use the language of Seeger
-and Pople. The spin conserved matrices are given by
+and Pople. Similarly, $\mathbf{H}$ factorizes, with no approximations, into
+$\mathbf{H}'$ and $ \mathbf{H}''$
+\begin{eqnarray}
+\mathbf{H}' =
+  \begin{bmatrix}
+    \mathbf{A}'   & \mathbf{B}'   \\
+    \mathbf{B}'^* & \mathbf{A}'^* \\
+  \end{bmatrix}
+\end{eqnarray}
+\begin{eqnarray}
+\mathbf{H}'' =
+  \begin{bmatrix}
+    \mathbf{A}''   & \mathbf{B}''   \\
+    \mathbf{B}''^* & \mathbf{A}''^* \\
+  \end{bmatrix}
+\end{eqnarray}
+The spin conserved matrices are given by
 
 \begin{eqnarray}
   \mathbf{A'}&=&\kbordermatrix{
@@ -220,15 +247,7 @@ while the spin-unconserved matrices are given by:
 }
 \end{eqnarray}
 \\
-Thus the spin conserved molecular orbital hessian, 
-\begin{eqnarray}
-\mathbf{H}' =
-  \begin{bmatrix}
-    \mathbf{A}'   & \mathbf{B}'   \\
-    \mathbf{B}'^* & \mathbf{A}'^* \\
-  \end{bmatrix}
-\end{eqnarray}
-is given by
+Thus the spin conserved molecular orbital hessian, is given by
 \begin{eqnarray*}
   \mathbf{H'}&=&\kbordermatrix{
         & \AtoA             & \BtoB            & \AtoA             & \BtoB            \\
@@ -239,15 +258,7 @@ is given by
 }
 \end{eqnarray*}
 \\
-and the spin unconserved molecular orbital hessian, 
-\begin{eqnarray}
-\mathbf{H}'' =
-  \begin{bmatrix}
-    \mathbf{A}''   & \mathbf{B}''   \\
-    \mathbf{B}''^* & \mathbf{A}''^* \\
-  \end{bmatrix}
-\end{eqnarray}
-is given by:
+and the spin unconserved molecular orbital hessian, is given by:
 \begin{eqnarray*}
   \mathbf{H''}&=&\kbordermatrix{
         & \AtoB           & \BtoA              & \AtoB             & \BtoA            \\
@@ -257,9 +268,104 @@ is given by:
   \BtoA & -\Br^*            & 0                & 0                 & \e\diag - \App^* \\
 }
 \end{eqnarray*}
-\\
-The eigenvalue equation defining $\mathbf{D}''$ is, 
+
+The eigenvalue equation defining $\mathbf{D}'$ is, 
+\begin{eqnarray}\label{hppeval}
+  \mathbf{H'D'} = 
+  \mathbf{H'}
+  \begin{bmatrix}
+    \mathbf{d_\AtoA} \\
+    \mathbf{d_\BtoB} \\
+    \mathbf{d^*_\AtoA} \\        
+    \mathbf{d^*_\BtoB} 
+  \end{bmatrix}
+  = 2E_2
+  \begin{bmatrix}
+    \mathbf{d_\AtoA} \\
+    \mathbf{d_\BtoB} \\
+    \mathbf{d^*_\AtoA} \\        
+    \mathbf{d^*_\BtoB} 
+  \end{bmatrix}
+\end{eqnarray}
+
+Applying the transformation defined by the unitary matrix, 
 \begin{eqnarray}
+  \mathbf{U} = \frac{1}{\sqrt{2}} 
+  \begin{bmatrix}
+    \mathbf{1} & -\mathbf{1} & 0 &  0 \\
+    \mathbf{1} &  \mathbf{1} & 0 &  0 \\
+    0 &  0 & \mathbf{1} & -\mathbf{1} \\
+    0 &  0 & \mathbf{1} &  \mathbf{1} \\
+  \end{bmatrix}
+\end{eqnarray}
+
+With no further assumptions, this transformation doesn't do much. However, if the spatial
+orbitals corresponding to $\alpha$ and $\beta$ are assumed equivalent, the 
+transformed $\mathbf{H}'$ is
+\begin{eqnarray*}
+  \hspace{-1cm}
+  \mathbf{U^{-1}H'U} =
+  \begin{bmatrix}
+    \e + \Aa + \Ap & 0              & \Ba + \B            & 0            \\
+    0                    & \e + \Aa - \Ap    & 0                & \Ba - \B              \\
+    \Ba^* + \B^*         & 0                & \e+ \Aa^* + \Ap^*   & 0                     \\
+    0                    & \Ba^* - \B^*     & 0                 & \e+ \Aa^* - \Ap^*  \\
+  \end{bmatrix}
+\end{eqnarray*}
+
+while the corresponding eigenvectors are 
+\begin{eqnarray*}
+  \mathbf{U^{-1}D'} = \frac{1}{\sqrt{2}}
+  \begin{bmatrix}
+    \mathbf{d_\AtoA + d_\BtoB} \\
+    \mathbf{d_\AtoA - d_\BtoB} \\
+    \mathbf{d^*_\AtoA + d^*_\BtoB} \\        
+    \mathbf{d^*_\AtoA - d^*_\BtoB} 
+  \end{bmatrix}
+\end{eqnarray*}
+
+In this basis the equations clearly factorize into the following sets of eigenvalue equations:  
+\begin{eqnarray}\label{1Heval}
+  \begin{bmatrix}
+    \e + \Aa + \Ap & \Ba + \B          \\
+    \Ba^* + \B^*   & \e+ \Aa^* + \Ap^* \\
+  \end{bmatrix}
+  \begin{bmatrix}
+    \mathbf{d_\AtoA + d_\BtoB} \\
+    \mathbf{d^*_\AtoA + d^*_\BtoB} \\        
+  \end{bmatrix}
+  = 2E_2
+  \begin{bmatrix}
+    \mathbf{d_\AtoA + d_\BtoB} \\
+    \mathbf{d^*_\AtoA + d^*_\BtoB} \\        
+  \end{bmatrix}
+  \vspace{5mm}
+  \\ \label{3Heval}
+  \begin{bmatrix}
+    \e + \Aa - \Ap & \Ba - \B          \\
+    \Ba^* - \B^*   & \e+ \Aa^* - \Ap^* \\
+  \end{bmatrix}
+  \begin{bmatrix}
+    \mathbf{d_\AtoA - d_\BtoB} \\
+    \mathbf{d^*_\AtoA - d^*_\BtoB} \\        
+  \end{bmatrix}
+  = 2E_2
+  \begin{bmatrix}
+    \mathbf{d_\AtoA - d_\BtoB} \\
+    \mathbf{d^*_\AtoA - d^*_\BtoB} \\        
+  \end{bmatrix}
+\end{eqnarray}
+Equation \ref{3Heval} defines the matrix ${{}^3\mathbf{H}'}$, the triplet instability matrix,
+while \ref{1Heval} defines the matrix ${{}^1\mathbf{H}'}$, which defines instabilities that mix 
+singlet states. The only assumption made until this point in the analysis of ${\mathbf{H}'}$ was
+that the original solution was a complex RHF solution. No assumption was made about the outside 
+space towards which the eigenvector points. Even still, the eigenvectors can be shown to have the
+form given in equations \ref{1Heval} and \ref{3Heval}. Thus, the space in which the eigenvectors
+of ${\mathbf{H}'}$ point can only be that of UHF solutions. 
+
+Now, the other part of the general form of the stability matrix is ${\mathbf{H}''}$.
+The eigenvalue equation defining $\mathbf{D}''$ is, 
+\begin{eqnarray}\label{hppeval}
   \mathbf{H''D''} = 
   \mathbf{H''}
   \begin{bmatrix}
@@ -277,94 +383,86 @@ The eigenvalue equation defining $\mathbf{D}''$ is,
   \end{bmatrix}
 \end{eqnarray}
 
-Transforming the equation with the similarity transform defined by the following Unitary 
-matrix, 
-\begin{eqnarray}
-  \mathbf{U} = \frac{1}{\sqrt{2}}
+Equation \ref{hppeval} clearly factors into the following two eigenvalue equations:
+\begin{eqnarray}\label{b2aa2b}
+    \kbordermatrix{
+          & \BtoA              & \AtoB            \\
+    \BtoA & \e\diag - \App     & -\Br             \\
+    \AtoB & -\Br^*           & \e\diag - \App^* \\
+  }
   \begin{bmatrix}
-    \mathbf{I} & 0 & 0 & -\mathbf{I} \\
-     0 & \mathbf{I} & -\mathbf{I} & 0 \\ 
-     0 & \mathbf{I} & \mathbf{I} & 0 \\
-    \mathbf{I} & 0 & 0 & \mathbf{I} \\  
+    \mathbf{d_\BtoA} \\
+    \mathbf{d^*_\AtoB} \\        
+  \end{bmatrix} 
+  &=& 2E_2
+  \begin{bmatrix}
+    \mathbf{d_\BtoA} \\
+    \mathbf{d^*_\AtoB} \\        
+  \end{bmatrix}
+  \\
+  \label{a2bb2a}
+    \kbordermatrix{
+          & \AtoB              & \BtoA            \\
+    \AtoB & \e\diag - \App     & -\Br             \\
+    \BtoA & -\Br^*           & \e\diag - \App^* \\
+  }
+  \begin{bmatrix}
+    \mathbf{d_\AtoB} \\
+    \mathbf{d^*_\BtoA} \\        
+  \end{bmatrix} 
+  &=& 2E_2
+  \begin{bmatrix}
+    \mathbf{d_\AtoB} \\
+    \mathbf{d^*_\BtoA} \\        
   \end{bmatrix}
 \end{eqnarray}
-The transformed Hessian is ($e = \e\diag$, $C.C.$ is the complex conjugate of the rest of the 
-expression). 
-\begin{eqnarray*}
-\hspace{-1.45cm}
-  &\mathbf{\tilde{H}''}& = \\
-  \hspace{-1.45cm} 
-  &\frac{1}{2}& \kbordermatrix{
-        &           &             &           &          \\
-   & e - \App -\Br + C.C.  & 0 & 0  & -e + \App -\Br - C.C.             \\
-   & 0               & e - \App -\Br + C.C.     & -e + \App -\Br - C.C. & 0  \\
-   & 0 & -e + \App +\Br - C.C. & e - \App +\Br + C.C.  & 0                \\
-   & -e + \App +\Br - C.C.    & 0  & 0  & e - \App +\Br +  C.C. \\
-}
-\end{eqnarray*}
-While the corresponding transformed eigenvector has the following form:
-\begin{eqnarray*}
-  \mathbf{\tilde{D}''} = 
-  \begin{bmatrix}
-    d_\AtoB + d^*_\BtoA \\
-    d_\BtoA + d^*_\AtoB \\
-    -d_\BtoA + d^*_\AtoB \\
-    -d_\AtoB + d^*_\BtoA \\
-  \end{bmatrix}
-\end{eqnarray*}
 
-If the two electron integrals and energies are all real, we have for the form 
-of $\mathbf{H''}$, 
-\begin{eqnarray*}
-\hspace{-1cm}
-  \mathbf{\tilde{H}''} = 
-  \kbordermatrix{
-        &           &              &             &      \\
-  & \e - \App -\Br  & 0                  & 0                 & 0            \\
-  & 0               & \e - \App -\Br     & 0                  & 0  \\
-  & 0 & 0 & \e - \App + \Br  & 0                \\
-  & 0    & 0  & 0  &\e - \App + \Br \\
-}
-\end{eqnarray*}
-Furthermore, if the solution we started with was an RHF solution, the $\AtoB$ and 
-$\BtoA$ are identical. Letting $d_\AtoB = d_\BtoA = d$, we get the following forms 
-of the transformed eigenvectors, 
-\begin{eqnarray}\label{rhfvecs}
-  \mathbf{\tilde{D}''} = 
-  \begin{bmatrix}
-    d + d^*  \\
-    d + d^*  \\
-    -d + d^* \\
-    -d + d^* \\
-  \end{bmatrix}
-  =
-  \begin{bmatrix}
-    Re(d)  \\
-    Re(d)  \\
-    Im(d)  \\
-    Im(d)  \\
-  \end{bmatrix}
-\end{eqnarray}
-At this point the only assumptions we made are that the two electron integrals and the
-energies are real-valued and that the solution we started with was an RHF solution. From
-this it immediately follows that the eigenvectors have the form of equation \ref{rhfvecs}.
+Equations \ref{b2aa2b} and \ref{a2bb2a} are complex conjugates in the general case. If however, 
+the solution is an RHF solution, the spatial orbitals for $\alpha$ and $\beta$ spins are identical
+by definition. In this case, the matrices in both equation \ref{b2aa2b} and equation \ref{a2bb2a}
+are equivalent to the triplet instability matrix defined by Seeger and Pople:
 
-Clearly, the eigensystem defined by $\mathbf{H}''\mathbf{D}'' = 2E_2\mathbf{D}''$ is a
-doubly degenerate set of the following equations:
 \begin{eqnarray}
-  \left[ \mathbf{A+B} \right] Re(d) &=& 2E_2 Re(d) \\
-  \left[ \mathbf{A-B} \right] Im(d) &=& 2E_2 Im(d) 
+  \mathbf{{}^3H} =
+  \begin{bmatrix}
+    \e \diag - (aj|bi) & -(ab | ji )           \\
+    -(ab | ji )^*        & \e \diag - (aj|bi)^* \\        
+  \end{bmatrix} 
 \end{eqnarray}
-Where $\mathbf{A}$ and $\mathbf{B}$ are defined such that
-\begin{eqnarray}
-  A_{ia, jb} &=& \e\diag - \App \\
-  B_{ia, jb} &=& -\Br 
-\end{eqnarray}
-These matrices are exactly equivalent to ${}^3\mathbf{A}'$ and ${}^3\mathbf{B}'$ (eq 35 in Seeger
-\& Pople). Thus, when the matrices $\mathbf{A}$ and $\mathbf{B}$ are real, and the solution
-is an RHF solution, the eigenvalue problem is doubly degenerate, and factorizes into the equation
-characterized by the triplet instability equation. 
 
+The implication of equations \ref{b2aa2b}, \ref{a2bb2a} and \ref{3Heval} is that the following 
+sets of eigenvectors comprise a degenerate manifold when the solution is an RHF wavefunction.
+\begin{eqnarray}
+  \begin{bmatrix}
+    \mathbf{d_\BtoA} \\
+    \mathbf{d^*_\AtoB} \\        
+  \end{bmatrix}
+  , 
+  \begin{bmatrix}
+    \mathbf{d_\AtoB} \\
+    \mathbf{d^*_\BtoA} \\        
+  \end{bmatrix}
+  ,
+  \begin{bmatrix}
+    \mathbf{d_\AtoA - d_\BtoB} \\
+    \mathbf{d^*_\AtoA - d^*_\BtoB} \\        
+  \end{bmatrix}
+\end{eqnarray}
+As such, the RHF-GHF instability eigenvectors can always be transformed into eigenvectors having the
+form of the RHF-UHF instability. On the other hand, if the solution is not an RHF solution, this is
+not the case and the eigenvalues/vectors and corresponding instabilities are distinct.  
+
+\section{Numerical result}
+To verify numerically, the diagonalization of the matrices $\mathbf{H}, \mathbf{H}'$ and 
+${}^3\mathbf{H}'$ were implemented independently of one another. No factorizations or 
+simplifications were performed. The lowest eigenvalue of each is shown below for a constant number
+of K-points and a varying density. The results are equivalent within the convergence criteria of 
+Davidson's Algorithm.  
+\begin{figure}[h]
+  \includegraphics[width=0.75\linewidth]{../../images/Matrix_Compare.pdf}
+\end{figure}
+
+\begin{comment}
 \section{Proof of Real-Valued A and B}
 In the case of the Homogeneous electron gas,
 the two electron integral is given by
@@ -394,7 +492,7 @@ The two electron integrals are always real-valued. Therefore
 $\mathbf{A} = \mathbf{A}^*$ and $\mathbf{B} = \mathbf{B}^*$
 
 So far I have not used this to simplify anything, but it is true.
-
+\end{comment}
 \section{References}
 \bibliography{../heg_references}
 \end{document}

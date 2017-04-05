@@ -17,7 +17,7 @@ TARGET = HFS
 LIB = -larmadillo
 LOCDIR = home/evan/git/HF-Stability/
 MANSEC = EPS
-include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
+
 CFLAGS = -Wall -std=c++11 -fPIC
 DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
 INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/
