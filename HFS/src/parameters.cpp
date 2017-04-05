@@ -37,6 +37,7 @@ namespace HFS{
     arma::umat inv_exc_mat;
     void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     arma::mat (*Matrix_generator)();
+    arma::vec exact_evals;
     uint dav_its;
     arma::vec dav_vals;
     uint num_guess_evecs;

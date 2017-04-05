@@ -97,8 +97,6 @@ int main(int argc, char* argv[]){
     HFS::dav_min_eval = HFS::dav_vals.min();
 
     // Finish up, write and test for problems.
-    HFS::writeJSON(HFS::OutputFileName, true);
-
     #ifndef NDEBUG
         if (HFS::Nmat < 1500) {
             HFS::davidsonAgreesWithFullDiag();
@@ -107,6 +105,8 @@ int main(int argc, char* argv[]){
             exit(EXIT_FAILURE);
         }
     #endif //NDEBUG
+
+    HFS::writeJSON(HFS::OutputFileName, true);
 
     return 0;
 }

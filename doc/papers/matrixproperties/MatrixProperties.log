@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  4 APR 2017 15:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.8.8)  5 APR 2017 18:23
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -392,53 +392,67 @@ Overfull \hbox (24.67058pt too wide) in alignment at lines 262--270
  []
 
 [2]
-Overfull \hbox (85.00246pt too wide) in alignment at lines 305--314
+Overfull \hbox (85.00246pt too wide) in alignment at lines 303--312
  [][][] []
  []
 
-[3] <../../images/Matrix_Compare.pdf, id=24, 266.81049pt x 257.27873pt>
-File: ../../images/Matrix_Compare.pdf Graphic file (type pdf)
+[3]
+\@endnoteout=\write3
+\openout3 = `MatrixProperties.end'.
 
-<use ../../images/Matrix_Compare.pdf>
-Package pdftex.def Info: ../../images/Matrix_Compare.pdf used on input line 462
-.
-(pdftex.def)             Requested size: 361.91907pt x 349.02684pt.
- (./MatrixProperties.bbl [4 <../../images/Matrix_Compare.pdf>]) [5] (./MatrixPr
-operties.aux)
+
+<../../images/matrix_factor_histograms.pdf, id=24, 610.18553pt x 324.53175pt>
+File: ../../images/matrix_factor_histograms.pdf Graphic file (type pdf)
+
+<use ../../images/matrix_factor_histograms.pdf>
+Package pdftex.def Info: ../../images/matrix_factor_histograms.pdf used on inpu
+t line 488.
+(pdftex.def)             Requested size: 482.55876pt x 256.65952pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+(./MatrixProperties.bbl (./MatrixProperties.end)) [4] [5 <../../images/matrix_f
+actor_histograms.pdf>] (./MatrixProperties.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 4996 strings out of 493029
- 64687 string characters out of 6136235
- 184263 words of memory out of 5000000
- 8455 multiletter control sequences out of 15000+600000
+ 5004 strings out of 493029
+ 64851 string characters out of 6136235
+ 185293 words of memory out of 5000000
+ 8460 multiletter control sequences out of 15000+600000
  11105 words of font info for 43 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,13n,35p,287b,350s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,13n,35p,812b,329s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
-r10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb>
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/sh
-are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmti9.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmtt9.pfb>
-Output written on MatrixProperties.pdf (5 pages, 300518 bytes).
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx5.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+mi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb
+></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmss9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmsy5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cms
+y6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
+Output written on MatrixProperties.pdf (5 pages, 406226 bytes).
 PDF statistics:
- 110 PDF objects out of 1000 (max. 8388607)
- 79 compressed objects within 1 object stream
+ 140 PDF objects out of 1000 (max. 8388607)
+ 105 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  6 words of extra memory for PDF output out of 10000 (max. 10000000)
 

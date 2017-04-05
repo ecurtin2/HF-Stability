@@ -15,7 +15,7 @@ bool davidsonAgreesWithFullDiag() {
     arma::eig_sym(eigvals, eigvecs, matrix);
     HFS::full_diag_min = eigvals.min();
     HFS::full_diag_time = timer.toc();
-
+    HFS::exact_evals = eigvals;
     return true;
 }
 

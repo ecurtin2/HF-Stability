@@ -100,6 +100,7 @@ namespace HFS {
             if (fabs(full_diag_min) > 1e-6) {
                 JSONVAL(full_diag_min);
                 JSONVAL(full_diag_time);
+                writeArmaVecToJSON(output, exact_evals, "exact_evals");
             }
 
             JSONVAL(dav_tol);
@@ -109,8 +110,8 @@ namespace HFS {
             JSONVAL(dav_time);
             #undef JSONVAL
             #undef JSONSTR
-
             if (detail) {
+
                 writeArmaVecToJSON(output, occ_energies, "occ_energies");
                 writeArmaVecToJSON(output, vir_energies, "vir_energies");
                 writeArmaVecToJSON(output, exc_energies, "exc_energies");

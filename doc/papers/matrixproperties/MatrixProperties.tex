@@ -51,8 +51,8 @@ Hessian has the form,
 \end{eqnarray}
 Where the matrices denoted by $\mathbf{A}$ and $\mathbf{B}$ are given by,
 \begin{eqnarray}
-  A_{st} &=& \e\diag +  \textcolor{myred}{\braket{aj||ib}} \\
-  B_{st} &=& \textcolor{myblue}{\braket{ab||ij}}         
+  A_{i \rightarrow a, j \rightarrow b} &=& \e\diag +  \textcolor{myred}{\braket{aj||ib}} \\
+  B_{i \rightarrow a, j \rightarrow b} &=& \textcolor{myblue}{\braket{ab||ij}}         
 \end{eqnarray}
 and the two electron integral used here is defined as, 
 \begin{eqnarray}
@@ -197,7 +197,7 @@ the column index corresponds to $j \rightarrow b$ excitations:
 \\
 These matrices factorize into ``spin conserved'' $(\mathbf{A', B'})$ and
 ``spin-unconserved'' $(\mathbf{A'', B''})$ parts, to use the language of Seeger
-and Pople. Similarly, $\mathbf{H}$ factorizes, with no approximations, into
+and Pople. Similarly, $\mathbf{H}$ factorizes, with no further approximations, into
 $\mathbf{H}'$ and $ \mathbf{H}''$
 \begin{eqnarray}
 \mathbf{H}' =
@@ -296,12 +296,10 @@ Applying the transformation defined by the unitary matrix,
     \mathbf{1} &  \mathbf{1} & 0 &  0 \\
     0 &  0 & \mathbf{1} & -\mathbf{1} \\
     0 &  0 & \mathbf{1} &  \mathbf{1} \\
-  \end{bmatrix}
+  \end{bmatrix},
 \end{eqnarray}
-
-With no further assumptions, this transformation doesn't do much. However, if the spatial
-orbitals corresponding to $\alpha$ and $\beta$ are assumed equivalent, the 
-transformed $\mathbf{H}'$ is
+and assuming the spatial orbitals corresponding to $\alpha$ and $\beta$ are equivalent (ie RHF), 
+the transformed $\mathbf{H}'$ is
 \begin{eqnarray*}
   \hspace{-1cm}
   \mathbf{U^{-1}H'U} =
@@ -321,7 +319,7 @@ while the corresponding eigenvectors are
     \mathbf{d_\AtoA - d_\BtoB} \\
     \mathbf{d^*_\AtoA + d^*_\BtoB} \\        
     \mathbf{d^*_\AtoA - d^*_\BtoB} 
-  \end{bmatrix}
+  \end{bmatrix}.
 \end{eqnarray*}
 
 In this basis the equations clearly factorize into the following sets of eigenvalue equations:  
@@ -453,13 +451,54 @@ form of the RHF-UHF instability. On the other hand, if the solution is not an RH
 not the case and the eigenvalues/vectors and corresponding instabilities are distinct.  
 
 \section{Numerical result}
-To verify numerically, the diagonalization of the matrices $\mathbf{H}, \mathbf{H}'$ and 
+To verify numerically, the brute force diagonalization of the matrices $\mathbf{H}, \mathbf{H}'$ 
+and 
 ${}^3\mathbf{H}'$ were implemented independently of one another. No factorizations or 
-simplifications were performed. The lowest eigenvalue of each is shown below for a constant number
-of K-points and a varying density. The results are equivalent within the convergence criteria of 
-Davidson's Algorithm.  
-\begin{figure}[h]
-  \includegraphics[width=0.75\linewidth]{../../images/Matrix_Compare.pdf}
+simplifications were performed. Let $\lambda_{\mathbf{M}}$ be the 
+set\footnote{Technically a multiset, as a set has only unique elements.} of eigenvalues of 
+square matrix $\mathbf{M}$, repeated according to their multiplicity, such that 
+\begin{eqnarray*}
+  \lambda_{\mathbf{H}} &=& \{ \text{All eigenvalues of } \mathbf{H}  \} \\
+  \lambda_{\mathbf{H'}} &=& \{ \text{All eigenvalues of } \mathbf{H'}  \} \\
+  \lambda_{\mathbf{{}^3H'}} &=& \{ \text{All eigenvalues of } \mathbf{{}^3H'}  \} \\
+  \lambda_{\mathbf{{}^1H'}} &=& \{ \text{All eigenvalues of } \mathbf{{}^1H'}  \} 
+\end{eqnarray*}
+To machine precision, the calculated eigenspectrum of  $\mathbf{H}'$ is
+equivalent to the union of the eigenvalues of ${}^3\mathbf{H}'$ and the eigenvalues of
+${}^1\mathbf{H}'$.
+\begin{equation}
+  \lambda_{\mathbf{H}'} = \lambda_{\mathbf{{}^3H}'} \cup \lambda_{\mathbf{{}^1H}'}  
+\end{equation}
+Similarly, the calculated eigenspectrum of $\mathbf{H}$ is equivalent to
+the union of the eigenvalues of ${}^1\mathbf{H}'$ and thrice-repeated eigenvalues
+of ${}^3\mathbf{H}'$ (two coming from the RHF limit of $\mathbf{H}''$ and one coming from
+$\mathbf{H}'$)
+\begin{equation}
+  \lambda_{\mathbf{H}} = \lambda_{\mathbf{{}^3H}'} \cup
+                              \lambda_{\mathbf{{}^3H}'} \cup
+                              \lambda_{\mathbf{{}^3H}'} \cup
+                               \lambda_{\mathbf{{}^1H}'}
+\end{equation}
+Visually, this information is presented in figure 1. This shows numerically that the RHF-GHF 
+instability is indistinguishable from the RHF-UHF instability, given an RHF wavefunction. 
+Lifting the symmetry of spatial orbitals between $\alpha$ and $\beta$ spin states will remove the
+degeneracies seen here, and the resulting UHF-GHF instability will become distinct from the RHF-UHF
+instability.  
+\begin{figure}[h]\label{histograms}
+  \includegraphics[width=\linewidth]{../../images/matrix_factor_histograms.pdf}
+  \caption{ Histogram of the calculated eigenspectra of stability matrices and factorizations. 
+  \newline \textbf{[Left]} The eigenspectrum of $\mathbf{H}$ (black outline, no fill) is equivalent 
+  to the 
+  set formed by combining the eigenspectra of $\mathbf{{}^3H'}$ (green), repeated thrice, and 
+  $\mathbf{{}^1H'}$ 
+  (blue).
+  \newline \textbf{[Right]} The eigenspectrum of $\mathbf{H'}$ (black outline, no fill) is 
+  equivalent to the 
+  set formed by combining the eigenspectra of $\mathbf{{}^3H'}$ (green) and $\mathbf{{}^1H'}$ 
+  (blue).  
+  \newline Although not apparent due to binning, all eigenvalues of factorized matrices agree
+  with eigenvalues of the unfactored matrix to machine precision. 
+  }
 \end{figure}
 
 \begin{comment}

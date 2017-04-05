@@ -66,6 +66,7 @@ namespace HFS{
     extern uint dav_its;                  /**< Number of iterations to converge in Davidson's Algorithm  */
     extern arma::vec dav_vals;                /**< All eigenvalues returned by the last iteration of Davidson's Algorithm. */
     extern uint num_guess_evecs;          /**< Number of eigenvectors used as initial guess for Davidson's Algorithm. */
+    extern arma::vec exact_evals;         /**< Only used in debug mode, holds the full eigenvalue spectra of the matrix from HFS::Matrix_generator */
     extern uint dav_blocksize;            /**< Block size Davidson's Algorithm. */
     extern uint dav_num_evals;            /**< Number of eigenvalues requested for Davidson's Algorithm. */
     extern uint dav_nconv;                /**< Number of converged eigenpairs returned by Davidson's Algorithm. */
