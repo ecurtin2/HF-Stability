@@ -88,6 +88,7 @@ namespace HFS {
             JSONVAL(Nocc);
             JSONVAL(Nvir);
             JSONVAL(Nexc);
+            JSONVAL(Nmat);
             JSONVAL(ground_state_degeneracy);
             JSONVAL(dav_its);
             JSONVAL(num_guess_evecs);

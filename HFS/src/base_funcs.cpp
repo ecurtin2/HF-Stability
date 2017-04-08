@@ -8,6 +8,9 @@
 
 
 #include "base_funcs.hpp"
+# if NDIM == 1
+#include <boost/math/special_functions/expint.hpp>
+# endif  // NDIM
 
 namespace HFS {
 
@@ -35,9 +38,12 @@ namespace HFS {
         if (norm < SMALLNUMBER) {
             return 0.0;
         }else{
-            #if NDIM == 2
+            # if NDIM == 1
+                return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
+                            * boost::math::expint(-norm * norm * HFS::two_e_const * HFS::two_e_const);
+            # elif NDIM == 2
                 return HFS::two_e_const / norm;
-            #elif NDIM == 3
+            # elif NDIM == 3
                 return HFS::two_e_const / (norm * norm);
             #endif
         }
@@ -64,23 +70,22 @@ namespace HFS {
         if (norm < SMALLNUMBER) {
             return 0.0;
         }else{
-            return HFS::two_e_const / std::pow(norm, NDIM - 1);
+            # if NDIM == 1
+                return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
+                            * boost::math::expint(-norm * norm * HFS::two_e_const * HFS::two_e_const);
+            # elif NDIM == 2
+                return HFS::two_e_const / norm;
+            # elif NDIM == 3
+                return HFS::two_e_const / (norm * norm);
+            #endif
         }
     }
-/*
-    arma::uvec kToIndex(arma::vec& k) {
-        arma::vec uint = arma::round((k + HFS::kmax) / HFS::deltaK);
-        arma::uvec indices = arma::conv_to<arma::uvec>::from(uint);
-        return indices;
-    }
-*/
+
     void kToIndex(arma::vec& k, arma::uvec& idx) {
         for (uint i = 0; i < NDIM; ++i) {
             idx[i] = std::round((k[i] + HFS::kmax) / HFS::deltaK);
         }
     }
-
-
 
     arma::umat kToIndex(arma::mat& k) {
         arma::mat idx = arma::round((k + HFS::kmax) / HFS::deltaK);

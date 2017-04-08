@@ -11,6 +11,8 @@
 #ifndef HFS_PARAMS_INCLUDED
 #define HFS_PARAMS_INCLUDED
 
+#define __STDCPP_WANT_MATH_SPEC_FUNCS__
+
 #ifndef PI
     #define PI 3.14159265358979323846264338327
 #endif
@@ -55,11 +57,15 @@ namespace HFS{
     extern arma::umat occ_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th occupied state. */
     extern arma::umat vir_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th virtual state. */
     extern arma::umat excitations;            /**< Matrix where the i'th row contains the indices for the corresponding [occupied, virtual] states. */
-    #if NDIM == 2
+    # if NDIM == 1
+      extern arma::uvec vir_N_to_1_mat;
+    # endif
+    # if NDIM == 2
       extern   arma::umat vir_N_to_1_mat;       /**< Matrix/Cube where the value is the virtual state index */
-    #elif NDIM == 3
+    # endif
+    # if NDIM == 3
       extern   arma::ucube vir_N_to_1_mat;
-    #endif // NDIM;
+    #endif
     extern arma::umat inv_exc_mat;            /**< The [i,a]'th element is s, where s labels the excitation i -> a.  */
     extern void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv); /**< Function pointer for the matrix-vector product. Is set by HFS::setMatrixPropertiesFromCase */
     extern arma::mat (*Matrix_generator)();   /**< Function pointer for the matrix elements. Is set by HFS::setMatrixPropertiesFromCase */

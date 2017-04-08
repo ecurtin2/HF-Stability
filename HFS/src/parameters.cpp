@@ -29,11 +29,15 @@ namespace HFS{
     arma::umat occ_states;
     arma::umat vir_states;
     arma::umat excitations;
-    #if NDIM == 2
+    # if NDIM == 1
+      arma::uvec vir_N_to_1_mat;
+    # endif
+    # if NDIM == 2
       arma::umat vir_N_to_1_mat;
-    #elif NDIM == 3
+    # endif
+    # if NDIM == 3
       arma::ucube vir_N_to_1_mat;
-    #endif // NDIM;
+    #endif
     arma::umat inv_exc_mat;
     void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv);
     arma::mat (*Matrix_generator)();

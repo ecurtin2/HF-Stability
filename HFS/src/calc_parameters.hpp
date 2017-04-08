@@ -131,7 +131,7 @@ namespace HFS {
     /**< \brief Create the Map to convert between 3/2-index and 1-index representation of virtual state.
 
     The NDIM compiler directory determines if this is an arma::ucube (3d) or arma::umat
-    (2d).
+    (2d) or arma::uvec (1d).
     @see NDIM
     @see vir_N_to_1_mat
     @see vir_states

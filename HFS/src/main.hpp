@@ -7,6 +7,7 @@ taken as command line input.
 @date Wednesday, 04 Jan, 2017
 */
 
+#define __STDCPP_WANT_MATH_SPEC_FUNCS__
 #include <iostream>
 #include <cmath>
 #include <assert.h>

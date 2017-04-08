@@ -20,7 +20,7 @@ MANSEC = EPS
 
 CFLAGS = -Wall -std=c++11 -fPIC
 DATAPATH = $(SLEPC_DIR)/share/slepc/datafiles/matrices
-INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/
+INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DIR)/include -I$(PETSC_DIR)/$(PETSC_ARCH)/include/ -I$(BOOST_ROOT)
 
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,%,$(SOURCES:.$(SRCEXT)=.o))
@@ -33,6 +33,7 @@ ifeq ($(COMP),Work)
 	PETSC_DIR=/home/evan/git/petsc
 	PETSC_ARCH=linux-gnu-c-debug
 	SLEPC_ARCH=linux-gnu-c-debug
+	BOOST_ROOT=/home/evan/local/boost_1_63_0
 endif
 
 # Gellmann
@@ -43,6 +44,7 @@ ifeq ($(COMP),Gellmann)
 	PETSC_ARCH=arch-64-bit-indices
 	SLEPC_ARCH=arch-64-bit-indices
 	LOCDIR=home/ecurtin2/git/HF-Stability/
+	BOOST_ROOT=/home/ecurtin2/local/boost_1_63_0
 endif
 
 ifeq ($(COMP),Home)
@@ -50,6 +52,7 @@ ifeq ($(COMP),Home)
 	PETSC_DIR=/home/evan/git/petsc
 	PETSC_ARCH=arch-linux2-c-debug
 	SLEPC_ARCH=arch-linux2-c-debug
+	BOOST_ROOT=/home/evan/local/boost_1_63_0
 endif
 
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
@@ -61,6 +64,20 @@ CFLAGS+=-L/home/ecurtin2/local/lib/ -I/home/ecurtin2/local/include/ -lopenblas -
 LINKEROPTS = -L/home/ecurtin2/local/lib/ -larmadillo
 endif
 
+debug1D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=1
+debug1D: EXE = HFSdebug1D
+debug1D: BUILDDIR = build/debug1D
+debug1D: $(TARGET)
+
+profile1D: CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D PROFILE -D NDIM=1
+profile1D: EXE = HFSprofile1D
+profile1D: BUILDDIR = build/profile1D
+profile1D:  $(TARGET)
+
+release2D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=2
+release2D: EXE = HFSrelease2D
+release2D: BUILDDIR = build/release2D
+release2D: $(TARGET)
 
 debug2D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=2
 debug2D: EXE = HFSdebug2D

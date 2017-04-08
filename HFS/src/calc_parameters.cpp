@@ -39,13 +39,14 @@ namespace HFS {
 
     void calcVolAndTwoEConst (uint N_elec, scalar rs, scalar& Vol, scalar& TwoEConst) {
         if (NDIM == 1) {
-            HFS::vol = HFS::N_elec * 2.0 * HFS::rs;
+            vol = N_elec * rs;
+            two_e_const = 0.01;    // 'a' for the exponential integral, radius of cylinder.
         } else if (NDIM == 2) {
-            HFS::vol = HFS::N_elec * PI * std::pow(HFS::rs, 2);
-            HFS::two_e_const = 2.0 * PI / HFS::vol;
+            vol = N_elec * PI * std::pow(rs, 2);
+            two_e_const = 2.0 * PI / vol;
         } else if (NDIM == 3) {
-            HFS::vol = HFS::N_elec * 4.0 / 3.0 * PI * std::pow(HFS::rs, 3);
-            HFS::two_e_const = 4.0 * PI / HFS::vol;
+            vol = N_elec * 4.0 / 3.0 * PI * std::pow(rs, 3);
+            two_e_const = 4.0 * PI / vol;
         }
     }
 
@@ -133,7 +134,7 @@ namespace HFS {
                         ,arma::umat& excitations
                         ,arma::vec&  exc_energies
                         ,uint& Nexc) {
-        arma::vec kexc(NDIM);
+        arma::vec  kexc(NDIM);
         arma::uvec vir_uint(NDIM);
         arma::uvec exc_uint(NDIM);
         excitations.set_size(2, Nocc * Nvir);
@@ -147,7 +148,6 @@ namespace HFS {
                 kexc = kgrid(occ_states.col(i));
                 kexc(0) += deltaK * j;
                 HFS::toFirstBrillouinZone(kexc);
-                //exc_uint = HFS::kToIndex(kexc);
                 HFS::kToIndex(kexc, exc_uint);
                 // Find the vir state
                 for (uint k = 0; k < vir_states.n_cols; ++k) {
@@ -161,8 +161,8 @@ namespace HFS {
 
             }
         }
-        excitations  = excitations.head_cols(Nexc); // excitations is now full
-        exc_energies = exc_energies.head(Nexc);  // set the size of exc_energies
+        excitations  = excitations.head_cols(Nexc); // clip size
+        exc_energies = exc_energies.head(Nexc);  // clip size
     }
 
     void calcExcitationEnergies() {
@@ -177,7 +177,16 @@ namespace HFS {
         HFS::excitations = HFS::excitations.cols(indices);
     }
 
-    #if NDIM == 2
+    # if NDIM == 1
+        void calcVirNTo1Map() {
+        HFS::vir_N_to_1_mat.set_size(HFS::Nk-1);
+        HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
+        for (uint i=0; i < HFS::Nvir; ++i){
+            HFS::vir_N_to_1_mat(HFS::vir_states(i)) = i;
+        }
+    }
+
+    # elif NDIM == 2
         void calcVirNTo1Map() {
             HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1);
             HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one
@@ -185,7 +194,7 @@ namespace HFS {
                 HFS::vir_N_to_1_mat(HFS::vir_states(0, i), HFS::vir_states(1, i)) = i;
             }
         }
-    #elif NDIM == 3
+    # elif NDIM == 3
         void calcVirNTo1Map() {
         HFS::vir_N_to_1_mat.set_size(HFS::Nk-1, HFS::Nk-1, HFS::Nk-1);
         HFS::vir_N_to_1_mat.fill(HFS::Nvir+1); // will make errors if accessing wrong one

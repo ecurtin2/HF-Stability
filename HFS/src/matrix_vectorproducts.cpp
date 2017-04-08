@@ -298,11 +298,15 @@ void ApplyMvFxnsToSubMatrices(
 
 uint calcTfromKbAndJ(arma::vec& kb, uint j) {
     arma::uvec b_N_uint(NDIM); kToIndex(kb, b_N_uint);
-    #if NDIM == 2
+    # if NDIM == 1
+        uint b = HFS::vir_N_to_1_mat(b_N_uint(0));
+    # endif
+    # if NDIM == 2
         uint b = HFS::vir_N_to_1_mat(b_N_uint(0), b_N_uint(1));
-    #elif NDIM == 3
+    # endif
+    # if NDIM == 3
         uint b = HFS::vir_N_to_1_mat(b_N_uint(0), b_N_uint(1), b_N_uint(2));
-    #endif // NDIM
+    #endif
     uint t = HFS::inv_exc_mat(j, b);
     return t;
 }
