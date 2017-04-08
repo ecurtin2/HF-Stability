@@ -74,10 +74,10 @@ profile1D: EXE = HFSprofile1D
 profile1D: BUILDDIR = build/profile1D
 profile1D:  $(TARGET)
 
-release2D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=2
-release2D: EXE = HFSrelease2D
-release2D: BUILDDIR = build/release2D
-release2D: $(TARGET)
+release1D: CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE -D NDIM=1
+release1D: EXE = HFSrelease1D
+release1D: BUILDDIR = build/release1D
+release1D: $(TARGET)
 
 debug2D: CFLAGS += -g -o0 -Wall -gdwarf-3 -D NDIM=2
 debug2D: EXE = HFSdebug2D
