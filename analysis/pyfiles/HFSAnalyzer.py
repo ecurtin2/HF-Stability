@@ -358,7 +358,7 @@ def plot_mvproduct_scaling(df, ax, scale=2):
     x = Nexcs * Noccs
 
 #ax.set_title('Matrix - Vector Product Scaling')
-    if len(df > 2):
+    if len(df) > 2:
     	x_split = np.array_split(x, 2)[1]
     	mvtimes_split = np.array_split(mvtimes, 2)[1]
 

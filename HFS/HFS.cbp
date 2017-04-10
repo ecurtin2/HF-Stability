@@ -94,6 +94,24 @@
 					<Add directory="src" />
 				</Compiler>
 			</Target>
+			<Target title="debug1D">
+				<Option output="./bin/HFSdebug1D" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+			</Target>
+			<Target title="profile1D">
+				<Option output="./bin/HFSprofile1D" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+			</Target>
+			<Target title="release1D">
+				<Option output="./bin/HFSrelease1D" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
@@ -114,7 +132,14 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
-		<Unit filename="src/SLEPcWrapper.cpp" />
+		<Unit filename="src/SLEPcWrapper.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+			<Option target="debug3D" />
+			<Option target="profile3D" />
+			<Option target="release3D" />
+		</Unit>
 		<Unit filename="src/SLEPcWrapper.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
@@ -140,7 +165,14 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
-		<Unit filename="src/cmd_parser.hpp" />
+		<Unit filename="src/cmd_parser.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+			<Option target="debug3D" />
+			<Option target="profile3D" />
+			<Option target="release3D" />
+		</Unit>
 		<Unit filename="src/debug.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
@@ -171,10 +203,38 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
-		<Unit filename="src/matrix_gen.cpp" />
-		<Unit filename="src/matrix_gen.hpp" />
-		<Unit filename="src/matrix_vectorproducts.cpp" />
-		<Unit filename="src/matrix_vectorproducts.hpp" />
+		<Unit filename="src/matrix_gen.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+			<Option target="debug3D" />
+			<Option target="profile3D" />
+			<Option target="release3D" />
+		</Unit>
+		<Unit filename="src/matrix_gen.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+			<Option target="debug3D" />
+			<Option target="profile3D" />
+			<Option target="release3D" />
+		</Unit>
+		<Unit filename="src/matrix_vectorproducts.cpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+			<Option target="debug3D" />
+			<Option target="profile3D" />
+			<Option target="release3D" />
+		</Unit>
+		<Unit filename="src/matrix_vectorproducts.hpp">
+			<Option target="debug2D" />
+			<Option target="release2D" />
+			<Option target="profile2D" />
+			<Option target="debug3D" />
+			<Option target="profile3D" />
+			<Option target="release3D" />
+		</Unit>
 		<Unit filename="src/parameters.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />

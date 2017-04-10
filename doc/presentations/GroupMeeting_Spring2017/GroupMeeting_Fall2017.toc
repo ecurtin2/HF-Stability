@@ -1,0 +1,6 @@
+\beamer@endinputifotherversion {3.36pt}
+\beamer@sectionintoc {1}{Background Information}{3}{0}{1}
+\beamer@sectionintoc {2}{Hartree-Fock Stability}{10}{0}{2}
+\beamer@sectionintoc {3}{Homogeneous Electron Gas}{21}{0}{3}
+\beamer@sectionintoc {4}{Iterative Subspace Eigenvalue Methods}{25}{0}{4}
+\beamer@sectionintoc {5}{Results}{42}{0}{5}
