@@ -6,81 +6,151 @@
 @date Wednesday, 04 Jan, 2017
 */
 
-
-
 #ifndef HFS_PARAMS_INCLUDED
 #define HFS_PARAMS_INCLUDED
 
 #define __STDCPP_WANT_MATH_SPEC_FUNCS__
 
-#ifndef PI
-    #define PI 3.14159265358979323846264338327
-#endif
-#ifndef SMALLNUMBER
-    #define SMALLNUMBER 1E-12
-#endif
-
 #include "armadillo"
+#include "base_funcs.hpp"
 
-typedef unsigned uint;
-typedef double   scalar;
-
-/** \namespace HFS
-    \brief Global parameters. Used mostly for traceability of parameters.
+/**
+    \brief Managing the physical parameters of the calculation
 */
 
-namespace HFS{
-    extern scalar bzone_length;               /**< The length of the entire Brillouin zone, = 2*pi / a */
-    extern scalar vol;                        /**< The volume of a unit cell in the direct lattics */
-    extern scalar rs;                         /**< The wigner-seitz radius */
-    extern scalar kf;                         /**< The fermi wave vector */
-    extern scalar kmax;                       /**< The cutoff wavevector */
-    extern scalar fermi_energy;               /**< The energy level of the highest occupied state */
-    extern scalar cond_number;                /**< The (lower limits of) condition number of the matrix being diagonalized */
-    extern scalar two_e_const;                /**< A pre-calculated number used in the two electron integrals */
-    extern scalar deltaK;                     /**< Spacing of the k-points in the reciprocal lattice */
-    extern scalar Total_Calculation_Time;     /**< Time from main() start to finish */
-    extern std::string computation_started; /**< Time of starting main() (date, time, year) */
-    extern std::string OutputFileName;        /**< Name of the file to be written to */
-    extern std::string mycase;                /**< String describing which instability is being found, "cRHF2cUHF", etc */
-    extern uint Nocc;                  /**< Number of occupied orbitals */
-    extern uint Nvir;                  /**< Number of virtual orbitals */
-    extern uint Nexc;                  /**< Number of excitations. Not necessarily Nocc*Nvir due to symmetry */
-    extern uint N_elec;                /**< Number of electrons (assumes 2 per occupied state, needs to be modified for non-RHF */
-    extern uint Nmat;                  /**< Size of stability matrix is Nmat x Nmat. */
-    extern uint Nk;                       /**< Number of k-points in the first brillouin zone. */
-    extern uint ground_state_degeneracy;  /**< Number of excitations with energy within SMALLNUMBER of lowest. */
-    extern arma::vec occ_energies;            /**< Vector containing the energies of occupied states. */
-    extern arma::vec vir_energies;            /**< Vector containing energies of virtual states. */
-    extern arma::vec exc_energies;            /**< Vector containing energy differences between occupied and virtual states. */
-    extern arma::vec kgrid;                   /**< Vector containing the k values of the grid. */
-    extern arma::umat occ_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th occupied state. */
-    extern arma::umat vir_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th virtual state. */
-    extern arma::umat excitations;            /**< Matrix where the i'th row contains the indices for the corresponding [occupied, virtual] states. */
+class PhysicalParams {
+
+public:
+    PhysicalParams(scalar inp_rs, scalar inp_kf, std::string inp_mycase);
+
+private:
+    std::string mycase;                /**< String describing which instability is being found, "cRHF2cUHF", etc */
+    scalar bzone_length;               /**< The length of the entire Brillouin zone, = 2*pi / a */
+    scalar vol;                        /**< The volume of a unit cell in the direct lattics */
+    scalar rs;                         /**< The wigner-seitz radius */
+    scalar kf;                         /**< The fermi wave vector */
+    scalar kmax;                       /**< The cutoff wavevector */
+    scalar fermi_energy;               /**< The energy level of the highest occupied state */
+    scalar cond_number;                /**< The (lower limits of) condition number of the matrix being diagonalized */
+    scalar two_e_const;                /**< A pre-calculated number used in the two electron integrals */
+    scalar deltaK;                     /**< Spacing of the k-points in the reciprocal lattice */
+    uint Nocc;                         /**< Number of occupied orbitals */
+    uint Nvir;                         /**< Number of virtual orbitals */
+    uint Nexc;                         /**< Number of excitations. Not necessarily Nocc*Nvir due to utilizing symmetry */
+    uint N_elec;                       /**< Number of electrons (assumes 2 per occupied state, needs to be modified for non-RHF */
+    uint Nk;                           /**< Number of k-points in the first brillouin zone. */
+    uint ground_state_degeneracy;      /**< Number of excitations with energy within SMALLNUMBER of lowest. */
+    arma::vec occ_energies;            /**< Vector containing the energies of occupied states. */
+    arma::vec vir_energies;            /**< Vector containing energies of virtual states. */
+    arma::vec exc_energies;            /**< Vector containing energy differences between occupied and virtual states. */
+    arma::vec kgrid;                   /**< Vector containing the k values of the grid. */
+    arma::umat occ_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th occupied state. */
+    arma::umat vir_states;             /**< Matrix where the i'th row contains the indices for kgrid of the i'th virtual state. */
+    arma::umat excitations;            /**< Matrix where the i'th row contains the indices for the corresponding [occupied, virtual] states. */
     # if NDIM == 1
-      extern arma::uvec vir_N_to_1_mat;
+      arma::uvec vir_N_to_1_mat;
     # endif
     # if NDIM == 2
-      extern   arma::umat vir_N_to_1_mat;       /**< Matrix/Cube where the value is the virtual state index */
+      arma::umat vir_N_to_1_mat;   /**< Matrix/Cube where the value is the virtual state index */
     # endif
     # if NDIM == 3
-      extern   arma::ucube vir_N_to_1_mat;
+      arma::ucube vir_N_to_1_mat;
     #endif
-    extern arma::umat inv_exc_mat;            /**< The [i,a]'th element is s, where s labels the excitation i -> a.  */
-    extern void (*MatVecProduct_func)(arma::vec& v, arma::vec& Mv); /**< Function pointer for the matrix-vector product. Is set by HFS::setMatrixPropertiesFromCase */
-    extern arma::mat (*Matrix_generator)();   /**< Function pointer for the matrix elements. Is set by HFS::setMatrixPropertiesFromCase */
-    extern uint dav_its;                  /**< Number of iterations to converge in Davidson's Algorithm  */
-    extern arma::vec dav_vals;                /**< All eigenvalues returned by the last iteration of Davidson's Algorithm. */
-    extern uint num_guess_evecs;          /**< Number of eigenvectors used as initial guess for Davidson's Algorithm. */
-    extern arma::vec exact_evals;         /**< Only used in debug mode, holds the full eigenvalue spectra of the matrix from HFS::Matrix_generator */
-    extern uint dav_blocksize;            /**< Block size Davidson's Algorithm. */
-    extern uint dav_num_evals;            /**< Number of eigenvalues requested for Davidson's Algorithm. */
-    extern uint dav_nconv;                /**< Number of converged eigenpairs returned by Davidson's Algorithm. */
-    extern scalar dav_tol;                    /**< Tolerance for the residual norm for Davidson's Algorithm. */
-    extern scalar dav_min_eval;              /**< Lowest eigenvalue returned by the last iteration of Davidson's Algorithm. */
-    extern uint dav_maxits;               /**< Maximum number of iterations for Davidson's Algorithm. */
-    extern uint Dav_minits;               /**< Minimum number of iterations for Davidson's Algorithm. */
-    extern uint dav_max_subsize;           /**< Maximum size of the subspace before restart for Davidson's Algorithm. */
-    extern scalar dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
-}
+    arma::umat inv_exc_mat;          /**< The [i,a]'th element is s, where s labels the excitation i -> a.  */
+
+    scalar calcKf();
+    /**< \brief calculate the fermi momentum, Kf.
+
+    Currently allows for ndim = 1, 2 or 3.
+
+    @see kf
+    @see rs
+    */
+
+    void calcVolAndTwoEConst();
+    /**< \brief Calculate the volume and constant used in the two-electron integral.
+
+    @param [in] N_elec
+    @param [in] rs
+    @param [out] Vol
+    @param [out] TwoEConst
+    @see vol
+    @see N_elec
+    @see rs
+    @see two_e_const
+    */
+
+    void calcStates();
+    /**< \brief Calculate the occupied & virtual states, their number and the number of electrons.
+
+    @param [in] kgrid The gridpoints per dimension in k-space.
+    @param [in] Nk The number of kpoints per dimension.
+    @param [in] ndim The number of dimensions.
+    @param [out] Nocc The number of occupied states.
+    @param [out] Nvir The number of virtual states.
+    @param [out] N_elec The number of electrons.
+    @param [out] occ_states The occupied states indices.
+    @param [out] vir_states The virtual state indices.
+    */
+
+    void calcEnergies();
+    /**< \brief Calculate the energies of states from the x, y and z indices
+
+    @param inp_states A matrix where each row corresponds to the x, y and z indices
+    of each state. Reminder that the momentum is HFS::kgrid[index].
+    @param energy_vec reference to a vector where the energies will be stored.
+    */
+
+    void calcExcitations();
+    /**< \brief Determine excitations in the x direction.
+
+    @param [in] kgrid grid of kpoints.
+    @param [in] Nk Number of k points per dimension
+    @param [in] Nocc Number of occupied states
+    @param [in] Nvir Number of virtual states
+    @param [in] occ_states occupied states
+    @param [in] vir_states virtual states
+    @param [out] excitations Matrix where each row contains [occupied_uint, virtual_uint]
+    @param [out] exc_energies Energy difference of occ and vir state in excitation
+    @param [out] Nexc Number of excitations
+    */
+
+    void calcExcitationEnergies();
+    /**< \brief Calculates and sorts the "excitation energies." Sorts excitations
+
+    The "excitation energy" in this program is the difference in energy
+    between an occupied and virtual state. The energies are sorted in ascending
+    order. HFS::excitations is sorted accordingly. Sets the following variables:
+    @see exc_energies
+    @see excitations
+    */
+
+    void calcLowestEnergyExcitationDegeneracy();
+    /**< \brief Calculate the number of states with the lowest energy.
+
+    Calculates how many excitation are within SMALLNUMBER of the lowest
+    energy excitation.
+    @see SMALLNUMBER
+    @see exc_energies
+    */
+
+    void calcVirNTo1Map();
+    /**< \brief Create the Map to convert between 3/2-index and 1-index representation of virtual state.
+
+    The NDIM compiler directory determines if this is an arma::ucube (3d) or arma::umat
+    (2d) or arma::uvec (1d).
+    @see NDIM
+    @see vir_N_to_1_mat
+    @see vir_states
+    */
+
+    void calcInverseExcitationMap();
+    /**< \brief Create a map that converts from i, a --> s
+
+    The one index denoting the excitation, s corresponds to the excitation from
+    occupied state i to virtual state a.
+    @see HFS::inv_exc_mat
+    */
+};
+
 #endif // HFS_PARAMS_INCLUDED

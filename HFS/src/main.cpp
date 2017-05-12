@@ -33,13 +33,13 @@ int main(int argc, char* argv[]){
 
     // Defaults
     HFS::rs              = 1.2;
-    HFS::Nk              = 22;
+    HFS::Nk              = 18;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
     HFS::dav_tol         = 1e-6;
     HFS::dav_maxits      = 30;
-    HFS::dav_max_subsize  = 1500;
+    HFS::dav_max_subsize = 1500;
     HFS::num_guess_evecs = 1;
     HFS::dav_blocksize   = 1;
     HFS::dav_num_evals   = 1;
@@ -64,12 +64,9 @@ int main(int argc, char* argv[]){
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
 
     # if NDIM != 1
-        HFS::timeMatrixVectorProduct();
+        HFS::timeMatrixVectorProduct(HFS::MatVecProduct_func, HFS::Nmat);
 
         SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
-        int nprocs = 1;
-        //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-        myeps.nprocs = nprocs;
         myeps.SetDimensions(HFS::dav_num_evals, HFS::dav_max_subsize);
         myeps.SetTol(HFS::dav_tol, HFS::dav_maxits);
         myeps.SetBlockSize(HFS::dav_blocksize);
@@ -94,7 +91,6 @@ int main(int argc, char* argv[]){
         HFS::dav_vals = temp;
         HFS::dav_its = myeps.niter;
         HFS::dav_nconv = myeps.nconv;
-        HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
         HFS::dav_min_eval = HFS::dav_vals.min();
     #endif // NDIM != 1
     # if NDIM == 1
@@ -112,8 +108,10 @@ int main(int argc, char* argv[]){
 
     // Finish up, write and test for problems.
     #ifndef NDEBUG
+        auto M = HFS::Matrix_generator();
+        assert(matrixVectorProductWorks(M, HFS::MatVecProduct_func) && "There is a problem in the matrix-vector product.");
         if (HFS::Nmat < 1500) {
-            HFS::davidsonAgreesWithFullDiag();
+            assert(agreesWithFullDiag() && "Davidson's Algorithm Didn't get the lowest eigenvalue.");
         }
         if ( !HFS::everything_works() ) {
             exit(EXIT_FAILURE);

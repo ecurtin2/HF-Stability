@@ -3,8 +3,10 @@
 #include <chrono>
 #include <ctime>
 
+namespace HFS {
+
 template <class T>
-std::string writeArmaMatToJSON(const arma::Mat<T>& M, const std::string& varname) {
+void writeArmaMatToJSON(std::ofstream& output, const arma::Mat<T>& M, const std::string& varname) {
         output << ",\n\"" << varname << "\" : ";
         output << "[";
 
@@ -30,7 +32,7 @@ std::string writeArmaMatToJSON(const arma::Mat<T>& M, const std::string& varname
 }
 
 template <class T>
-std::string ArmaVecToJSON(const arma::Col<T>& v, const std::string& varname) {
+void writeArmaVecToJSON(std::ofstream& output, const arma::Col<T>& v, const std::string& varname) {
         output << ",\n\"" << varname << "\" : [" << v[0];
         for (arma::uword i = 1; i < v.n_elem; ++i) {
                 output << ", " << v[i];
@@ -66,8 +68,8 @@ void writeJSON(std::string fname, bool detail) {
         computation_finished.pop_back();
 
         // Begin output
-        #define JSONVAL(x) output << ",\n\"" << # x << "\" : " << x
-        #define JSONSTR(x) output << ",\n\"" << # x << "\" : \"" << x << "\""
+            #define JSONVAL(x) output << ",\n\"" << # x << "\" : " << x
+            #define JSONSTR(x) output << ",\n\"" << # x << "\" : \"" << x << "\""
         output << "{\"File\" : \"" << fname << "\"";
         JSONSTR(total_calculation_time);
         JSONSTR(computation_started);
@@ -75,13 +77,27 @@ void writeJSON(std::string fname, bool detail) {
         JSONSTR(build_date);
         JSONSTR(total_calculation_time);
 
+        JSONVAL(Nk);
+        JSONVAL(NDIM);
+        JSONVAL(rs);
+        JSONSTR(mycase);
 
+        JSONVAL(deltaK);
+        JSONVAL(kf);
+        JSONVAL(kmax);
+        JSONVAL(Nocc);
+        JSONVAL(Nvir);
+        JSONVAL(Nexc);
+        JSONVAL(Nmat);
+        JSONVAL(ground_state_degeneracy);
         JSONVAL(dav_its);
         JSONVAL(num_guess_evecs);
         JSONVAL(dav_blocksize);
         JSONVAL(dav_num_evals);
         JSONVAL(mv_time);
+        JSONVAL(cond_number);
         JSONVAL(dav_nconv);
+
         if (fabs(full_diag_min) > 1e-6) {
                 JSONVAL(full_diag_min);
                 JSONVAL(full_diag_time);
@@ -93,8 +109,8 @@ void writeJSON(std::string fname, bool detail) {
         JSONVAL(dav_max_subsize);
         JSONVAL(dav_min_eval);
         JSONVAL(dav_time);
-        #undef JSONVAL
-        #undef JSONSTR
+            #undef JSONVAL
+            #undef JSONSTR
         if (detail) {
 
                 writeArmaVecToJSON(output, occ_energies, "occ_energies");

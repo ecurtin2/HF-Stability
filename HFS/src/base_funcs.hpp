@@ -1,127 +1,148 @@
 /** @file base_funcs.hpp
-@author Evan Curtin
-@version Revision 0.1
-@brief Header including extern prototypes for low-level functions used throughout the codebase.
-@details The definitions are in base_funcs.cpp.
-@date Wednesday, 04 Jan, 2017
-*/
+   @author Evan Curtin
+   @version Revision 0.1
+   @brief Header including extern prototypes for low-level functions used throughout the codebase.
+   @details The definitions are in base_funcs.cpp.
+   @date Wednesday, 04 Jan, 2017
+ */
 
 #ifndef HFS_BASE_FUNCS_INCLUDED
 #define HFS_BASE_FUNCS_INCLUDED
 
 #include "parameters.hpp"
 
-namespace HFS{
-    extern scalar exchange(arma::umat& states, uint i);
-    /**< \brief Calculate the exchange energy for the given state.
-    @param states Either occ_states or vir_states. Will determine the exchange
-    energy for the i'th occupied or the i'th virtual state depending on input.
-    @param i The index of the state to be considered.
-    @return the exchange contribution to the energy
-    */
+namespace HFS {
+extern scalar exchange(const arma::umat& states, const uint i);
+/**< \brief Calculate the exchange energy for the given state.
+   @param states Either occ_states or vir_states. Will determine the exchange
+   energy for the i'th occupied or the i'th virtual state depending on input.
+   @param i The index of the state to be considered.
+   @return the exchange contribution to the energy
+ */
 
-    extern scalar twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4);
-    /**< \brief Calculate the two electron integral, <k1 k2|1/r|k3 k4>
+extern scalar twoElectronSafe(const arma::vec& k1
+                             ,const arma::vec& k2
+                             ,const arma::vec& k3
+                             ,const arma::vec& k4);
+/**< \brief Calculate the two electron integral, <k1 k2|1/r|k3 k4>
 
-    The two electron integral is defined as,
-    \f[
-    \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right>
-    \f].
-    Any combination of 4 states is acceptable. The conservation of momentum is checked
-    for each combination, and 0 is returned in the even that momentum is not conserved.
-    @param k1, k2, k3, k4 Vectors containing the kx, ky, ... for the 4 input states.
-    @return The two electron integral
-    */
+   The two electron integral is defined as,
+   \f[
+   \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right>
+   \f].
+   Any combination of 4 states is acceptable. The conservation of momentum is checked
+   for each combination, and 0 is returned in the even that momentum is not conserved.
+   @param k1, k2, k3, k4 Vectors containing the kx, ky, ... for the 4 input states.
+   @return The two electron integral
+ */
 
-    inline void toFirstBrillouinZone(arma::vec& k){
-    /** \brief Translate vector in-place to first Brillioun zone.
+inline void toFirstBrillouinZone(arma::vec& k){
+        /** \brief Translate vector in-place to first Brillioun zone.
 
-    Defined on the interval [-pi/a .. pi/a). The vector is assumed to be within the first
-    or second BZ, therefore is only translated a maximum of HFS::bzone_length in each
-    dimension.
-    @param k The vector in k-space.
-    @see HFS::bzone_length
+           Defined on the interval [-pi/a .. pi/a). The vector is assumed to be within the first
+           or second BZ, therefore is only translated a maximum of HFS::bzone_length in each
+           dimension.
+           @param k The vector in k-space.
+           @see HFS::bzone_length
 
-    */
+         */
         for (uint i = 0; i < NDIM; ++i) {
-            if (k[i] < -HFS::kmax - SMALLNUMBER) {
-                k[i] += HFS::bzone_length;
-            } else if (k[i] > HFS::kmax - SMALLNUMBER) {
-                k[i] -= HFS::bzone_length;
-            }
+                if (k[i] < -HFS::kmax - SMALLNUMBER) {
+                        k[i] += HFS::bzone_length;
+                } else if (k[i] > HFS::kmax - SMALLNUMBER) {
+                        k[i] -= HFS::bzone_length;
+                }
         }
-    }
+}
 
-    extern scalar twoElectron(arma::vec& k1, arma::vec& k3);
-    /**< \brief Calculate the two electron integral, assuming momentum conservation.
+inline void toFirstBrillouinZone(std::array<scalar, NDIM>& k_ary) {
+        /** \brief Translate vector in-place to first Brillioun zone.
 
-    The two electron integral is defined as,
-    \f[
-    \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right>
-    \f].
-    @param k1, k3 The first state in the bra and ket.
-    @return The value of the two electron integral.
-    */
+           Defined on the interval [-pi/a .. pi/a). The vector is assumed to be within the first
+           or second BZ, therefore is only translated a maximum of HFS::bzone_length in each
+           dimension.
+           @param k The vector in k-space.
+           @see HFS::bzone_length
 
-    inline bool isOccupied(scalar k){
-    /** \brief true if k < kf, else false.
-        @see HFS::kf
-     */
-        return (k < (HFS::kf));
-    }
+         */
+        for (auto& k : k_ary) {
+                if (k < -HFS::kmax - SMALLNUMBER) {
+                        k += HFS::bzone_length;
+                } else if (k > HFS::kmax - SMALLNUMBER) {
+                        k -= HFS::bzone_length;
+                }
+        }
+}
 
-    //extern arma::uvec kToIndex(arma::vec& k);
-    extern void kToIndex(arma::vec& k, arma::uvec& uint);
-    /**< \brief Given k-vector, return corresponding vector of indices in each dimension.
+extern scalar twoElectron(const arma::vec& k1, const arma::vec& k3);
+/**< \brief Calculate the two electron integral, assuming momentum conservation.
 
-    Each element in k is converted to the corresponding index. Evenly spaced
-    gridpoints are assumed. The indices are related to momentum via HFS::kgrid; <br>
-    k[i] = HFS::kgrid[indices[i]].
+   The two electron integral is defined as,
+   \f[
+   \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right>
+   \f].
+   @param k1, k3 The first state in the bra and ket.
+   @return The value of the two electron integral.
+ */
 
-    @param k vector in k-space
-    @return vector of indices
-    @see HFS::kgrid
+inline bool isOccupied(const scalar k){
+        /** \brief true if k < kf, else false.
+            @see HFS::kf
+         */
+        return (k < HFS::kf);
+}
 
-    */
+extern void kToIndex(const arma::vec& k, arma::uvec& uint);
+/**< \brief Given k-vector, return corresponding vector of indices in each dimension.
 
-    extern arma::umat kToIndex(arma::mat& k);
-    /**< \brief kToIndex, overloaded for matrix
+   Each element in k is converted to the corresponding index. Evenly spaced
+   gridpoints are assumed. The indices are related to momentum via HFS::kgrid; <br>
+   k[i] = HFS::kgrid[indices[i]].
 
-    @param k matrix of k-points
-    @return matrix of indices
-    @see kToIndex()
-    @see HFS::kgrid
-    */
+   @param k vector in k-space
+   @return vector of indices
+   @see HFS::kgrid
 
-    extern void occIndexToK(uint i, arma::vec& k);
-    /**< \brief Return the momentum of the i'th occupied state.
+ */
 
-    @param i The index of the occupied state.
-    @return vector of the kx, ky, ... momentum of the i'th occupied state.
-    */
+extern arma::umat kToIndex(const arma::mat& k);
+/**< \brief kToIndex, overloaded for matrix
 
-    extern arma::vec virIndexToK(uint i);
-    /**< \brief Return the momentum of the i'th virtual state.
+   @param k matrix of k-points
+   @return matrix of indices
+   @see kToIndex()
+   @see HFS::kgrid
+ */
 
-    @param i The index of the virtual state.
-    @return vector of the kx, ky, ... momentum of the i'th virtual state.
-    */
+extern void occIndexToK(const uint i, arma::vec& k);
+/**< \brief Return the momentum of the i'th occupied state.
 
-    extern int kroneckerDelta(uint i, uint j);
-    /**< \brief return 1 if i = j, else 0.
+   @param i The index of the occupied state.
+   @return vector of the kx, ky, ... momentum of the i'th occupied state.
+ */
 
-    @param i, j indices
-    @return 1 if i = j, else 0.
-    */
+extern arma::vec virIndexToK(const uint i);
+/**< \brief Return the momentum of the i'th virtual state.
 
-    extern std::vector<arma::vec> stToKiKaKjKb(uint s, uint t);
-    /**< \brief Given excitation indices s & t, return corresponding ki, kj, ka, kb.
+   @param i The index of the virtual state.
+   @return vector of the kx, ky, ... momentum of the i'th virtual state.
+ */
 
-    S corresponds to occupied i to virtual a.
-    T corresponds to occupied j to virtual b.
-    @param s, t Excitation labels.
-    @return Vector of 4 vectors, {ki, kj, ka, kb}. In this order.
-    */
+extern int kroneckerDelta(const uint i, const uint j);
+/**< \brief return 1 if i = j, else 0.
+
+   @param i, j indices
+   @return 1 if i = j, else 0.
+ */
+
+extern std::vector<arma::vec> stToKiKaKjKb(const uint s, const uint t);
+/**< \brief Given excitation indices s & t, return corresponding ki, kj, ka, kb.
+
+   S corresponds to occupied i to virtual a.
+   T corresponds to occupied j to virtual b.
+   @param s, t Excitation labels.
+   @return Vector of 4 vectors, {ki, kj, ka, kb}. In this order.
+ */
 }
 
 #endif // HFS_base_funcs_included

@@ -24,7 +24,7 @@
 namespace SLEPc {
 
     extern PetscErrorCode Petsc_MatVecProd(Mat matrix, Vec x, Vec y);
-    extern void (*matvec_product)(arma::vec&, arma::vec&);
+    extern void (*matvec_product)(const arma::vec&, arma::vec&);
     class EpS {
         public:
             PetscErrorCode                     ierr;
@@ -41,7 +41,7 @@ namespace SLEPc {
             char**                             argv=&args;
 
 
-            EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&));
+            EpS(PetscInt Ninput, void (*matvec_product)(const arma::vec&, arma::vec&));
             ~EpS();
             PetscErrorCode SetInitialSpace(std::vector<std::vector<PetscScalar>> vecs);
             PetscErrorCode EPSContext ();
@@ -49,7 +49,7 @@ namespace SLEPc {
             PetscErrorCode SetFromOptions();
             PetscErrorCode SetDimensions(PetscInt num_evals, PetscInt max_subspace_size);
             PetscErrorCode SetBlockSize(PetscInt blocksize);
-            PetscErrorCode SetTol(PetscScalar tolerance, int max_it=200);
+            PetscErrorCode SetTol(PetscScalar tolerance=1e-6, int max_it=200);
             PetscErrorCode Solve();
             void PrintEvals(const char* format="%10.5f\n");
             void PrintEvecs(const char* format="%10.5f");

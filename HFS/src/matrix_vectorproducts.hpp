@@ -18,29 +18,29 @@ namespace HFS{
 namespace Matrix {
 
 extern void setMatrixPropertiesFromCase();
-extern uint calcTfromKbAndJ(arma::vec&, uint);
+extern uint calcTfromKbAndJ(const arma::vec&, uint);
 
 namespace MatrixVectorProduct {
-    extern void ApplyMvFxnsToSubMatrices(arma::vec& v, arma::vec& Mv, uint Ndivisions,
-                 std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList
+    extern void ApplyMvFxnsToSubMatrices(const arma::vec& v, arma::vec& Mv, uint Ndivisions,
+                 std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList
                  );
 
-    extern void E_delta_st_plus_aj_ib_antisym(arma::vec& v, arma::vec& Mv);
-    extern void E_delta_st_minus_aj_bi(arma::vec& v, arma::vec& Mv);
-    extern void E_delta_st_plus_2aj_ib_minus_ajbi(arma::vec& v, arma::vec& Mv);
-    extern void aj_ib(arma::vec& v, arma::vec& Mv);
-    extern void ab_ij_antisym(arma::vec& v, arma::vec& Mv);
-    extern void minus_abji_plus_2ab_ij(arma::vec& v, arma::vec& Mv);
-    extern void ab_ij(arma::vec& v, arma::vec& Mv);
-    extern void minus_ab_ji(arma::vec& v, arma::vec& Mv);
+    extern void E_delta_st_plus_aj_ib_antisym(const arma::vec& v, arma::vec& Mv);
+    extern void E_delta_st_minus_aj_bi(const arma::vec& v, arma::vec& Mv);
+    extern void E_delta_st_plus_2aj_ib_minus_ajbi(const arma::vec& v, arma::vec& Mv);
+    extern void aj_ib(const arma::vec& v, arma::vec& Mv);
+    extern void ab_ij_antisym(const arma::vec& v, arma::vec& Mv);
+    extern void minus_abji_plus_2ab_ij(const arma::vec& v, arma::vec& Mv);
+    extern void ab_ij(const arma::vec& v, arma::vec& Mv);
+    extern void minus_ab_ji(const arma::vec& v, arma::vec& Mv);
 
-    extern void TripletH(arma::vec& v, arma::vec& Mv);
-    extern void Hprime(arma::vec& v, arma::vec& Mv);
-    extern void Aprime(arma::vec& v, arma::vec& Mv);
-    extern void Bprime(arma::vec& v, arma::vec& Mv);
-    extern void H(arma::vec& v, arma::vec& Mv);
-    extern void A(arma::vec& v, arma::vec& Mv);
-    extern void B(arma::vec& v, arma::vec& Mv);
+    extern void TripletH(const arma::vec& v, arma::vec& Mv);
+    extern void Hprime(const arma::vec& v, arma::vec& Mv);
+    extern void Aprime(const arma::vec& v, arma::vec& Mv);
+    extern void Bprime(const arma::vec& v, arma::vec& Mv);
+    extern void H(const arma::vec& v, arma::vec& Mv);
+    extern void A(const arma::vec& v, arma::vec& Mv);
+    extern void B(const arma::vec& v, arma::vec& Mv);
 
 }  // MatrixVectorProduct
 } // Matrix

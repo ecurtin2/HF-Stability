@@ -20,7 +20,7 @@ namespace HFS{
     extern scalar full_diag_min; /**< The minimum eigenvalue determined by full diagonalization of the stability matrix. Used to debug the Davidson algorithm.*/
     extern scalar mv_time; /**< The time taken to execute one call of the matrix-vector product function. */
     extern scalar full_diag_time; /**< The time taken to diagonalize the matrix using armadillo's eig_sym. */
-    extern bool davidsonAgreesWithFullDiag();
+    extern bool agreesWithFullDiag();
     /**< \brief Checks that Davidson's Algorithm is getting the lowest eigenvalue.
     The full matrix is built and diagonalized, which is slow for Nk > 20 or so. The
     minimum of the eigenvalues is compared to the value returned by Davidson's algorithm
@@ -29,7 +29,7 @@ namespace HFS{
     @see buildMatrixFromFunction()
     @see SMALLNUMBER
     */
-    extern bool matrixVectorProductWorks();
+    extern bool matrixVectorProductWorks(const arma::mat& M, void (*Mv_func)(const arma::vec& v, arma::vec& Mv));
     /**< \brief Checks that matrix vector product function gets the same result as armadillo's matrix multiply.
     The full matrix is built and multiplied by a random vector. T
     and is said to be equal if they are the same within SMALLNUMBER
@@ -45,7 +45,7 @@ namespace HFS{
     @see matrixVectorProductWorks()
     */
 
-    extern void timeMatrixVectorProduct();
+    extern double timeMatrixVectorProduct(void (* const Mv_func)(const arma::vec&, arma::vec&), uint N);
     /**< \brief Times the matrix vector product execution.
     Sets the value of mv_time.
     @return The matrix.
