@@ -1,18 +1,23 @@
-#include "Config.hpp"
+#include "config.hpp"
 
-Config::Config(std::string OutFileName) {
-    auto thetime = std::chrono::system_clock::now();
-
-    std::time_t now = std::chrono::system_clock::to_time_t(thetime);
+Config::Config() {
+    start_time = std::chrono::system_clock::now();
+    auto now = std::chrono::system_clock::to_time_t(start_time);
     date_time_start = std::string(std::ctime(&now));
-    OutputFileName = OutFileName;
 }
 
-Config::to_JSON() {
+void Config::get_Total_Calculation_Time() {
+    auto thetime = std::chrono::system_clock::now();
+    using FpSeconds =
+        std::chrono::duration<float, std::chrono::seconds::period>;
 
-    auto calc_time_seconds = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
-
-
+    static_assert(std::chrono::treat_as_floating_point<FpSeconds::rep>::value,
+                  "Rep required to be floating point");
+    auto diff = FpSeconds(start_time - thetime);
+    Total_Calculation_Time = diff.count();
 }
 
-
+std::string Config::to_JSON() {
+    std::string str = "aaaaa";
+    return str;
+}

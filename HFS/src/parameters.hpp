@@ -1,7 +1,7 @@
 /** @file parameters.hpp
 @author Evan Curtin
 @version Revision 0.1
-@brief Header including extern declarations for global parameters.
+@brief Header including declarations for global parameters.
 @details Definitions are in parameters.cpp
 @date Wednesday, 04 Jan, 2017
 */
@@ -12,7 +12,7 @@
 #define __STDCPP_WANT_MATH_SPEC_FUNCS__
 
 #include "armadillo"
-#include "base_funcs.hpp"
+#include "constants.hpp"
 
 /**
     \brief Managing the physical parameters of the calculation
@@ -22,8 +22,8 @@ class PhysicalParams {
 
 public:
     PhysicalParams(scalar inp_rs, scalar inp_kf, std::string inp_mycase);
+    std::string get_mycase();
 
-private:
     std::string mycase;                /**< String describing which instability is being found, "cRHF2cUHF", etc */
     scalar bzone_length;               /**< The length of the entire Brillouin zone, = 2*pi / a */
     scalar vol;                        /**< The volume of a unit cell in the direct lattics */
@@ -97,7 +97,7 @@ private:
     /**< \brief Calculate the energies of states from the x, y and z indices
 
     @param inp_states A matrix where each row corresponds to the x, y and z indices
-    of each state. Reminder that the momentum is HFS::kgrid[index].
+    of each state. Reminder that the momentum is kgrid[index].
     @param energy_vec reference to a vector where the energies will be stored.
     */
 
@@ -120,7 +120,7 @@ private:
 
     The "excitation energy" in this program is the difference in energy
     between an occupied and virtual state. The energies are sorted in ascending
-    order. HFS::excitations is sorted accordingly. Sets the following variables:
+    order. excitations is sorted accordingly. Sets the following variables:
     @see exc_energies
     @see excitations
     */
@@ -149,8 +149,138 @@ private:
 
     The one index denoting the excitation, s corresponds to the excitation from
     occupied state i to virtual state a.
-    @see HFS::inv_exc_mat
+    @see inv_exc_mat
     */
+
+    scalar exchange(const arma::umat& states, const uint i);
+    /**< \brief Calculate the exchange energy for the given state.
+       @param states Either occ_states or vir_states. Will determine the exchange
+       energy for the i'th occupied or the i'th virtual state depending on input.
+       @param i The index of the state to be considered.
+       @return the exchange contribution to the energy
+    */
+
+    scalar twoElectronSafe(const arma::vec& k1, const arma::vec& k2
+                          ,const arma::vec& k3, const arma::vec& k4);
+    /**< \brief Calculate the two electron integral, <k1 k2|1/r|k3 k4>
+
+       The two electron integral is defined as,
+       \f[
+       \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right>
+       \f].
+       Any combination of 4 states is acceptable. The conservation of momentum is checked
+       for each combination, and 0 is returned in the even that momentum is not conserved.
+       @param k1, k2, k3, k4 Vectors containing the kx, ky, ... for the 4 input states.
+       @return The two electron integral
+     */
+
+    inline void toFirstBrillouinZone(arma::vec& k) {
+        /** \brief Translate vector in-place to first Brillioun zone.
+
+           Defined on the interval [-pi/a .. pi/a). The vector is assumed to be within the first
+           or second BZ, therefore is only translated a maximum of bzone_length in each
+           dimension.
+           @param k The vector in k-space.
+           @see bzone_length
+
+         */
+        for (uint i = 0; i < NDIM; ++i) {
+                if (k[i] < -kmax - SMALLNUMBER) {
+                        k[i] += bzone_length;
+                } else if (k[i] > kmax - SMALLNUMBER) {
+                        k[i] -= bzone_length;
+                }
+        }
+}
+
+    inline void toFirstBrillouinZone(std::array<scalar, NDIM>& k_ary) {
+        /** \brief Translate vector in-place to first Brillioun zone.
+
+           Defined on the interval [-pi/a .. pi/a). The vector is assumed to be within the first
+           or second BZ, therefore is only translated a maximum of bzone_length in each
+           dimension.
+           @param k The vector in k-space.
+           @see bzone_length
+
+         */
+        for (auto& k : k_ary) {
+                if (k < -kmax - SMALLNUMBER) {
+                        k += bzone_length;
+                } else if (k > kmax - SMALLNUMBER) {
+                        k -= bzone_length;
+                }
+        }
+    }
+
+    scalar twoElectron(const arma::vec& k1, const arma::vec& k3);
+        /**< \brief Calculate the two electron integral, assuming momentum conservation.
+
+        The two electron integral is defined as,
+        \f[
+        \left< k_1 k_2 \left| \frac{1}{r_{12}} \right| k_3 k_4\right>
+        \f].
+        @param k1, k3 The first state in the bra and ket.
+        @return The value of the two electron integral.
+        */
+
+    inline bool isOccupied(const scalar k){
+        /** \brief true if k < kf, else false.
+            @see kf
+        */
+        return (k < kf);
+    }
+
+    void kToIndex(const arma::vec& k, arma::uvec& uint);
+        /**< \brief Given k-vector, return corresponding vector of indices in each dimension.
+
+       Each element in k is converted to the corresponding index. Evenly spaced
+       gridpoints are assumed. The indices are related to momentum via kgrid; <br>
+       k[i] = kgrid[indices[i]].
+
+       @param k vector in k-space
+       @return vector of indices
+       @see kgrid
+
+       */
+
+    arma::umat kToIndex(const arma::mat& k);
+        /**< \brief kToIndex, overloaded for matrix
+
+           @param k matrix of k-points
+           @return matrix of indices
+           @see kToIndex()
+           @see kgrid
+        */
+
+    void occIndexToK(const uint i, arma::vec& k);
+        /**< \brief Return the momentum of the i'th occupied state.
+
+           @param i The index of the occupied state.
+           @return vector of the kx, ky, ... momentum of the i'th occupied state.
+         */
+
+    arma::vec virIndexToK(const uint i);
+        /**< \brief Return the momentum of the i'th virtual state.
+
+           @param i The index of the virtual state.
+           @return vector of the kx, ky, ... momentum of the i'th virtual state.
+         */
+
+    inline int kroneckerDelta(const uint i, const uint j);
+        /**< \brief return 1 if i = j, else 0.
+
+           @param i, j indices
+           @return 1 if i = j, else 0.
+         */
+
+    std::vector<arma::vec> stToKiKaKjKb(const uint s, const uint t);
+        /**< \brief Given excitation indices s & t, return corresponding ki, kj, ka, kb.
+
+           S corresponds to occupied i to virtual a.
+           T corresponds to occupied j to virtual b.
+           @param s, t Excitation labels.
+           @return Vector of 4 vectors, {ki, kj, ka, kb}. In this order.
+         */
 };
 
 #endif // HFS_PARAMS_INCLUDED

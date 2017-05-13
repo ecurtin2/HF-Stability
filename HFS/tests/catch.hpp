@@ -1577,7 +1577,7 @@ std::string toString( std::nullptr_t );
 
 namespace Detail {
 
-    extern const std::string unprintableString;
+    const std::string unprintableString;
 
  #if !defined(CATCH_CONFIG_CPP11_STREAM_INSERTABLE_CHECK)
     struct BorgType {
@@ -2118,7 +2118,7 @@ namespace Catch{
 #elif defined(_MSC_VER)
     #define CATCH_TRAP() __debugbreak()
 #elif defined(__MINGW32__)
-    extern "C" __declspec(dllimport) void __stdcall DebugBreak();
+    "C" __declspec(dllimport) void __stdcall DebugBreak();
     #define CATCH_TRAP() DebugBreak()
 #endif
 
@@ -4405,7 +4405,7 @@ namespace Clara {
 
     struct UnpositionalTag {};
 
-    extern UnpositionalTag _;
+    UnpositionalTag _;
 
 #ifdef CLARA_CONFIG_MAIN
     UnpositionalTag _;
@@ -6364,7 +6364,7 @@ namespace Catch {
 namespace Catch {
 
     struct SignalDefs { DWORD id; const char* name; };
-    extern SignalDefs signalDefs[];
+    SignalDefs signalDefs[];
     // There is no 1-1 mapping between signals and windows exceptions.
     // Windows can easily distinguish between SO and SigSegV,
     // but SigInt, SigTerm, etc are handled differently.
@@ -6447,7 +6447,7 @@ namespace Catch {
         int id;
         const char* name;
     };
-    extern SignalDefs signalDefs[];
+    SignalDefs signalDefs[];
     SignalDefs signalDefs[] = {
             { SIGINT,  "SIGINT - Terminal interrupt signal" },
             { SIGILL,  "SIGILL - Illegal instruction signal" },
@@ -8733,14 +8733,14 @@ namespace Catch {
         }
     } // namespace Catch
 #elif defined(_MSC_VER)
-    extern "C" __declspec(dllimport) int __stdcall IsDebuggerPresent();
+    "C" __declspec(dllimport) int __stdcall IsDebuggerPresent();
     namespace Catch {
         bool isDebuggerActive() {
             return IsDebuggerPresent() != 0;
         }
     }
 #elif defined(__MINGW32__)
-    extern "C" __declspec(dllimport) int __stdcall IsDebuggerPresent();
+    "C" __declspec(dllimport) int __stdcall IsDebuggerPresent();
     namespace Catch {
         bool isDebuggerActive() {
             return IsDebuggerPresent() != 0;

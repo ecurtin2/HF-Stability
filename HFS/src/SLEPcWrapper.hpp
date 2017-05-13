@@ -23,8 +23,8 @@
 */
 namespace SLEPc {
 
-    extern PetscErrorCode Petsc_MatVecProd(Mat matrix, Vec x, Vec y);
-    extern void (*matvec_product)(const arma::vec&, arma::vec&);
+    PetscErrorCode Petsc_MatVecProd(Mat matrix, Vec x, Vec y);
+    void (*matvec_product)(const arma::vec&, arma::vec&);
     class EpS {
         public:
             PetscErrorCode                     ierr;

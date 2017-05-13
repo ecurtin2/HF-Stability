@@ -13,4 +13,4 @@ const double SMALLNUMBER = 1E-12;
 typedef unsigned uint;
 typedef double   scalar;
 
-#endif HFS_CONSTANTS_INCLUDED
+#endif // HFS_CONSTANTS_INCLUDED

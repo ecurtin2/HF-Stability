@@ -1,6 +1,5 @@
 #include "SLEPcWrapper.hpp"
 
-void (*SLEPc::matvec_product)(const arma::vec&, arma::vec&);
 
 SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(const arma::vec&, arma::vec&)) {
     static char help[] = "Solves the same eigenproblem as in example ex2, but using a shell matrix. "
