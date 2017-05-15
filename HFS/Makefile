@@ -25,7 +25,7 @@ INC = -I$(SLEPC_DIR)/include/ -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include/ -I$(PETSC_DI
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,%,$(SOURCES:.$(SRCEXT)=.o))
 
-COMP = Work
+COMP = Home
 
 # Work
 ifeq ($(COMP),Work)

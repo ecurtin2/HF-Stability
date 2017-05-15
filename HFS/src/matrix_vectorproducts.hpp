@@ -11,39 +11,62 @@
 
 #include "parameters.hpp"
 #include <functional>
-typedef void (*MvFunc)(const arma::vec&, arma::vec&);
+
+typedef void (*MvPtr)(const arma::vec&, arma::vec&); // Fucntion pointer to Mv
+
+
 
 class MatrixVectorProduct {
 
+typedef void (MatrixVectorProduct::*MvMemberFxnPtr)(const arma::vec&, arma::vec&);
+typedef void (MvMemberFxn)(const arma::vec&, arma::vec&);
+typedef std::vector<std::tuple<uint, uint, MvMemberFxnPtr>> Loc2FxnMap;
+
+class Loc2MemberFxnMap {
+    uint i;
+    uint j;
+    MvMemberFxnPtr Mv;
+    MatrixVectorProduct& self;
+
+    Loc2MemberFxnMap(MatrixVectorProduct& self_in, uint i_in, uint j_in, MvMemberFxnPtr Mv_in)
+         : self (self_in) {
+        i  = i_in;
+        j  = j_in;
+        Mv = Mv_in;
+    }
+};
+
+
 public:
     MatrixVectorProduct(PhysicalParams Params);
-    MvFunc get_Mvfunc();
+    MvPtr get_Mvfunc();
 
 private:
-    void (MatrixVectorProduct::*Mvfunc)(const arma::vec& v, arma::vec& Mv);
+    MvMemberFxnPtr Mvfunc;
+    std::vector<Loc2MemberFxnMap> MvMapVec;
     void ApplyMvFxnsToSubMatrices(const arma::vec& v, arma::vec& Mv, uint Ndivisions,
-                 std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList
-                 );
-    uint calcTfromKbAndJ(const arma::vec&, uint);
+                                  std::vector<Loc2MemberFxnMap> MvList);
+    void ApplyMvFxnToSubMatrix(const arma::vec& v, arma::vec& Mv,
+                            uint irow, uint icol,
+                            uint Ndivisions, MvMemberFxnPtr MvFunc);
 
-    void E_delta_st_plus_aj_ib_antisym(const arma::vec& v, arma::vec& Mv);
-    void E_delta_st_minus_aj_bi(const arma::vec& v, arma::vec& Mv);
-    void E_delta_st_plus_2aj_ib_minus_ajbi(const arma::vec& v, arma::vec& Mv);
-    void aj_ib(const arma::vec& v, arma::vec& Mv);
-    void ab_ij_antisym(const arma::vec& v, arma::vec& Mv);
-    void minus_abji_plus_2ab_ij(const arma::vec& v, arma::vec& Mv);
-    void ab_ij(const arma::vec& v, arma::vec& Mv);
-    void minus_ab_ji(const arma::vec& v, arma::vec& Mv);
+    uint calcTfromKbAndJ;
 
-    void SingletH(const arma::vec& v, arma::vec& Mv);
-    void TripletH(const arma::vec& v, arma::vec& Mv);
-    void Hprime(const arma::vec& v, arma::vec& Mv);
-    void Aprime(const arma::vec& v, arma::vec& Mv);
-    void Bprime(const arma::vec& v, arma::vec& Mv);
-    void H(const arma::vec& v, arma::vec& Mv);
-    void A(const arma::vec& v, arma::vec& Mv);
-    void B(const arma::vec& v, arma::vec& Mv);
+    MvMemberFxn
+        E_delta_st_plus_aj_ib_antisym,
+        minus_abji_plus_2ab_ij,
+        minus_ab_ji,
+        E_delta_st_minus_aj_bi,
+        E_delta_st_plus_2aj_ib_minus_ajbi,
+        aj_ib,
+        ab_ij, ab_ij_antisym,
+        SingletH, TripletH,
+        Hprime, Aprime, Bprime,
+        H, A, B;
+
 
 };  // MatrixVectorProduct
+
+
 
 #endif // HFS_MATRIX_VECTORPRODUCTS_INCLUDED

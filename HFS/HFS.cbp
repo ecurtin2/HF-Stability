@@ -145,26 +145,6 @@
 			<Option target="release2D" />
 			<Option target="profile2D" />
 		</Unit>
-		<Unit filename="src/base_funcs.cpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
-		<Unit filename="src/base_funcs.hpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
-		<Unit filename="src/calc_parameters.cpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
-		<Unit filename="src/calc_parameters.hpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
 		<Unit filename="src/cmd_parser.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
@@ -194,11 +174,6 @@
 			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/main.cpp">
-			<Option target="debug2D" />
-			<Option target="release2D" />
-			<Option target="profile2D" />
-		</Unit>
-		<Unit filename="src/main.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
 			<Option target="profile2D" />

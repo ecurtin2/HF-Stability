@@ -1,4 +1,5 @@
 #include "matrix_vectorproducts.hpp"
+#include <functional>
 
 MatrixVectorProduct::MatrixVectorProduct(PhysicalParams Params) {
     if (Params.mycase == "cRHF2cRHF") {
@@ -14,28 +15,35 @@ MatrixVectorProduct::MatrixVectorProduct(PhysicalParams Params) {
             exit(EXIT_FAILURE);
     }
 }
-MvFunc MatrixVectorProduct::get_Mvfunc() {
-    using std::placeholders::_1;
-    std::function <void (const arma::vec&, arma::vec&)> Mv
-      = std::bind( &MatrixVectorProduct::Mvfunc, this, _1 );
+//MvFunc MatrixVectorProduct::get_Mvfunc() {
+ //   using std::placeholders::_1;
+ //   std::function <void (const arma::vec&, arma::vec&)> Mv
+ //     = std::bind( &MatrixVectorProduct::Mvfunc, this, _1 );
  //   Mv = [&] () { (this->*Mvfunc); };
-    return Mv;
-}
+//    return Mv;
+//}
 
 void MatrixVectorProduct::TripletH(const arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (4);
 
-    MvList[0] = std::make_tuple(0, 0, E_delta_st_minus_aj_bi);
+    auto fp = std::bind(&MatrixVectorProduct::E_delta_st_minus_aj_bi, this, std::placeholders::_1, std::placeholders::_2);
+    //std::vector<Loc2MemberFxnMap> MvMap (4);
+
+    /*
+    MvMapVec.resize(4);
+
+    MvMapVec.push_back(Loc2MemberFxnMap(this, 0, 0, this.E_delta_st_minus_aj_bi));
     MvList[1] = std::make_tuple(0, 1, minus_ab_ji);
     MvList[2] = std::make_tuple(1, 0, minus_ab_ji);
     MvList[3] = std::make_tuple(1, 1, E_delta_st_minus_aj_bi);
     ApplyMvFxnsToSubMatrices(v, Mv, 2, MvList);
+    */
+    ApplyMvFxnToSubMatrix(v, Mv, 0, 0, 2, fp);
 }
 
 void MatrixVectorProduct::SingletH(const arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, E_delta_st_plus_2aj_ib_minus_ajbi);
     MvList[1] = std::make_tuple(0, 1, minus_abji_plus_2ab_ij);
@@ -46,7 +54,7 @@ void MatrixVectorProduct::SingletH(const arma::vec& v, arma::vec& Mv) {
 
 void MatrixVectorProduct::Hprime(const arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, Aprime);
     MvList[1] = std::make_tuple(0, 1, Bprime);
@@ -56,7 +64,7 @@ void MatrixVectorProduct::Hprime(const arma::vec& v, arma::vec& Mv) {
 }
 
 void MatrixVectorProduct::Aprime(const arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, E_delta_st_plus_aj_ib_antisym);
     MvList[1] = std::make_tuple(0, 1, aj_ib);
@@ -66,7 +74,7 @@ void MatrixVectorProduct::Aprime(const arma::vec& v, arma::vec& Mv) {
 }
 
 void MatrixVectorProduct::Bprime(const arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, ab_ij_antisym);
     MvList[1] = std::make_tuple(0, 1, ab_ij);
@@ -78,7 +86,7 @@ void MatrixVectorProduct::Bprime(const arma::vec& v, arma::vec& Mv) {
 
 void MatrixVectorProduct::H(const arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (4);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (4);
 
     MvList[0] = std::make_tuple(0, 0, A);
     MvList[1] = std::make_tuple(0, 1, B);
@@ -88,7 +96,7 @@ void MatrixVectorProduct::H(const arma::vec& v, arma::vec& Mv) {
 }
 
 void MatrixVectorProduct::A(const arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (6);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (6);
 
     MvList[0] = std::make_tuple(0, 0, E_delta_st_plus_aj_ib_antisym);
     MvList[1] = std::make_tuple(0, 3, aj_ib);
@@ -100,7 +108,7 @@ void MatrixVectorProduct::A(const arma::vec& v, arma::vec& Mv) {
 }
 
 void MatrixVectorProduct::B(const arma::vec& v, arma::vec& Mv) {
-    std::vector<std::tuple<uint, uint, void (*)(const arma::vec&, arma::vec&)>> MvList (6);
+    std::vector<std::tuple<uint, uint, void (MatrixVectorProduct::*)(const arma::vec&, arma::vec&)>> MvList (6);
 
     MvList[0] = std::make_tuple(0, 0, ab_ij_antisym);
     MvList[1] = std::make_tuple(0, 3, ab_ij);
@@ -275,6 +283,33 @@ void MatrixVectorProduct::minus_ab_ji(const arma::vec& v, arma::vec& Mv) {
                 Mv(s) += -twoElectron(ka, kj) * v(t);
             }
         }
+    }
+}
+
+void MatrixVectorProduct::ApplyMvFxnToSubMatrix(const arma::vec& v, arma::vec& Mv,
+                                                uint irow, uint icol,
+                                                uint Ndivisions, MvPtr MvFunc) {
+     /** \brief Apply in-place Matrix-Vector product functions to sub-matrices.
+      *
+      * Assumes each function DOES NOT INITIALIZE and ADDS the contribution to Mv IN-PLACE.
+      * DOES NOT INITIALIZE Mv.
+      * \param v Vector to be multiplied by matrix.
+      * \param Mv Vector to store
+      * \param Ndivisions Number of sections per row/column. Assumed equal.
+      * \param locs
+      * \param Mvfuncs
+      *
+      */
+
+    uint N = v.n_elem / Ndivisions; // Size of each subview
+    scalar* Mv_ptr = &Mv[irow * N];
+    arma::vec Mv_subview = arma::vec(Mv_ptr, N, false, true);
+
+    scalar* v_ptr  = (scalar*) &v[icol * N];
+    /* This technically violates const correctness. Do not use v_ptr for anything but initializing
+       a const vec */
+    const arma::vec v_subview = arma::vec(v_ptr, N, false, true);
+    MvFunc(v_subview, Mv_subview);
     }
 }
 
