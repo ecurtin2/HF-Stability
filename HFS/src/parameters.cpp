@@ -12,6 +12,8 @@ namespace HFS{
     scalar two_e_const;
     scalar deltaK;
     scalar Total_Calculation_Time;
+    scalar twoE_parameter_1dCase;
+    bool use_delta_1D;
     std::string computation_started;
     std::string OutputFileName;
     std::string mycase;

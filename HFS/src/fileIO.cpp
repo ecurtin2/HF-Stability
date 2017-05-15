@@ -97,6 +97,9 @@ namespace HFS {
             JSONVAL(mv_time);
             JSONVAL(cond_number);
             JSONVAL(dav_nconv);
+            JSONVAL(twoE_parameter_1dCase);
+            JSONVAL(use_delta_1D);
+
 
             if (fabs(full_diag_min) > 1e-6) {
                 JSONVAL(full_diag_min);

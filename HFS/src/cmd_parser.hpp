@@ -3,7 +3,7 @@
 #include<string>
 #include<stdexcept>
 #include<assert.h>
-
+#include <boost/algorithm/string.hpp>
 
 void set_val_from_string(double& val, const std::string& str) {
     val = std::stod(str);
@@ -24,6 +24,15 @@ void set_val_from_string(long double& val, const std::string& str) {
 
 void set_val_from_string(std::string& val, const std::string& str) {
     val = str;
+}
+
+void set_val_from_string(bool& val, const std::string& str) {
+    if (boost::iequals(str, "true")) {
+        val = true;
+    } else {
+        val = false;
+    }
+
 }
 
 class ConfigParser {

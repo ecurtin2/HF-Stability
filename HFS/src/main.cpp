@@ -43,6 +43,8 @@ int main(int argc, char* argv[]){
     HFS::num_guess_evecs = 1;
     HFS::dav_blocksize   = 1;
     HFS::dav_num_evals   = 1;
+    HFS::twoE_parameter_1dCase = 1;
+    HFS::use_delta_1D = false;
 
     /* Set options from command line. False means error won't be thrown if
        value is not found, and default will be used. */
@@ -57,6 +59,8 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::num_guess_evecs, "--num_guess_evecs", false);
     parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
     parser.set_val(HFS::dav_num_evals, "--Dav_num_evals", false);
+    parser.set_val(HFS::twoE_parameter_1dCase, "--twoE_parameter_1dCase", false);
+    parser.set_val(HFS::use_delta_1D, "--use_delta_1D", false);
 
 
     /* Calculation starts here */

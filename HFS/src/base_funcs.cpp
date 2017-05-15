@@ -39,8 +39,12 @@ namespace HFS {
             return 0.0;
         }else{
             # if NDIM == 1
-                return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
+                if (use_delta_1D == true) {
+                    return HFS::two_e_const;
+                } else {
+                    return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
                             * boost::math::expint(-norm * norm * HFS::two_e_const * HFS::two_e_const);
+                }
             # elif NDIM == 2
                 return HFS::two_e_const / norm;
             # elif NDIM == 3
@@ -71,8 +75,12 @@ namespace HFS {
             return 0.0;
         }else{
             # if NDIM == 1
+                if (use_delta_1D == true) {
+                    return HFS::two_e_const;
+                } else {
                 return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
                             * boost::math::expint(-norm * norm * HFS::two_e_const * HFS::two_e_const);
+                }
             # elif NDIM == 2
                 return HFS::two_e_const / norm;
             # elif NDIM == 3

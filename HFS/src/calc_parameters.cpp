@@ -40,8 +40,11 @@ namespace HFS {
     void calcVolAndTwoEConst (uint N_elec, scalar rs, scalar& Vol, scalar& TwoEConst) {
         if (NDIM == 1) {
             vol = N_elec * rs;
-            scalar a = 0.01;
-            two_e_const = a * PI / vol;    // 'a' for the exponential integral, radius of cylinder.
+            if (use_delta_1D == true) {
+                two_e_const = twoE_parameter_1dCase;
+            } else {
+                two_e_const = twoE_parameter_1dCase * PI / vol;    // 'a' for the exponential integral, radius of cylinder.
+            }
         } else if (NDIM == 2) {
             vol = N_elec * PI * std::pow(rs, 2);
             two_e_const = 2.0 * PI / vol;

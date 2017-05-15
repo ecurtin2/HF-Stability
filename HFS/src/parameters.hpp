@@ -31,6 +31,8 @@ typedef double   scalar;
 
 namespace HFS{
     extern scalar bzone_length;               /**< The length of the entire Brillouin zone, = 2*pi / a */
+    extern scalar twoE_parameter_1dCase;            /**< Constant for the delta function interaction version of 1D. */
+    extern bool use_delta_1D;                 /**< Flag to determine if delta function or exponential integral for 1d. */
     extern scalar vol;                        /**< The volume of a unit cell in the direct lattics */
     extern scalar rs;                         /**< The wigner-seitz radius */
     extern scalar kf;                         /**< The fermi wave vector */
