@@ -29,6 +29,7 @@ COMP = Work
 
 # Work
 ifeq ($(COMP),Work)
+        CC=/home/evan/local/anaconda3/bin/g++
 	SLEPC_DIR=/home/evan/local/slepc-3.7.3
 	PETSC_DIR=/home/evan/git/petsc
 	PETSC_ARCH=linux-gnu-c-debug

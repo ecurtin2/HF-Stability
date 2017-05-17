@@ -60,7 +60,9 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
     parser.set_val(HFS::dav_num_evals, "--Dav_num_evals", false);
     parser.set_val(HFS::twoE_parameter_1dCase, "--twoE_parameter_1dCase", false);
-    parser.set_val(HFS::use_delta_1D, "--use_delta_1D", false);
+    //parser.set_val(HFS::use_delta_1D, "--use_delta_1D", false);
+
+    std::cout << HFS::OutputFileName << std::endl;
 
 
     /* Calculation starts here */

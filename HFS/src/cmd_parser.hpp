@@ -23,8 +23,9 @@ void set_val_from_string(long double& val, const std::string& str) {
 }
 
 void set_val_from_string(std::string& val, const std::string& str) {
-    val = str;
+    val.assign(str);
 }
+
 
 void set_val_from_string(bool& val, const std::string& str) {
     if (boost::iequals(str, "true")) {
@@ -55,6 +56,20 @@ class ConfigParser {
                 }
             }
         }
+        void set_str_from_input(std::string& val, const std::string varname, bool checkerr=true) {
+            bool found = false;
+            for (unsigned i = 0; i < arg_names.size(); ++i) {
+                if (varname == arg_names[i]) {
+                    val.assign(arg_vals[i]);
+                }
+                found = true;
+            }
+
+            if (!found && checkerr) {
+                std::string err = "Variable: " + varname + " not found while parsing arguments";
+                throw std::invalid_argument(err);
+            }
+        }
 
         template <class T>
         void set_val(T& val, std::string varname, bool checkerr=true) {
@@ -63,9 +78,10 @@ class ConfigParser {
             for (unsigned i = 0; i < arg_names.size(); ++i) {
                 if (varname == arg_names[i]){
                     set_val_from_string(val, arg_vals[i]);
-                    found = true;
                 }
+                found = true;
             }
+
             if (!found && checkerr) {
                 std::string err = "Variable: " + varname + " not found while parsing arguments";
                 throw std::invalid_argument(err);

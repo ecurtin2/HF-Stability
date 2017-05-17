@@ -1,6 +1,7 @@
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import scipy.special as sp
+import warnings
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -49,7 +50,11 @@ def np_array_if_possible(val):
 
 def json_to_df(json_str):
     with open(json_str) as json_data:
-        mydict = json.load(json_data)
+        try:
+            mydict = json.load(json_data)
+        except json.JSONDecodeError as e:  
+            warnings.warn('Error Loading: ' + json_str + ': ' + str(e))
+            return None
     mydict = {key : np_array_if_possible(val) for (key, val) in mydict.items()}
     k = list(mydict.keys())
     v = [list(mydict.values())]
