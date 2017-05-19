@@ -32,8 +32,8 @@ int main(int argc, char* argv[]){
     timer.tic();
 
     // Defaults
-    HFS::rs              = 1.2;
-    HFS::Nk              = 22;
+    HFS::rs              = 0.01;
+    HFS::Nk              = 20;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
@@ -60,16 +60,14 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
     parser.set_val(HFS::dav_num_evals, "--Dav_num_evals", false);
     parser.set_val(HFS::twoE_parameter_1dCase, "--twoE_parameter_1dCase", false);
-    //parser.set_val(HFS::use_delta_1D, "--use_delta_1D", false);
-
-    std::cout << HFS::OutputFileName << std::endl;
+    parser.set_val(HFS::use_delta_1D, "--use_delta_1D", false);
 
 
     /* Calculation starts here */
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
 
-    # if NDIM != 1
+   // # if NDIM != 1
         HFS::timeMatrixVectorProduct();
 
         SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
@@ -102,7 +100,10 @@ int main(int argc, char* argv[]){
         HFS::dav_nconv = myeps.nconv;
         HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
         HFS::dav_min_eval = HFS::dav_vals.min();
-    #endif // NDIM != 1
+
+
+    //#endif // NDIM != 1
+    /*
     # if NDIM == 1
         arma::wall_clock eval_timer;
         eval_timer.tic();
@@ -114,6 +115,7 @@ int main(int argc, char* argv[]){
         HFS::full_diag_time = eval_timer.toc();
         HFS::exact_evals = eigvals;
     # endif // NDIM
+    */
     HFS::Total_Calculation_Time = timer.toc();
 
     // Finish up, write and test for problems.

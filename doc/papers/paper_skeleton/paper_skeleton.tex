@@ -1,0 +1,143 @@
+\documentclass{revtex4}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{braket}
+
+\newcommand{\ki}{\mathbf{k}_{i}}
+\newcommand{\kj}{\mathbf{k}_{j}}
+\newcommand{\ka}{\mathbf{k}_{a}}
+\newcommand{\kb}{\mathbf{k}_{b}}
+\newcommand{\kp}{\mathbf{k}_{p}}
+\newcommand{\kq}{\mathbf{k}_{q}}
+\newcommand{\kr}{\mathbf{k}_{r}}
+\newcommand{\ks}{\mathbf{k}_{s}}
+
+\makeatletter
+\makeatother
+
+\begin{document}
+\title{Hartree-Fock Stability Analysis of the Paramagnetic Homogeneous Electron Gas in
+1, 2 and 3 Dimensions.}
+\author{Evan Curtin, So Hirata}
+\maketitle
+
+\section{Abstract}
+
+\section{Introduction}
+
+\section{Methods}
+We consider the paramagnetic state of the Homogeneous Electron Gas (HEG) in a $D$-dimensional
+box of length $L$. All states below the fermi wave vector, $k_f$ are doubly occupied, and all
+above are virtual. According to Guiliani and Vignale\cite{Guiliani2005}, $k_f$ is given by equation 
+\ref{kf} for 1, 2 and 3 dimensions.
+
+\begin{eqnarray} \label{kf}
+k_f
+=\begin{cases} 
+  (3\pi^2n)^{\frac{1}{3}} = \left(\frac{9\pi}{4}\right)^{\frac{1}{3}}\frac{1}{r_sa_0} & 3D \\ \\
+  (2\pi n)^{\frac{1}{2}} = \frac{\sqrt{2}}{r_sa_0}  & 2D \\
+  \\
+  \frac{\pi}{2}n = \frac{\pi}{4 r_s a_0}   & 1D 
+ \end{cases} 
+\end{eqnarray}
+
+The Hartree-Fock Hamiltonian  is defined in the usual way for the HEG in that the positive
+background charge exactly cancels the electron-electron coulomb interaction. One solution of the 
+Hartree-Fock equation is a set of plane waves, 
+
+\begin{eqnarray} \label {planewave}
+  \phi_k(\vec{r}) = \frac{ e^ {i \bf{k} \cdot \bf{r}}} {\sqrt{D^N}},  
+\end{eqnarray}
+
+defined with periodic boundary conditions\cite{Phillips2012}. Do determine the stability of these
+RHF solutions, we use the method introduced by Thouless \cite{Thouless1960}, and further 
+chatagerized by Seeger and Pople \cite{Seeger1977}. The solutions of the Hartree-Fock equations are 
+unstable when the Molecular Orbital Hessian, 
+
+\begin{eqnarray} \label{H}
+  \bf{H} = 
+  \begin{bmatrix}
+    \bf{A}   & \bf{B} \\
+    \bf{B^*} & \bf{A^*}\\
+  \end{bmatrix},
+\end{eqnarray}
+
+has any strictly negative eigenvalues. An unstable HF solution is one that is a stationary solution
+to the HF equations, but has a negative second-order variation in the energy with respect to 
+electronic oscillations. Thus, a solution being
+unstable is a sufficient condition for another solution of lower energy existing. 
+
+The square matrices $\bf{A}$ and $\bf{B}$ are defined in 
+terms of the excitations of the system, and thus have the size of the number of possible 
+excitations. Their elements are
+
+\begin{eqnarray} \label{A_B}
+	A_{\ki\rightarrow \ka, \kj\rightarrow \kb} &=& 
+	(\epsilon_{\ka} - \epsilon_{\ki})\delta_{\ki\kj}\delta_{\ka\kb} + \braket{\ka\kj||\ki\kb}\\
+	B_{\ki\rightarrow \ka, \kj\rightarrow \kb} &=& \braket{\ka\kb||\ki\kj},  \nonumber
+\end{eqnarray}
+
+where $\epsilon_{\ki}$ is the $i$'th eigenvalue of the one-electron Fock operator. 
+The convention for the two electron integrals is, 
+
+\begin{eqnarray} \label{TwoElectron}
+  \braket{\kp\kq|\kr\ks}  &=& \int\int \phi_{\kp}^*(\mathbf{x}_1) \phi_{\kq}^*(\mathbf{x}_2) 
+                              \frac{1}{r_{12}} 
+                              \phi_{\kr}(\mathbf{x}_1) \phi_{\ks}(\mathbf{x}_2) 
+                              \mathrm{d}\mathbf{x}_1  \mathrm{d}\mathbf{x}_2, \\
+  \braket{\kp\kq||\kr\ks} &=& \braket{\kp\kq|\kr\ks} - \braket{\kp\kq|\ks\kr}                  
+\end{eqnarray}
+
+and the integration is over both Cartesian and spin coordinates. The analytic form of the two 
+electron integral for the case of the HEG is given by
+
+\begin{subequations} 
+  \begin{eqnarray} \label{TwoElectronAnalytic}
+    \braket{\kp\kq||\kr\ks}\stackrel{\text{2D, 3D}}{=}
+    	\begin{cases} 
+      	\frac{\pi}{\Omega} \frac{2^{D-1}}{ |\kp - \kr|^{D-1} } 
+      	& \ks + \kr = \kp + \kq  \mathrm{~and~} | \kp - \kr | \neq 0 \\
+      	0 
+      	& \text{else}
+    	\end{cases}
+    \\ \nonumber \\
+    \braket{\kp\kq||\kr\ks}\stackrel{\text{1D}}{=}
+    	\begin{cases} 
+      	e^{ |\kp - \kr|^2a^2 }  \text{Ei} (-|\kp - \kr|^2a^2)
+      	& \ks + \kr = \kp + \kq \mathrm{~and~} | \kp - \kr | \neq 0 \\
+      	0 
+      	& \text{else}
+    	\end{cases},
+  \end{eqnarray}
+\end{subequations}
+
+where $\Omega$ is the direct lattice volume. \cite{Delyon2008} \cite{Guiliani2005}. Ei(x) 
+denotes the exponential integral function and the parameter $a$ in 1D is the radius of a cylinder
+that approximates a 1D system (For more details we refer the reader to reference 
+\cite{Guiliani2005}). The eigenenergies of the one particle Fock operator can be determined by
+evaluating 
+
+\begin{equation} \label{eq:hf_orb_energy}
+  \epsilon_{\kp}=
+  	\frac{\hbar^2|\kp|^2}{2m} - \sum\limits_{\ki}^{occ}
+    n_{\ki} \braket{\kp, \ki | \ki, \kp}
+\end{equation}
+Where $n_{\ki}$ is the occupation number of the state $\ki$ and spin \cite{Guiliani2005}. 
+
+A program was implemented to calculate the stability of the HEG with a simple cubic lattice in 1, 2
+and 3 dimensions. As we are only interested in the presence of any number of negative eigenvalues, 
+it suffices to calculate the lowest eigenvalue and determine its sign. Due to the sparse and 
+diagonally dominant nature of $\mathbf{H}$, this is a natural candidate for the Jacobi-Davidson 
+Algorithm \cite{Davidson1975}. The algorithm was implented using the SLEPc package, an extension of 
+the PETSc suite \cite{Hernandez2005}\cite{petsc-web-page}. 
+
+\section{Discussion}
+
+\section{Conclusion}
+
+\section{Acknowledgements}
+
+\section{References}
+\bibliography{paper_skeleton}
+\end{document}

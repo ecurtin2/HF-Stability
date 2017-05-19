@@ -25,7 +25,7 @@ namespace HFS {
             for (uint j = 0; j < NDIM; ++j) {
                 k2(j) = HFS::kgrid(HFS::occ_states(j, k));
             }
-            exch += HFS::twoElectron(ki, k2);
+            exch += HFS::twoElectronSafe(ki, k2, k2, ki);
         }
         exch *= -1.0;
         return exch;
@@ -42,8 +42,13 @@ namespace HFS {
                 if (use_delta_1D == true) {
                     return HFS::two_e_const;
                 } else {
-                    return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
-                            * boost::math::expint(-norm * norm * HFS::two_e_const * HFS::two_e_const);
+                    scalar arg = -norm * norm * HFS::two_e_const * HFS::two_e_const;
+                    if (arg < -30.0) { // Ei(-30) = -3.02 x 10^-15, causes nan for low numbers, just do 0.
+                        return 0;
+                    } else {
+                        return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
+                                * boost::math::expint(arg);
+                    }
                 }
             # elif NDIM == 2
                 return HFS::two_e_const / norm;
@@ -78,8 +83,13 @@ namespace HFS {
                 if (use_delta_1D == true) {
                     return HFS::two_e_const;
                 } else {
-                return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
-                            * boost::math::expint(-norm * norm * HFS::two_e_const * HFS::two_e_const);
+                    scalar arg = -norm * norm * HFS::two_e_const * HFS::two_e_const;
+                    if (arg < -30.0) { // Ei(-30) = -3.02 x 10^-15, causes nan for low numbers, just do 0.
+                        return 0;
+                    } else {
+                        return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
+                                * boost::math::expint(arg);
+                    }
                 }
             # elif NDIM == 2
                 return HFS::two_e_const / norm;
