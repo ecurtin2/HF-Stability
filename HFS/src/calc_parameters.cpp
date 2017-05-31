@@ -39,7 +39,7 @@ namespace HFS {
 
     void calcVolAndTwoEConst (uint N_elec, scalar rs, scalar& Vol, scalar& TwoEConst) {
         if (NDIM == 1) {
-            vol = N_elec * rs;
+            vol = 2.0 * N_elec * rs;
             if (use_delta_1D == true) {
                 two_e_const = twoE_parameter_1dCase;
             } else {
@@ -47,10 +47,10 @@ namespace HFS {
             }
         } else if (NDIM == 2) {
             vol = N_elec * PI * std::pow(rs, 2);
-            two_e_const = 2.0 * PI / vol;
+            two_e_const = PI / vol;
         } else if (NDIM == 3) {
             vol = N_elec * 4.0 / 3.0 * PI * std::pow(rs, 3);
-            two_e_const = 4.0 * PI / vol;
+            two_e_const = 2.0 * PI / vol;
         }
     }
 

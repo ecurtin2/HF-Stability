@@ -42,12 +42,12 @@ namespace HFS {
                 if (use_delta_1D == true) {
                     return HFS::two_e_const;
                 } else {
-                    scalar arg = -norm * norm * HFS::two_e_const * HFS::two_e_const;
-                    if (arg < -30.0) { // Ei(-30) = -3.02 x 10^-15, causes nan for low numbers, just do 0.
+                    scalar arg = norm * norm * HFS::two_e_const * HFS::two_e_const;
+                    if (arg > 30.0) { // Ei(-30) = -3.02 x 10^-15, causes nan for low numbers, just do 0.
                         return 0;
                     } else {
-                        return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
-                                * boost::math::expint(arg);
+                        return - exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
+                                * boost::math::expint(-arg);
                     }
                 }
             # elif NDIM == 2
