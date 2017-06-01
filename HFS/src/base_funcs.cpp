@@ -46,8 +46,7 @@ namespace HFS {
                     if (arg > 30.0) { // Ei(-30) = -3.02 x 10^-15, causes nan for low numbers, just do 0.
                         return 0;
                     } else {
-                        return - exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
-                                * boost::math::expint(-arg);
+                        return exp(arg) * boost::math::expint(-arg);
                     }
                 }
             # elif NDIM == 2
@@ -60,8 +59,8 @@ namespace HFS {
     }
 
     scalar twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4) {
-        // Same as two_electron, except checks for momentum conservation
-        // In the other, conservation is assumed
+        // Check for momentum conservation, then calculate two electron.
+        // In the non-safe version, conservation is assumed
         arma::vec k(NDIM);
 
         k = k1 + k2 - k3 - k4;
@@ -69,33 +68,9 @@ namespace HFS {
 
         // If not momentum conserving:
         if (arma::any(arma::abs(k) > SMALLNUMBER)) {
-                return 0.0;
-        }
-
-        k =  k1 - k3;
-        HFS::toFirstBrillouinZone(k);
-        scalar norm = arma::norm(k);
-
-        if (norm < SMALLNUMBER) {
             return 0.0;
-        }else{
-            # if NDIM == 1
-                if (use_delta_1D == true) {
-                    return HFS::two_e_const;
-                } else {
-                    scalar arg = -norm * norm * HFS::two_e_const * HFS::two_e_const;
-                    if (arg < -30.0) { // Ei(-30) = -3.02 x 10^-15, causes nan for low numbers, just do 0.
-                        return 0;
-                    } else {
-                        return exp(norm * norm * HFS::two_e_const * HFS::two_e_const)
-                                * boost::math::expint(arg);
-                    }
-                }
-            # elif NDIM == 2
-                return HFS::two_e_const / norm;
-            # elif NDIM == 3
-                return HFS::two_e_const / (norm * norm);
-            #endif
+        } else {
+            return twoElectron(k1, k3);
         }
     }
 

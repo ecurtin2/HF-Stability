@@ -32,8 +32,8 @@ int main(int argc, char* argv[]){
     timer.tic();
 
     // Defaults
-    HFS::rs              = 0.01;
-    HFS::Nk              = 20;
+    HFS::rs              = 1.2;
+    HFS::Nk              = 12;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
