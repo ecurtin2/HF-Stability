@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
 
     // Defaults
     HFS::rs              = 1.2;
-    HFS::Nk              = 12;
+    HFS::Nk              = 7;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
@@ -66,6 +66,27 @@ int main(int argc, char* argv[]){
     /* Calculation starts here */
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
+
+    arma::vec k1 = {1.0, 2.0};
+    arma::vec k2 = {2.0, 3.0};
+    std::cout << "TWOE VALUE " << HFS::twoElectron(k1, k2) << std::endl;
+
+    arma::mat A(HFS::Nexc, HFS::Nexc, arma::fill::zeros);
+    for (unsigned i = 0; i < A.n_cols; ++i) {
+            for (unsigned j = 0; j < A.n_rows; ++j) {
+                A(j, i) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(j, i);
+            }
+    }
+
+    arma::mat B(HFS::Nexc, HFS::Nexc, arma::fill::zeros);
+    for (unsigned i = 0; i < B.n_cols; ++i) {
+            for (unsigned j = 0; j < B.n_rows; ++j) {
+                B(j, i) = HFS::Matrix::Gen::B_minus_ab_ji(j, i);
+            }
+    }
+
+    A.print("A");
+    B.print("B");
 
    // # if NDIM != 1
         HFS::timeMatrixVectorProduct();

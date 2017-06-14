@@ -83,6 +83,7 @@ namespace HFS {
             JSONSTR(mycase);
 
             JSONVAL(deltaK);
+            JSONVAL(vol);
             JSONVAL(kf);
             JSONVAL(kmax);
             JSONVAL(Nocc);

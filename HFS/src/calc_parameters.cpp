@@ -10,13 +10,27 @@ namespace HFS {
                                         // cases where the states fall exactly on kf
         HFS::bzone_length = 2.0 * HFS::kmax;
         HFS::fermi_energy = 0.5 * HFS::kf * HFS::kf;
-        HFS::kgrid = arma::linspace(-HFS::kmax, HFS::kmax, HFS::Nk);
+        HFS::kgrid = arma::linspace(-HFS::kmax, HFS::kmax, HFS::Nk + 1);
+        HFS::kgrid.print("kgrid before");
+        HFS::kgrid.shed_row(HFS::Nk);
+        HFS::kgrid.print("kgrid after");
         HFS::deltaK = HFS::kgrid(1) - HFS::kgrid(0);
         HFS::calcStates(HFS::kgrid, HFS::Nk, NDIM,
                         HFS::Nocc, HFS::Nvir, HFS::N_elec, HFS::occ_states, HFS::vir_states);
         HFS::calcVolAndTwoEConst(HFS::N_elec, HFS::rs, HFS::vol, HFS::two_e_const);
         HFS::calcEnergies(HFS::occ_states, HFS::occ_energies);
         HFS::calcEnergies(HFS::vir_states, HFS::vir_energies);
+
+        // Sort occ and vir by energies
+        /*auto idx = arma::sort_index(HFS::occ_energies);
+        HFS::occ_energies = HFS::occ_energies(idx);
+        HFS::occ_states = HFS::occ_states.rows(idx);
+
+        auto vir_idx = arma::sort_index(HFS::vir_energies);
+        HFS::vir_energies = HFS::vir_energies(idx);
+        HFS::vir_states = HFS::vir_states.rows(idx);
+*/
+
         HFS::calcExcitations(HFS::kgrid, HFS::Nk, HFS::deltaK, HFS::Nocc, HFS::Nvir,
                              HFS::occ_states, HFS::vir_states,
                              HFS::excitations, HFS::exc_energies, HFS::Nexc);
@@ -47,7 +61,7 @@ namespace HFS {
             }
         } else if (NDIM == 2) {
             vol = N_elec * PI * std::pow(rs, 2);
-            two_e_const = PI / vol;
+            two_e_const = 2.0 * PI / vol;
         } else if (NDIM == 3) {
             vol = N_elec * 4.0 / 3.0 * PI * std::pow(rs, 3);
             two_e_const = 2.0 * PI / vol;
