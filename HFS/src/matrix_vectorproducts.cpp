@@ -297,7 +297,8 @@ void ApplyMvFxnsToSubMatrices(
 
 
 uint calcTfromKbAndJ(arma::vec& kb, uint j) {
-    arma::uvec b_N_uint(NDIM); kToIndex(kb, b_N_uint);
+    arma::uvec b_N_uint(NDIM);
+    kToIndex(kb, b_N_uint);
     # if NDIM == 1
         uint b = HFS::vir_N_to_1_mat(b_N_uint(0));
     # endif

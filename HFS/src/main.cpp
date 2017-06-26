@@ -21,6 +21,7 @@ This program is incomplete in the following ways
 
 #include "main.hpp"
 #include "NDmap.hpp"
+#include <iomanip>
 
 int main(int argc, char* argv[]){
     // Start the timers
@@ -33,7 +34,7 @@ int main(int argc, char* argv[]){
 
     // Defaults
     HFS::rs              = 1.2;
-    HFS::Nk              = 7;
+    HFS::Nk              = 5;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
@@ -84,10 +85,21 @@ int main(int argc, char* argv[]){
                 B(j, i) = HFS::Matrix::Gen::B_minus_ab_ji(j, i);
             }
     }
-
+    std::cout << std::setw(100);
     A.print("A");
     B.print("B");
 
+    auto H = HFS::Matrix_generator();
+    arma::vec evals;
+    arma::mat evecs;
+    arma::eig_sym(evals, evecs, A);
+    evals.print("A evals");
+    arma::eig_sym(evals, evecs, B);
+    evals.print("B evals");
+    arma::eig_sym(evals, evecs, H);
+    evals.print("H evals");
+
+    /*
    // # if NDIM != 1
         HFS::timeMatrixVectorProduct();
 
@@ -124,19 +136,19 @@ int main(int argc, char* argv[]){
 
 
     //#endif // NDIM != 1
-    /*
+
     # if NDIM == 1
-        arma::wall_clock eval_timer;
-        eval_timer.tic();
-        arma::mat matrix = HFS::Matrix_generator();
-        arma::vec eigvals;
-        arma::mat eigvecs;
-        arma::eig_sym(eigvals, eigvecs, matrix);
-        HFS::full_diag_min = eigvals.min();
-        HFS::full_diag_time = eval_timer.toc();
-        HFS::exact_evals = eigvals;
+    //    arma::wall_clock eval_timer;
+//        eval_timer.tic();
+//        arma::mat matrix = HFS::Matrix_generator();
+//        arma::vec eigvals;
+//        arma::mat eigvecs;
+//        arma::eig_sym(eigvals, eigvecs, matrix);
+//        HFS::full_diag_min = eigvals.min();
+//        HFS::full_diag_time = eval_timer.toc();
+//        HFS::exact_evals = eigvals;
     # endif // NDIM
-    */
+
     HFS::Total_Calculation_Time = timer.toc();
 
     // Finish up, write and test for problems.
@@ -150,6 +162,6 @@ int main(int argc, char* argv[]){
     #endif //NDEBUG
 
     HFS::writeJSON(HFS::OutputFileName, true);
-
+*/
     return 0;
 }
