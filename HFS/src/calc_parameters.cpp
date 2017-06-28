@@ -58,14 +58,14 @@ namespace HFS {
             if (use_delta_1D == true) {
                 two_e_const = twoE_parameter_1dCase;
             } else {
-                two_e_const = twoE_parameter_1dCase * PI / vol;    // 'a' for the exponential integral, radius of cylinder.
+                two_e_const = twoE_parameter_1dCase;    // 'a' for the exponential integral, radius of cylinder.
             }
         } else if (NDIM == 2) {
             vol = N_elec * PI * std::pow(rs, 2);
             two_e_const = 2.0 * PI / vol;
         } else if (NDIM == 3) {
             vol = N_elec * 4.0 / 3.0 * PI * std::pow(rs, 3);
-            two_e_const = 2.0 * PI / vol;
+            two_e_const = 4.0 * PI / vol;
         }
     }
 

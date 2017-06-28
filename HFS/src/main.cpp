@@ -34,7 +34,7 @@ int main(int argc, char* argv[]){
 
     // Defaults
     HFS::rs              = 1.2;
-    HFS::Nk              = 5;
+    HFS::Nk              = 12;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
@@ -86,8 +86,6 @@ int main(int argc, char* argv[]){
             }
     }
     std::cout << std::setw(100);
-    A.print("A");
-    B.print("B");
 
     auto H = HFS::Matrix_generator();
     arma::vec evals;
