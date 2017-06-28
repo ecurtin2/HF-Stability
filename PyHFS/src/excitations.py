@@ -4,6 +4,7 @@ import prettyprint
 
 
 class Excitations(object):
+    """Class for the excitations of the system."""
 
     def __init__(self, parameters):
         self.parameters = parameters
@@ -66,6 +67,12 @@ class Excitations(object):
         self._label_from_momenta = {tuple(np.round(k, 5)): i for i, k in enumerate(self._momenta)}
 
     def label_from_momenta(self, ki, ka):
+        """Return the label for the excitation from ki -> ka.
+
+        The label is the index describing an excitation: excitation = excitations[label]
+        This term was chosen to avoid name conflict with index, which describes the indices of the
+        reciprocal space grid.
+        """
         k = tuple(np.round(np.hstack((ki, ka)), 5))
         return self._label_from_momenta[k]
 

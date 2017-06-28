@@ -29,8 +29,10 @@ def exchange_energy(k, k_fermi, n_dimensions):
 
 
 def kinetic_energy(k):
+    """Kinetic energy in atomic units."""
     return np.sum(k**2) / 2.0  
 
 
 def total_energy(k, k_fermi, n_dimensions):
+    """Total energy in atomic units."""
     return kinetic_energy(k) + exchange_energy(k, k_fermi, n_dimensions)

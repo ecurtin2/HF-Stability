@@ -6,17 +6,15 @@ from scipy.special import expi
 
 
 class TwoElectronIntegral(object):
+    """An object for controlling the Two Electron Integrals.
+
+    This contains functions to evaluate all the various two electron integrals that will be needed in the
+    evaluation of the code. It controls which exact two electron integral is to be used and controls the normalization.
+    The member function self.eval(k1, k2, k3, k4) is the exposed method that can be called to evaluate the two electron
+    integral.
+    """
 
     def __init__(self, parameters):
-        """Return the ERI functions for the given set of parameters.
-
-        The two retur
-
-        :returns two_ERI, two_ERI_check_conservation: Closures of the functions to
-        determine the value of the two electron integrals with and without checking
-        that momentum is conserved.
-
-        """
         self.eval = __class__._two_eri_not_set
         self.parameters = parameters
         if not hasattr(self.parameters, 'volume'):
@@ -24,7 +22,10 @@ class TwoElectronIntegral(object):
         self._set_eval()
 
     def _set_eval(self, safe=True):
-        """Update two electron integral with information from states object."""
+        """Update two electron integral with information from states object.
+
+        Once this is called, the member function self.eval(*args) can be used to evaluate the two
+        electron integral."""
 
         if self.parameters.n_dimensions == 1:
             if hasattr(self.parameters, "delta_fxn_magnitude"):
@@ -56,7 +57,8 @@ class TwoElectronIntegral(object):
         """Return the value of the two electron repulsion integral iff the states conserve momentum.
         returns <1 2 | 1 / r_12 | 3 4>
 
-        :param two_electron_func: The unsafe two electron function.
+        :param two_electron_func: function taking (k1, k2, k3, k4) and returning the value of the two electron
+        integral.
         """
         def wrapper(k1, k2, k3, k4, *args, **kwargs):
             k = k1 + k2 - (k3 + k4)
@@ -69,6 +71,7 @@ class TwoElectronIntegral(object):
 
     @staticmethod
     def _two_eri_not_set(*args, **kwargs):
+        """Dummy function to raise AttributError if two_eri was not set."""
         raise AttributeError('Two electron integral not set properly, maybe need to update with '
                              + 'states?')
 

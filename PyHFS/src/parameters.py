@@ -8,9 +8,30 @@ import twoERI
 
 
 class Parameters(object):
+    """Object for the physical parameters of the system, like wigner-seitz Radius (rs) and number
+    of dimensions. """
 
     def __init__(self, *, rs=1.2, n_k_points=12, n_dimensions=2, instability_type='cRHF2cUHF',
                  cylinder_radius=None, delta_fxn_magnitude=None):
+        """Create the parameters object for the given parameters.
+
+        :param rs: The wigner seitz radius, in 1 / bohr
+        :type rs: float
+        :param n_k_points: The number of reciprocal space grid points. Must be > 2
+        :type n_k_points: int
+        :param n_dimensions: Number of physical dimensions: 1, 2 or 3.
+        :type n_dimensions: int
+        :param instability_type: The type of instability to be investigated. Must be one of the strings in the
+        set __class__.instabilities_supported.
+        :type instability_type: string
+        :param cylinder_radius: The radius of the cylinder for the pseudo - 1 dimensional system. This is meant
+        to be small such that motion in the radial dimension is 'frozen'. See the appendix of Guiliani and Vignale
+        for a discussion on this.
+        :type cylinder_radius: float
+        :param delta_fxn_magnitude: The multiplicative constant for the delta function potential in 1 dimension.
+        ( v(r12) = delta_fxn_magnitude * delta(r12) )
+        """
+
         self.rs = rs
         self.n_k_points = n_k_points
         self.n_dimensions = n_dimensions
@@ -82,7 +103,11 @@ class Parameters(object):
             raise ValueError('n_dimensions must be one of: 1, 2, 3 \nbut ' + str(n_dimensions) + ' was given.')
 
     def to_first_brillouin_zone(self, k):
-        """Translate k to first brillouin zone, defined by k_max, in place """
+        """Translate k to first brillouin zone, defined by k_max, in place
+
+         :param k: Momentum vector of a state
+         :type k: np.ndarray(len = n_dimensions)
+         """
 
         # Note the equivalence of boolean array and 0, 1 array.
         k += 2.0 * self.k_max * (k < (-self.k_max - constants.SMALL_NUMBER))
