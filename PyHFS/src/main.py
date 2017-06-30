@@ -3,6 +3,7 @@ import time
 
 import parameters
 from OrbitalHessian import OrbitalHessian
+import slepc_wrapper
 
 
 def main():
@@ -40,4 +41,5 @@ if __name__ == "__main__":
     t = time.time()
     main()
     t = time.time() - t
-    print("PyHFS completed in {} seconds.".format(t))
+    print("PyHFS completed in {} seconds.\n".format(t))
+    slepc_wrapper.main()
