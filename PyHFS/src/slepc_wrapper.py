@@ -1,114 +1,139 @@
-import sys
-import time
-import pprint
+import sys, slepc4py
+slepc4py.init(sys.argv)
 
-
-import numpy as np
-import slepc4py
 from petsc4py import PETSc
 from slepc4py import SLEPc
+import numpy as np
+import functools
 
 
-def matrix_func(i, j):
-    if i != j:
-        return float(1e-4 * (j + i))
-    else:
-        return float(3 * i)
+class PetscMatWrapper():
 
-
-class EigenValueProblemWrapper(object):
-
-    def __init__(self, n_rows, n_cols, mpi_comm=PETSc.COMM_WORLD, n_evals=1):
-
+    def __init__(self, n_rows, n_cols, row_val_iterator, mpi_comm=PETSc.COMM_WORLD, *args, **kwargs):
         self.mpi_comm = mpi_comm
-        self.scalar = PETSc.ScalarType
-
-        self.eps = SLEPc.EPS().create(self.mpi_comm)
-        self.eps.setProblemType(SLEPc.EPS.ProblemType.HEP)  # Hermitian Eigenvalue Problem
-
-        self.mat = PETSc.Mat()
+        self.mat = PETSc.Mat(*args, **kwargs)
+        self.n_rows = n_rows
+        self.n_cols = n_cols
         self.mat.create(self.mpi_comm)
-        self.n_rows, self.n_cols = n_rows, n_cols
-        self.mat.setSizes([self.n_rows, self.n_cols])
-        self.mat.setType('mpiaij')
-        self.mat.setUp()
-        self.mat.setPreallocationNNZ(self.n_cols)
+        self.mat.setSizes([n_rows, n_cols])
         self.mat.setFromOptions()
-        self.mat_from_func(matrix_func)
+        self.mat.setUp()
+        self.fill(row_val_iterator)
+        self.row_val_iterator = row_val_iterator
 
-        self.eps.setType(SLEPc.EPS.Type.JD)  # Jacobi - Davidson
+    def fill(self, row_val_iterator):
+        rstart, rend = self.mat.getOwnershipRange()
+
+        for i in range(rstart, rend):
+            for j, val in row_val_iterator(i):
+                self.mat[i, j] = val
+
+            self.mat.assemble()
+
+    @staticmethod
+    def row_generator(i_row, n_cols):
+        """given a row index, return a generator for the indices and values of the row.
+
+        This is an example of the type of data structure that fill can use to efficiently build a matrix.
+        """
+        def it():
+            for i_col in range(0, n_cols):
+                if i_row == i_col:
+                    yield (i_col, i_col + 1)
+                elif i_row == i_col + 1:
+                    yield (i_col, 0.1)
+                elif i_row == i_col - 1:
+                    yield (i_col, 0.1)
+        return it()
+
+    @staticmethod
+    def row_generator_to_numpy(row_generator, n_rows, n_cols):
+        ary = np.zeros((n_rows, n_cols))
+        for i_row in range(n_rows):
+            for i_col, v in row_generator(i_row):
+                ary[i_row, i_col] = v
+        return ary
+
+
+class SlepcEPSWrapper(object):
+
+    def __init__(self, Mat, n_eigvals=1, n_initial=1):
+        self.eps = SLEPc.EPS()
+        self.Mat = Mat
+        self.eps.create(self.Mat.mpi_comm)
+        self.eps.setOperators(self.Mat.mat)
+        self.n_eigvals = n_eigvals
+        self.eps.setDimensions(nev=self.n_eigvals, ncv=PETSc.DECIDE, mpd=PETSc.DECIDE)
+        self.eps.setProblemType(SLEPc.EPS.ProblemType.HEP)
+        self.eps.setType(SLEPc.EPS.Type.JD)
         self.eps.setWhichEigenpairs(SLEPc.EPS.Which.SMALLEST_REAL)
-        self.eps.max_it = 100
-
-        self.eps.setOperators(self.mat, None)
-        self.eps.setDimensions(nev=n_evals, ncv=PETSc.DECIDE, mpd=PETSc.DECIDE)
-
+        self.eps.max_it = 99
+        self.set_initial_space(n_initial)
         self.eps.setFromOptions()
+        self.eps.solve()
 
-        self.solution_time = None
-        self.eigs = None
-        self.n_iters = None
-        self.n_converged = None
-
-    def mat_from_func(self, f):
-        Istart, Iend = self.mat.getOwnershipRange()
-        row = np.zeros(self.n_cols)
-        print(
-        'Rank is {rank:.0f}, Istart is {ist:.0f} and Iend is {ie:.0f}'.format(rank=self.mpi_comm.getRank(), ist=Istart,
-                                                                              ie=Iend))
-        for i in range(Istart, Iend):
-            for j in range(self.n_cols):
-                row[j] = f(i, j)
-
-        self.mat.assemblyBegin()
-        self.mat.assemblyEnd()
-
-    def set_initial_space(self, n_initial=1, which='identity'):
-        """Initial guess vectors, create from mat to ensure compatible parallel layout."""
-
-        vecs = [self.mat.createVecLeft() for _ in range(n_initial)]
+    def set_initial_space(self, n_initial, which='identity'):
+        vecs = [self.Mat.mat.createVecLeft() for i in range(n_initial)]
 
         if which == 'identity':
             for i, v in enumerate(vecs):
-                v[i] = 1.0
+                v[i] = 0
                 v.assemblyBegin()
                 v.assemblyEnd()
 
         self.eps.setInitialSpace(vecs)
 
-    def solve(self):
-        t = time.time()
-        self.eps.solve()
-        self.solution_time = time.time() - t
-        self.n_iters = self.eps.getIterationNumber()
-        self.n_converged = self.eps.getConverged()
-        if self.n_converged > 0:
-            for i in range(self.n_converged):
-                self.eigs.append(self.eps.getEigenpair(i))
+    def get_eigenpairs(self):
+        """Return a list of all eigenpairs and errors"""
+        pairs = []
+        nconv = self.eps.getConverged()
+        if nconv > 0:
+            # Create the results vectors
+            vr, wr = self.Mat.mat.getVecs()
+            vi, wi = self.Mat.mat.getVecs()
+
+            for i in range(nconv):
+                k = self.eps.getEigenpair(i, vr, vi)
+                error = self.eps.computeError(i)
+                if k.imag != 0.0:
+                    pairs.append((k.real, k.imag, error))
+                else:
+                    pairs.append((k.real, error))
+        return pairs
 
     def __str__(self):
-        return "Eigenvalue Problem Solver:\n" + pprint.pformat(self.__dict__)
+        s = []
+        its = self.eps.getIterationNumber()
+        eps_type = self.eps.getType()
+        nev, ncv, mpd = self.eps.getDimensions()
+        tol, maxit = self.eps.getTolerances()
+        nconv = self.eps.getConverged()
+
+        s.append("Number of iterations of the method: %d" % its)
+        s.append("Solution method: %s" % eps_type)
+        s.append("Number of requested eigenvalues: %d" % nev)
+        s.append("Stopping condition: tol=%.4g, maxit=%d" % (tol, maxit))
+        s.append("Number of converged eigenpairs %d" % nconv)
+        s.append(str(self.get_eigenpairs()))
+        return '\n'.join(s)
 
 
 def main():
+    n = 10
 
-    N = 80
-    EVPW = EigenValueProblemWrapper(N, N)
-    EVPW.mat_from_func(matrix_func)
-    # EVPW.solve()
-    print(EVPW)
+    gen = functools.partial(PetscMatWrapper.row_generator, n_cols=n)
+    M = PetscMatWrapper(n, n, gen)
+    E = SlepcEPSWrapper(M)
 
-    if EVPW.mpi_comm.getRank() == 0:
-        A = np.zeros((N, N))
-        for i in range(N):
-            for j in range(N):
-                A[i, j] = matrix_func(i, j)
-        t1 = time.time()
-        evals, evecs = np.linalg.eigh(A)
+    ary = np.zeros((n, n))
+    for i in range(n):
+        for j, v in M.row_val_iterator(i):
+            ary[i, j] = v
 
-        print('np min eval = {mineval:10.8f}'.format(mineval=np.amin(evals)))
-        print("Np took this long: ", time.time() - t1)
-
+    np_evals = np.linalg.eigvals(ary)
+    np_evals = np.sort(np_evals)
+    print('Numpy eigenvals :', np_evals[:E.n_eigvals])
+    print(E)
 
 if __name__ == '__main__':
     main()

@@ -19,8 +19,8 @@ class Excitations(object):
 
     @property
     def momenta(self):
-        return ((k[:self.parameters.n_dimensions], k[self.parameters.n_dimensions:])
-                for k in self._momenta)
+        return [(k[:self.parameters.n_dimensions], k[self.parameters.n_dimensions:])
+                for k in self._momenta]
 
     def find_all_excitations(self):
         """Find excitations from all combinations of occupied and virtual states."""

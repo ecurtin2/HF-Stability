@@ -1,6 +1,8 @@
+import itertools
+
 import numpy as np
 
-
+import slepc_wrapper
 import twoERI
 
 
@@ -30,13 +32,31 @@ class OrbitalHessian(object):
     def as_numpy(self):
         """Return the OrbitalHessian instance as a numpy array.
         No simplifications are made for the various symmetries, so the entire H matrix is generated always."""
-        H = np.zeros((self.size, self.size))
+        H = slepc_wrapper.PetscMatWrapper.row_generator_to_numpy(self.row_generator,
+                                                                 self.size, self.size)
+        return H
 
+    def row_generator(self, i_row):
         N = self.size // 2
-        H[:N, :N] = self.A.as_numpy()
-        H[:N, N:] = self.B.as_numpy()
-        H[N:, :N] = self.B.as_numpy()
-        H[N:, N:] = self.A.as_numpy()
+
+        # Switched the order of row_gen iterator in each case. This
+        # may be better for contiguous access, but I'm not sure. It likely
+        # is not significant.
+        if i_row < N:
+            A_gen = self.A.row_generator(i_row, offset=0)
+            B_gen = self.B.row_generator(i_row, offset=N)
+            row_gen = itertools.chain(A_gen, B_gen)
+        else:
+            i_row -= N
+            A_gen = self.A.row_generator(i_row, offset=N)
+            B_gen = self.B.row_generator(i_row, offset=0)
+            row_gen = itertools.chain(B_gen, A_gen)
+        return row_gen
+
+    def as_PETSc(self):
+        """Create and return reference to Petsc Sparse Parallel Matrix."""
+        H = slepc_wrapper.PetscMatWrapper(self.size, self.size,
+                                                       self.row_generator)
         return H
 
     def get_conserving_virtual(self, k_occ, k_vir, k_second_occ):
@@ -57,12 +77,28 @@ class OrbitalHessian(object):
         exc_label = self.excitations.label_from_indices(indices)
         return exc_label, k
 
-    def lowest_eigenvalue(self):
+    def lowest_eigenvalue(self, method='Numpy'):
         """Return the lowest eigenvalue of the Orbital Hessian
 
         Again currently only builds the full matrix and diagonalizes.
         """
+        methods = {'SLEPc_Sparse': self._slepc_sparse_lowest_eigenvalue
+                  ,'Numpy': self._numpy_lowest_eigenvalue}
+        if method not in methods.keys():
+            raise ValueError('Method is not available. Given = ' +
+                             '{given}, must be one of {must}.'.format(given=method
+                                                                      , must=set(methods.keys())))
+        return methods[method]()
 
+    def _slepc_sparse_lowest_eigenvalue(self):
+        """Return the lowest eigenvalue using a sparse parallel PETSc Matrix."""
+        H = self.as_PETSc()
+        eps = slepc_wrapper.SlepcEPSWrapper(H)
+        print(eps)
+        return
+
+    def _numpy_lowest_eigenvalue(self):
+        """Return the lowest eigenvalue using dense numpy."""
         return np.amin(np.linalg.eigvals(self.as_numpy()))
 
 
@@ -76,9 +112,16 @@ class AorB(object):
         self.states = orbitalhessian.states
         self.excitations = orbitalhessian.excitations
         self.elmnt_from_momenta = self._gen_elmnt_function()
+        self.n_rows = self.parameters.excitations.n
+        self.n_cols = self.parameters.excitations.n
 
     def as_numpy(self):
         """Return the matrix in the form of a numpy array."""
+        return slepc_wrapper.PetscMatWrapper.row_generator_to_numpy(self.row_generator,
+                                                               self.n_rows, self.n_cols)
+
+    def row_generator(self, i_row, offset=0):
+        """Return a generator for the i'th row that makes (column index, value) pairs for nonzero elements."""
         raise NotImplementedError
 
     def momentum_conserving_pairs(self, k_i, k_a):
@@ -150,12 +193,17 @@ class A(AorB):
                 t = self.excitations.label_from_momenta(kj, kb)
                 yield t, kj, kb
 
-    def as_numpy(self):
-        a = np.diag(self.excitations.energies)
-        for s, (k_i, k_a) in enumerate(self.excitations.momenta):
-            for t, k_j, k_b in self.momentum_conserving_pairs(k_i, k_a):
-                a[s, t] += self.elmnt_from_momenta(ki=k_i, ka=k_a, kj=k_j, kb=k_b)
-        return a
+    def row_generator(self, i_row, offset=0):
+        """Return a generator for the i'th row that makes (column index, value) pairs for nonzero elements."""
+
+        def it():
+            (k_i, k_a) = self.excitations.momenta[i_row]
+            for i_col, k_j, k_b in self.momentum_conserving_pairs(k_i, k_a):
+                val = self.elmnt_from_momenta(ki=k_i, ka=k_a, kj=k_j, kb=k_b)
+                if i_row == i_col:
+                    val += self.excitations.energies[i_row]
+                yield (i_col + offset, val)
+        return it()
 
     def singlet_elmnt(self, ki, ka, kj, kb):
         return 2.0 * self.parameters.eri.eval(ka, kj, ki, kb) - self.parameters.eri.eval(ka, kj, kb, ki)
@@ -190,12 +238,13 @@ class B(AorB):
                 t = self.excitations.label_from_momenta(kj, kb)
                 yield t, kj, kb
 
-    def as_numpy(self):
-        b = np.zeros((self.excitations.n, self.excitations.n))
-        for s, (k_i, k_a) in enumerate(self.excitations.momenta):
-            for t, k_j, k_b in self.momentum_conserving_pairs(k_i, k_a):
-                b[s, t] = self.elmnt_from_momenta(ki=k_i, ka=k_a, kj=k_j, kb=k_b)
-        return b
+    def row_generator(self, i_row, offset=0):
+        """Return a generator for the i'th row that makes (column index, value) pairs for nonzero elements."""
+        def it():
+            (k_i, k_a) = self.excitations.momenta[i_row]
+            for i_col, k_j, k_b in self.momentum_conserving_pairs(k_i, k_a):
+                yield (i_col + offset, self.elmnt_from_momenta(ki=k_i, ka=k_a, kj=k_j, kb=k_b))
+        return it()
 
     def singlet_elmnt(self, ki, ka, kj, kb):
         return 2.0 * self.parameters.eri.eval(ka, kb, ki, kj) - self.parameters.eri.eval(ka, kb, kj, ki)
@@ -203,7 +252,4 @@ class B(AorB):
     def triplet_elmnt(self, ki, ka, kj, kb):
 
         val = -self.parameters.eri.eval(k1=ka, k2=kb, k3=kj, k4=ki)
-        # k = self.parameters.to_first_brillouin_zone(kj-ka)
-        # print("within triplet", np.linalg.norm(k))
-        # print("B triplet_elmnt", ka, kb, kj, ki, val)
         return val

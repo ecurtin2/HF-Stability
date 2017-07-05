@@ -35,8 +35,6 @@ class States(object):
         self.energies = np.zeros(self.len)
         self.set_indices()
         self.momenta = self.parameters.k_grid[self.indices]
-        print(self.indices)
-        print(self.momenta)
 
         self.is_occupied = None
         self.occupied_indices = None

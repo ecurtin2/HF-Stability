@@ -1,6 +1,7 @@
 import numpy as np
 import time
 
+import constants
 import parameters
 from OrbitalHessian import OrbitalHessian
 import slepc_wrapper
@@ -36,10 +37,21 @@ def main():
     vals, vecs = np.linalg.eigh(H.as_numpy())
     print("H evals : \n{}".format(vals))
 
+    A_2 = slepc_wrapper.PetscMatWrapper.row_generator_to_numpy(H.A.row_generator,
+                                                               H.A.n_rows, H.A.n_cols)
+    assert (np.all(np.isclose(H.A.as_numpy(), A_2)))
+    B_2 = slepc_wrapper.PetscMatWrapper.row_generator_to_numpy(H.B.row_generator,
+                                                               H.B.n_rows, H.B.n_cols)
+    assert(np.all(np.isclose(H.B.as_numpy(), B_2)))
+
+    print(H.lowest_eigenvalue(method='SLEPc_Sparse'))
+
 
 if __name__ == "__main__":
     t = time.time()
     main()
     t = time.time() - t
-    print("PyHFS completed in {} seconds.\n".format(t))
+    print("PyHFS completed in {:10.5f} seconds.\n".format(t))
     slepc_wrapper.main()
+
+
