@@ -1,3 +1,5 @@
+import itertools
+
 import numpy as np
 
 import prettyprint
@@ -19,8 +21,8 @@ class Excitations(object):
 
     @property
     def momenta(self):
-        return [(k[:self.parameters.n_dimensions], k[self.parameters.n_dimensions:])
-                for k in self._momenta]
+        return ((k[:self.parameters.n_dimensions], k[self.parameters.n_dimensions:])
+                for k in self._momenta)
 
     def find_all_excitations(self):
         """Find excitations from all combinations of occupied and virtual states."""
@@ -65,6 +67,10 @@ class Excitations(object):
         self.energies = self.energies[idx]
         self._momenta = self._momenta[idx]
         self._label_from_momenta = {tuple(np.round(k, 5)): i for i, k in enumerate(self._momenta)}
+
+    def labels_from_momenta_ary(self, k):
+
+        return self._label_from_momenta[tuple(np.round(k, 5))]
 
     def label_from_momenta(self, ki, ka):
         """Return the label for the excitation from ki -> ka.

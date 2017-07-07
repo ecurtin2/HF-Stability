@@ -1,4 +1,6 @@
 import itertools
+import time
+import sys
 
 import numpy as np
 
@@ -25,9 +27,16 @@ class OrbitalHessian(object):
         self.parameters = parameters
         self.states = parameters.states
         self.excitations = parameters.excitations
-        self.size = __class__.case_size[self.parameters.instability_type] * self.excitations.n
+        try:
+            self.size = __class__.case_size[self.parameters.instability_type] * self.excitations.n
+        except KeyError:
+            raise ValueError("Instability type '{type}' not supported, must be one of {set}.".format(
+                type=self.parameters.instability_type, set=set(self.case_size.keys())
+            ))
         self.A = A(self)
         self.B = B(self)
+        self.timings = {}
+        self.PETSc_mat = None
 
     def as_numpy(self):
         """Return the OrbitalHessian instance as a numpy array.
@@ -57,6 +66,7 @@ class OrbitalHessian(object):
         """Create and return reference to Petsc Sparse Parallel Matrix."""
         H = slepc_wrapper.PetscMatWrapper(self.size, self.size,
                                                        self.row_generator)
+        self.PETSc_mat = H
         return H
 
     def get_conserving_virtual(self, k_occ, k_vir, k_second_occ):
@@ -92,14 +102,30 @@ class OrbitalHessian(object):
 
     def _slepc_sparse_lowest_eigenvalue(self):
         """Return the lowest eigenvalue using a sparse parallel PETSc Matrix."""
+        t = time.time()
         H = self.as_PETSc()
+        self.timings['PETSc Build'] = time.time() - t
+
         eps = slepc_wrapper.SlepcEPSWrapper(H)
-        print(eps)
-        return
+        eps.set_initial_space(n_initial=10, which='identity')
+        t = time.time()
+        eps.solve()
+        self.timings['SLEPc Solve'] = time.time() - t
+
+        eigs = eps.get_eigenpairs()
+        eigs_real = [val[0] for val in eigs]
+        return min(eigs_real)
 
     def _numpy_lowest_eigenvalue(self):
         """Return the lowest eigenvalue using dense numpy."""
-        return np.amin(np.linalg.eigvals(self.as_numpy()))
+        t = time.time()
+        ary = self.as_numpy()
+        self.timings['Numpy Build'] = time.time() - t
+
+        t = time.time()
+        val = np.amin(np.linalg.eigvals(ary))
+        self.timings['Numpy Diagonalization'] = time.time() - t
+        return val
 
 
 class AorB(object):
@@ -196,14 +222,47 @@ class A(AorB):
     def row_generator(self, i_row, offset=0):
         """Return a generator for the i'th row that makes (column index, value) pairs for nonzero elements."""
 
-        def it():
-            (k_i, k_a) = self.excitations.momenta[i_row]
+        def a_row_iterator():
+            k_i, k_a = np.split(self.excitations._momenta[i_row], 2)
             for i_col, k_j, k_b in self.momentum_conserving_pairs(k_i, k_a):
-                val = self.elmnt_from_momenta(ki=k_i, ka=k_a, kj=k_j, kb=k_b)
+                val = self.elmnt_from_momenta(k_i, k_a, k_j, k_b)
                 if i_row == i_col:
                     val += self.excitations.energies[i_row]
                 yield (i_col + offset, val)
-        return it()
+        return a_row_iterator()
+
+    def fast_row_generator(self, i_row, offset=0):
+        """Fast version of row generator
+
+        Logically equivalent to row_generator.
+        """
+        k_i, k_a = np.split(self.excitations._momenta[i_row], 2)
+
+        #  All possible momentum conserving virtual states
+        kj_ary = self.parameters.states.occupied_momenta
+        kb_ary = (k_a - k_i)[np.newaxis, :] + kj_ary
+        self.parameters.to_first_brillouin_zone(kb_ary)
+        mask = np.linalg.norm(kb_ary, axis=1) > self.parameters.k_fermi
+        kt_ary = np.hstack((kj_ary, kb_ary))
+        #  Keep only excitations with actual virtual states
+        kt_ary = kt_ary[mask]
+        idx = np.zeros(len(kt_ary), dtype=np.uint32)
+
+        # this isn't optimal.
+        for i, kt in enumerate(kt_ary):
+            idx[i] = self.excitations._label_from_momenta[tuple(np.round(kt, 5))]
+
+        # only called once should be ok
+        two_e_kakjkikb = self.elmnt_from_momenta(k_a, 0, k_i, 0)
+
+        denom = np.linalg.norm(self.parameters.to_first_brillouin_zone((k_a - k_i)[np.newaxis, :]), axis=0)
+        print(denom)
+        sys.exit()
+
+        val = self.elmnt_from_momenta(k_i, k_a, k_j, k_b)
+        if i_row == i_col:
+            val += self.excitations.energies[i_row]
+        return (i_col + offset, val)
 
     def singlet_elmnt(self, ki, ka, kj, kb):
         return 2.0 * self.parameters.eri.eval(ka, kj, ki, kb) - self.parameters.eri.eval(ka, kj, kb, ki)
@@ -240,16 +299,16 @@ class B(AorB):
 
     def row_generator(self, i_row, offset=0):
         """Return a generator for the i'th row that makes (column index, value) pairs for nonzero elements."""
-        def it():
-            (k_i, k_a) = self.excitations.momenta[i_row]
+        def b_row_iterator():
+            k_i, k_a = np.split(self.excitations._momenta[i_row], 2)
             for i_col, k_j, k_b in self.momentum_conserving_pairs(k_i, k_a):
-                yield (i_col + offset, self.elmnt_from_momenta(ki=k_i, ka=k_a, kj=k_j, kb=k_b))
-        return it()
+                yield (i_col + offset, self.elmnt_from_momenta(k_i, k_a, k_j, k_b))
+        return b_row_iterator()
 
     def singlet_elmnt(self, ki, ka, kj, kb):
         return 2.0 * self.parameters.eri.eval(ka, kb, ki, kj) - self.parameters.eri.eval(ka, kb, kj, ki)
 
     def triplet_elmnt(self, ki, ka, kj, kb):
 
-        val = -self.parameters.eri.eval(k1=ka, k2=kb, k3=kj, k4=ki)
+        val = -self.parameters.eri.eval(ka, kb, kj, ki)
         return val

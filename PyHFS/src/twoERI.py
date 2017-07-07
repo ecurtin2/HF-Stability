@@ -19,7 +19,7 @@ class TwoElectronIntegral(object):
         self.parameters = parameters
         if not hasattr(self.parameters, 'volume'):
             raise AttributeError('Parameters must have volume defined before instantiating.')
-        self._set_eval()
+        self._set_eval(safe=self.parameters.safe_eri)
 
     def _set_eval(self, safe=True):
         """Update two electron integral with information from states object.

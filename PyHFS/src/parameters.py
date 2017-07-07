@@ -12,7 +12,7 @@ class Parameters(object):
     of dimensions. """
 
     def __init__(self, *, rs=1.2, n_k_points=12, n_dimensions=2, instability_type='cRHF2cUHF',
-                 cylinder_radius=None, delta_fxn_magnitude=None):
+                 cylinder_radius=None, delta_fxn_magnitude=None, safe_eri=True):
         """Create the parameters object for the given parameters.
 
         :param rs: The wigner seitz radius, in 1 / bohr
@@ -21,20 +21,20 @@ class Parameters(object):
         :type n_k_points: int
         :param n_dimensions: Number of physical dimensions: 1, 2 or 3.
         :type n_dimensions: int
-        :param instability_type: The type of instability to be investigated. Must be one of the strings in the
-        set __class__.instabilities_supported.
+        :param instability_type: The type of instability to be investigated. Must be one of the strings in the set __class__.instabilities_supported.
         :type instability_type: string
-        :param cylinder_radius: The radius of the cylinder for the pseudo - 1 dimensional system. This is meant
-        to be small such that motion in the radial dimension is 'frozen'. See the appendix of Guiliani and Vignale
-        for a discussion on this.
+        :param cylinder_radius: The radius of the cylinder for the pseudo - 1 dimensional system. This is meant to be small such that motion in the radial dimension is 'frozen'. See the appendix of Guiliani and Vignale for a discussion on this.
         :type cylinder_radius: float
-        :param delta_fxn_magnitude: The multiplicative constant for the delta function potential in 1 dimension.
-        ( v(r12) = delta_fxn_magnitude * delta(r12) )
+        :param delta_fxn_magnitude: The multiplicative constant for the delta function potential in 1 dimension. ( v(r12) = delta_fxn_magnitude * delta(r12) )
+        :type delta_fxn_magnitude: float
+        :param safe_eri: Whether to check for momentum conservation explicitly in the two ERI.
+        :type safe_eri: bool
         """
 
         self.rs = rs
         self.n_k_points = n_k_points
         self.n_dimensions = n_dimensions
+        self.safe_eri = safe_eri
 
         if self.n_dimensions == 1:
             if (cylinder_radius is None) and (delta_fxn_magnitude is None):

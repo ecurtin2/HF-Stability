@@ -1,34 +1,47 @@
-import sys, slepc4py
-slepc4py.init(sys.argv)
+import functools
+import time
 
+
+import numpy as np
 from petsc4py import PETSc
 from slepc4py import SLEPc
-import numpy as np
-import functools
 
 
-class PetscMatWrapper():
+class PetscMatWrapper(object):
 
     def __init__(self, n_rows, n_cols, row_val_iterator, mpi_comm=PETSc.COMM_WORLD, *args, **kwargs):
         self.mpi_comm = mpi_comm
         self.mat = PETSc.Mat(*args, **kwargs)
         self.n_rows = n_rows
         self.n_cols = n_cols
+        self.n_nonzeros = 0
+
         self.mat.create(self.mpi_comm)
         self.mat.setSizes([n_rows, n_cols])
         self.mat.setFromOptions()
         self.mat.setUp()
+
         self.fill(row_val_iterator)
         self.row_val_iterator = row_val_iterator
 
     def fill(self, row_val_iterator):
-        rstart, rend = self.mat.getOwnershipRange()
 
+        rstart, rend = self.mat.getOwnershipRange()
         for i in range(rstart, rend):
+            t = time.time()
             for j, val in row_val_iterator(i):
                 self.mat[i, j] = val
+            PETSc.Sys.Print('Assigning took {} seconds.'.format(time.time() - t))
+            t = time.time()
+            for j, val in row_val_iterator(i):
+                pass
+            PETSc.Sys.Print('Just looping took {} seconds.'.format(time.time() - t))
 
-            self.mat.assemble()
+        t_row = time.time() - t
+        t = time.time()
+        self.mat.assemble()
+        t_assmeble = time.time() - t
+        PETSc.Sys.Print('Ratio of iterator to assemble is {}'.format(t_row / t_assmeble))
 
     @staticmethod
     def row_generator(i_row, n_cols):
@@ -68,7 +81,8 @@ class SlepcEPSWrapper(object):
         self.eps.setType(SLEPc.EPS.Type.JD)
         self.eps.setWhichEigenpairs(SLEPc.EPS.Which.SMALLEST_REAL)
         self.eps.max_it = 99
-        self.set_initial_space(n_initial)
+
+    def solve(self):
         self.eps.setFromOptions()
         self.eps.solve()
 
