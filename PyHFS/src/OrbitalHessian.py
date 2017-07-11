@@ -248,15 +248,21 @@ class A(AorB):
         kt_ary = kt_ary[mask]
         idx = np.zeros(len(kt_ary), dtype=np.uint32)
 
+        row_vals = np.zeros(len(kt_ary), dtype=np.float64)
         # this isn't optimal.
         for i, kt in enumerate(kt_ary):
-            idx[i] = self.excitations._label_from_momenta[tuple(np.round(kt, 5))]
+            j = self.excitations._label_from_momenta[tuple(np.round(kt, 5))]
+            if j == i_row:
+                row_vals[i] = self.excitations.energies[i]
+            idx[i] = j
+
 
         # only called once should be ok
         two_e_kakjkikb = self.elmnt_from_momenta(k_a, 0, k_i, 0)
 
-        denom = np.linalg.norm(self.parameters.to_first_brillouin_zone((k_a - k_i)[np.newaxis, :]), axis=0)
-        print(denom)
+        denoms = np.linalg.norm(self.parameters.to_first_brillouin_zone((k_a - k_i)[np.newaxis, :]), axis=0)
+
+        print('denom = ', denoms)
         sys.exit()
 
         val = self.elmnt_from_momenta(k_i, k_a, k_j, k_b)

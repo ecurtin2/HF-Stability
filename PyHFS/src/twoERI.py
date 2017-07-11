@@ -17,6 +17,7 @@ class TwoElectronIntegral(object):
     def __init__(self, parameters):
         self.eval = __class__._two_eri_not_set
         self.parameters = parameters
+        self.prefactor = None
         if not hasattr(self.parameters, 'volume'):
             raise AttributeError('Parameters must have volume defined before instantiating.')
         self._set_eval(safe=self.parameters.safe_eri)
@@ -40,13 +41,13 @@ class TwoElectronIntegral(object):
 
         elif self.parameters.n_dimensions == 2:
             # CORRECT ONE:
-            prefactor = np.pi * 2.0 / self.parameters.volume
+            self.prefactor = np.pi * 2.0 / self.parameters.volume
             # INCORRECT
             # prefactor = np.pi / self.parameters.volume
-            self.eval = functools.partial(self._2d, prefactor)
+            self.eval = functools.partial(self._2d, self.prefactor)
         elif self.parameters.n_dimensions == 3:
-            prefactor = np.pi * 4.0 / self.parameters.volume
-            self.eval = functools.partial(self._3d, prefactor)
+            self.prefactor = np.pi * 4.0 / self.parameters.volume
+            self.eval = functools.partial(self._3d, self.prefactor)
         else:
             raise ValueError('parameters must have attribute n_dimensions = 1, 2 or 3.')
 

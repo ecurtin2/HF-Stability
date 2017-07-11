@@ -30,6 +30,9 @@ def main():
                         dest='safe_eri', action='store_false')
     parser.set_defaults(safe_eri=True)
 
+    # for jupyter
+    parser.add_argument('-f', '--fjup', type=str)
+
     args = vars(parser.parse_args())
 
     params = parameters.Parameters(n_dimensions=args['ndim']
@@ -54,8 +57,8 @@ def main():
     for k, v in H.timings.items():
         Pprint('{k} : {v}'.format(k=k, v=v))
 
-    x = H.A.fast_row_generator(1)
-    Pprint(x)
+    #x = H.A.fast_row_generator(1)
+    #Pprint(x)
 
 if __name__ == "__main__":
     main()
