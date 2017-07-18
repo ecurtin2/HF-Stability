@@ -16,7 +16,7 @@ class PetscMatWrapper(object):
         self.n_cols = n_cols
         self.n_nonzeros = 0
 
-        self.mat.create(self.mpi_comm)
+        SLEPc
         self.mat.setSizes([n_rows, n_cols])
         self.mat.setFromOptions()
         self.mat.setUp()
@@ -31,6 +31,7 @@ class PetscMatWrapper(object):
             t = time.time()
             for j, val in row_val_iterator(i):
                 self.mat[i, j] = val
+
             PETSc.Sys.Print('Assigning took {} seconds.'.format(time.time() - t))
             t = time.time()
             for j, val in row_val_iterator(i):
