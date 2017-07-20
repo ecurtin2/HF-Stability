@@ -8,11 +8,13 @@ SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&))
                          "The command line options are:\n"
                          "  -n <n>, where <n> = number of grid subdivisions in both x and y dimensions.\n\n";
 
+
     N = Ninput;
     SLEPc::matvec_product = matvec_product;
     SlepcInitialize(&argc, &argv, (char*)0, help);
     MPI_Comm_size(PETSC_COMM_WORLD, &nprocs);
     MatCreateShell(PETSC_COMM_WORLD, N / nprocs, N / nprocs, N, N, &N, &matrix);
+
     PETSCMatShellCreate(matrix);
     EPSCreate(PETSC_COMM_WORLD, &eps);
     EPSContext();
@@ -63,7 +65,7 @@ PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix) {
     ierr = MatSetFromOptions(matrix);                                                        CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
-//    ierr = MatShellSetOperation(matrix, MATOP_GET_DIAGONAL  , (void(*)())Petsc_MatDiags);    CHKERRQ(ierr);
+    //ierr = MatShellSetOperation(matrix, MATOP_GET_DIAGONAL  , (void(*)())Petsc_MatDiags);    CHKERRQ(ierr);
     return ierr;
 }
 
@@ -183,3 +185,31 @@ PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
     ierr = VecRestoreArray(y, &py);             CHKERRQ(ierr);
     PetscFunctionReturn(0);
 }
+/*
+#undef __FUNCT__
+#define __FUNCT__ "Petsc_MatVecProd"
+PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
+    void*             ctx;
+    int               nx;
+    const PetscReal*  px;
+    PetscReal*        py;
+    PetscErrorCode    ierr;
+
+    PetscFunctionBeginUser;
+    ierr = MatShellGetContext(matrix, &ctx);    CHKERRQ(ierr);
+
+    nx = *(int*)ctx;
+    ierr = VecGetArrayRead(x, &px);             CHKERRQ(ierr);
+    ierr = VecGetArray(y, &py);                 CHKERRQ(ierr);
+
+
+    PetscScalar* v = (PetscScalar*) &px[0];        // cast to non-const pointer for armadillo initialization
+    PetscScalar* Mv = (PetscScalar*) &py[0];
+    arma::vec myvec(v, nx, false, true); // copy_aux_mem (first bool) must be false for this to work
+    arma::vec myMv(Mv, nx, false, true); // since the memory pointed to by y is what PETSc sees.
+    SLEPc::matvec_product(myvec, myMv);  // modifies myMv inplace
+    ierr = VecRestoreArrayRead(x, &px);         CHKERRQ(ierr);
+    ierr = VecRestoreArray(y, &py);             CHKERRQ(ierr);
+    PetscFunctionReturn(0);
+}
+*/

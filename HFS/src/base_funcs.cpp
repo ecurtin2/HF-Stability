@@ -12,6 +12,7 @@
 #include <boost/math/special_functions/expint.hpp>
 # endif  // NDIM
 
+
 namespace HFS {
 
     scalar exchange(arma::umat& states, uint i) {

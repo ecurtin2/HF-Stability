@@ -68,10 +68,6 @@ int main(int argc, char* argv[]){
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
 
-    arma::vec k1 = {1.0, 2.0};
-    arma::vec k2 = {2.0, 3.0};
-    std::cout << "TWOE VALUE " << HFS::twoElectron(k1, k2) << std::endl;
-
     arma::mat A(HFS::Nexc, HFS::Nexc, arma::fill::zeros);
     for (unsigned i = 0; i < A.n_cols; ++i) {
             for (unsigned j = 0; j < A.n_rows; ++j) {
@@ -85,20 +81,8 @@ int main(int argc, char* argv[]){
                 B(j, i) = HFS::Matrix::Gen::B_minus_ab_ji(j, i);
             }
     }
-    std::cout << std::setw(100);
 
-    auto H = HFS::Matrix_generator();
-    arma::vec evals;
-    arma::mat evecs;
-    arma::eig_sym(evals, evecs, A);
-    evals.print("A evals");
-    arma::eig_sym(evals, evecs, B);
-    evals.print("B evals");
-    arma::eig_sym(evals, evecs, H);
-    evals.print("H evals");
-
-    /*
-   // # if NDIM != 1
+   # if NDIM != 1
         HFS::timeMatrixVectorProduct();
 
         SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
@@ -133,18 +117,18 @@ int main(int argc, char* argv[]){
         HFS::dav_min_eval = HFS::dav_vals.min();
 
 
-    //#endif // NDIM != 1
+    #endif // NDIM != 1
 
     # if NDIM == 1
-    //    arma::wall_clock eval_timer;
-//        eval_timer.tic();
-//        arma::mat matrix = HFS::Matrix_generator();
-//        arma::vec eigvals;
-//        arma::mat eigvecs;
-//        arma::eig_sym(eigvals, eigvecs, matrix);
-//        HFS::full_diag_min = eigvals.min();
-//        HFS::full_diag_time = eval_timer.toc();
-//        HFS::exact_evals = eigvals;
+        arma::wall_clock eval_timer;
+        eval_timer.tic();
+        arma::mat matrix = HFS::Matrix_generator();
+        arma::vec eigvals;
+        arma::mat eigvecs;
+        arma::eig_sym(eigvals, eigvecs, matrix);
+        HFS::full_diag_min = eigvals.min();
+        HFS::full_diag_time = eval_timer.toc();
+        HFS::exact_evals = eigvals;
     # endif // NDIM
 
     HFS::Total_Calculation_Time = timer.toc();
@@ -160,6 +144,6 @@ int main(int argc, char* argv[]){
     #endif //NDEBUG
 
     HFS::writeJSON(HFS::OutputFileName, true);
-*/
+
     return 0;
 }

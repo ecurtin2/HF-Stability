@@ -74,8 +74,8 @@ class SlepcEPSWrapper(object):
     def __init__(self, Mat, n_eigvals=1, n_initial=1):
         self.eps = SLEPc.EPS()
         self.Mat = Mat
-        self.eps.create(self.Mat.mpi_comm)
-        self.eps.setOperators(self.Mat.mat)
+        self.eps.create(self.Mat.getComm())
+        self.eps.setOperators(self.Mat)
         self.n_eigvals = n_eigvals
         self.eps.setDimensions(nev=self.n_eigvals, ncv=PETSc.DECIDE, mpd=PETSc.DECIDE)
         self.eps.setProblemType(SLEPc.EPS.ProblemType.HEP)
@@ -88,7 +88,7 @@ class SlepcEPSWrapper(object):
         self.eps.solve()
 
     def set_initial_space(self, n_initial, which='identity'):
-        vecs = [self.Mat.mat.createVecLeft() for i in range(n_initial)]
+        vecs = [self.Mat.createVecLeft() for i in range(n_initial)]
 
         if which == 'identity':
             for i, v in enumerate(vecs):
@@ -104,9 +104,8 @@ class SlepcEPSWrapper(object):
         nconv = self.eps.getConverged()
         if nconv > 0:
             # Create the results vectors
-            vr, wr = self.Mat.mat.getVecs()
-            vi, wi = self.Mat.mat.getVecs()
-
+            vr, wr = self.Mat.getVecs()
+            vi, wi = self.Mat.getVecs()
             for i in range(nconv):
                 k = self.eps.getEigenpair(i, vr, vi)
                 error = self.eps.computeError(i)
@@ -114,6 +113,7 @@ class SlepcEPSWrapper(object):
                     pairs.append((k.real, k.imag, error))
                 else:
                     pairs.append((k.real, error))
+
         return pairs
 
     def __str__(self):
