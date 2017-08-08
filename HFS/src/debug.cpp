@@ -16,7 +16,7 @@ bool davidsonAgreesWithFullDiag() {
     HFS::full_diag_min = eigvals.min();
     HFS::full_diag_time = timer.toc();
     HFS::exact_evals = eigvals;
-    return true;
+    return fabs(HFS::full_diag_min - HFS::dav_min_eval) < 1e-6;
 }
 
 bool matrixVectorProductWorks() {

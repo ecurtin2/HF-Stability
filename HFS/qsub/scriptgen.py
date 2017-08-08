@@ -3,17 +3,17 @@ import itertools
 import tempfile
 import os
 
-NDIM = 3
-caselist = ['cUHF2cUHF', 'cRHF2cUHF']
+NDIM = 1
+caselist = ['cRHF2cRHF', 'cRHF2cUHF']
 rslists = {
-	   'cUHF2cUHF' : [1.2]
-	  ,'cRHF2cUHF' : [0.8, 1.0, 1.2, 2.0, 4.0, 5.0] 
+	   'cRHF2cRHF' : np.linspace(0.4, 5.0, 10)
+	  ,'cRHF2cUHF' : np.linspace(0.4, 5.0, 10) 
           }
 Nklists = {
-	   'cUHF2cUHF' : [33]
-	  ,'cRHF2cUHF' : range(13, 49, 4)
+	   'cRHF2cRHF' : range(57, 357, 100)
+	  ,'cRHF2cUHF' : range(57, 357, 100)
           }
-Nodes = itertools.cycle([4, 5, 6, 7]) # iterator that loops through these variables
+Nodes = itertools.cycle([0, 1, 2, 3, 4]) # iterator that loops through these variables
 			              # goes back to start after reaching end. 
 
 f = open("templateqsub.sh", "r")

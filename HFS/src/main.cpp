@@ -39,10 +39,13 @@ int main(int argc, char* argv[]){
     HFS::OutputFileName  = "HFS.json";
 
     HFS::dav_tol         = 1e-6;
-    HFS::dav_maxits      = 30;
-    HFS::dav_max_subsize  = 1500;
-    HFS::num_guess_evecs = 1;
-    HFS::dav_blocksize   = 1;
+    HFS::dav_maxits      = 20;
+    HFS::dav_max_subsize  = 750;
+
+    // As Nk increases, the initial space and block size
+    // need to be bigger to accound for density/degeneracy in
+    // the eigenvalue spectrum.
+
     HFS::dav_num_evals   = 1;
     HFS::twoE_parameter_1dCase = 1;
     HFS::use_delta_1D = false;
@@ -57,8 +60,6 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::dav_tol, "--Dav_tol", false);
     parser.set_val(HFS::dav_maxits, "--Dav_maxits", false);
     parser.set_val(HFS::dav_max_subsize, "--Dav_maxsubsize", false);
-    parser.set_val(HFS::num_guess_evecs, "--num_guess_evecs", false);
-    parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
     parser.set_val(HFS::dav_num_evals, "--Dav_num_evals", false);
     parser.set_val(HFS::twoE_parameter_1dCase, "--twoE_parameter_1dCase", false);
     parser.set_val(HFS::use_delta_1D, "--use_delta_1D", false);
@@ -67,69 +68,50 @@ int main(int argc, char* argv[]){
     /* Calculation starts here */
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
+    HFS::timeMatrixVectorProduct();
 
-    arma::mat A(HFS::Nexc, HFS::Nexc, arma::fill::zeros);
-    for (unsigned i = 0; i < A.n_cols; ++i) {
-            for (unsigned j = 0; j < A.n_rows; ++j) {
-                A(j, i) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(j, i);
-            }
+    HFS::num_guess_evecs = HFS::ground_state_degeneracy;
+    HFS::dav_blocksize   = HFS::ground_state_degeneracy;
+
+    /* Default values for these are calculated, but may be
+    overridden from command line */
+    parser.set_val(HFS::num_guess_evecs, "--num_guess_evecs", false);
+    parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
+
+    SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
+    int nprocs = 1;
+    //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
+    myeps.nprocs = nprocs;
+    myeps.SetDimensions(HFS::dav_num_evals, HFS::dav_max_subsize);
+    myeps.SetTol(HFS::dav_tol, HFS::dav_maxits);
+    myeps.SetBlockSize(HFS::dav_blocksize);
+
+    // Choose guess eigenvectors for davidson. Weight by how close diags are.
+    std::vector< std::vector<scalar> > vecs(HFS::num_guess_evecs, std::vector<scalar>(HFS::Nmat, 0.0));
+    for (uint i = 0; i < HFS::num_guess_evecs; ++i) {
+        arma::vec guessvec;
+        arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
+        guessvec = (1.0 / temp);
+        guessvec /= arma::norm(guessvec);
+        vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
     }
 
-    arma::mat B(HFS::Nexc, HFS::Nexc, arma::fill::zeros);
-    for (unsigned i = 0; i < B.n_cols; ++i) {
-            for (unsigned j = 0; j < B.n_rows; ++j) {
-                B(j, i) = HFS::Matrix::Gen::B_minus_ab_ji(j, i);
-            }
-    }
-
-   # if NDIM != 1
-        HFS::timeMatrixVectorProduct();
-
-        SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
-        int nprocs = 1;
-        //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-        myeps.nprocs = nprocs;
-        myeps.SetDimensions(HFS::dav_num_evals, HFS::dav_max_subsize);
-        myeps.SetTol(HFS::dav_tol, HFS::dav_maxits);
-        myeps.SetBlockSize(HFS::dav_blocksize);
-
-        // Choose guess eigenvectors for davidson. Weight by how close diags are.
-        std::vector< std::vector<scalar> > vecs(HFS::num_guess_evecs, std::vector<scalar>(HFS::Nmat, 0.0));
-        for (uint i = 0; i < HFS::num_guess_evecs; ++i) {
-            arma::vec guessvec;
-            arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
-            guessvec = (1.0 / temp);
-            guessvec /= arma::norm(guessvec);
-            vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
-        }
-
-        // Davidson Algorithm
-        myeps.SetInitialSpace(vecs);
-        arma::wall_clock davtimer;
-        davtimer.tic();
-        myeps.Solve();
-        HFS::dav_time = davtimer.toc();
-        arma::vec temp(myeps.rVals);
-        HFS::dav_vals = temp;
-        HFS::dav_its = myeps.niter;
-        HFS::dav_nconv = myeps.nconv;
-        HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
+    // Davidson Algorithm
+    myeps.SetInitialSpace(vecs);
+    arma::wall_clock davtimer;
+    davtimer.tic();
+    myeps.Solve();
+    HFS::dav_time = davtimer.toc();
+    arma::vec temp(myeps.rVals);
+    HFS::dav_vals = temp;
+    HFS::dav_its = myeps.niter;
+    HFS::dav_nconv = myeps.nconv;
+    HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
+    if (HFS::dav_nconv >= 1) {
         HFS::dav_min_eval = HFS::dav_vals.min();
-
-
-    #endif // NDIM != 1
-
-    # if NDIM == 1
-        arma::wall_clock eval_timer;
-        eval_timer.tic();
-        arma::mat matrix = HFS::Matrix_generator();
-        arma::vec eigvals;
-        arma::mat eigvecs;
-        arma::eig_sym(eigvals, eigvecs, matrix);
-        HFS::full_diag_min = eigvals.min();
-        HFS::full_diag_time = eval_timer.toc();
-        HFS::exact_evals = eigvals;
-    # endif // NDIM
+    } else {
+        HFS::dav_min_eval = 1.0 / 0.0;
+    }
 
     HFS::Total_Calculation_Time = timer.toc();
 
