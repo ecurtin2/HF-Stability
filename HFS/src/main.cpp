@@ -79,9 +79,6 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
 
     SLEPc::EpS myeps(HFS::Nmat, HFS::MatVecProduct_func);
-    int nprocs = 1;
-    //MPI_Comm_size(MPI_COMM_WORLD, &nprocs);
-    myeps.nprocs = nprocs;
     myeps.SetDimensions(HFS::dav_num_evals, HFS::dav_max_subsize);
     myeps.SetTol(HFS::dav_tol, HFS::dav_maxits);
     myeps.SetBlockSize(HFS::dav_blocksize);
@@ -93,9 +90,11 @@ int main(int argc, char* argv[]){
         arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
         guessvec = (1.0 / temp);
         guessvec /= arma::norm(guessvec);
+        guessvec = arma::join_cols(guessvec, guessvec);
         vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
     }
 
+    HFS::N_MV_PROD = 0;
     // Davidson Algorithm
     myeps.SetInitialSpace(vecs);
     arma::wall_clock davtimer;
@@ -114,6 +113,8 @@ int main(int argc, char* argv[]){
     }
 
     HFS::Total_Calculation_Time = timer.toc();
+    std::cout << HFS::N_MV_PROD << std::endl;
+    std::cout << HFS::dav_min_eval << std::endl;
 
     // Finish up, write and test for problems.
     #ifndef NDEBUG

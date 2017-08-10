@@ -84,5 +84,6 @@ namespace HFS{
     extern uint Dav_minits;               /**< Minimum number of iterations for Davidson's Algorithm. */
     extern uint dav_max_subsize;           /**< Maximum size of the subspace before restart for Davidson's Algorithm. */
     extern scalar dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
+    extern int N_MV_PROD;
 }
 #endif // HFS_PARAMS_INCLUDED

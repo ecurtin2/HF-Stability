@@ -15,6 +15,9 @@
 #include <slepceps.h>
 #include <petscblaslapack.h>
 
+#include "parameters.hpp"
+#include "matrix_gen.hpp"
+
 
 
 
@@ -24,6 +27,8 @@
 namespace SLEPc {
 
     extern PetscErrorCode Petsc_MatVecProd(Mat matrix, Vec x, Vec y);
+    extern PetscErrorCode Petsc_MatDiags(Mat M, Vec diag);
+    extern PetscErrorCode Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv);
     extern void (*matvec_product)(arma::vec&, arma::vec&);
     class EpS {
         public:
@@ -36,12 +41,8 @@ namespace SLEPc {
             PetscScalar                             tol=1E-5;
             std::vector<PetscScalar>                iVals, rVals;
             std::vector< std::vector<PetscScalar> > iVecs, rVecs;
-            int                                argc=1;
-            char*                              args = (char*)"eps_monitor";
-            char**                             argv=&args;
 
-
-            EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&));
+            EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&), int argc=0, char** argv = (char**)"eps_monitor");
             ~EpS();
             PetscErrorCode SetInitialSpace(std::vector<std::vector<PetscScalar>> vecs);
             PetscErrorCode EPSContext ();
