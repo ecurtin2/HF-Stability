@@ -15,6 +15,7 @@ void TripletH(arma::vec& v, arma::vec& Mv) {
     ApplyMvFxnsToSubMatrices(v, Mv, 2, MvList);
 }
 
+
 void SingletH(arma::vec& v, arma::vec& Mv) {
     Mv.zeros();
     std::vector<std::tuple<uint, uint, void (*)(arma::vec&, arma::vec&)>> MvList (4);

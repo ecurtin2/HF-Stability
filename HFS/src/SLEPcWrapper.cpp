@@ -2,7 +2,7 @@
 
 void (*SLEPc::matvec_product)(arma::vec&, arma::vec&);
 
-SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&)) {
+SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&), int argc, char* argv[]) {
     static char help[] = "Solves the same eigenproblem as in example ex2, but using a shell matrix. "
                          "The problem is a standard symmetric eigenproblem corresponding to the 2-D Laplacian operator.\n\n"
                          "The command line options are:\n"
@@ -13,7 +13,7 @@ SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&))
     SLEPc::matvec_product = matvec_product;
     SlepcInitialize(&argc, &argv, (char*)0, help);
     MPI_Comm_size(PETSC_COMM_WORLD, &nprocs);
-    MatCreateShell(PETSC_COMM_WORLD, N / nprocs, N / nprocs, N, N, &N, &matrix);
+    MatCreateShell(PETSC_COMM_WORLD, N / nprocs + 1, N / nprocs + 1, PETSC_DETERMINE, PETSC_DETERMINE, &N, &matrix);
 
     PETSCMatShellCreate(matrix);
     EPSCreate(PETSC_COMM_WORLD, &eps);
@@ -55,7 +55,7 @@ PetscErrorCode SLEPc::EpS::EPSContext () {
     ierr = EPSSetOperators(eps, matrix, NULL);              CHKERRQ(ierr);  // Set Operators, null = non-general eigevalue problem
     ierr = EPSSetProblemType(eps, EPS_HEP);                 CHKERRQ(ierr);  // Hermitian eigenvalue?
     ierr = EPSSetWhichEigenpairs(eps, EPS_SMALLEST_REAL);   CHKERRQ(ierr);  // Set default searching
-    ierr = EPSSetType(eps, EPSJD);                          CHKERRQ(ierr);  // Set default solver to Jacobi-Davidson
+    ierr = EPSSetType(eps, EPSKRYLOVSCHUR);                          CHKERRQ(ierr);  // Set default solver to Jacobi-Davidson
     return ierr;
 }
 
@@ -63,8 +63,10 @@ PetscErrorCode SLEPc::EpS::EPSContext () {
 PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix) {
     // only matvec prod supported
     ierr = MatSetFromOptions(matrix);                                                        CHKERRQ(ierr);
-    ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
-    ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
+    //ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
+    //ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
+    ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
+    ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
     //ierr = MatShellSetOperation(matrix, MATOP_GET_DIAGONAL  , (void(*)())Petsc_MatDiags);    CHKERRQ(ierr);
     return ierr;
 }
@@ -159,6 +161,7 @@ PetscErrorCode SLEPc::EpS::print() {
 }
 
 
+
 #undef __FUNCT__
 #define __FUNCT__ "Petsc_MatVecProd"
 PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
@@ -183,33 +186,97 @@ PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
     SLEPc::matvec_product(myvec, myMv);  // modifies myMv inplace
     ierr = VecRestoreArrayRead(x, &px);         CHKERRQ(ierr);
     ierr = VecRestoreArray(y, &py);             CHKERRQ(ierr);
+    HFS::N_MV_PROD += 1;
     PetscFunctionReturn(0);
 }
-/*
+
 #undef __FUNCT__
-#define __FUNCT__ "Petsc_MatVecProd"
-PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
-    void*             ctx;
-    int               nx;
-    const PetscReal*  px;
-    PetscReal*        py;
+#define __FUNCT__ "Petsc_MatDiags"
+PetscErrorCode SLEPc::Petsc_MatDiags(Mat M, Vec diag) {
+
     PetscErrorCode    ierr;
+    PetscInt N;
+
+    PetscInt indices[HFS::Nmat];
+    const PetscScalar* values;
+    N = static_cast<PetscInt> (HFS::Nmat);
 
     PetscFunctionBeginUser;
-    ierr = MatShellGetContext(matrix, &ctx);    CHKERRQ(ierr);
+    for (unsigned i = 0; i < HFS::Nmat; ++i) {
+        indices[i] = i;
+    }
 
-    nx = *(int*)ctx;
-    ierr = VecGetArrayRead(x, &px);             CHKERRQ(ierr);
-    ierr = VecGetArray(y, &py);                 CHKERRQ(ierr);
-
-
-    PetscScalar* v = (PetscScalar*) &px[0];        // cast to non-const pointer for armadillo initialization
-    PetscScalar* Mv = (PetscScalar*) &py[0];
-    arma::vec myvec(v, nx, false, true); // copy_aux_mem (first bool) must be false for this to work
-    arma::vec myMv(Mv, nx, false, true); // since the memory pointed to by y is what PETSc sees.
-    SLEPc::matvec_product(myvec, myMv);  // modifies myMv inplace
-    ierr = VecRestoreArrayRead(x, &px);         CHKERRQ(ierr);
-    ierr = VecRestoreArray(y, &py);             CHKERRQ(ierr);
+    values = HFS::exc_energies.memptr();
+    ierr = VecSetValues(diag, N, indices, values, INSERT_VALUES);CHKERRQ(ierr);
     PetscFunctionReturn(0);
 }
-*/
+
+#undef __FUNCT__
+#define __FUNCT__ "Petsc_Mv_TripletH"
+PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
+    const PetscScalar* v_ptr, *v_local_copy_ptr;
+    PetscScalar* Mv_ptr;
+    PetscErrorCode ierr;
+    PetscInt Mvstart, Mvend, vstart, vend, i, local_idx;
+
+    Vec v_local_copy;
+    VecScatter ctx;
+
+
+    PetscFunctionBeginUser;
+    ierr = VecGetArrayRead(v, &v_ptr);                 CHKERRQ(ierr);
+    ierr = VecGetArray(Mv, &Mv_ptr);                   CHKERRQ(ierr);
+
+    ierr = VecGetOwnershipRange(v, &vstart, &vend);    CHKERRQ(ierr);
+    ierr = VecGetOwnershipRange(Mv, &Mvstart, &Mvend); CHKERRQ(ierr);
+
+    VecScatterCreateToAll(v, &ctx, &v_local_copy);
+    VecScatterBegin(ctx, v, v_local_copy, INSERT_VALUES, SCATTER_FORWARD);
+    VecScatterEnd(ctx, v, v_local_copy, INSERT_VALUES, SCATTER_FORWARD);
+
+    ierr = VecGetArrayRead(v_local_copy, &v_local_copy_ptr);
+
+    assert(Mvstart == vstart && Mvend == vend);
+
+    std::cout << "vstart = " << vstart << " vend = " << vend;// << std::endl;
+    printf(" 0x%016x\n", v_ptr);
+
+
+    for (i = vstart, local_idx = 0; i < vend; ++i, ++local_idx) {
+        if (i < 2*HFS::Nexc) {
+            Mv_ptr[local_idx] = 0.0;
+            // [ A B ] Portion
+            if (i < HFS::Nexc) {
+                // A Portion
+                for (PetscInt j = 0; j < HFS::Nexc; ++j) {
+                    Mv_ptr[local_idx] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j) * v_local_copy_ptr[j];
+                }
+                // B Portion
+                for (PetscInt j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
+                    Mv_ptr[local_idx] += HFS::Matrix::Gen::B_minus_ab_ji(i, j - HFS::Nexc) * v_local_copy_ptr[j];
+                }
+
+            // [ B A ] Portion
+            } else {
+
+                // B Portion
+                for (PetscInt j = 0; j < HFS::Nexc; ++j) {
+                    Mv_ptr[local_idx] += HFS::Matrix::Gen::B_minus_ab_ji(i - HFS::Nexc, j) * v_local_copy_ptr[j];
+                }
+                // A Portion
+                for (PetscInt j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
+
+                    Mv_ptr[local_idx] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i - HFS::Nexc, j - HFS::Nexc) * v_local_copy_ptr[j];
+                }
+            }
+        }
+
+    }
+
+    ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
+    ierr = VecDestroy(&v_local_copy);CHKERRQ(ierr);
+
+    ierr = VecRestoreArrayRead(v, &v_ptr);         CHKERRQ(ierr);
+    ierr = VecRestoreArray(Mv, &Mv_ptr);             CHKERRQ(ierr);
+    PetscFunctionReturn(0);
+}

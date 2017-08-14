@@ -56,4 +56,5 @@ namespace HFS{
     uint Dav_minits;
     uint dav_max_subsize;
     scalar dav_time;
+    int N_MV_PROD;
 }
