@@ -14,6 +14,21 @@ NDIM = 2
 
 debug2D(default): $(BINDIR)/$(MODE)/$(NDIM)d/$(TARGET)
 
+test: all
+	@echo "******************************************"
+	@echo "*Testing all debug executables on 1 proc!*"
+	@echo "******************************************"
+	-$(MPI_RUN) -n 1 ./$(BINDIR)/debug/1d/$(TARGET)
+	-$(MPI_RUN) -n 1 ./$(BINDIR)/debug/2d/$(TARGET)
+	-$(MPI_RUN) -n 1 ./$(BINDIR)/debug/3d/$(TARGET) --Nk 7
+    
+	@echo "*******************************************"
+	@echo "*Testing all debug executables on >1 proc!*"
+	@echo "*******************************************"
+	-$(MPI_RUN) -n 2 ./$(BINDIR)/debug/1d/$(TARGET)
+	-$(MPI_RUN) -n 2 ./$(BINDIR)/debug/2d/$(TARGET)
+	-$(MPI_RUN) -n 2 ./$(BINDIR)/debug/3d/$(TARGET) --Nk 7
+
 all: 
 	@make NDIM=1 MODE=$(MODE)
 	@make NDIM=2 MODE=$(MODE)
