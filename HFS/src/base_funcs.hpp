@@ -1,7 +1,7 @@
 /** @file base_funcs.hpp
 @author Evan Curtin
 @version Revision 0.1
-@brief Header including extern prototypes for low-level functions used throughout the codebase.
+@brief Header including prototypes for low-level functions used throughout the codebase.
 @details The definitions are in base_funcs.cpp.
 @date Wednesday, 04 Jan, 2017
 */
@@ -12,7 +12,7 @@
 #include "parameters.hpp"
 
 namespace HFS{
-    extern scalar exchange(arma::umat& states, uint i);
+    scalar exchange(arma::umat& states, uint i);
     /**< \brief Calculate the exchange energy for the given state.
     @param states Either occ_states or vir_states. Will determine the exchange
     energy for the i'th occupied or the i'th virtual state depending on input.
@@ -20,7 +20,7 @@ namespace HFS{
     @return the exchange contribution to the energy
     */
 
-    extern scalar twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4);
+    scalar twoElectronSafe(arma::vec& k1, arma::vec& k2, arma::vec& k3, arma::vec& k4);
     /**< \brief Calculate the two electron integral, <k1 k2|1/r|k3 k4>
 
     The two electron integral is defined as,
@@ -52,7 +52,7 @@ namespace HFS{
         }
     }
 
-    extern scalar twoElectron(arma::vec& k1, arma::vec& k3);
+    scalar twoElectron(arma::vec& k1, arma::vec& k3);
     /**< \brief Calculate the two electron integral, assuming momentum conservation.
 
     The two electron integral is defined as,
@@ -70,8 +70,8 @@ namespace HFS{
         return (k < (HFS::kf));
     }
 
-    //extern arma::uvec kToIndex(arma::vec& k);
-    extern void kToIndex(arma::vec& k, arma::uvec& uint);
+    //arma::uvec kToIndex(arma::vec& k);
+    void kToIndex(arma::vec& k, arma::uvec& uint);
     /**< \brief Given k-vector, return corresponding vector of indices in each dimension.
 
     Each element in k is converted to the corresponding index. Evenly spaced
@@ -84,7 +84,7 @@ namespace HFS{
 
     */
 
-    extern arma::umat kToIndex(arma::mat& k);
+    arma::umat kToIndex(arma::mat& k);
     /**< \brief kToIndex, overloaded for matrix
 
     @param k matrix of k-points
@@ -93,28 +93,28 @@ namespace HFS{
     @see HFS::kgrid
     */
 
-    extern void occIndexToK(uint i, arma::vec& k);
+    void occIndexToK(uint i, arma::vec& k);
     /**< \brief Return the momentum of the i'th occupied state.
 
     @param i The index of the occupied state.
     @return vector of the kx, ky, ... momentum of the i'th occupied state.
     */
 
-    extern arma::vec virIndexToK(uint i);
+    arma::vec virIndexToK(uint i);
     /**< \brief Return the momentum of the i'th virtual state.
 
     @param i The index of the virtual state.
     @return vector of the kx, ky, ... momentum of the i'th virtual state.
     */
 
-    extern int kroneckerDelta(uint i, uint j);
+    int kroneckerDelta(uint i, uint j);
     /**< \brief return 1 if i = j, else 0.
 
     @param i, j indices
     @return 1 if i = j, else 0.
     */
 
-    extern std::vector<arma::vec> stToKiKaKjKb(uint s, uint t);
+    std::vector<arma::vec> stToKiKaKjKb(uint s, uint t);
     /**< \brief Given excitation indices s & t, return corresponding ki, kj, ka, kb.
 
     S corresponds to occupied i to virtual a.
@@ -124,4 +124,4 @@ namespace HFS{
     */
 }
 
-#endif // HFS_base_funcs_included
+#endif //HFS_BASE_FUNCS_INCLUDED
