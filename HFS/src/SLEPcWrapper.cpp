@@ -1,4 +1,5 @@
 #include "SLEPcWrapper.hpp"
+#include "matrix_vectorproducts.hpp"
 
 void (*SLEPc::matvec_product)(arma::vec&, arma::vec&);
 
@@ -213,14 +214,14 @@ PetscErrorCode SLEPc::Petsc_MatDiags(Mat M, Vec diag) {
 
 class PetscLocalVec {
 /* Class wrapping the local access to a Petsc Vector. It is indexed
-using the global index, and the conversion to the local index is 
+using the global index, and the conversion to the local index is
 handled behind the scenes. Basically, it looks basically the same
-as a normal vector but should parallelize automatically. 
+as a normal vector but should parallelize automatically.
 */
     public:
         PetscLocalVec (Vec* v, bool Copy_to_Local) {
             parent = v;
-            is_local_copy = Copy_to_Local;   
+            is_local_copy = Copy_to_Local;
 
             if (is_local_copy) {
                 ierr = VecScatterCreateToAll(*parent, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
@@ -235,15 +236,15 @@ as a normal vector but should parallelize automatically.
         }
 
         PetscInt size() { return _size; }
-        PetscScalar * data() { return _data; } 
+        PetscScalar * data() { return _data; }
         PetscInt begin() { return global_begin_idx; }
         PetscInt end() { return global_end_idx; }
-        PetscScalar& operator[] (PetscInt i) { 
+        PetscScalar& operator[] (PetscInt i) {
             PetscInt local_i = i - global_begin_idx;
             assert( (local_i >= 0) && (local_i < _size) && "PetscLocalVec index out of bounds!");
             return _data[i - global_begin_idx];
-        }  
-        
+        }
+
         void cleanup () {
             if (is_local_copy) {
                 ierr = VecScatterDestroy(&VecScatterCtx);//CHKERRQ(ierr);
@@ -253,7 +254,7 @@ as a normal vector but should parallelize automatically.
             }
 
         }
-        
+
 
     private:
         PetscScalar* _data;
@@ -267,14 +268,14 @@ as a normal vector but should parallelize automatically.
 
 class PetscLocalVecReadOnly {
 /* Class wrapping the local access to a Petsc Vector. It is indexed
-using the global index, and the conversion to the local index is 
+using the global index, and the conversion to the local index is
 handled behind the scenes. Basically, it looks basically the same
-as a normal vector but should parallelize automatically. 
+as a normal vector but should parallelize automatically.
 */
     public:
         PetscLocalVecReadOnly (Vec* v, bool Copy_to_Local) {
             parent = v;
-            is_local_copy = Copy_to_Local;   
+            is_local_copy = Copy_to_Local;
 
             if (is_local_copy) {
                 ierr = VecScatterCreateToAll(*parent, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
@@ -291,13 +292,13 @@ as a normal vector but should parallelize automatically.
         PetscInt size() { return _size; }
         PetscInt begin() { return global_begin_idx; }
         PetscInt end() { return global_end_idx; }
-        const PetscScalar* data() {return _data; } 
-        PetscScalar operator[] (PetscInt i) { 
+        const PetscScalar* data() {return _data; }
+        PetscScalar operator[] (PetscInt i) {
             PetscInt local_i = i - global_begin_idx;
             assert( (local_i >= 0) && (local_i < _size) && "PetscLocalVec index out of bounds!");
             return _data[i - global_begin_idx];
-        }  
-        
+        }
+
         void cleanup () {
             if (is_local_copy) {
                 ierr = VecScatterDestroy(&VecScatterCtx);//CHKERRQ(ierr);
@@ -307,7 +308,7 @@ as a normal vector but should parallelize automatically.
             }
 
         }
-        
+
 
     private:
         const PetscScalar* _data;
@@ -327,34 +328,46 @@ PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
     PetscLocalVec LocalMv(&Mv, false);
     PetscLocalVecReadOnly LocalV(&v, true);
 
-    for (PetscInt i = LocalMv.begin(); i < LocalMv.end(); ++i) {
-        LocalMv[i] = 0.0;
-        if (i < 2*HFS::Nexc) {
-            // [ A B ] Portion
-            if (i < HFS::Nexc) {
-                // A Portion
-                for (unsigned j = 0; j < HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j) * LocalV[j];
-                }
-                // B Portion
-                for (unsigned j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::B_minus_ab_ji(i, j - HFS::Nexc) * LocalV[j];
-                }
+    for (PetscInt s = LocalMv.begin(); s < LocalMv.end(); ++s) {
+        LocalMv[s] = 0.0;
+        if (s < HFS::Nexc) { // due to padding local may have extra elements
+                             // Happens when matrix size not divisible by n procs.
 
-            // [ B A ] Portion
-            } else {
-                // B Portion
-                for (unsigned j = 0; j < HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::B_minus_ab_ji(i - HFS::Nexc, j) * LocalV[j];
-                }
-                // A Portion
-                for (unsigned j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i - HFS::Nexc, j - HFS::Nexc) * LocalV[j];
-                }
-            }
+            uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+
+            arma::vec ki(NDIM), ka(NDIM);
+            HFS::occIndexToK(i, ki);
+            ka = HFS::virIndexToK(a);
+            for (uint j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(NDIM), kb(NDIM);
+                HFS::occIndexToK(j, kj);
+
+                // The contribution due to A
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    if (s == t) {
+                        LocalMv[s] += HFS::exc_energies(s) * LocalV[t];
+                    } else {
+                        LocalMv[s] += -HFS::twoElectron(ka, kb) * LocalV[t];
+                    }
+                } // if
+
+                // The contribution due to B
+                kb = ki +  kj - ka; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    LocalMv[s] -= -HFS::twoElectron(ka, kj) * LocalV[t];
+                } // if
+
+            } // j
         }
+    } // s
 
-    }
     LocalMv.cleanup();
     LocalV.cleanup();
     PetscFunctionReturn(0);

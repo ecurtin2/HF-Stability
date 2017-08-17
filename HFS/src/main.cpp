@@ -22,6 +22,7 @@ This program is incomplete in the following ways
 #include "main.hpp"
 #include "NDmap.hpp"
 #include <iomanip>
+#include <string>
 
 int main(int argc, char* argv[]){
     // Start the timers
@@ -34,7 +35,7 @@ int main(int argc, char* argv[]){
 
     // Defaults
     HFS::rs              = 1.2;
-    HFS::Nk              = 12;
+    HFS::Nk              = 7;
     HFS::mycase          = "cRHF2cUHF";
     HFS::OutputFileName  = "HFS.json";
 
@@ -68,7 +69,7 @@ int main(int argc, char* argv[]){
     /* Calculation starts here */
     HFS::calcParameters();
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
-    HFS::timeMatrixVectorProduct();
+    //HFS::timeMatrixVectorProduct();
 
     HFS::num_guess_evecs = HFS::ground_state_degeneracy;
     HFS::dav_blocksize   = HFS::ground_state_degeneracy;
@@ -100,6 +101,7 @@ int main(int argc, char* argv[]){
     arma::wall_clock davtimer;
     davtimer.tic();
     myeps.Solve();
+
     HFS::dav_time = davtimer.toc();
     arma::vec temp(myeps.rVals);
     HFS::dav_vals = temp;
@@ -113,22 +115,41 @@ int main(int argc, char* argv[]){
     }
 
     HFS::Total_Calculation_Time = timer.toc();
-    std::cout << HFS::N_MV_PROD << std::endl;
-    std::cout << HFS::dav_min_eval << std::endl;
-    for (auto it : HFS::mv_times) {
-        std::cout << it << std::endl;
-    }
 
+    PetscPrintf(PETSC_COMM_WORLD, "\nDav Min Eval\n");
+    PetscPrintf(PETSC_COMM_WORLD, (std::to_string(HFS::dav_min_eval) + "\n").c_str());
+    PetscPrintf(PETSC_COMM_WORLD, "\nEvaluated in this many seconds\n");
+    PetscPrintf(PETSC_COMM_WORLD, (std::to_string(HFS::Total_Calculation_Time) + "\n").c_str());
+//    arma::mat A(HFS::Nexc, HFS::Nexc);
+//    arma::mat B(HFS::Nexc, HFS::Nexc);
+//    for (unsigned i = 0; i < HFS::Nexc; ++i) {
+//        for (unsigned j = 0; j < HFS::Nexc; ++j) {
+//            A(i, j) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j);
+//            B(i, j) = HFS::Matrix::Gen::B_minus_ab_ji(i, j);
+//        }
+//    }
+//    arma::vec evals;
+//    
+//    arma::eig_sym(evals, A+B);
+//    std::cout << "A+B min = " << evals.min() << std::endl;
+//    arma::eig_sym(evals, A-B);
+//    std::cout << "A-B min = " << evals.min() << std::endl;
+//    arma::mat H = arma::join_cols(arma::join_rows(A, B), arma::join_rows(B, A));
+//    arma::eig_sym(evals, H);
+//    std::cout << "H min = " << evals.min() << std::endl;
+    
+
+    
     // Finish up, write and test for problems.
-    #ifndef NDEBUG
-        if (HFS::Nmat < 1500) {
-            HFS::davidsonAgreesWithFullDiag();
-        }
-        if ( !HFS::everything_works() ) {
-            exit(EXIT_FAILURE);
-        }
-    #endif //NDEBUG
-
+//    #ifndef NDEBUG
+//        if (HFS::Nmat < 1500) {
+//            HFS::davidsonAgreesWithFullDiag();
+//        }
+//        if ( !HFS::everything_works() ) {
+//            exit(EXIT_FAILURE);
+//        }
+//    #endif //NDEBUG
+//
     HFS::writeJSON(HFS::OutputFileName, true);
 
     return 0;

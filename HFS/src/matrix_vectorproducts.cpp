@@ -322,7 +322,7 @@ void setMatrixPropertiesFromCase() {
     } else if (HFS::mycase == "cRHF2cUHF") {
         HFS::MatVecProduct_func = MatrixVectorProduct::TripletH;
         HFS::Matrix_generator = HFS::Matrix::Gen::TripletH;
-        HFS::Nmat = 2 * HFS::Nexc;
+        HFS::Nmat = HFS::Nexc;
     } else if (HFS::mycase == "cUHF2cUHF") {
         HFS::MatVecProduct_func = MatrixVectorProduct::Hprime;
         HFS::Matrix_generator = HFS::Matrix::Gen::Hprime;
