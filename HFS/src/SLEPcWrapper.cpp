@@ -218,14 +218,14 @@ handled behind the scenes. Basically, it looks basically the same
 as a normal vector but should parallelize automatically. 
 */
     public:
-        PetscLocalVec (Vec v, bool Copy_to_Local) {
-            parent = &v;
+        PetscLocalVec (Vec* v, bool Copy_to_Local) {
+            parent = v;
             is_local_copy = Copy_to_Local;   
 
             if (is_local_copy) {
-                ierr = VecScatterCreateToAll(v, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
-                ierr = VecScatterBegin(VecScatterCtx, v, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
-                ierr = VecScatterEnd(VecScatterCtx, v, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+                ierr = VecScatterCreateToAll(*parent, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
+                ierr = VecScatterBegin(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+                ierr = VecScatterEnd(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
             } else {
                 LocalVec = *parent;
             }
@@ -244,7 +244,7 @@ as a normal vector but should parallelize automatically.
             return _data[i - global_begin_idx];
         }  
         
-        void cleanup (Vec& v) {
+        void cleanup () {
             if (is_local_copy) {
                 ierr = VecScatterDestroy(&VecScatterCtx);//CHKERRQ(ierr);
                 ierr = VecDestroy(&LocalVec);//CHKERRQ(ierr);
@@ -272,18 +272,18 @@ handled behind the scenes. Basically, it looks basically the same
 as a normal vector but should parallelize automatically. 
 */
     public:
-        PetscLocalVecReadOnly (Vec v, bool Copy_to_Local) {
-            parent = &v;
+        PetscLocalVecReadOnly (Vec* v, bool Copy_to_Local) {
+            parent = v;
             is_local_copy = Copy_to_Local;   
 
             if (is_local_copy) {
-                ierr = VecScatterCreateToAll(v, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
-                ierr = VecScatterBegin(VecScatterCtx, v, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
-                ierr = VecScatterEnd(VecScatterCtx, v, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+                ierr = VecScatterCreateToAll(*parent, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
+                ierr = VecScatterBegin(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+                ierr = VecScatterEnd(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
             } else {
                 LocalVec = *parent;
             }
-            ierr = VecGetArrayRead(LocalVec, &data);//CHKERRQ(ierr);
+            ierr = VecGetArrayRead(LocalVec, &_data);//CHKERRQ(ierr);
             ierr = VecGetOwnershipRange(LocalVec, &global_begin_idx, &global_end_idx);//CHKERRQ(ierr);
             _size = global_end_idx - global_begin_idx;
         }
@@ -291,27 +291,26 @@ as a normal vector but should parallelize automatically.
         PetscInt size() { return _size; }
         PetscInt begin() { return global_begin_idx; }
         PetscInt end() { return global_end_idx; }
+        const PetscScalar* data() {return _data; } 
         PetscScalar operator[] (PetscInt i) { 
             PetscInt local_i = i - global_begin_idx;
             assert( (local_i >= 0) && (local_i < _size) && "PetscLocalVec index out of bounds!");
-            return data[i - global_begin_idx];
+            return _data[i - global_begin_idx];
         }  
         
-        void cleanup (Vec& v) {
+        void cleanup () {
             if (is_local_copy) {
                 ierr = VecScatterDestroy(&VecScatterCtx);//CHKERRQ(ierr);
                 ierr = VecDestroy(&LocalVec);//CHKERRQ(ierr);
             } else {
-            std::cout << " reastore " << std::endl;
-
-                ierr = VecRestoreArrayRead(*parent, &data);//CHKERRQ(ierr);
+                ierr = VecRestoreArrayRead(*parent, &_data);//CHKERRQ(ierr);
             }
 
         }
         
 
     private:
-        const PetscScalar* data;
+        const PetscScalar* _data;
         PetscErrorCode ierr;
         VecScatter VecScatterCtx;
         Vec* parent;
@@ -324,24 +323,11 @@ as a normal vector but should parallelize automatically.
 #undef __FUNCT__
 #define __FUNCT__ "Petsc_Mv_TripletH"
 PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
-    const PetscScalar* v_local_copy_ptr, *v_ptr;
-    PetscScalar* Mv_ptr;
-    
-    PetscErrorCode ierr;
-    PetscInt Mvstart, Mvend, local_i;
-    unsigned i;
-
-    Vec v_local_copy;
-    VecScatter ctx;
-
     PetscFunctionBeginUser;
+    PetscLocalVec LocalMv(&Mv, false);
+    PetscLocalVecReadOnly LocalV(&v, true);
 
-    PetscLocalVec LocalMv(Mv, false);
-    std::cout << " Constructed LocalV " << std::endl;
-    PetscLocalVecReadOnly LocalV(v, true);
-    std::cout << " Constructed Readonly " << std::endl;
-
-    for (i = LocalMv.begin(); i < LocalMv.end(); ++i) {
+    for (PetscInt i = LocalMv.begin(); i < LocalMv.end(); ++i) {
         LocalMv[i] = 0.0;
         if (i < 2*HFS::Nexc) {
             // [ A B ] Portion
@@ -352,84 +338,24 @@ PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
                 }
                 // B Portion
                 for (unsigned j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::B_minus_ab_ji(i, j - HFS::Nexc) * LocalV[i];
+                    LocalMv[i] += HFS::Matrix::Gen::B_minus_ab_ji(i, j - HFS::Nexc) * LocalV[j];
                 }
 
             // [ B A ] Portion
             } else {
                 // B Portion
                 for (unsigned j = 0; j < HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::B_minus_ab_ji(i - HFS::Nexc, j) * LocalV[i];
+                    LocalMv[i] += HFS::Matrix::Gen::B_minus_ab_ji(i - HFS::Nexc, j) * LocalV[j];
                 }
                 // A Portion
                 for (unsigned j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-                    LocalMv[i] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i - HFS::Nexc, j - HFS::Nexc) * LocalV[i];
+                    LocalMv[i] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i - HFS::Nexc, j - HFS::Nexc) * LocalV[j];
                 }
             }
         }
 
     }
-    std::cout << " Passed Mv" << std::endl;
-
-//    PetscFunctionReturn(0);
-
-//    ierr = VecGetArray(Mv, &Mv_ptr);                   CHKERRQ(ierr);
-//    ierr = VecGetArrayRead(v, &v_ptr);                   CHKERRQ(ierr);
-//    ierr = VecGetOwnershipRange(Mv, &Mvstart, &Mvend); CHKERRQ(ierr);
-//
-//    VecScatterCreateToAll(v, &ctx, &v_local_copy);
-//    VecScatterBegin(ctx, v, v_local_copy, INSERT_VALUES, SCATTER_FORWARD);
-//    VecScatterEnd(ctx, v, v_local_copy, INSERT_VALUES, SCATTER_FORWARD);
-//    ierr = VecGetArrayRead(v_local_copy, &v_local_copy_ptr);
-//
-//    
-//    for (i = Mvstart, local_i = 0; i < Mvend; ++i, ++local_i) {
-//        if (i < 2*HFS::Nexc) {
-//            Mv_ptr[local_i] = 0.0;
-//            // [ A B ] Portion
-//            if (i < HFS::Nexc) {
-//                // A Portion
-//                for (unsigned j = 0; j < HFS::Nexc; ++j) {
-//                    Mv_ptr[local_i] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j) * v_local_copy_ptr[j];
-//                }
-//                // B Portion
-//                for (unsigned j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-//                    Mv_ptr[local_i] += HFS::Matrix::Gen::B_minus_ab_ji(i, j - HFS::Nexc) * v_local_copy_ptr[j];
-//                }
-//
-//            // [ B A ] Portion
-//            } else {
-//
-//                // B Portion
-//                for (unsigned j = 0; j < HFS::Nexc; ++j) {
-//                    Mv_ptr[local_i] += HFS::Matrix::Gen::B_minus_ab_ji(i - HFS::Nexc, j) * v_local_copy_ptr[j];
-//                }
-//                // A Portion
-//                for (unsigned j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-//                    Mv_ptr[local_i] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i - HFS::Nexc, j - HFS::Nexc) * v_local_copy_ptr[j];
-//                }
-//            }
-//        }
-//
-//    }
-//        
-//    for (i = 0; i < 10; ++i) {
-//        std::cout << "new = " << LocalMv[i] << " old = " << Mv_ptr[Mvstart + i] << std::endl;
-//    }
-//
-//
-//    ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
-//    ierr = VecDestroy(&v_local_copy);CHKERRQ(ierr);
-    LocalMv.cleanup(Mv);
-    std::cout << " Cleanup LocalV" << std::endl;
-    LocalV.cleanup(v);
-    std::cout << " Cleanup LocalVReadOnly" << std::endl;
-
-
-//    ierr = VecRestoreArrayRead(v, &v_ptr);         CHKERRQ(ierr);
-    //ierr = VecRestoreArray(Mv, &Mv_ptr);             CHKERRQ(ierr);
-//    Mv_ptr = LocalMv.data();
-//    ierr = VecRestoreArray(Mv, &Mv_ptr);             CHKERRQ(ierr);
-    HFS::N_MV_PROD += 1;
+    LocalMv.cleanup();
+    LocalV.cleanup();
     PetscFunctionReturn(0);
 }
