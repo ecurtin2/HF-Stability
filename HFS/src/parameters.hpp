@@ -85,5 +85,6 @@ namespace HFS{
     extern uint dav_max_subsize;           /**< Maximum size of the subspace before restart for Davidson's Algorithm. */
     extern scalar dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
     extern int N_MV_PROD;
+    extern std::vector<double> mv_times;
 }
 #endif // HFS_PARAMS_INCLUDED

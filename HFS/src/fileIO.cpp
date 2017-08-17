@@ -100,6 +100,7 @@ namespace HFS {
             JSONVAL(dav_nconv);
             JSONVAL(twoE_parameter_1dCase);
             JSONVAL(use_delta_1D);
+            JSONVAL(N_MV_PROD);
 
 
             if (fabs(full_diag_min) > 1e-6) {

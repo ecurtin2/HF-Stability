@@ -115,6 +115,9 @@ int main(int argc, char* argv[]){
     HFS::Total_Calculation_Time = timer.toc();
     std::cout << HFS::N_MV_PROD << std::endl;
     std::cout << HFS::dav_min_eval << std::endl;
+    for (auto it : HFS::mv_times) {
+        std::cout << it << std::endl;
+    }
 
     // Finish up, write and test for problems.
     #ifndef NDEBUG
