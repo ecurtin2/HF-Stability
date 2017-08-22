@@ -57,4 +57,5 @@ namespace HFS{
     uint dav_max_subsize;
     scalar dav_time;
     int N_MV_PROD;
+    std::vector<double> mv_times;
 }

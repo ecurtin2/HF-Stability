@@ -8,7 +8,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="debug2D">
-				<Option output="./bin/HFSdebug2D" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/debug/2d/HFS" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -17,16 +17,16 @@
 					<Add directory="src" />
 				</Compiler>
 				<MakeCommands>
-					<Build command="$make -f $makefile $target" />
+					<Build command="$make -f $makefile NDIM=2 MODE=debug" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make -f $makefile clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+					<SilentBuild command="$make -f $makefile NDIM=2 MODE=debug &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="release2D">
-				<Option output="./bin/HFSrelease2D" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/release/2d/HFS" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -38,79 +38,75 @@
 					<Add option="-s" />
 				</Linker>
 				<MakeCommands>
-					<Build command="$make -f $makefile $target" />
+					<Build command="$make -f $makefile NDIM=2 MODE=release" />
 					<CompileFile command="$make -f $makefile $file" />
 					<Clean command="$make -f $makefile clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
-				</MakeCommands>
-			</Target>
-			<Target title="profile2D">
-				<Option output="./bin/HFSprofile2D" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add directory="src" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
-				<MakeCommands>
-					<Build command="$make -f $makefile $target" />
-					<CompileFile command="$make -f $makefile $file" />
-					<Clean command="$make -f $makefile clean" />
-					<DistClean command="$make -f $makefile distclean$target" />
-					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
+					<SilentBuild command="$make -f $makefile NDIM=2 MODE=release &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="debug3D">
-				<Option output="./bin/HFSdebug3D" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/debug/3d/HFS" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add directory="src" />
 				</Compiler>
-			</Target>
-			<Target title="profile3D">
-				<Option output="./bin/HFSprofile3D" prefix_auto="1" extension_auto="1" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
-				<Compiler>
-					<Add directory="src" />
-				</Compiler>
+				<MakeCommands>
+					<Build command="$make -f $makefile MODE=debug NDIM=3" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile MODE=debug NDIM=3 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="release3D">
-				<Option output="./bin/HFSrelease3D" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/release/3d/HFS" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add directory="src" />
 				</Compiler>
+				<MakeCommands>
+					<Build command="$make -f $makefile MODE=release NDIM=3" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile MODE=release NDIM=3 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="debug1D">
-				<Option output="./bin/HFSdebug1D" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/debug/1d/HFS" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
-			</Target>
-			<Target title="profile1D">
-				<Option output="./bin/HFSprofile1D" prefix_auto="1" extension_auto="1" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
+				<MakeCommands>
+					<Build command="$make -f $makefile MODE=debug NDIM=1" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile MODE=debug NDIM=1 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="release1D">
-				<Option output="./bin/HFSrelease1D" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/release/1d/HFS" prefix_auto="1" extension_auto="1" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<MakeCommands>
+					<Build command="$make -f $makefile MODE=release NDIM=1" />
+					<CompileFile command="$make -f $makefile $file" />
+					<Clean command="$make -f $makefile clean$target" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make -q -f $makefile $target" />
+					<SilentBuild command="$make -f $makefile MODE=release NDIM=1 &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 		</Build>
 		<Compiler>
@@ -120,130 +116,102 @@
 		<Unit filename="Makefile">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="launch.py">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/NDmap.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/SLEPcWrapper.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 			<Option target="debug3D" />
-			<Option target="profile3D" />
 			<Option target="release3D" />
 		</Unit>
 		<Unit filename="src/SLEPcWrapper.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/base_funcs.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/base_funcs.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/calc_parameters.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/calc_parameters.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/cmd_parser.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 			<Option target="debug3D" />
-			<Option target="profile3D" />
 			<Option target="release3D" />
 		</Unit>
 		<Unit filename="src/debug.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/debug.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/fileIO.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/fileIO.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/main.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/main.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/matrix_gen.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 			<Option target="debug3D" />
-			<Option target="profile3D" />
 			<Option target="release3D" />
 		</Unit>
 		<Unit filename="src/matrix_gen.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 			<Option target="debug3D" />
-			<Option target="profile3D" />
 			<Option target="release3D" />
 		</Unit>
 		<Unit filename="src/matrix_vectorproducts.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 			<Option target="debug3D" />
-			<Option target="profile3D" />
 			<Option target="release3D" />
 		</Unit>
 		<Unit filename="src/matrix_vectorproducts.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 			<Option target="debug3D" />
-			<Option target="profile3D" />
 			<Option target="release3D" />
 		</Unit>
 		<Unit filename="src/parameters.cpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Unit filename="src/parameters.hpp">
 			<Option target="debug2D" />
 			<Option target="release2D" />
-			<Option target="profile2D" />
 		</Unit>
 		<Extensions>
 			<code_completion />

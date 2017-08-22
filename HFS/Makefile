@@ -15,6 +15,7 @@ NDIM = 2
 debug2D(default): $(BINDIR)/$(MODE)/$(NDIM)d/$(TARGET)
 
 test: all
+
 	@echo "******************************************"
 	@echo "*Testing all debug executables on 1 proc!*"
 	@echo "******************************************"
@@ -43,7 +44,7 @@ MANSEC = EPS
 CFLAGS = -Wall -std=c++11 -fPIC -D NDIM=$(NDIM)
 
 ifeq ($(MODE),release)
-CFLAGS += -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE
+CFLAGS += -pg -O3 -Wall -D ARMA_NO_DEBUG -D NDEBUG -D RELEASE
 else
 CFLAGS += -g -o0 -Wall -gdwarf-3
 endif
@@ -59,12 +60,12 @@ $(BINDIR)/$(MODE)/$(NDIM)d/$(TARGET): $(OBJECTS)
 	@echo " Linking..."
 	@mkdir -p $(BINDIR)/$(MODE)/$(NDIM)d
 	@echo "$(CXX) $^ -o $@"
-	@$(CXX) $^ -o $@ $(LIB) $(INC) ${SLEPC_EPS_LIB}
+	$(CXX) $(CFLAGS) $^ -o $@ $(LIB) $(INC) ${SLEPC_EPS_LIB}
 
 $(OBJECTS): $(BUILDDIR)/$(MODE)/$(NDIM)d/%.o : $(SRCDIR)/%.cpp
 	@echo "CXX -c $< -o $@"
 	@mkdir -p $(BUILDDIR)/$(MODE)/$(NDIM)d
-	@$(CXX) $(CFLAGS) -c $< $(INC) $(LIB) -o $@
+	$(CXX) $(CFLAGS) -c $< $(INC) $(LIB) -o $@
 
 .PHONY: clean print
 

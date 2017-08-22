@@ -1,4 +1,5 @@
 #include "SLEPcWrapper.hpp"
+#include "matrix_vectorproducts.hpp"
 
 void (*SLEPc::matvec_product)(arma::vec&, arma::vec&);
 
@@ -211,72 +212,163 @@ PetscErrorCode SLEPc::Petsc_MatDiags(Mat M, Vec diag) {
     PetscFunctionReturn(0);
 }
 
+class PetscLocalVec {
+/* Class wrapping the local access to a Petsc Vector. It is indexed
+using the global index, and the conversion to the local index is
+handled behind the scenes. Basically, it looks basically the same
+as a normal vector but should parallelize automatically.
+*/
+    public:
+        PetscLocalVec (Vec* v, bool Copy_to_Local) {
+            parent = v;
+            is_local_copy = Copy_to_Local;
+
+            if (is_local_copy) {
+                ierr = VecScatterCreateToAll(*parent, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
+                ierr = VecScatterBegin(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+                ierr = VecScatterEnd(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+            } else {
+                LocalVec = *parent;
+            }
+            ierr = VecGetArray(LocalVec, &_data);//CHKERRQ(ierr);
+            ierr = VecGetOwnershipRange(LocalVec, &global_begin_idx, &global_end_idx);//CHKERRQ(ierr);
+            _size = global_end_idx - global_begin_idx;
+        }
+
+        PetscInt size() { return _size; }
+        PetscScalar * data() { return _data; }
+        PetscInt begin() { return global_begin_idx; }
+        PetscInt end() { return global_end_idx; }
+        PetscScalar& operator[] (PetscInt i) {
+            PetscInt local_i = i - global_begin_idx;
+            assert( (local_i >= 0) && (local_i < _size) && "PetscLocalVec index out of bounds!");
+            return _data[i - global_begin_idx];
+        }
+
+        void cleanup () {
+            if (is_local_copy) {
+                ierr = VecScatterDestroy(&VecScatterCtx);//CHKERRQ(ierr);
+                ierr = VecDestroy(&LocalVec);//CHKERRQ(ierr);
+            } else {
+                ierr = VecRestoreArray(*parent, &_data);//CHKERRQ(ierr);
+            }
+
+        }
+
+
+    private:
+        PetscScalar* _data;
+        PetscErrorCode ierr;
+        VecScatter VecScatterCtx;
+        Vec *parent, LocalVec;
+        PetscInt global_begin_idx, global_end_idx, _size;
+        bool is_local_copy;
+};
+
+
+class PetscLocalVecReadOnly {
+/* Class wrapping the local access to a Petsc Vector. It is indexed
+using the global index, and the conversion to the local index is
+handled behind the scenes. Basically, it looks basically the same
+as a normal vector but should parallelize automatically.
+*/
+    public:
+        PetscLocalVecReadOnly (Vec* v, bool Copy_to_Local) {
+            parent = v;
+            is_local_copy = Copy_to_Local;
+
+            if (is_local_copy) {
+                ierr = VecScatterCreateToAll(*parent, &VecScatterCtx, &LocalVec);//CHKERRQ(ierr);
+                ierr = VecScatterBegin(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+                ierr = VecScatterEnd(VecScatterCtx, *parent, LocalVec, INSERT_VALUES, SCATTER_FORWARD);//CHKERRQ(ierr);
+            } else {
+                LocalVec = *parent;
+            }
+            ierr = VecGetArrayRead(LocalVec, &_data);//CHKERRQ(ierr);
+            ierr = VecGetOwnershipRange(LocalVec, &global_begin_idx, &global_end_idx);//CHKERRQ(ierr);
+            _size = global_end_idx - global_begin_idx;
+        }
+
+        PetscInt size() { return _size; }
+        PetscInt begin() { return global_begin_idx; }
+        PetscInt end() { return global_end_idx; }
+        const PetscScalar* data() {return _data; }
+        PetscScalar operator[] (PetscInt i) {
+            PetscInt local_i = i - global_begin_idx;
+            assert( (local_i >= 0) && (local_i < _size) && "PetscLocalVec index out of bounds!");
+            return _data[i - global_begin_idx];
+        }
+
+        void cleanup () {
+            if (is_local_copy) {
+                ierr = VecScatterDestroy(&VecScatterCtx);//CHKERRQ(ierr);
+                ierr = VecDestroy(&LocalVec);//CHKERRQ(ierr);
+            } else {
+                ierr = VecRestoreArrayRead(*parent, &_data);//CHKERRQ(ierr);
+            }
+
+        }
+
+
+    private:
+        const PetscScalar* _data;
+        PetscErrorCode ierr;
+        VecScatter VecScatterCtx;
+        Vec* parent;
+        Vec LocalVec;
+        PetscInt global_begin_idx, global_end_idx, _size;
+        bool is_local_copy, is_readonly;
+};
+
+
 #undef __FUNCT__
 #define __FUNCT__ "Petsc_Mv_TripletH"
 PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
-    const PetscScalar* v_ptr, *v_local_copy_ptr;
-    PetscScalar* Mv_ptr;
-    PetscErrorCode ierr;
-    PetscInt Mvstart, Mvend, vstart, vend, i, local_idx;
-
-    Vec v_local_copy;
-    VecScatter ctx;
-
-
     PetscFunctionBeginUser;
-    ierr = VecGetArrayRead(v, &v_ptr);                 CHKERRQ(ierr);
-    ierr = VecGetArray(Mv, &Mv_ptr);                   CHKERRQ(ierr);
+    PetscLocalVec LocalMv(&Mv, false);
+    PetscLocalVecReadOnly LocalV(&v, true);
 
-    ierr = VecGetOwnershipRange(v, &vstart, &vend);    CHKERRQ(ierr);
-    ierr = VecGetOwnershipRange(Mv, &Mvstart, &Mvend); CHKERRQ(ierr);
+    for (PetscInt s = LocalMv.begin(); s < LocalMv.end(); ++s) {
+        LocalMv[s] = 0.0;
+        if (s < HFS::Nexc) { // due to padding local may have extra elements
+                             // Happens when matrix size not divisible by n procs.
 
-    VecScatterCreateToAll(v, &ctx, &v_local_copy);
-    VecScatterBegin(ctx, v, v_local_copy, INSERT_VALUES, SCATTER_FORWARD);
-    VecScatterEnd(ctx, v, v_local_copy, INSERT_VALUES, SCATTER_FORWARD);
+            uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
 
-    ierr = VecGetArrayRead(v_local_copy, &v_local_copy_ptr);
+            arma::vec ki(NDIM), ka(NDIM);
+            HFS::occIndexToK(i, ki);
+            ka = HFS::virIndexToK(a);
+            for (uint j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(NDIM), kb(NDIM);
+                HFS::occIndexToK(j, kj);
 
-    assert(Mvstart == vstart && Mvend == vend);
+                // The contribution due to A
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    if (s == t) {
+                        LocalMv[s] += HFS::exc_energies(s) * LocalV[t];
+                    } else {
+                        LocalMv[s] += -HFS::twoElectron(ka, kb) * LocalV[t];
+                    }
+                } // if
 
-    std::cout << "vstart = " << vstart << " vend = " << vend;// << std::endl;
-    printf(" 0x%016x\n", v_ptr);
+                // The contribution due to B
+                kb = ki +  kj - ka; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    LocalMv[s] -= -HFS::twoElectron(ka, kj) * LocalV[t];
+                } // if
 
-
-    for (i = vstart, local_idx = 0; i < vend; ++i, ++local_idx) {
-        if (i < 2*HFS::Nexc) {
-            Mv_ptr[local_idx] = 0.0;
-            // [ A B ] Portion
-            if (i < HFS::Nexc) {
-                // A Portion
-                for (PetscInt j = 0; j < HFS::Nexc; ++j) {
-                    Mv_ptr[local_idx] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j) * v_local_copy_ptr[j];
-                }
-                // B Portion
-                for (PetscInt j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-                    Mv_ptr[local_idx] += HFS::Matrix::Gen::B_minus_ab_ji(i, j - HFS::Nexc) * v_local_copy_ptr[j];
-                }
-
-            // [ B A ] Portion
-            } else {
-
-                // B Portion
-                for (PetscInt j = 0; j < HFS::Nexc; ++j) {
-                    Mv_ptr[local_idx] += HFS::Matrix::Gen::B_minus_ab_ji(i - HFS::Nexc, j) * v_local_copy_ptr[j];
-                }
-                // A Portion
-                for (PetscInt j = HFS::Nexc; j < 2*HFS::Nexc; ++j) {
-
-                    Mv_ptr[local_idx] += HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i - HFS::Nexc, j - HFS::Nexc) * v_local_copy_ptr[j];
-                }
-            }
+            } // j
         }
+    } // s
 
-    }
-
-    ierr = VecScatterDestroy(&ctx);CHKERRQ(ierr);
-    ierr = VecDestroy(&v_local_copy);CHKERRQ(ierr);
-
-    ierr = VecRestoreArrayRead(v, &v_ptr);         CHKERRQ(ierr);
-    ierr = VecRestoreArray(Mv, &Mv_ptr);             CHKERRQ(ierr);
+    LocalMv.cleanup();
+    LocalV.cleanup();
     PetscFunctionReturn(0);
 }
