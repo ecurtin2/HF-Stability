@@ -1,9 +1,7 @@
 #include "SLEPcWrapper.hpp"
 #include "matrix_vectorproducts.hpp"
 
-void (*SLEPc::matvec_product)(arma::vec&, arma::vec&);
-
-SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&), int argc, char* argv[]) {
+SLEPc::EpS::EpS(PetscInt Ninput, PetscErrorCode (*matvec_product)(Mat, Vec, Vec), int argc, char* argv[]) {
     static char help[] = "Solves the same eigenproblem as in example ex2, but using a shell matrix. "
                          "The problem is a standard symmetric eigenproblem corresponding to the 2-D Laplacian operator.\n\n"
                          "The command line options are:\n"
@@ -11,12 +9,10 @@ SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&),
 
 
     N = Ninput;
-    SLEPc::matvec_product = matvec_product;
     SlepcInitialize(&argc, &argv, (char*)0, help);
     MPI_Comm_size(PETSC_COMM_WORLD, &nprocs);
-    MatCreateShell(PETSC_COMM_WORLD, N / nprocs + 1, N / nprocs + 1, PETSC_DETERMINE, PETSC_DETERMINE, &N, &matrix);
-
-    PETSCMatShellCreate(matrix);
+    MatCreateShell(PETSC_COMM_WORLD, PETSC_DECIDE, PETSC_DECIDE, N, N, &N, &matrix);
+    PETSCMatShellCreate(matrix, matvec_product);
     EPSCreate(PETSC_COMM_WORLD, &eps);
     EPSContext();
 }
@@ -24,7 +20,7 @@ SLEPc::EpS::EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&),
 SLEPc::EpS::~EpS() {
     ierr = EPSDestroy(&eps);    //CHKERRQ(ierr);
     ierr = MatDestroy(&matrix); //CHKERRQ(ierr);
-    ierr = SlepcFinalize();
+    //ierr = SlepcFinalize();
 }
 
 PetscErrorCode SLEPc::EpS::SetInitialSpace(std::vector<std::vector<PetscScalar>> vecs) {
@@ -56,19 +52,18 @@ PetscErrorCode SLEPc::EpS::EPSContext () {
     ierr = EPSSetOperators(eps, matrix, NULL);              CHKERRQ(ierr);  // Set Operators, null = non-general eigevalue problem
     ierr = EPSSetProblemType(eps, EPS_HEP);                 CHKERRQ(ierr);  // Hermitian eigenvalue?
     ierr = EPSSetWhichEigenpairs(eps, EPS_SMALLEST_REAL);   CHKERRQ(ierr);  // Set default searching
-    ierr = EPSSetType(eps, EPSKRYLOVSCHUR);                          CHKERRQ(ierr);  // Set default solver to Jacobi-Davidson
+    ierr = EPSSetType(eps, EPSJD);                          CHKERRQ(ierr);  // Set default solver to Jacobi-Davidson
     return ierr;
 }
 
 
-PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix) {
+PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix, PetscErrorCode (*matvec_product)(Mat, Vec, Vec)) {
     // only matvec prod supported
     ierr = MatSetFromOptions(matrix);                                                        CHKERRQ(ierr);
-    //ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
-    //ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_MatVecProd);  CHKERRQ(ierr);
-    ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
-    ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
-    //ierr = MatShellSetOperation(matrix, MATOP_GET_DIAGONAL  , (void(*)())Petsc_MatDiags);    CHKERRQ(ierr);
+    ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())matvec_product);  CHKERRQ(ierr);
+    ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())matvec_product);  CHKERRQ(ierr);
+    //ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
+    //ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
     return ierr;
 }
 
@@ -101,6 +96,7 @@ PetscErrorCode SLEPc::EpS::SetTol(PetscScalar tolerance, int max_it){
 
 PetscErrorCode SLEPc::EpS::Solve() {
     ierr = EPSSetFromOptions(eps); CHKERRQ(ierr);
+    ierr = EPSSetUp(eps);
     ierr = EPSSolve(eps); CHKERRQ(ierr);
 
     // Retrieve Solutions
@@ -131,8 +127,6 @@ PetscErrorCode SLEPc::EpS::Solve() {
         rVals[i] = rVal;
         iVecs[i].resize(N, 0.0);
         rVecs[i].resize(N, 0.0);
-        //ierr = VecGetValues(PetscrVec, N, &indices[0], &rVecs[i][0]);
-        //ierr = VecGetValues(PetsciVec, N, &indices[0], &iVecs[i][0]);
     }
     return ierr;
 }
@@ -161,56 +155,6 @@ PetscErrorCode SLEPc::EpS::print() {
     return ierr;
 }
 
-
-
-#undef __FUNCT__
-#define __FUNCT__ "Petsc_MatVecProd"
-PetscErrorCode SLEPc::Petsc_MatVecProd(Mat matrix, Vec x, Vec y) {
-    void*             ctx;
-    int               nx;
-    const PetscReal*  px;
-    PetscReal*        py;
-    PetscErrorCode    ierr;
-
-    PetscFunctionBeginUser;
-    ierr = MatShellGetContext(matrix, &ctx);    CHKERRQ(ierr);
-
-    nx = *(int*)ctx;
-    ierr = VecGetArrayRead(x, &px);             CHKERRQ(ierr);
-    ierr = VecGetArray(y, &py);                 CHKERRQ(ierr);
-
-
-    PetscScalar* v = (PetscScalar*) &px[0];        // cast to non-const pointer for armadillo initialization
-    PetscScalar* Mv = (PetscScalar*) &py[0];
-    arma::vec myvec(v, nx, false, true); // copy_aux_mem (first bool) must be false for this to work
-    arma::vec myMv(Mv, nx, false, true); // since the memory pointed to by y is what PETSc sees.
-    SLEPc::matvec_product(myvec, myMv);  // modifies myMv inplace
-    ierr = VecRestoreArrayRead(x, &px);         CHKERRQ(ierr);
-    ierr = VecRestoreArray(y, &py);             CHKERRQ(ierr);
-    HFS::N_MV_PROD += 1;
-    PetscFunctionReturn(0);
-}
-
-#undef __FUNCT__
-#define __FUNCT__ "Petsc_MatDiags"
-PetscErrorCode SLEPc::Petsc_MatDiags(Mat M, Vec diag) {
-
-    PetscErrorCode    ierr;
-    PetscInt N;
-
-    PetscInt indices[HFS::Nmat];
-    const PetscScalar* values;
-    N = static_cast<PetscInt> (HFS::Nmat);
-
-    PetscFunctionBeginUser;
-    for (unsigned i = 0; i < HFS::Nmat; ++i) {
-        indices[i] = i;
-    }
-
-    values = HFS::exc_energies.memptr();
-    ierr = VecSetValues(diag, N, indices, values, INSERT_VALUES);CHKERRQ(ierr);
-    PetscFunctionReturn(0);
-}
 
 class PetscLocalVec {
 /* Class wrapping the local access to a Petsc Vector. It is indexed
@@ -322,14 +266,16 @@ as a normal vector but should parallelize automatically.
 
 
 #undef __FUNCT__
-#define __FUNCT__ "Petsc_Mv_TripletH"
-PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
+#define __FUNCT__ "Petsc_Mv_Triplet_A_Minus_B"
+PetscErrorCode SLEPc::Petsc_Mv_Triplet_A_Minus_B(Mat M, Vec v, Vec Mv) {
     PetscFunctionBeginUser;
     PetscLocalVec LocalMv(&Mv, false);
     PetscLocalVecReadOnly LocalV(&v, true);
 
+
     for (PetscInt s = LocalMv.begin(); s < LocalMv.end(); ++s) {
         LocalMv[s] = 0.0;
+
         if (s < HFS::Nexc) { // due to padding local may have extra elements
                              // Happens when matrix size not divisible by n procs.
 
@@ -341,6 +287,8 @@ PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
             for (uint j = 0; j < HFS::Nocc; ++j) {
                 arma::vec kj(NDIM), kb(NDIM);
                 HFS::occIndexToK(j, kj);
+
+
 
                 // The contribution due to A
                 kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
@@ -361,7 +309,7 @@ PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
                 if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
                     // only if momentum conserving state is virtual
                     uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
-                    LocalMv[s] -= -HFS::twoElectron(ka, kj) * LocalV[t];
+                    LocalMv[s] += HFS::twoElectron(ka, kj) * LocalV[t];
                 } // if
 
             } // j
@@ -372,3 +320,166 @@ PetscErrorCode SLEPc::Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv) {
     LocalV.cleanup();
     PetscFunctionReturn(0);
 }
+
+#undef __FUNCT__
+#define __FUNCT__ "Petsc_Mv_Triplet_A_Plus_B"
+PetscErrorCode SLEPc::Petsc_Mv_Triplet_A_Plus_B(Mat M, Vec v, Vec Mv) {
+    PetscFunctionBeginUser;
+    PetscLocalVec LocalMv(&Mv, false);
+    PetscLocalVecReadOnly LocalV(&v, true);
+
+    for (PetscInt s = LocalMv.begin(); s < LocalMv.end(); ++s) {
+        LocalMv[s] = 0.0;
+        if (s < HFS::Nexc) { // due to padding local may have extra elements
+                             // Happens when matrix size not divisible by n procs.
+
+            uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+
+            arma::vec ki(NDIM), ka(NDIM);
+            HFS::occIndexToK(i, ki);
+            ka = HFS::virIndexToK(a);
+            for (uint j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(NDIM), kb(NDIM);
+                HFS::occIndexToK(j, kj);
+
+
+
+                // The contribution due to A
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    if (s == t) {
+                        LocalMv[s] += HFS::exc_energies(s) * LocalV[t];
+                    }
+                    LocalMv[s] += -HFS::twoElectron(ka, kb) * LocalV[t];
+
+                } // if
+
+                // The contribution due to B
+                kb = ki +  kj - ka; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    LocalMv[s] += -HFS::twoElectron(ka, kj) * LocalV[t];
+                } // if
+
+            } // j
+        }
+    } // s
+
+    LocalMv.cleanup();
+    LocalV.cleanup();
+    PetscFunctionReturn(0);
+}
+
+#undef __FUNCT__
+#define __FUNCT__ "Petsc_Mv_Singlet_A_Minus_B"
+PetscErrorCode SLEPc::Petsc_Mv_Singlet_A_Minus_B(Mat M, Vec v, Vec Mv) {
+    PetscFunctionBeginUser;
+    PetscLocalVec LocalMv(&Mv, false);
+    PetscLocalVecReadOnly LocalV(&v, true);
+
+    for (PetscInt s = LocalMv.begin(); s < LocalMv.end(); ++s) {
+        LocalMv[s] = 0.0;
+        if (s < HFS::Nexc) { // due to padding local may have extra elements
+                             // Happens when matrix size not divisible by n procs.
+
+            uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+
+            arma::vec ki(NDIM), ka(NDIM);
+            HFS::occIndexToK(i, ki);
+            ka = HFS::virIndexToK(a);
+            for (uint j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(NDIM), kb(NDIM);
+                HFS::occIndexToK(j, kj);
+
+
+
+                // The contribution due to A
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    if (s == t) {
+                        LocalMv[s] += HFS::exc_energies(s) * LocalV[t];
+                    }
+                    LocalMv[s] += (2.0 * HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kb)) * LocalV[t];
+
+                } // if
+
+                // The contribution due to B
+                kb = ki +  kj - ka; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    LocalMv[s] +=  - (2.0 * HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kj)) * LocalV[t];
+                } // if
+
+            } // j
+        }
+    } // s
+
+    LocalMv.cleanup();
+    LocalV.cleanup();
+    PetscFunctionReturn(0);
+}
+
+
+
+#undef __FUNCT__
+#define __FUNCT__ "Petsc_Mv_Singlet_A_Plus_B"
+PetscErrorCode SLEPc::Petsc_Mv_Singlet_A_Plus_B(Mat M, Vec v, Vec Mv) {
+    PetscFunctionBeginUser;
+    PetscLocalVec LocalMv(&Mv, false);
+    PetscLocalVecReadOnly LocalV(&v, true);
+
+    for (PetscInt s = LocalMv.begin(); s < LocalMv.end(); ++s) {
+        LocalMv[s] = 0.0;
+        if (s < HFS::Nexc) { // due to padding local may have extra elements
+                             // Happens when matrix size not divisible by n procs.
+            uint i = HFS::excitations(0, s), a = HFS::excitations(1, s);
+
+            arma::vec ki(NDIM), ka(NDIM);
+            HFS::occIndexToK(i, ki);
+            ka = HFS::virIndexToK(a);
+            for (uint j = 0; j < HFS::Nocc; ++j) {
+                arma::vec kj(NDIM), kb(NDIM);
+                HFS::occIndexToK(j, kj);
+
+
+
+                // The contribution due to A
+                kb = ka + kj - ki; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    if (s == t) {
+                        LocalMv[s] += HFS::exc_energies(s) * LocalV[t];
+                    }
+                    LocalMv[s] += (2.0 * HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kb)) * LocalV[t];
+                } // if
+
+                // The contribution due to B
+                kb = ki +  kj - ka; // Momentum conservation for <aj|ib> or <aj|bi>
+                HFS::toFirstBrillouinZone(kb);
+                if (arma::norm(kb) > (HFS::kf + SMALLNUMBER)) {
+                    // only if momentum conserving state is virtual
+                    uint t = HFS::Matrix::calcTfromKbAndJ(kb, j);
+                    LocalMv[s] += (2.0 * HFS::twoElectron(ka, ki) - HFS::twoElectron(ka, kj)) * LocalV[t];
+                } // if
+
+            } // j
+        }
+    } // s
+
+    LocalMv.cleanup();
+    LocalV.cleanup();
+    PetscFunctionReturn(0);
+}
+

@@ -38,7 +38,7 @@ all:
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/$(MODE)/$(NDIM)d/%,$(SOURCES:.$(SRCEXT)=.o))
 
-LIB = -larmadillo -L/usr/lib
+LIB = -larmadillo
 
 MANSEC = EPS
 CFLAGS = -Wall -std=c++11 -fPIC -D NDIM=$(NDIM)
@@ -50,7 +50,9 @@ CFLAGS += -g -o0 -Wall -gdwarf-3
 endif
 
 INC =  -I$(SLEPC_DIR)/include 
+INC +=  -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include 
 INC += -I$(PETSC_DIR)/include 
+INC += -I$(PETSC_DIR)/$(PETSC_ARCH)/include 
 INC += -I$(BOOST_ROOT)
 INC += -I$(ARMA_INC)
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
@@ -78,7 +80,7 @@ print:
 	$(info $$CFLAGS is [${CFLAGS}])
 	$(info $$NDIM is [${NDIM}])
 
-clean:
+.clean:
 	@echo " Cleaning..."
 	@rm -rf build/
 	@rm -rf bin/
