@@ -71,7 +71,7 @@ int main(int argc, char* argv[]){
     HFS::Matrix::setMatrixPropertiesFromCase(); // RHF-UHF etc instability, matrix dimension
     //HFS::timeMatrixVectorProduct();
 
-    HFS::num_guess_evecs = HFS::ground_state_degeneracy;
+    HFS::num_guess_evecs = 100;
     HFS::dav_blocksize   = HFS::ground_state_degeneracy;
 
     /* Default values for these are calculated, but may be
@@ -79,18 +79,32 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::num_guess_evecs, "--num_guess_evecs", false);
     parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
 
-    std::vector<PetscErrorCode (*)(Mat, Vec, Vec)> mvproducts = {
-        SLEPc::Petsc_Mv_Triplet_A_Plus_B,
-        SLEPc::Petsc_Mv_Triplet_A_Minus_B,
-        SLEPc::Petsc_Mv_Singlet_A_Plus_B,
-        SLEPc::Petsc_Mv_Singlet_A_Minus_B,
-    };
+    std::vector<PetscErrorCode (*)(Mat, Vec, Vec)> mvproducts(4);
+    std::vector<scalar> dav_vals(4);
+    enum cases {Triplet_A_Plus_B, Triplet_A_Minus_B,
+                Singlet_A_Plus_B, Singlet_A_Minus_B};
 
+    mvproducts[Triplet_A_Plus_B] = SLEPc::Petsc_Mv_Triplet_A_Plus_B;
+    mvproducts[Triplet_A_Minus_B] = SLEPc::Petsc_Mv_Triplet_A_Minus_B;
+    mvproducts[Singlet_A_Plus_B] = SLEPc::Petsc_Mv_Singlet_A_Plus_B;
+    mvproducts[Singlet_A_Minus_B] = SLEPc::Petsc_Mv_Singlet_A_Minus_B;
+
+    int i = 0;
     for (auto mv: mvproducts) {
         SLEPc::EpS myeps(HFS::Nexc, mv);
         myeps.SetDimensions(HFS::dav_num_evals, HFS::dav_max_subsize);
         myeps.SetTol(HFS::dav_tol, HFS::dav_maxits);
         myeps.SetBlockSize(HFS::dav_blocksize);
+
+        std::vector< std::vector<scalar> > vecs(HFS::num_guess_evecs, std::vector<scalar>(HFS::Nmat, 0.0));
+        for (uint i = 0; i < HFS::num_guess_evecs; ++i) {
+            arma::vec guessvec;
+            arma::vec temp = arma::abs(HFS::exc_energies[i] - HFS::exc_energies) + 1;
+            guessvec = (1.0 / temp);
+            guessvec /= arma::norm(guessvec);
+            vecs[i] = arma::conv_to< std::vector<scalar> >::from(guessvec);
+        }
+        myeps.SetInitialSpace(vecs);
 
         HFS::N_MV_PROD = 0;
         arma::wall_clock davtimer;
@@ -103,70 +117,66 @@ int main(int argc, char* argv[]){
         HFS::dav_nconv = myeps.nconv;
         HFS::cond_number = HFS::exc_energies(HFS::exc_energies.n_elem-1) / HFS::exc_energies(0);
         if (HFS::dav_nconv >= 1) {
-            HFS::dav_min_eval = HFS::dav_vals.min();
+            dav_vals[i] = HFS::dav_vals.min();
         } else {
-            HFS::dav_min_eval = 1.0 / 0.0;
+            dav_vals[i] = 1.0 / 0.0;
         }
         HFS::Total_Calculation_Time = timer.toc();
-        PetscPrintf(PETSC_COMM_WORLD, "\nDav Min Eval\n");
-        PetscPrintf(PETSC_COMM_WORLD, (std::to_string(HFS::dav_min_eval) + "\n").c_str());
-        PetscPrintf(PETSC_COMM_WORLD, "\nEvaluated in this many seconds\n");
-        PetscPrintf(PETSC_COMM_WORLD, (std::to_string(HFS::Total_Calculation_Time) + "\n").c_str());
+        i += 1;
     }
-    PetscErrorCode ierr = SlepcFinalize();
+
+    HFS::dav_triplet_a_plus_b = dav_vals[Triplet_A_Plus_B];
+    HFS::dav_triplet_a_minus_b = dav_vals[Triplet_A_Minus_B];
+    HFS::dav_singlet_a_plus_b = dav_vals[Singlet_A_Plus_B];
+    HFS::dav_singlet_a_minus_b = dav_vals[Singlet_A_Minus_B];
+
+    PetscInt myrank;
+    MPI_Comm_rank(PETSC_COMM_WORLD, &myrank);
+    PetscErrorCode ierr = SlepcFinalize();CHKERRQ(ierr);
 
 
-
-
-    arma::mat A(HFS::Nexc, HFS::Nexc);
-    arma::mat B(HFS::Nexc, HFS::Nexc);
-    for (unsigned i = 0; i < HFS::Nexc; ++i) {
-        for (unsigned j = 0; j < HFS::Nexc; ++j) {
-            A(i, j) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j);
-            B(i, j) = HFS::Matrix::Gen::B_minus_ab_ji(i, j);
+    if (myrank == 0) {
+    #ifndef NDEBUG
+        arma::mat A(HFS::Nexc, HFS::Nexc);
+        arma::mat B(HFS::Nexc, HFS::Nexc);
+        for (unsigned i = 0; i < HFS::Nexc; ++i) {
+            for (unsigned j = 0; j < HFS::Nexc; ++j) {
+                A(i, j) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_minus_aj_bi(i, j);
+                B(i, j) = HFS::Matrix::Gen::B_minus_ab_ji(i, j);
+            }
         }
-    }
 
-    std::cout << "Values determined by full diagonalization:" << std::endl;
-    arma::vec evals;
-    arma::eig_sym(evals, A+B);
-    std::cout << "Triplet A+B min = " << evals.min() << std::endl;
-    arma::eig_sym(evals, A-B);
-    std::cout << "Triplet A-B min = " << evals.min() << std::endl;
-    arma::mat H = arma::join_cols(arma::join_rows(A, B), arma::join_rows(B, A));
-    arma::eig_sym(evals, H);
-    std::cout << "Triplet H min = " << evals.min() << std::endl;
+        std::cout << "Values determined by full diagonalization:" << std::endl;
+        arma::vec evals;
+        arma::eig_sym(evals, A+B);
+        std::cout << "Triplet A+B min = " << evals.min() << std::endl;
+        arma::eig_sym(evals, A-B);
+        std::cout << "Triplet A-B min = " << evals.min() << std::endl;
+        arma::mat H = arma::join_cols(arma::join_rows(A, B), arma::join_rows(B, A));
+        arma::eig_sym(evals, H);
+        std::cout << "Triplet H min = " << evals.min() << std::endl;
 
-    arma::mat sA(HFS::Nexc, HFS::Nexc);
-    arma::mat sB(HFS::Nexc, HFS::Nexc);
-    for (unsigned i = 0; i < HFS::Nexc; ++i) {
-        for (unsigned j = 0; j < HFS::Nexc; ++j) {
-            sA(i, j) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_2aj_ib_minus_ajbi(i, j);
-            sB(i, j) = HFS::Matrix::Gen::B_minus_abji_plus_2abij(i, j);
+        arma::mat sA(HFS::Nexc, HFS::Nexc);
+        arma::mat sB(HFS::Nexc, HFS::Nexc);
+        for (unsigned i = 0; i < HFS::Nexc; ++i) {
+            for (unsigned j = 0; j < HFS::Nexc; ++j) {
+                sA(i, j) = HFS::Matrix::Gen::A_E_delta_ij_delta_ab_plus_2aj_ib_minus_ajbi(i, j);
+                sB(i, j) = HFS::Matrix::Gen::B_minus_abji_plus_2abij(i, j);
+            }
         }
+
+        arma::eig_sym(evals, sA+sB);
+        std::cout << "singlet A+B min = " << evals.min() << std::endl;
+        arma::eig_sym(evals, sA-sB);
+        std::cout << "singlet A-B min = " << evals.min() << std::endl;
+        H = arma::join_cols(arma::join_rows(sA, sB), arma::join_rows(sB, sA));
+        arma::eig_sym(evals, H);
+        std::cout << "singlet H min = " << evals.min() << std::endl;
+    #endif //NDEBUG
+    } // myrank == 0
+
+    if (myrank == 0) {
+        HFS::writeJSON(HFS::OutputFileName, false);
     }
-
-    arma::eig_sym(evals, sA+sB);
-    std::cout << "singlet A+B min = " << evals.min() << std::endl;
-    arma::eig_sym(evals, sA-sB);
-    std::cout << "singlet A-B min = " << evals.min() << std::endl;
-    H = arma::join_cols(arma::join_rows(sA, sB), arma::join_rows(sB, sA));
-    arma::eig_sym(evals, H);
-    std::cout << "singlet H min = " << evals.min() << std::endl;
-
-
-
-    // Finish up, write and test for problems.
-//    #ifndef NDEBUG
-//        if (HFS::Nmat < 1500) {
-//            HFS::davidsonAgreesWithFullDiag();
-//        }
-//        if ( !HFS::everything_works() ) {
-//            exit(EXIT_FAILURE);
-//        }
-//    #endif //NDEBUG
-//
-    HFS::writeJSON(HFS::OutputFileName, true);
-
     return 0;
 }

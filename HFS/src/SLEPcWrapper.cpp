@@ -62,8 +62,6 @@ PetscErrorCode SLEPc::EpS::PETSCMatShellCreate(Mat &matrix, PetscErrorCode (*mat
     ierr = MatSetFromOptions(matrix);                                                        CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())matvec_product);  CHKERRQ(ierr);
     ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())matvec_product);  CHKERRQ(ierr);
-    //ierr = MatShellSetOperation(matrix, MATOP_MULT,           (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
-    //ierr = MatShellSetOperation(matrix, MATOP_MULT_TRANSPOSE, (void(*)())Petsc_Mv_TripletH);  CHKERRQ(ierr);
     return ierr;
 }
 

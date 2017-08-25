@@ -58,4 +58,6 @@ namespace HFS{
     scalar dav_time;
     int N_MV_PROD;
     std::vector<double> mv_times;
+    scalar dav_singlet_a_plus_b, dav_singlet_a_minus_b;
+    scalar dav_triplet_a_plus_b, dav_triplet_a_minus_b;
 }

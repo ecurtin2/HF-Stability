@@ -86,5 +86,7 @@ namespace HFS{
     extern scalar dav_time;                   /**< Time taken until convergence for Davidson's Algorithm. */
     extern int N_MV_PROD;
     extern std::vector<double> mv_times;
+    extern scalar dav_singlet_a_plus_b, dav_singlet_a_minus_b;
+    extern scalar dav_triplet_a_plus_b, dav_triplet_a_minus_b;
 }
 #endif // HFS_PARAMS_INCLUDED
