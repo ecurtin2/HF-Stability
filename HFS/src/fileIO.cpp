@@ -101,6 +101,11 @@ namespace HFS {
             JSONVAL(twoE_parameter_1dCase);
             JSONVAL(use_delta_1D);
             JSONVAL(N_MV_PROD);
+            JSONVAL(dav_triplet_a_plus_b);
+            JSONVAL(dav_triplet_a_minus_b);
+            JSONVAL(dav_singlet_a_plus_b);
+            JSONVAL(dav_singlet_a_minus_b);
+
 
 
             if (fabs(full_diag_min) > 1e-6) {

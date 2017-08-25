@@ -51,7 +51,10 @@ endif
 
 INC =  -I$(SLEPC_DIR)/include 
 INC +=  -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include 
-#INC += -I$(PETSC_DIR)/include 
+INC += -I$(PETSC_DIR)/include 
+INC += -I$(PETSC_DIR)/$(PETSC_ARCH)/include 
+INC += -I$(BOOST_ROOT)
+
 INC += -I$(ARMA_INC)
 INC += $(CRAY_BOOST_INCLUDE_OPTS)
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
@@ -80,7 +83,7 @@ print:
 	$(info $$NDIM is [${NDIM}])
 	$(info $$BOOST_ROOT is [${BOOST_ROOT}])
 
-#clean:
-#	@echo " Cleaning..."
-#	@rm -rf build/
-#	@rm -rf bin/
+.clean:
+	@echo " Cleaning..."
+	@rm -rf build/
+	@rm -rf bin/

@@ -26,10 +26,11 @@
 */
 namespace SLEPc {
 
-    extern PetscErrorCode Petsc_MatVecProd(Mat matrix, Vec x, Vec y);
-    extern PetscErrorCode Petsc_MatDiags(Mat M, Vec diag);
-    extern PetscErrorCode Petsc_Mv_TripletH(Mat M, Vec v, Vec Mv);
-    extern void (*matvec_product)(arma::vec&, arma::vec&);
+    extern PetscErrorCode Petsc_Mv_Singlet_A_Plus_B(Mat M, Vec v, Vec Mv);
+    extern PetscErrorCode Petsc_Mv_Singlet_A_Minus_B(Mat M, Vec v, Vec Mv);
+    extern PetscErrorCode Petsc_Mv_Triplet_A_Plus_B(Mat M, Vec v, Vec Mv);
+    extern PetscErrorCode Petsc_Mv_Triplet_A_Minus_B(Mat M, Vec v, Vec Mv);
+
     class EpS {
         public:
             PetscErrorCode                     ierr;
@@ -42,11 +43,11 @@ namespace SLEPc {
             std::vector<PetscScalar>                iVals, rVals;
             std::vector< std::vector<PetscScalar> > iVecs, rVecs;
 
-            EpS(PetscInt Ninput, void (*matvec_product)(arma::vec&, arma::vec&), int argc=0, char** argv = (char**)"eps_monitor");
+            EpS(PetscInt Ninput, PetscErrorCode (*matvec_product)(Mat, Vec, Vec), int argc=0, char** argv = (char**)"eps_monitor");
             ~EpS();
             PetscErrorCode SetInitialSpace(std::vector<std::vector<PetscScalar>> vecs);
             PetscErrorCode EPSContext ();
-            PetscErrorCode PETSCMatShellCreate(Mat& matrix);
+            PetscErrorCode PETSCMatShellCreate(Mat& matrix, PetscErrorCode (*matvec_product)(Mat, Vec, Vec));
             PetscErrorCode SetFromOptions();
             PetscErrorCode SetDimensions(PetscInt num_evals, PetscInt max_subspace_size);
             PetscErrorCode SetBlockSize(PetscInt blocksize);
