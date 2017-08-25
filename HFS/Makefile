@@ -38,7 +38,7 @@ all:
 SOURCES = $(wildcard $(SRCDIR)/*$(SRCEXT))
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/$(MODE)/$(NDIM)d/%,$(SOURCES:.$(SRCEXT)=.o))
 
-LIB = -larmadillo -L/usr/lib
+LIB = -larmadillo -L$(ARMA_DIR)
 
 MANSEC = EPS
 CFLAGS = -Wall -std=c++11 -fPIC -D NDIM=$(NDIM)
@@ -50,24 +50,25 @@ CFLAGS += -g -o0 -Wall -gdwarf-3
 endif
 
 INC =  -I$(SLEPC_DIR)/include 
-INC += -I$(PETSC_DIR)/include 
-INC += -I$(BOOST_ROOT)
+INC +=  -I$(SLEPC_DIR)/$(SLEPC_ARCH)/include 
+#INC += -I$(PETSC_DIR)/include 
 INC += -I$(ARMA_INC)
+INC += $(CRAY_BOOST_INCLUDE_OPTS)
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
 
 
 $(BINDIR)/$(MODE)/$(NDIM)d/$(TARGET): $(OBJECTS)
 	@echo " Linking..."
 	@mkdir -p $(BINDIR)/$(MODE)/$(NDIM)d
-	@echo "$(CXX) $^ -o $@"
+#@echo "$(CXX) $^ -o $@"
 	$(CXX) $(CFLAGS) $^ -o $@ $(LIB) $(INC) ${SLEPC_EPS_LIB}
 
 $(OBJECTS): $(BUILDDIR)/$(MODE)/$(NDIM)d/%.o : $(SRCDIR)/%.cpp
-	@echo "CXX -c $< -o $@"
+#	@echo "CXX -c $< -o $@"
 	@mkdir -p $(BUILDDIR)/$(MODE)/$(NDIM)d
 	$(CXX) $(CFLAGS) -c $< $(INC) $(LIB) -o $@
 
-.PHONY: clean print
+.PHONY:: clean print
 
 print:
 	$(info $$SOURCES is [${SOURCES}])
@@ -77,8 +78,9 @@ print:
 	$(info $$TARGET is [${TARGET}])
 	$(info $$CFLAGS is [${CFLAGS}])
 	$(info $$NDIM is [${NDIM}])
+	$(info $$BOOST_ROOT is [${BOOST_ROOT}])
 
-clean:
-	@echo " Cleaning..."
-	@rm -rf build/
-	@rm -rf bin/
+#clean:
+#	@echo " Cleaning..."
+#	@rm -rf build/
+#	@rm -rf bin/
