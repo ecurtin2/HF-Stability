@@ -20,7 +20,7 @@
     #define SMALLNUMBER 1E-12
 #endif
 
-#include "armadillo"
+#include <armadillo>
 
 typedef unsigned uint;
 typedef double   scalar;
