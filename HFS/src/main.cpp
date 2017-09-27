@@ -79,6 +79,11 @@ int main(int argc, char* argv[]){
     parser.set_val(HFS::num_guess_evecs, "--num_guess_evecs", false);
     parser.set_val(HFS::dav_blocksize, "--Dav_blocksize", false);
 
+	if (HFS::num_guess_evecs > HFS::Nexc) {
+			  HFS::num_guess_evecs = HFS::Nexc;
+	}
+
+
     std::vector<PetscErrorCode (*)(Mat, Vec, Vec)> mvproducts(4);
     std::vector<scalar> dav_vals(4);
     enum cases {Triplet_A_Plus_B, Triplet_A_Minus_B,

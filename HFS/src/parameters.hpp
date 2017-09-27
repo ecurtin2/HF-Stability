@@ -11,7 +11,7 @@
 #ifndef HFS_PARAMS_INCLUDED
 #define HFS_PARAMS_INCLUDED
 
-#define __STDCPP_WANT_MATH_SPEC_FUNCS__
+#define __STDCPP_WANT_MATH_SPEC_FUNCS__ 1
 
 #ifndef PI
     #define PI 3.14159265358979323846264338327
@@ -20,7 +20,7 @@
     #define SMALLNUMBER 1E-12
 #endif
 
-#include "armadillo"
+#include <armadillo>
 
 typedef unsigned uint;
 typedef double   scalar;
