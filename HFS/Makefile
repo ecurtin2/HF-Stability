@@ -56,6 +56,7 @@ INC += -I$(PETSC_DIR)/$(PETSC_ARCH)/include
 INC += -I$(BOOST_ROOT)
 INC += -I$(ARMA_INC)
 include $(SLEPC_DIR)/lib/slepc/conf/slepc_common
+LIB += ${SLEPC_EPS_LIB}
 
 
 $(BINDIR)/$(MODE)/$(NDIM)d/$(TARGET): $(OBJECTS)
