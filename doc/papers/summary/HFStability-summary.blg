@@ -1,49 +1,54 @@
-This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
-Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+This is BibTeX, Version 0.99d (TeX Live 2017/W32TeX)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
 The top-level auxiliary file: HFStability-summary.aux
 The style file: apsrev.bst
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: ../heg_references.bib
+Repeated entry---line 373 of file ../heg_references.bib
+ : @article{Cui2013
+ :                 ,
+I'm skipping whatever remains of this entry
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 10 entries,
+You've used 14 entries,
             3411 wiz_defined-function locations,
-            1248 strings with 12318 characters,
-and the built_in function-call counts, 7054 in all, are:
-= -- 425
-> -- 214
-< -- 33
-+ -- 168
-- -- 52
-* -- 994
-:= -- 771
-add.period$ -- 10
-call.type$ -- 10
-change.case$ -- 40
-chr.to.int$ -- 10
-cite$ -- 10
-duplicate$ -- 627
-empty$ -- 591
-format.name$ -- 138
-if$ -- 1336
+            1280 strings with 13172 characters,
+and the built_in function-call counts, 9653 in all, are:
+= -- 571
+> -- 287
+< -- 46
++ -- 224
+- -- 70
+* -- 1366
+:= -- 1056
+add.period$ -- 14
+call.type$ -- 14
+change.case$ -- 58
+chr.to.int$ -- 17
+cite$ -- 14
+duplicate$ -- 865
+empty$ -- 825
+format.name$ -- 184
+if$ -- 1830
 int.to.chr$ -- 1
-int.to.str$ -- 11
-missing$ -- 94
-newline$ -- 45
-num.names$ -- 30
-pop$ -- 130
+int.to.str$ -- 15
+missing$ -- 134
+newline$ -- 57
+num.names$ -- 42
+pop$ -- 184
 preamble$ -- 1
-purify$ -- 40
+purify$ -- 56
 quote$ -- 0
-skip$ -- 253
+skip$ -- 340
 stack$ -- 0
-substring$ -- 249
-swap$ -- 519
-text.length$ -- 27
+substring$ -- 327
+swap$ -- 717
+text.length$ -- 36
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 60
+type$ -- 80
 warning$ -- 0
-while$ -- 32
+while$ -- 43
 width$ -- 0
-write$ -- 133
+write$ -- 179
+(There was 1 error message)

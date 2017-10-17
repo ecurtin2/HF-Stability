@@ -7,6 +7,7 @@
 \usepackage{textcomp}
 \usepackage{algorithm}
 \usepackage{booktabs}
+\usepackage{color}
 
 \begin{document}
 \title{Summary of Hartree-Fock Stability of HEG}
@@ -20,43 +21,40 @@
     The presence of GHF solutions to the Homogeneous Electron Gas which have lower energy than the RHF solutions was proven in the landmark paper by Overhauser\cite{Overhauser1962}. Later still, the ground state energies of the electron gas were found to great accuracy by Ceperley and Alder \cite{Ceperley1980}. In the past few years, phase diagrams have been determined for the HEG in 2 and 3 dimensions\cite{Delyon2008}\cite{Bernu2011}\cite{Baguet2013}. In all cases the phase diagrams are made by computing the energies of the polarized and unpolarized states, and comparing them. The present work focuses on directly calculating the stability of the paramagnetic homogeneous electron gas as a function of electron density. It should be emphasized that instability of the Hartree-Fock solution is a sufficient, but not necessary, condition for the presence of a symmetry-broken Hartree-Fock solution of lower energy to exist. The technique may be used to guide a search for the lowest energy Hartree-Fock solution by following the instability eigenvectors downhill in energy. Such an approach will be attempted in a future paper. 
     
 \section{Methods}    
-    The Fermi level, $k_f$, is (p. 30 of \cite{Guiliani2005})
-    
-    \begin{equation}
-    k_f
-    =\begin{cases} 
-    (3\pi^2n)^{\frac{1}{3}} = \left(\frac{9\pi}{4}\right)^{\frac{1}{3}}\frac{1}{r_sa_0} & 3D \\ \\
-    (2\pi n)^{\frac{1}{2}} = \frac{\sqrt{2}}{r_sa_0}  & 2D \\
-    \\
-    \frac{\pi}{2}n = \frac{\pi}{4 r_s a_0}   & 1D 
-    \end{cases}
-    .
-    \end{equation}
-    
-    The two electron integral is given by (eq. 12 of \cite{Delyon2008} and p. 16 of \cite{Guiliani2005})
+	
+	Starting with the Jellium Hamiltonian, 
+	\begin{equation}\label{hamiltonian}
+		\mathbf{H} = ....
+	\end{equation}
+	
+	Solutions to the Hartree-Fock equations in $D$ dimensions are plane waves of the form, 
+	\begin{equation}\label{planewave}
+		\phi_{\vec{k} \sigma} =
+		   \frac{1} { \sqrt{L ^ D} } e ^ {i \vec{k} \dot \vec{x}}.
+	\end{equation}
+	Choosing a plane wave basis with periodic boundary conditions is therefore natural, and results in the two electron repulsion integrals being analytic with the following forms, (eq. 12 of \cite{Delyon2008} and p. 16 of \cite{Guiliani2005})
     
     \begin{subequations}
     	\begin{align}
-    	\braket{\vec{k}, \vec{k}'|\vec{k}'',\vec{k}'''}\stackrel{\text{2D, 3D}}{=}&
+    	\braket{\vec{k}, \vec{k}' | \vec{k}'', \vec{k}'''} 
+    	  \stackrel{ \text{2D, 3D} }{=}&
     	\begin{cases} 
-    	\frac{\pi}{\Omega}\frac{2^{D-1}}{|\vec{k}-\vec{k}''|^{D-1}} 
-    	& \vec{k}''' = \vec{k}+\vec{k}'-\vec{k}'' \textbf{ and } |\vec{k}-\vec{k}''| \neq 0 \\
+    	\frac{\pi} {\Omega} \frac{ 2^{D-1} } { | \vec{k} - \vec{k}'' | ^ {D-1} } 
+    	& \vec{k}''' = \vec{k} + \vec{k}' - \vec{k}'' + \vec{G} \textbf{ and } | \vec{k} - \vec{k}''| \neq 0 \\
     	0 
     	& \text{else}
     	\end{cases}
     	\\ \nonumber \\
-    	\braket{k, k'|k'',k'''}\stackrel{\text{1D}}{=}&
+    	\braket{k, k' | k'', k'''} \stackrel{\text{1D}}{=}&
     	\begin{cases} 
-    	e^{|k-k''|^2a^2}\text{Ei}(-|k-k''|^2a^2)\text{ ;}
-    	& k''' = k+k'-k'' \textbf{ and } |k-k''| \neq 0 \\
+    	e ^ { |k-k''|^2a^2 } \text{Ei} (-|k - k''|^2 a^2)\text{ ;}
+    	& k''' = k + k' - k'' + \vec{G} \textbf{ and } |k - k''| \neq 0 \\
     	0\text{ ;} 
     	& \text{else}
     	\end{cases}
     	\end{align}
     \end{subequations}
-    where $\Omega$ is the direct lattice volume and D is the dimensionality of the system. Ei(x) 
-    denotes the exponential integral function The parameter $a$ in 1D is the radius of a cylinder
-    that approximates a 1D system. The limit $a \rightarrow 0$ diverges. The orbital energies are given 
+    where $\Omega$ is the direct lattice volume and $\vec{G}$ is a reciprocal lattice vector of the system. Ei(x) denotes the exponential integral function and the parameter $a$ in 1D is the radius of a cylinder that approximates a 1D system to circumvent divergence of the integral in 1 dimension. The orbital energies are given 
     by 
     
     \begin{equation}\label{eq:hf_orb_energy}
@@ -64,10 +62,11 @@
     \frac{\hbar^2\vec{k}^2}{2m} - \sum\limits_{\vec{k}}^{|\vec{k}|< k_f}n_{\vec{k}\sigma}\braket{\vec{k}, \vec{k}' |\vec{k}', \vec{k}}
     \end{equation}
     
-    Where $n_{\vec{k}\sigma}$ is the occupation number of the state with momentum $\vec{k}$ and spin $\sigma$. Here we have used the relationship to relate the discrete and continuous quantities, (p. 15 of \cite{Guiliani2005}). 
+    Where $n_{\vec{k}\sigma}$ is the occupation number of the state with momentum $\vec{k}$ and spin $\sigma$ (p. 15 of \cite{Guiliani2005}). 
 
     \subsection{Hartree-Fock Stability}
-    The HF stability condition was presented by Thouless \cite{Thouless1972} ($1^{st}$ Ed. 1960) and is the presence of imaginary electronic oscillation frequencies in the random phase approximation (RPA). Equivalently, instability of a Hartree-Fock solution is borne out as a negative eigenvalue of the electronic Hessian (density-matrix--density-matrix response function). For a paramagnetic HF solution, the equations factorize into the matrices known to chemists as the singlet and triplet instability matrices \cite{Dunning1967}\cite{Seeger1977},
+    The HF stability condition was presented by Thouless \cite{Thouless1972} ($1^{st}$ Ed. 1960) and is the presence of imaginary electronic oscillation frequencies in the random phase approximation (RPA). Equivalently, instability of a Hartree-Fock solution is borne out as a negative eigenvalue of the electronic Hessian (static density-matrix--density-matrix response function). For a paramagnetic HF solution, the equations factorize into the matrices known to chemists as the singlet and triplet instability matrices \cite{Dunning1967}\cite{Seeger1977} \textcolor{red}{show this here? appendix?}
+    ,
     \begin{equation}\label{eq:1,3H}
     {}^{1,3}\bf{H'}=
     \begin{bmatrix}
@@ -75,7 +74,7 @@
     \left({}^{1,3}\bf{B'}\right)^* & \left({}^{1,3}\bf{A'}\right)^* \\
     \end{bmatrix},
     \end{equation}
-    where the $1,3$ denote singlet and triplet states, respectively. $\bf{A}$, $\bf{B}$ have dimension $N_{occ}\times N_{vir}$ and are defined as follows:
+    where the $1,3$ denote singlet and triplet instabilities, respectively. $\bf{A}$, $\bf{B}$ have dimension $N_{occ}\times N_{vir}$ and are defined as follows:
     \begin{subequations}
     	\begin{align}
     	{}^{1}{A'}_{i\rightarrow a, j\rightarrow b} &= (\epsilon_a-\epsilon_i)\delta_{ij}\delta_{ab} + 2\braket{aj|ib}-\braket{aj|bi}\\
@@ -84,7 +83,7 @@
     	{}^{3}{B'}_{i\rightarrow a, j\rightarrow b} &= -\braket{ab|ji}
     	\end{align}
     \end{subequations}
-    The matrix given in Equation \ref{eq:1,3H} represents the case of complex RHF stability in the space of complex RHF space (${}^{1}\mathbf{H}$ - internal instability) and in the space of complex UHF space (${}^{3}\mathbf{H}$ - triplet instability).
+    The matrix given in Equation \ref{eq:1,3H} represents the case of complex RHF stability in the space of complex RHF space (${}^{1}\mathbf{H}$ - internal instability) and in the space of complex UHF space (${}^{3}\mathbf{H}$ - triplet instability). The lowest eigenvalue of both of these matrices will reveal the stability of the RHF solution. If they are both positive, the solution is stable with respect to symmetry breaking, while negative eigenvalues in either indicate instability with respect to either triplet or singlet perturbations (or both). We mention here that an eigenvalue of 0 does not indicate instability, and this case is discussed in detail by Cui et al \cite{Cui2013}.
 
 \section{References}
 \bibliography{../heg_references}

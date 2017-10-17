@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{14}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname bibnamefont\endcsname\relax
   \def\bibnamefont#1{#1}\fi
@@ -96,5 +96,40 @@
   \bibinfo{pages}{166402} (\bibinfo{year}{2013}), ISSN
   \bibinfo{issn}{0031-9007},
   \urlprefix\url{http://link.aps.org/doi/10.1103/PhysRevLett.111.166402}.
+
+\bibitem[{\citenamefont{Guiliani and Vignale}(2005)}]{Guiliani2005}
+\bibinfo{author}{\bibfnamefont{G.}~\bibnamefont{Guiliani}} \bibnamefont{and}
+  \bibinfo{author}{\bibfnamefont{G.}~\bibnamefont{Vignale}},
+  \emph{\bibinfo{title}{{Quantum Theory of the Electron Liquid}}}
+  (\bibinfo{publisher}{Cambridge University Press},
+  \bibinfo{address}{Cambridge}, \bibinfo{year}{2005}), ISBN
+  \bibinfo{isbn}{978-0-521-82112-6}.
+
+\bibitem[{\citenamefont{Thouless}(1972)}]{Thouless1972}
+\bibinfo{author}{\bibfnamefont{D.~J.} \bibnamefont{Thouless}},
+  \emph{\bibinfo{title}{{The Quantum Mechanics of Many-Body Systems}}}
+  (\bibinfo{publisher}{Dover}, \bibinfo{address}{Mineola, NY},
+  \bibinfo{year}{1972}), \bibinfo{edition}{2nd} ed., ISBN
+  \bibinfo{isbn}{978-0-486-49357-2}.
+
+\bibitem[{\citenamefont{Dunning}(1967)}]{Dunning1967}
+\bibinfo{author}{\bibfnamefont{T.~H.} \bibnamefont{Dunning}},
+  \bibinfo{journal}{The Journal of Chemical Physics}
+  \textbf{\bibinfo{volume}{47}}, \bibinfo{pages}{1735} (\bibinfo{year}{1967}),
+  ISSN \bibinfo{issn}{00219606},
+  \urlprefix\url{http://scitation.aip.org/content/aip/journal/jcp/47/5/10.1063/1.1712158}.
+
+\bibitem[{\citenamefont{Cui et~al.}(2013)\citenamefont{Cui, Bulik,
+  Jim??nez-Hoyos, Henderson, and Scuseria}}]{Cui2013}
+\bibinfo{author}{\bibfnamefont{Y.}~\bibnamefont{Cui}},
+  \bibinfo{author}{\bibfnamefont{I.~W.} \bibnamefont{Bulik}},
+  \bibinfo{author}{\bibfnamefont{C.~A.} \bibnamefont{Jim??nez-Hoyos}},
+  \bibinfo{author}{\bibfnamefont{T.~M.} \bibnamefont{Henderson}},
+  \bibnamefont{and} \bibinfo{author}{\bibfnamefont{G.~E.}
+  \bibnamefont{Scuseria}}, \bibinfo{journal}{Journal of Chemical Physics}
+  \textbf{\bibinfo{volume}{139}}, \bibinfo{pages}{154107}
+  (\bibinfo{year}{2013}), ISSN \bibinfo{issn}{00219606},
+  \eprint{arXiv:1310.0942v1},
+  \urlprefix\url{http://scitation.aip.org/content/aip/journal/jcp/139/15/10.1063/1.4824905}.
 
 \end{thebibliography}
