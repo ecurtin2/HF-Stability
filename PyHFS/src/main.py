@@ -6,11 +6,15 @@ import time
 import parameters
 from OrbitalHessian import OrbitalHessian
 
-import slepc4py
-from petsc4py import PETSc
-Pprint = PETSc.Sys.Print
 
-slepc4py.init(sys.argv)
+try:
+    import slepc4py
+    from petsc4py import PETSc
+    Pprint = PETSc.Sys.Print
+    
+    slepc4py.init(sys.argv)
+except ImportError:
+    print("CANT USE SLEPC NOW")
 
 
 def main():

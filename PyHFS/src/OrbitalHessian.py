@@ -4,7 +4,11 @@ import sys
 
 import numpy as np
 
-import slepc_wrapper
+try:
+    import slepc_wrapper
+except ImportError:
+    print("SLEPC CANT BE LOADED DONT USE")
+
 import twoERI
 
 

@@ -130,13 +130,13 @@
   
   \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{../../images/singlet-stability-convergence.pdf}
+    \includegraphics[width=\textwidth]{../../images/singlet-stability-convergence.eps}
     \caption{The lowest eigenvalue of ${}^1\mathbf{H}$ as a function of $r_s$ with increasing number of k-points in 1, 2 and 3 dimensions.}
     \label{fig:singlet_convergence}
   \end{figure}
   \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{../../images/triplet-stability-convergence.pdf}
+    \includegraphics[width=\textwidth]{../../images/triplet-stability-convergence.eps}
     \caption{The lowest eigenvalue of ${}^3\mathbf{H}$ as a function of $r_s$ with increasing number of k-points in 1, 2 and 3 dimensions.}
     \label{fig:triplet_convergence}
   \end{figure}
@@ -146,16 +146,16 @@
   \end{equation}
   The solution to eq. \ref{eq:transition_rs} is referred to as the transition $r_s$ and this quantity was determined while increasing the number of k-points in the simulation to convergence (see Fig. \ref{fig:onset}).
   
-  \begin{tabular}{c | c }\label{table:transition_rs}
-    D~~~ & ~~ Transition $r_s$ \\
+  \begin{tabular}{ c | c }\label{table:transition_rs}
+    D~~~ & ~~ Transition $r_s$ (bohr$^{-1}$) \\
     \hline
-    1    &  0.09 \\
+    1    &  0.02 \\
     2    &  0.87 \\
     3    &  3.16 \\
     \hline
   \end{tabular}
   
-  The transition $r_s$ occurs at $r_s = 1$ in 2D and $r_s = 3$ in 3D (See Fig.~\ref{fig:stability} and Fig.~\ref{fig:onset}). These results are consistent with those seen by other methods\cite{Baguet2014, Bernu2011}. On the other hand, the transition $r_s$ for one dimension tends towards zero and stays quite close as the number of grid points increases. Indeed, numerical issues appear at very high density (low $r_s$) due to divergence of the two electron integrals in the asymptotic limit. With this in mind, it is clear at least that the instability in the 1D case persists even at very high densities (potentially all finite densities), which is to be expected from Overhauser's proof of instability at all values of $r_s$ in 1D for the delta function potential \cite{Overhauser1962}.
+  The transition $r_s$ values are presented in table \ref{table:transition_rs}. These results are consistent with those seen by other methods\cite{Baguet2014, Bernu2011}. On the other hand, the transition $r_s$ for one dimension tends towards zero and stays quite close as the number of grid points increases. Indeed, numerical issues appear at very high density (low $r_s$) due to divergence of the two electron integrals in the asymptotic limit. With this in mind, it is clear at least that the instability in the 1D case persists even at very high densities (potentially all finite densities), which is to be expected from Overhauser's proof of instability at all values of $r_s$ in 1D for the delta function potential \cite{Overhauser1962}.
   \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{../../images/combined_onset.eps}
