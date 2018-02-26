@@ -15,7 +15,7 @@
 \affiliation{Department of Chemistry, University of Illinois at Urbana-Champaign, 600 South Mathews Avenue, Urbana, Illinois 61801, USA}
 
 \begin{abstract}
-    
+  In molecular electronic structure theory, breaking symmetry of a Hartree-Fock reference serves as a viable means to resolve spurious degeneracies in certain systems. This allows for the use of a wide array of post-Hartree-Fock methods to recover more of the correlation energy. While there exists proofs of the existence of lower energy broken symmetry solutions under certain circumstance in the finite case, we are unaware of analogous ones in the periodic case. This study presents numerical experiments into stability of paramagnetic solutions of the Homogeneous electron gas within the Hartree-Fock approximation to glean insight into the periodic case. We show that in 2 and 3 dimensions, the paramagnetic solution is unstable at $r_s$ above 0.87 and 3.2 atomic units, respectively. In one dimension the solution is essentially always unstable, in agreement with Overhauser's theorem. This approach also lends itself to a means of finding lower energy broken symmetry solutions, at various levels of restriction within Hartree-Fock theory.
 \end{abstract}
 
 \maketitle
@@ -27,7 +27,9 @@
   \end{equation}
   In many cases the correlation energy is relatively small and the Hartree-Fock reference captures a significant portion of the exact total energy. In such cases, the prevailing approach is usually successful and has only implementation issues for larger systems. On the other hand there are systems which are not well treated by this approach, which are often called ``strongly correlated''. Examples of such systems are those with degenerate or near-degenerate HOMO-LUMO gaps, metallic solids or molecules close to breaking bonds. Oftentimes for such systems the traditional Hartree-Fock solutions are not even qualitatively correct, implying inadequacies in either the single-reference or mean-field approach.    
   
-  It is often neglected, however, that the usual way for computing a Hartree-Fock solution in practice is to use a restricted form of the single determinantal wavefunction. In the Restricted  Hartree-Fock (RHF), the wave function is restricted to be an eigenfunction of the $\hat{S^2}$ and $\hat{S_z}$ operators, while in the Unrestricted variant (UHF), the wave function need only be an eigenfunction of the $\hat{S_z}$. There is yet another lesser-known variation of the theory, known as General Hartree-Fock (GHF), which assumes no spin-symmetries in the wave function. This allows for greater variational flexibility at the cost of ``broken symmetry''. Together these three levels of Hartree-Fock theory form a heirarchy of increasing parameter space within which to minimize the total energy. 
+  It is often neglected, however, that the usual way for computing a Hartree-Fock solution in practice is to use a restricted form of the single determinantal wavefunction. In the Restricted  Hartree-Fock (RHF), the wave function is restricted to be an eigenfunction of the $\hat{S^2}$ and $\hat{S_z}$ operators, while in the Unrestricted variant (UHF), the wave function need only be an eigenfunction of the $\hat{S_z}$. There is yet another lesser-known variation of the theory, known as General Hartree-Fock (GHF), which assumes no spin-symmetries in the wave function. This allows for greater variational flexibility at the cost of ``broken symmetry''. Together these three levels of Hartree-Fock theory form a heirarchy of increasing parameter space within which to minimize the total energy. In order to test whether or not a lower energy solution of broken symmetry exists, a ``stability analysis'' can be performed on a determined Hartree-Fock solution. 
+  
+  First, a self-consistent solution to the HF equations needs to be found, but being a solution to the Hartree-Fock equation ensures only that the solution is stationary with respect to the determined orbitals. If the solution is indeed a minimum, it is called ``stable'', while if there is any displacement in the electronic structure which lowers the energy, the solution is ``unstable''. A method for determining the stability of a Hartree-Fock solution was proposed by Thouless in 1960\cite{Thouless1960}. The condition was rederived into the expression familiar to quantum chemists by Čížek and Paldus in 1967\cite{Cizek1967}. Furthermore, the stability equations factorize depending on the symmetry of the Hartree-Fock eigenfunctions. To this end, Seeger and Pople outlined a hierarchical approach to systematically evaluate the stability of HF states in the restricted, unrestricted and generalized Hartree-Fock procedures\cite{Seeger1977}. Recently, the method has been used to aid the search for the lowest-energy Unrestricted Hartree-Fock (UHF) solutions in molecules, as well as the General Hartree-Fock (GHF) solutions in geometrically frustrated hydrogen rings which cannot conform even to the UHF scheme\cite{Pulay2016, Goings2015}. The lower energy HF solutions in these studies were located by first finding the instabilities in the higher spin-symmetry solutions, then using this information to obtain ``symmetry breaking'' displacements that lower the energy.    
     
   Previously it has been shown for finite systems with form-degenerate HOMO-LUMO, there always exists a symmetry-breaking instability\cite{Yamada2015}. Whether this theorem holds in the infinite case remains to be seen. To investigate HF instabilities in zero band gap solids, a natural starting point is the Homogeneous Electron Gas (HEG, often called Jellium or Uniform Electron Gas) model. The model consists of electrons in a box with periodic boundary conditions  and the constraint that the entire system is charge-neutral via a uniform background positive  charge. The resulting Coulomb interactions cancel exactly, and the only remaining terms are due   to kinetic and exchange energies. Historically it was thought that the plane-wave paramagnetic solution to the HF equations for this model was the ``correct'' solution. However, in a landmark paper, Overhauser showed that certain symmetry broken solutions \emph{always} have lower-energy than the paramagnetic solutions at all electron densities\cite{Overhauser1962}. This hints at, but does not show, that the analogous triplet instability theorem persists in the infinite case.  
         
@@ -49,9 +51,9 @@
   %If it turns out that fully minimizing the HF energy can reproduce a majority of the ``correlation energy'' in these systems, then using this HF searching method becomes a justified method of solving strongly correlated systems. This would mean that the strong correlation was in fact illusory, and is convertible to a weak correlation problem by means of a more rigorous Hartree-Fock theory.
     
 \section{Method}
-  Hartree-Fock (HF) Theory has been the foundation for \emph{ab initio} electronic structure theory  throughout its history. An often overlooked aspect of the theory is that there are many solutions to the HF equations for a given system, but being a solution to the Hartree-Fock equation ensures only that the solution is stationary with respect to the determined orbitals. If the solution is indeed a minimum, it is called ``stable'', while if there is any displacement in the electronic structure which lowers the energy, the solution is ``unstable''. A method for determining the stability of a Hartree-Fock solution was proposed by Thouless in 1960\cite{Thouless1960}. The condition was rederived into the expression familiar to quantum chemists by Čížek and Paldus in 1967\cite{Cizek1967}. Furthermore, the stability equations factorize depending on the symmetry of the Hartree-Fock eigenfunctions. To this end, Seeger and Pople outlined a hierarchical approach to systematically evaluate the stability of HF states in the restricted, unrestricted and generalized Hartree-Fock procedures\cite{Seeger1977}. Recently, the method has been used to aid the search for the lowest-energy Unrestricted Hartree-Fock (UHF) solutions in molecules, as well as the General Hartree-Fock (GHF) solutions in geometrically frustrated hydrogen rings which cannot conform even to the UHF scheme\cite{Pulay2016, Goings2015}. The lower energy HF solutions in these studies were located by first finding the instabilities in the higher spin-symmetry solutions, then using this information to obtain ``symmetry breaking'' displacements that lower the energy.    
+
   
-  To determine if there is indeed a symmetry-broken HF solution of lower energy, the usual method  is to determine the stability of a found Hartree-Fock solution. Instabilities are indicated by a negative eigenvalue the Electronic Hessian, 
+  To determine if there is indeed a symmetry-broken HF solution of lower energy, the usual method  is to determine the stability of a found Hartree-Fock solution. Instabilities are indicated by a negative eigenvalue in the Electronic Hessian, 
   \begin{equation}
     \bf{H}=
     \begin{bmatrix}
@@ -65,7 +67,16 @@
      + \left< aj||ib \right>, \\
      B_{i \rightarrow a, j \rightarrow b} &= \left< ab||ij \right>. 
   \end{align}    
-  For a paramagnetic HF solution (RHF), the Orbital Hessian factorizes into the matrices known to chemists as the singlet and triplet instability matrices ($\bf{{}^1H}$ and $\bf{{}^3H}$, respectively)\cite{Dunning1967,Seeger1977}.
+  
+  Where occupied states are labelled by $i$ and $j$, virtual by $a$ and $b$, and $i \rightarrow a$ refers to the excitation which replaces state $i$ with state $a$. The relevant two electron notation is
+  \begin{equation}
+    \left< pq||rs \right> = \left< pq|rs \right> - \left< pq|sr \right>,
+  \end{equation}
+  where, 
+  \begin{equation}
+    \left< pq|rs \right> = \int \int \phi^*_p(\vec{r}_1) \phi^*_q(\vec{r}_2) \frac{1}{r_{12}} \phi_r(\vec{r}_1) \phi_s(\vec{r}_2) d\vec{r_1} d\vec{r_2}, 
+  \end{equation}
+  and states labeled with $p$, $q$, $r$, or $s$ are either occupied or virtual. For a paramagnetic HF solution (RHF), the Orbital Hessian factorizes into the matrices known to chemists as the singlet and triplet instability matrices ($\bf{{}^1H}$ and $\bf{{}^3H}$, respectively)\cite{Dunning1967,Seeger1977}.
   \begin{subequations}
     \begin{eqnarray}
       {}^{1}{A'}_{i\rightarrow a, j\rightarrow b} &=& 
@@ -80,13 +91,12 @@
   \end{subequations}
   The lowest eigenvalue of both of these matrices will reveal the stability of the RHF solution. If  ${}^1\bf{H}$ has negative eigenvalues, the solution is unstable with respect to changes that preserve singlet character (singlet instability), while if ${}^3\bf{H}$ has negative eigenvalues, the solution is unstable towards displacements that would change the wavefunction towards a triplet state (triplet instability). The solution is stable if neither ${}^1\bf{H}$ nor ${}^3\bf{H}$ has a negative eigenvalue. An eigenvalue of 0 does not indicate instability, and this case is discussed in detail by Cui et al \cite{Cui2013}.   
     	
-\subsection{Method}
-  Starting with the Jellium Hamiltonian in atomic units, 
+  To apply the stability analysis to the electron gas, start with the Jellium Hamiltonian in atomic units, 
   \begin{equation}\label{hamiltonian}
    	\hat{H} = \sum_i \frac{\hat{p}_i^2}{2}  + \frac{1}{2} \sum_{i < j} \frac{1}{|\vec{r}_i - 
-   	\vec{r}_j|},
+   	\vec{r}_j|}.
   \end{equation}
-  one solution to the Hartree-Fock equations in $D$ dimensions are plane waves of the form	
+  One solution to the Hartree-Fock equations in $D$ dimensions are plane waves of the form	
   \begin{equation}\label{planewave}
    	\phi_{\vec{k}} =
     \frac{1} { \sqrt{L ^ D} } e ^ {i \vec{k} \dot \vec{x}},
@@ -114,7 +124,7 @@
     V(r_{12}) = V_0\delta(r_{12}),
   \end{equation}
   and the two electron integral in this case is simply
-  \begin{align}
+  \begin{align}\label{eq:ERI_1d}
     \braket{\vec{k}, \vec{k}' | \vec{k}'', \vec{k}'''} 
     \stackrel{ \text{1D} }{=}&
     \begin{cases} 
@@ -124,17 +134,19 @@
       & \text{else}.
     \end{cases}
   \end{align}  
-    
-\subsection{Results}   
-  Using the equations for energies and two electron integrals, the stability analysis was performed on the paramagnetic HEG model as a function of electron density (or equivalently, the Wigner-Seitz radius, $r_s$). The approach of explicitly constructing and diagonalizing the orbital hessian is intractable both in terms of memory and calculation time requirements. Since the instability condition is that the any eigenvalue is negative, it suffices to calculate the sign of only the lowest eigenvalue. This is a task well suited for an iterative subspace solver. To this end, the Jacobi-Davidson algorithm was from the SLEPc library was used to calculated the lowest eigenvalues\cite{Hernandez2005}. 
+  These expressions can be used to evaluate the stability of the paramagnetic electron gas. In doing so, presence of instabilities of triplet (${}^3\mathbf{H}$) character are a sufficient, but not necessary, condition that a solution with different densities of $\alpha$ and $\beta$ spin exists which has lower energy than the paramagnetic solution. An example of such a solution would be the spin-density-wave (SDW) solution. 
+   
+\section{Results}   
+  Using the equations for energies and two electron integrals, the stability analysis was performed on the paramagnetic HEG model as a function of electron density (or equivalently, the Wigner-Seitz radius, $r_s$). The approach of explicitly constructing and diagonalizing the orbital hessian is intractable both in terms of memory and calculation time requirements. Since the instability condition is that the any eigenvalue is negative, it suffices to calculate the sign of only the lowest eigenvalue. This is a task well suited for an iterative subspace solver. To this end, the Jacobi-Davidson algorithm was from the SLEPc library was used to calculated the lowest eigenvalues using the Blue Waters Supercomputer\cite{Hernandez2005}. 
   
-  \begin{figure}
+  A basis of plane waves with simple cubic symmetry was used for all calculations, and the number of k-points was incremented until the lowest eigenvalues were sufficiently converged {\color{red} (for 1D and 2D more data can be gathered but in 3D getting more data is computationally unfeasible at the moment)}. In the 1D calculations, a potential of $V_0 = 1$ in atomic units was used.
+  \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../../images/singlet-stability-convergence.eps}
     \caption{The lowest eigenvalue of ${}^1\mathbf{H}$ as a function of $r_s$ with increasing number of k-points in 1, 2 and 3 dimensions.}
     \label{fig:singlet_convergence}
   \end{figure}
-  \begin{figure}
+  \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../../images/triplet-stability-convergence.eps}
     \caption{The lowest eigenvalue of ${}^3\mathbf{H}$ as a function of $r_s$ with increasing number of k-points in 1, 2 and 3 dimensions.}
@@ -145,23 +157,33 @@
     \lambda_{min}(r_s) = 0.
   \end{equation}
   The solution to eq. \ref{eq:transition_rs} is referred to as the transition $r_s$ and this quantity was determined while increasing the number of k-points in the simulation to convergence (see Fig. \ref{fig:onset}).
-  
-  \begin{tabular}{ c | c }\label{table:transition_rs}
-    D~~~ & ~~ Transition $r_s$ (bohr$^{-1}$) \\
-    \hline
-    1    &  0.02 \\
-    2    &  0.87 \\
-    3    &  3.16 \\
-    \hline
-  \end{tabular}
-  
-  The transition $r_s$ values are presented in table \ref{table:transition_rs}. These results are consistent with those seen by other methods\cite{Baguet2014, Bernu2011}. On the other hand, the transition $r_s$ for one dimension tends towards zero and stays quite close as the number of grid points increases. Indeed, numerical issues appear at very high density (low $r_s$) due to divergence of the two electron integrals in the asymptotic limit. With this in mind, it is clear at least that the instability in the 1D case persists even at very high densities (potentially all finite densities), which is to be expected from Overhauser's proof of instability at all values of $r_s$ in 1D for the delta function potential \cite{Overhauser1962}.
-  \begin{figure}
+  \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../../images/combined_onset.eps}
-    \caption{The value of $r_s$ at which the singlet (blue) and triplet (orange) instability    occurs with increasing number of k-points in 1, 2 and 3 dimensions. In the 1D case (left), the singlet instability never appeared in the calculations performed. }
+    \caption{The value of $r_s$ at which the singlet (green) and triplet (blue) instability    occurs with increasing number of k-points in 1, 2 and 3 dimensions. In the 1D case (left), the singlet instability never appeared in the calculations performed. }
     \label{fig:onset}
   \end{figure}
+  
+  
+  \begin{table}[H]
+  \centering
+  \caption{The values of $r_s$ at which the lowest eigenvalue of $\mathbf{H}$ changes sign.}
+    \begin{tabular}{ c | c }
+      D~~~ & ~~ Transition $r_s$ (bohr$^{-1}$) \\
+      \hline
+      1    &  0.02 \\
+      2    &  0.87 \\
+      3    &  3.16 \\
+      \hline
+     \end{tabular}
+  \label{table:transition_rs}
+  \end{table}  
+  The transition $r_s$ values are presented in table \ref{table:transition_rs}. These results are consistent with those seen by other methods, which show the emergence of broken symmetry phases with distinguishably lower energy at $r_s \approx 0.8$ in 2D and $r_s \approx 3$ in 3D\cite{Baguet2014, Bernu2011}. On the other hand, the transition $r_s$ for one dimension tends towards zero and stays quite close as the number of grid points increases. Indeed, numerical issues appear at very high density (low $r_s$) due to divergence of the two electron integrals in the asymptotic limit. With this in mind, it is clear at least that the instability in the 1D case persists even at very high densities (potentially all finite densities), which is to be expected from Overhauser's proof of instability at all values of $r_s$ in 1D for the delta function potential \cite{Overhauser1962}.
+
+  
+\section{Conclusion}
+  The paramagnetic Hartree-Fock solution to the Homogeneous electron gas was shown numerically to be unstable with respect to broken symmetry solutions at certain densities, which were determined in 2 and 3 dimensions. The one dimensional solution with the delta function potential is effectively always unstable (that is to say, the value of $r_s$ at which the solution becomes unstable is within numerical error of zero). These results are compatible with Overhauser's theorem and direct energy comparisons. While the present study did not find lower energy broken symmetry solutions, the procedure for doing so is outlined by Seeger\cite{Seeger1977}. This procedure may be computationally difficult to actualize for this system, but nevertheless could be a worthwhile pursuit. By tracing the instability eigenvectors downhill in energy, the broken symmetry solutions of lower energy may be found. Since the correlated energy is known, it could be compared to the lowest energy Hartree-Fock energy found and may give insights into the ability of broken symmetry Hartree-Fock solutions to describe periodic systems. 
+
   
 \begin{acknowledgements}
 The authors would like to thank...
