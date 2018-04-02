@@ -1,0 +1,79 @@
+  Thanks for this manuscript. I think this is an excellent start. Please make
+  absolutely sure that no one has done this before and finish this ASAP.
+
+  1) Please search the literature using the same method under a different name
+  (evaluating dielectric constant?) which was pointed out by Lucas Wagner and
+  described in some textbook.
+
+  2) TABLE 1 should list all transition rs obtained by previous studies.
+
+  3) I think that the first 3 paragraphs of intro are unnecessary or
+  significantly compressed. The abstract should be compressed to contain only
+  new and significant information. Many sentences are too vague for a scientific
+  article.
+
+  4) In intro, “Whether this theorem … remains to be seen” -> I feel that we can
+  say that the theorem does not hold because proofs are mathematically not valid
+  in the case of an infinite system. In Yamada paper, we clearly state “… the
+  theorem does not hold” in Section IIIE Homogeneous electron gas.
+
+  5) I am not sure if the 2 objectives of the intro are accurate or particularly
+  compelling. To me,  (1) we wanted to know if the singlet/triplet instability
+  theorems’ conclusions apply to HEG. The answer seems decisive “NO” because
+  triplet instabilities do not even exist at many densities. So, the pursuit of
+  the theorems for solids is futile. (2) Conclusion (1) appears to contradict
+  with Overhauser’s theorem for GHF (esp. when GHF instability matrix = UHF
+  instability matrix), but it does not because instability is only a sufficient
+  (weaker) condition for/than a lower-energy solution (stronger). (3) Given (2),
+  we are curious how the instability detection (weaker) and direct minimization
+  (stronger) for UHF differ from each other. They seem consistent/similar for
+  UHF, while they are different for GHF (2) (True??? – we need TABLE 1 with
+  other studies’ results).
+
+  6) I think it important to point out the difference between (a) instability
+  and (b) lower energy solution. As you corrected me, (a) -> (b) but not (b) ->
+  (a). So the first sentence of II. METHOD is vague and misleading (also “To
+  determine … is to determine” is awkward).
+
+  7) In Eq. (6), we might keep the 2-e interaction general V(1,2) or something
+  given it can be delta function.
+
+  8) I wonder if Eqs. (3) & (4) are spinorbital based, whereas Eqs. (7) are
+  spatial-orbital based.
+
+  9) Eq. (13) is different from Eq. (41) of Yamada paper. Have you reproduced
+  the analytical energy bands from your numerical calc?
+
+  10) We might also mention GHF instability = UHF instability (in relation to
+  Overhauser’s theorem).
+
+  11) Fig. 1 is not quite informative. It’s hard to tell the crossing of zero
+  axis. Can we extrapolate to infinite k points? We can clearly say is that the
+  curves are monotonic with rs and #kpoints (any explanation for the latter?).
+  So, once a negative eigenvalue is achieved increasing k points does not
+  reverse it, and so computational transition rs is an upper bound.
+
+  12) Fig. 2 1D curves have steps. Why (just an artifact of log plot)?
+
+  13) Fig. 3 Can we extrapolate the transition rs at infinite #kpoints? (Or
+  better yet we extrapolate the negative eigenvalue at each rs at infinite
+  #kpoints first and then interpolate the transition rs next.)
+
+  14) Table I should compare with literature values.
+
+  15) “which is to be expected from Overhauser’s proof …” -> is this true? What
+  about 3D Overhauser’s theorem? If this statement was true, wouldn’t we have a
+  contradiction at 3D? My take is that our calculations cannot agree nor
+  contradict with Overhauser’s theorems at any dimension because instability
+  and lower-energy solution are different conditions.
+
+  16) Conclusion: “effectively always unstable” -> This is too vague to be
+  unacceptable scientifically. Fig 2 seems to suggest to me that the lowest
+  eigenvalue at the smallest rs you studied is positive (what’s up with the huge
+  value of 10^4? Something must be wrong); do you think going to larger #kpoints
+  bring it down all the way to negative?
+
+  17) “These results are … direct energy comparisons” -> I don’t agree and I
+  don’t like.
+
+  18) I don’t quite understand the point of the remaining sentences.

@@ -74,7 +74,11 @@
   \end{equation}
   where, 
   \begin{equation}
-    \left< pq|rs \right> = \int \int \phi^*_p(\vec{r}_1) \phi^*_q(\vec{r}_2) \frac{1}{r_{12}} \phi_r(\vec{r}_1) \phi_s(\vec{r}_2) d\vec{r_1} d\vec{r_2}, 
+    \left< pq|rs \right> = 
+    \int \int \phi^*_p(\vec{r}_1) \phi^*_q(\vec{r}_2) 
+    V(\vec{r}_1, \vec{r}_2) 
+    \phi_r(\vec{r}_1) \phi_s(\vec{r}_2) 
+    d\vec{r_1} d\vec{r_2}, 
   \end{equation}
   and states labeled with $p$, $q$, $r$, or $s$ are either occupied or virtual. For a paramagnetic HF solution (RHF), the Orbital Hessian factorizes into the matrices known to chemists as the singlet and triplet instability matrices ($\bf{{}^1H}$ and $\bf{{}^3H}$, respectively)\cite{Dunning1967,Seeger1977}.
   \begin{subequations}
@@ -142,13 +146,13 @@
   A basis of plane waves with simple cubic symmetry was used for all calculations, and the number of k-points was incremented until the lowest eigenvalues were sufficiently converged {\color{red} (for 1D and 2D more data can be gathered but in 3D getting more data is computationally unfeasible at the moment)}. In the 1D calculations, a potential of $V_0 = 1$ in atomic units was used.
   \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{../../images/singlet-stability-convergence.eps}
+    \includegraphics[width=\textwidth]{../../images/singlet-stability-convergence.pdf}
     \caption{The lowest eigenvalue of ${}^1\mathbf{H}$ as a function of $r_s$ with increasing number of k-points in 1, 2 and 3 dimensions.}
     \label{fig:singlet_convergence}
   \end{figure}
   \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{../../images/triplet-stability-convergence.eps}
+    \includegraphics[width=\textwidth]{../../images/triplet-stability-convergence.pdf}
     \caption{The lowest eigenvalue of ${}^3\mathbf{H}$ as a function of $r_s$ with increasing number of k-points in 1, 2 and 3 dimensions.}
     \label{fig:triplet_convergence}
   \end{figure}
@@ -159,7 +163,7 @@
   The solution to eq. \ref{eq:transition_rs} is referred to as the transition $r_s$ and this quantity was determined while increasing the number of k-points in the simulation to convergence (see Fig. \ref{fig:onset}).
   \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{../../images/combined_onset.eps}
+    \includegraphics[width=\textwidth]{../../images/combined_onset.pdf}
     \caption{The value of $r_s$ at which the singlet (green) and triplet (blue) instability    occurs with increasing number of k-points in 1, 2 and 3 dimensions. In the 1D case (left), the singlet instability never appeared in the calculations performed. }
     \label{fig:onset}
   \end{figure}
