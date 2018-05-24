@@ -56,9 +56,9 @@ namespace HFS {
         if (NDIM == 1) {
             vol = 2.0 * N_elec * rs;
             if (use_delta_1D == true) {
-                two_e_const = twoE_parameter_1dCase;
+                two_e_const = twoE_parameter_1dCase / vol;
             } else {
-                two_e_const = twoE_parameter_1dCase;    // 'a' for the exponential integral, radius of cylinder.
+                two_e_const = twoE_parameter_1dCase / vol;    // 'a' for the exponential integral, radius of cylinder.
             }
         } else if (NDIM == 2) {
             vol = N_elec * PI * std::pow(rs, 2);
